@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+	<<menu execute="~/.config/openbox/pipe_menu/walls.sh" id="walls" label="WALLS"/>
+	<<menu execute="~/.config/openbox/pipe_menu/unmount.sh" id="unmount" label="UNMOUNT"/>
+	<<menu execute="~/.config/openbox/pipe_menu/ncmpcpp.sh" id="ncmpcpp" label="ncmpcpp"/>
+
+	<<menu id="apps" label="APPS" execute="~/.config/openbox/pipe_menu/apps.sh">
+	</menu>
+
+	<<menu id="mpd" label="MPD" execute="~/.config/openbox/pipe_menu/mpd.sh">
+	</menu>
+
+	<<menu id="playlist" label="playlist" execute="~/.config/openbox/pipe_menu/playlist.sh">
+	</menu>
+
+	<<menu id="toggle" label="TOGGLE" execute="~/.config/openbox/pipe_menu/toggle.sh">
+	</menu>
+
+	<<menu id="rofi" label="rofi" execute="~/.config/openbox/pipe_menu/rofi.sh">
+	</menu>
+
+	<<menu id="rofi_mode" label="mode" execute="~/.config/openbox/pipe_menu/rofi_menu.sh">
+	</menu>
+
+	<<menu id="buttons" label="buttons" execute="~/.config/openbox/pipe_menu/buttons.sh">
+	</menu>
+
+	<<menu id="colors" label="COLORS" execute="~/.config/openbox/pipe_menu/colors.sh">
+	</menu>
+
+	<<menu id="mount" label="MOUNT" execute="~/.config/openbox/pipe_menu/mount.sh">
+	</menu>
+
+	<<menu id="select_wall" label="select__wall" execute="~/.config/openbox/pipe_menu/select_wallpaper.sh">
+	</menu>
+
+	<menu id="root-menu" label="Openbox 3">
+		<separator label="APPS"/>
+		<menu id="apps"/>
+		<menu id="mpd"/>
+		<menu id="walls"/>
+		<menu id="toggle"/>
+		<menu id="colors"/>
+		<separator/>
+		<separator label="DEVICES"/>
+		<menu id="mount"/>
+		<menu id="unmount"/>
+	</menu>
+
+</openbox_menu>

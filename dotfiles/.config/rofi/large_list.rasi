@@ -1,0 +1,34 @@
+/* large list config */
+
+@import "list"
+
+* {
+	font:   "RobotoMono Nerd Font 9";
+	font:   "Iosevka Orw 9";
+}
+
+#window {
+	width:   45%;
+	height:  43%;
+	padding: 60px;
+}
+
+#listview {
+	padding:        0px 0px;
+	spacing:        0px;
+	scrollbar:      false;
+	border:         2px 0px 0px;
+	border-color:   @bg;
+	vertical-align: 0.5;
+}
+
+#inputbar {
+	margin:         0 0 5px;
+	padding:        2px 5px;
+	children:       [ prompt, entry ];
+}
+
+#element {
+	border:         0;
+	padding:        2px 5px;
+}

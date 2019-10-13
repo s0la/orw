@@ -1,0 +1,124 @@
+#---------------------------------------------
+# TINT2 CONFIG FILE
+#---------------------------------------------
+
+# ID 1
+rounded = 2
+border_width = 0
+background_color = #ffffff 0
+border_color = #000000 0
+
+# ID 2 - tooltip
+rounded = 2
+border_width = 0
+background_color = #000000 30
+border_color = #000000 90
+
+# ID 3 - taskbar
+rounded = 2
+border_width = 0
+background_color = #000000 15
+border_color = #000000 0
+
+# ID 4 - active taskbar
+rounded = 2
+border_width = 0
+background_color = #000000 30
+border_color = #000000 0
+
+# ID 5 - task
+rounded = 2
+border_width = 0
+background_color = #000000 17
+border_color = #9bbbbe 0
+
+# ID 6 - active task
+rounded = 2
+border_width = 0
+background_color = #ffffff 8
+border_color = #9bbbbe 0
+
+# ID 7 - launcher
+rounded = 2
+border_width = 0
+background_color = #555555 100
+border_color = #9bbbbe 0
+
+# Panel
+panel_monitor = all
+panel_position = bottom center horizontal
+panel_items = TL
+panel_size = 50% 100
+panel_margin = 0 25
+panel_padding = 1 0
+panel_dock = 0
+wm_menu = 1
+panel_layer = top
+panel_background_id = 1
+
+# Panel Autohide
+autohide = 0
+autohide_show_timeout = 0.3
+autohide_hide_timeout = 1.5
+autohide_height = 6
+strut_policy = none
+
+# Taskbar
+taskbar_mode = multi_desktop
+taskbar_padding = 5 20
+taskbar_margin = 10 10
+taskbar_background_id = 3
+taskbar_active_background_id = 4
+taskbar_name = 0
+taskbar_name_background_id = 0
+taskbar_name_active_background_id = 0
+taskbar_name_font = Droid Sans 9
+taskbar_name_font_color = #888888 100
+taskbar_name_active_font_color = #eeeeee 100
+
+# Tasks
+urgent_nb_of_blink = 20
+task_icon = 50
+task_text = 0
+task_centered = 1
+task_maximum_size = 300 100
+task_padding = 5 10
+task_background_id = 5
+task_active_background_id = 6
+task_urgent_background_id = 6
+task_iconified_background_id = 5
+
+# Task Icons
+task_icon_asb = 100 0 0
+task_active_icon_asb = 100 0 0
+task_urgent_icon_asb = 100 0 0
+task_iconified_icon_asb = 85 0 0
+
+# Launcher
+launcher_padding = 10 10
+launcher_background_id = 7
+launcher_icon_size = 20 20
+launcher_item_app = Documents/scripts/workspaces_manager/launchers/add.desktop
+
+# Fonts
+task_font = Droid Sans 06_55 9
+task_font_color = #aaaaaa 70
+task_active_font_color = #eeeeee 100
+task_urgent_font_color = #064D99 100
+task_iconified_font_color = #aaaaaa 60
+font_shadow = 0
+
+# Tooltips
+tooltip = 1
+tooltip_padding = 10 10
+tooltip_show_timeout = 0.0
+tooltip_hide_timeout = 0.0
+tooltip_background_id = 2
+tooltip_font_color = #d8d8d8 100
+tooltip_font = Droid Sans normal 10.0
+
+# Mouse
+mouse_middle = none
+mouse_right = toggle
+mouse_scroll_up = toggle
+mouse_scroll_down = iconify

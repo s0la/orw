@@ -1,0 +1,6 @@
+gtk-menu-images = 0
+gtk-button-images = 0
+
+gtk-theme-name = "orw"
+gtk-icon-theme-name = "orw"
+gtk-cursor-theme-name = "Alkano-Aluminium"

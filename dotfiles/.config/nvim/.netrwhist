@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =3
+let g:netrw_dirhist_3='/home/sola/.orw/.fonts'
+let g:netrw_dirhist_2='/home/sola/.orw'
+let g:netrw_dirhist_1='/home/sola/.orw/dotfiles'
+let g:netrw_dirhist_0='/home/sola/.orw'
+let g:netrw_dirhist_9='/home/sola/.orw/dotfiles'
+let g:netrw_dirhist_8='/home/sola/.orw/dotfiles/services'
+let g:netrw_dirhist_7='/home/sola/.orw/dotfiles'
+let g:netrw_dirhist_6='/home/sola/.orw/dotfiles/.ncmpcpp'
+let g:netrw_dirhist_5='/home/sola/.orw/dotfiles'
+let g:netrw_dirhist_4='/home/sola/.orw/dotfiles/.mpd'

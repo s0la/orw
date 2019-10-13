@@ -1,0 +1,38 @@
+style "sidepane" {
+	font_name = "8"
+
+	base[NORMAL]      = @sbbg_color
+	base[ACTIVE]      = shade(0.95, @sbbg_color)
+	base[INSENSITIVE] = "#eeeeee"
+
+	text[NORMAL]      = @sbfg_color
+	text[ACTIVE]      = @sbfg_color
+	text[SELECTED]    = @sbfg_color
+
+	GtkTreeView::vertical-separator = 2
+}
+
+style "breadcrumbs" {
+	xthickness = 3
+	ythickness = 2
+
+	font_name = " 8"
+
+	ThunarLocationButtons::spacing = 1
+}
+
+style "thunar-frame" {
+	xthickness = 0
+	ythickness = 0
+}
+
+widget_class "*ThunarLocationButtons*"            style "breadcrumbs"
+widget_class "*ThunarShortcutsView*"              style "sidepane"
+widget_class "*ThunarTreeView*"                   style "sidepane"
+widget_class "*ThunarLocationEntry*"              style "entry"
+widget_class "*ThunarStatusbar*"                  style "resize-grip"
+widget_class "*ThunarWindow*.<GtkScrolledWindow>" style "thunar-frame"
+
+# Gtk2 Open-File Dialog
+widget_class "*GtkFileChooserWidget.GtkFileChooserDefault.GtkVBox.GtkHPaned.GtkVBox.GtkScrolledWindow.GtkTreeView*"              style "sidepane"
+widget_class "*GtkFileChooserWidget.GtkFileChooserDefault.GtkVBox.GtkHPaned.GtkVBox.GtkScrolledWindow.<GtkTreeView>.<GtkButton>" style "treeview-header"

@@ -1,0 +1,115 @@
+.TH windowctl 1
+.SH NAME
+windowctl.sh \- script for window management
+.SH SYNOPSIS
+.B windowctl.sh [ \fIOPTIONS \fR| \fIACTIONS \fR]\fI...
+.SH DESCRIPTION
+.B windowctl.sh
+helps you manage windows position and size relative to screen edges, orientation, ratio or other windows.
+.SH OPTIONS
+.TP
+.BR move\ \-[TRBLStrbl]...
+Moves currently active/specified window, according to provided action.
+.TP
+.BR resize\ \-[TRBLDHtrbl]...
+Resizes currently active/specified window, according to provided action.
+.TP
+.BR fill\ [hv]
+Fills first available screen area with currently active/specified window, according to provided orientation.
+.SH ACTIONS
+.TP
+.BR \-T
+.br
+Moves/resizes currently active/specified window to the nearest top edge (bar, window or screen).
+.TP
+.BR \-R
+.br
+If given prior to any option, it restores SAVED properties of all windows on current workspace.
+.br
+Given after option, it behaves same as above, but regarding right edge instead.
+.TP
+.BR \-B
+.br
+Behaves same as above, but regarding bottom edge instead.
+.TP
+.BR \-L
+.br
+Behaves same as above, but regarding left edge instead.
+.TP
+.BR \-S\ [trbl]
+If given prior to any option, it saves properties of all windows on current workspace.
+.br
+Given after move option, it swaps currently active/specified window with nearest window, according to provided direction.
+.TP
+.BR \-D\ [hv]
+Resizes currently active/specified window by "doubling" its size by privided value, in provided direction.
+.TP
+.BR \-H\ [hv]
+Resizes currently active/specified window by "halfing" its size by privided value, in provided direction.
+.TP
+.BR \-M\ [\ \fItrbl\ \fR|\ \fIID\ \fR|\ \fINAME\ \fR]\ [x,y,w,h]
+Mirroring another window's properties - all or specific (single or multiple comma-separated) to currently active/specified window.
+.br
+Mirror window can be selected by its id, name, or provided direction.
+.TP
+.BR \-t\ [-+n]
+.br
+Moves/resizes window top edge by provided value.
+.TP
+.BR \-r\ [-+n]
+.br
+If Given prior to any option, it restores last saved properties of currently active/specified window.
+.br
+Given after option, it behaves same as above, but regarding right edge instead.
+.TP
+.BR \-b\ [-+n]
+.br
+Behaves same as above, but regarding bottom edge instead.
+.TP
+.BR \-l\ [-+n]
+.br
+Behaves same as above, but regarding left edge instead.
+.TP
+.BR \-h\ n/m
+.br
+Moves/resizes currently active/specified window to provided screen ratio in horizontal orientation.
+.TP
+.BR \-v\ n/m
+.br
+Behaves same as above, but regarding vertical orientation instead.
+.TP
+.BR \-i\ ID
+.br
+Selects window with provided ID, on which to apply following options/actions.
+.TP
+.BR \-n\ NAME
+.br
+Behaves same as above, but regarding window name instead.
+.TP
+.BR \-x\ n
+.br
+Distance from horizontal screen edges, and (if -m action is not given) between its neighbour windows.
+.TP
+.BR \-y\ n
+.br
+Behaves same as above, but regarding vertical orientation instead.
+.TP
+.BR \-m\ n
+.br
+Distance between windows, makes sense only if its different from x/y offset.
+.TP
+.BR \-g
+.br
+Aligns all windows on current workspace into grid layout.
+.TP
+.BR \-c
+.br
+Moves currently active/specified window to the center of current/specified screen.
+.TP
+.BR \-d\ n
+.br
+Selects provided display (screen) on which following actions will take place.
+.TP
+.BR \-D\ n
+.br
+Selects provided desktop (workspace) on which following actions will take place.

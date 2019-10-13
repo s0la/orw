@@ -1,0 +1,82 @@
+.TH wallctl 1
+.SH NAME
+wallctl.sh \- script for wallpaper management
+.SH SYNOPSIS
+.B wallctl.sh [ \fIOPTIONS \fR]\fI...
+.SH DESCRIPTION
+.B wallctl.sh
+manages wallpapers on multiple monitors and workspaces.
+.br
+It also provide convenient command line interface for interaction with Unsplash and Wallhaven.
+.br
+In order to work properly, script requires wallpaper directory to be set, which can be done with -d option.
+.SH OPTIONS
+.TP
+.BR \-d\ DIR
+.br
+Sets DIR as wallpaper directory - directory from which wallpapers will be used.
+.br
+If directory contains another directories, setting adequate recursion level is required, which can be done with -R option.
+.TP
+.BR \-R\ n
+.br
+Sets recursion depth level to n, useful if wallpaper directory contains directories.
+.TP
+.BR \-s\ wallpaper1\ wallpaper2..
+.br
+Sets wallpaper(s). In case of multi monitor setup, if single wallpaper is provided as argument, same wallpaper will be set for all monitors.
+To set wallpaper on specific monitor, or multiple wallpapers starting from specific monitor, use -m option.
+.TP
+.BR \-m\ n
+.br
+Sets wallpaper on monitor specified with n. If single wallpaper is provided via -s option, it will be set only on that particular monitor. If muiltiple wallpapers are provided, they will be set each for consecutive monitor, starting from monitor n.
+.TP
+.BR \-o\ [npr]
+.br
+Sets order in which next wallpaper will be chosen (next, previous, random).
+.TP
+.BR \-i\ n
+.br
+Sets wallpaper at corresponding index n, starting from 1 for first.
+.TP
+.BR \-w\ n
+.br
+Sets wallpaper on nth workspace, starting from 1 for first.
+.TP
+.BR \-a
+.br
+Sets wallpaper on all workspaces.
+.TP
+.BR \-r
+.br
+Restores wallpaper on current workspace.
+.TP
+.BR \-c
+.br
+Applies colorscheme, if one is associated with wallpaper which is about to be set.
+.TP
+.BR \-A
+.br
+Toggles daemon which automatically changes wallpaper. Interval and order of changeing can be set with -I and -O options, respectively.
+.TP
+.BR \-I\ n\ [sec|min]
+Sets interval in which wallpapers will be changed to n. Default units are minutes, seconds can be set by providing "sec" after n.
+.TP
+.BR \-O\ [next|previous|random]
+Sets order in which wallpapers will be changed automatically.
+.TP
+.BR \-W
+.br
+Starts interface for interaction with Wallhaven.
+.TP
+.BR \-U
+.br
+Starts interface for interaction with Unsplash.
+.TP
+.BR \-P\ n
+.br
+Sets number of results per page to n, works only when interacting with Unsplash.
+.TP
+.BR \-t\ n
+.br
+Sets width of preview thumbnail to n, works only when interacting with Unsplash.

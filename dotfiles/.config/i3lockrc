@@ -1,0 +1,10 @@
+#colors
+tc=b0b0b0ff
+rc=7FA891ff
+ic=222222cc
+wc=6D4E48ff
+
+blur=6
+width=7
+delta=55
+radius=150

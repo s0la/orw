@@ -1,0 +1,31 @@
+.TH toggle.sh 1
+.SH NAME
+toggle.sh \- script for toggling options
+.SH SYNOPSIS
+.B toggle.sh \fIAPP \fI\fR [ OPTIONS ]..
+.SH DESCRIPTION
+.B toggle.sh
+toggles some convenient options.
+.SH OPTIONS
+.BR
+.TP
+.BR folders\ \-\ Toggles\ between\ flat/papirus\ folders.
+.br
+.TP
+.BR buttons\ \-\ Toggles\ between\ box/bars/turq/dots/plus/slim/small/default/numix/round/sharp/elegant\ icons.
+.TP
+.BR rofi\ [mode|prompt]\ [arg]
+Toggles mode/prompt to provided argument arg.
+.br
+Available modes are: list - default, dmenu, fullscreen.
+.br
+Prompt modes are: prompt - default, colon.
+.TP
+.BR bash\ [edge]
+Toggles between bash rice/simple mode.
+.br
+Edge modes are: flat - default, sharp.
+.TP
+.BR titlebar\ \-\ Toggles\ titlebar.
+.TP
+.BR blur\ [bar|rofi]\ \-\ Toggles\ bar/rofi\ blur\ if\ specified,\ otherwise\ toggles\ blur\ in\ general.

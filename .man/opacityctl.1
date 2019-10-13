@@ -1,0 +1,41 @@
+.TH opacityctl 1
+.SH NAME
+opacityctl.sh \- script for opacity and blur management
+.SH SYNOPSIS
+.B opacityctl.sh \fIAPP \fI\fR [+-]VALUE
+.SH DESCRIPTION
+.B opacityctl.sh
+sets opacity or blur level of various applications to provoded value.
+.br
+If value has sign, it will be calculated relative to current value, otherwise provided value will be set. 
+.SH OPTIONS
+.BR
+.SH Openbox
+.TP
+.BR fo\ \-\ Frame\ opacity.
+.TP   
+.BR ao\ \-\ Active\ window\ opacity.
+.TP   
+.BR io\ \-\ Inactive\ window\ opacity.
+.TP   
+.BR pm\ \-\ Popup\ menu\ opacity.
+.TP   
+.BR dm\ \-\ Dropdown\ menu\ opacity.
+.BR
+.SH Blur
+.TP
+.BR bl\ \-\ Sets\ blur\ level.
+.TP
+.BR bs\ \-\ Sets\ blur\ strength.
+.BR
+.SH Apps
+.TP
+.BR bar\ \-\ Sets\ bar\ opacity.
+.TP
+.BR lock\ \-\ Sets\ lock\ opacity.
+.TP
+.BR rofi\ \-\ Sets\ rofi\ opacity.
+.TP
+.BR term\ \-\ Sets\ termite\ opacity.
+.TP
+.BR dunst\ \-\ Sets\ dunst\ opacity.

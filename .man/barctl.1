@@ -1,0 +1,28 @@
+.TH barctl 1
+.SH NAME
+barctl.sh \- script for bar managment
+.SH SYNOPSIS
+.B barctl.sh [ \fIOPTIONS \fR]\fI...
+.SH DESCRIPTION
+.B barctl.sh
+manages bars.
+.SH OPTIONS
+.TP
+.BR \-b\ bar1,bar2..
+Targets provided bar(s) for running/closing.
+.TP
+.BR \-k
+.br
+Closes bar(s) specified by option -b, or all running bars if -b option is not provided.
+.TP
+.BR \-c\ n
+.br
+Sets check interval to n seconds.
+.br
+Barctl daemon will check memory consumption at given interval, and rewpawn bar if ram tolerance is exceeded.
+.TP
+.br
+.BR \-r\ n
+Sets ram tolerance to n MB.
+.br
+Ram tolerance is amount of memory that bar consumes which shouldn't be exceeded, otherwise it will be respawned.

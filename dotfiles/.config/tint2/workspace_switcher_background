@@ -1,0 +1,17 @@
+# ID 1 - launcher
+rounded = 0
+border_width = 0
+background_color = #2d2d2d 70
+border_color = #9bbbbe 0
+
+# Panel
+panel_monitor = all
+panel_position = bottom center horizontal
+panel_items =
+panel_size = 100% 150
+panel_margin = 0 0
+panel_padding = 0 0
+panel_dock = 0
+wm_menu = 1
+panel_layer = top
+panel_background_id = 1

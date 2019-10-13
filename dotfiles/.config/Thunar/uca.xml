@@ -1,0 +1,40 @@
+<?xml encoding="UTF-8" version="1.0"?>
+<actions>
+<action>
+	<icon>Terminal</icon>
+	<name>Open Terminal Here</name>
+	<unique-id>1519447185229301-1</unique-id>
+	<command>exo-open --working-directory %f --launch TerminalEmulator</command>
+	<description>Example for a custom action</description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+<action>
+	<icon>filefind</icon>
+	<name>Find in this folder</name>
+	<unique-id>1519447185229403-2</unique-id>
+	<command>catfish --path=%f</command>
+	<description>Search for files within this folder</description>
+	<patterns>*</patterns>
+	<directories/>
+</action>
+<action>
+	<icon></icon>
+	<name>add to playlist</name>
+	<unique-id>1519448861829052-7</unique-id>
+	<command>~/.wrapper/scripts/add_to_playlist.sh %F</command>
+	<description>Add selected item to playlist</description>
+	<patterns>*</patterns>
+	<directories/>
+	<audio-files/>
+</action>
+<action>
+	<icon></icon>
+	<name>set as wallpaper</name>
+	<unique-id>1539781504028104-1</unique-id>
+	<command>~/.orw/scripts/wallctl.sh -s %F</command>
+	<description>Set selected item as wallpaper</description>
+	<patterns>*</patterns>
+	<image-files/>
+</action>
+</actions>

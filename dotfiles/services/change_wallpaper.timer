@@ -1,0 +1,10 @@
+[Unit]
+Description=wallpaper changer timer
+
+[Timer]
+OnBootSec=0min
+AccuracySec=1us
+OnUnitActiveSec=15sec
+
+[Install]
+WantedBy=multi-user.target

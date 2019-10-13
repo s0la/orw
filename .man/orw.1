@@ -1,0 +1,123 @@
+.TH windowctl 1
+.SH NAME
+ORW - Openbox Ricing Wrapper
+.SH DESCRIPTION
+.B ORW
+is a collection of bash scripts and config files, conceptualized to provide cohesive experience for ricing enthusiasts.
+.br
+It contains status bar, theming and window management engine, and uses Rofi as main gui way of interaction.
+.br
+Since ORW is not a program itself but rather concept, this man will serve more as a guide line on how to start.
+.SH Useful manuals
+.BR
+.TP
+.BR bar\ \-\ Orw\ status\ bar
+.TP
+.BR barctl\ \-\ Orw\ bar\ management\ script
+.TP
+.BR ras\ \-\ Orw\ theme\ management\ script
+.TP
+.BR wallctl\ \-\ Orw\ wallpaper\ management\ script
+.TP
+.BR windowctl\ \-\ Orw\ window\ management\ script
+.TP
+.BR borderctl\ \-\ Orw\ border\ and\ padding\ management\ script
+.TP
+.BR opacityctl\ \-\ Orw\ opacity\ management\ script
+.TP
+.BR toggle\ \-\ Orw\ script\ for\ toggling\ options
+.SH Rofi shortcuts
+.BR
+.TP
+.BR Alt\ \+\ Tab\ \-\ App\ switcher
+.TP
+.BR Alt\ \+\ [Left|Right]\ \-\ Changes\ modi
+.TP
+.BR Alt\ \+\ a\ \-\ Apps\ group
+Consists of following modis: apps I'm frequently using - default modi, all orw scripts, all apps.
+.TP
+.BR Alt\ \+\ w\ \-\ Windows\ group
+Consists of following modis: window buttons actions - default modi, some conveniant windowctl shortcuts.
+.TP
+.BR Alt\ \+\ d\ \-\ Workspaces\ group
+Consists of following modis: change workspace - default modi, move active window to workspace, change workspace and restore corresponding wallpaper.
+.TP
+.BR Alt\ \+\ z\ \-\ Ncmpcpp\ group
+Consists of following modis: playback options - default modi, playlist management, music library, ncmpcpp layouts.
+.TP
+.BR Alt\ \+\ c\ \-\ Color\ group
+Consists of following modis: list of all orw colorschemes - default modi, list of colorschemes by specific module.
+.TP
+.BR Alt\ \+\ f\ \-\ Files
+Script for file management.
+.TP
+.BR Alt\ \+\ s\ \-\ Wallpapers
+Script for wallpaper management.
+.TP
+.BR Alt\ \+\ m\ \-\ Mount
+Script for mounting devices.
+.TP
+.BR Alt\ \+\ v\ \-\ Volume
+Script for changing volume.
+.TP
+.BR Alt\ \+\ p\ \-\ Playlist
+Script for selecting song from current mpd playlist.
+.TP
+.BR Alt\ \+\ l\ \-\ Library
+Script for adding song from mpd library to current playlist.
+.TP
+.BR Alt\ \+\ q\ \-\ Logout
+Script for ending current session.
+.SH Window management shortcuts
+.BR
+.TP
+.BR Super\ \+\ w\ \-\ Starts\ script\ for\ listening\ input.
+This key combination is required prior to any of following commands.
+.TP
+.BR F\ \-\ Fills\ window\ in\ both\ directions.
+.TP
+.BR f\ [h|v]\ \-\ Fills\ window\ in\ provided\ direction.
+.TP
+.BR A\ \-\ Fills\ adjucent\ windows\ according\ to\ active\ window\ new\ properties.
+.TP
+.BR C\ \-\ Centers\ window\ in\ both\ directions.
+.TP
+.BR c\ [h|v]\ \-\ Centers\ window\ in\ provided\ direction.
+.TP
+.BR a\ \-\ Selects\ all\ windows\ to\ save/restore.
+.TP
+.BR s\ \-\ Saves\ active\ window\ or\ all\ windows\ if\ pressed\ after\ a.
+.TP
+.BR R\ \-\ Restores\ active\ window\ or\ all\ windows\ if\ pressed\ after\ a.
+.TP
+.BR e\ \-\ Selects\ active\ window's\ edge.
+.TP
+.BR b\ \-\ Respects\ bar's\ edge\ like\ display's\ starting/ending\ vertival\ point.
+.TP
+.BR o\ \-\ Respects\ offsets.
+.TP
+.BR E\ \-\ Applies\ provided\ size\ ratio\ equaly\ to\ both\ width\ and\ height\ of\ active\ window.
+.TP
+.BR M\ [trbl]\ \-\ Mirroring\ properties\ of\ nearset\ window\ in\ provided\ direction.
+.TP
+.BR D\ [hv]\ n\ \-\ Doubles\ active\ window\ in\ provided\ orientation\ n\ times.
+.TP
+.BR H\ [hv]\ n\ \-\ Same\ as\ D,\ just\ halves\ instead.
+.TP
+.BR r\ [trbl]\ \-\ Resizes\ active\ window\ to\ the\ provided\ display\ edge.
+Same can be done by pressing Ctrl + Alt + and arrow key in wanted direction.
+.TP
+.BR r\ [hv]\ n\ m\ \-\ Resizes\ active\ window\ to\ provided\ ratio\ n/m.
+N and m must be single digit numbers.
+.TP
+.BR m\ [trblhv]\ \-\ same\ as\ r,\ just\ moves\ insted.
+.TP
+.BR g\ \-\ Arranges\ all\ windows\ in\ grid.
+.TP
+.BR z\ \-\ Zoom\ active\ window.
+.TP
+.BR Super\ \+\ arrow\ key\ \-\ Moves\ active\ window\ in\ wanted\ direction.
+.TP
+.BR Shift\ \+\ arrow\ key\ \-\ Resizes\ active\ window\ right/bottom\ edge\ in\ wanted\ direction.
+.TP
+.BR Ctrl\ \+\ Super\ \+\ Alt\ \+\ arrow\ key\ \-\ Same\ as\ above,\ and\ adjust\ adjucent\ windows\ accordingly.

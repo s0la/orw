@@ -1,0 +1,88 @@
+.TH borderctl 1
+.SH NAME
+borderctl.sh \- script for border and padding management
+.SH SYNOPSIS
+.B borderctl.sh \fIPROPERTY \fI\fR [+-]VALUE
+.SH DESCRIPTION
+.B borderctl.sh
+sets borders and padding of various applications to provoded value.
+.br
+If value has sign, it will be calculated relative to current value, otherwise provided value will be set. 
+.SH OPTIONS
+.BR
+.SH ORW
+.TP
+.BR [xy]
+Sets default x/y padding for bars and windows.
+.BR
+.SH Openbox
+.TP
+.BR bw
+Sets openbox border width.
+.TP
+.BR pw
+Sets openbox padding width.
+.TP
+.BR ph
+Sets openbox padding height.
+.TP
+.BR hw
+Sets openbox handle width.
+.TP
+.BR cw
+Sets openbox client width.
+.TP
+.BR jt
+Sets openbox title justification.
+.TP
+.BR tbh
+Sets openbox titlebar height.
+.TP
+.BR mbw
+Sets openbox menu border width.
+.BR
+.SH Rofi
+.TP
+.BR \-c\ config
+Sets rofi config file on which changes will be applied.
+.br
+Existing configs (modes) are list - default, large_list - used for files, library and playlist, and dmenu.
+.TP
+.BR rw
+Sets rofi width in percentage.
+.TP
+.BR rbw
+Sets rofi border width.
+.TP
+.BR rwp
+Sets rofi window padding - padding around all elements.
+.TP
+.BR rip
+Sets rofi items padding - padding around list items.
+.TP
+.BR rwp
+Sets rofi window padding - padding around all elements.
+.TP
+.BR rln
+Sets number of lines in rofi list mode.
+.BR
+.SH Dunst
+.TP
+.BR dp
+Sets dunst padding.
+.TP
+.BR dfw
+Sets dunst border width.
+.BR
+.SH Lock
+.TP
+.BR lrw
+Sets lock ring width.
+.TP
+.BR lrr
+Sets lock ring radius.
+.BR
+.SH Termite
+.TP
+.BR tp
+Sets termite padding.

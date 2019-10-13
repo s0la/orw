@@ -1,0 +1,18 @@
+#!/bin/sh
+
+while read file; do
+	case "$1" in
+		"d") rm "$file";;
+		"m") mv "$file" ~/Pictures/walls;;
+		"y") cp "$file" ~/Pictures/walls;;
+		"s") ~/.orw/scripts/wallctl.sh -s "$file";;
+		"a") ~/.orw/scripts/wallctl.sh -a -s "$file";;
+		"c") ~/.orw/scripts/wallctl.sh -c -s "$file";;
+		"1") ~/.orw/scripts/wallctl.sh -n 1 -s "$file";;
+		"2") ~/.orw/scripts/wallctl.sh -n 2 -s "$file";;
+		"3") ~/.orw/scripts/wallctl.sh -n 3 -s "$file";;
+		"C-1") ~/.orw/scripts/wallctl.sh -w 0 -s "$file";;
+		"C-2") ~/.orw/scripts/wallctl.sh -w 1 -s "$file";;
+		"C-3") ~/.orw/scripts/wallctl.sh -w 2 -s "$file";;
+	esac
+done

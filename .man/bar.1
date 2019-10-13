@@ -1,0 +1,185 @@
+.TH generate_bar 1
+.SH NAME
+generate_bar.sh \- script for generating statusbar
+.SH SYNOPSIS
+.B generate_bar.sh [ \fIOPTIONS \fR| \fIMODULES \fR]\fI...
+.SH DESCRIPTION
+.B generate_bar.sh
+is used to generate bar with specified options and modules, such as date and time, resource usage (cpu, memory, disk space), workspaces, runing apps..
+.SH OPTIONS
+.TP
+.BR -x\ [r]\ [nc]
+Specifies distance from horizontal edges (if width is not given, distance is equal from both sides, otherwise left edge, by default, or right edge, if r is provided), provided by n, or places bar to the center of primary/specified screen if c is provided.
+.br
+NOTE: For bar to be centered, width must be given (explicit or adjustable) using -w option.
+.TP
+.BR -c
+.br
+Places following modules in center alignment of bar.
+.TP
+.BR -r
+.br
+Same as above, but regarding right alignment instead.
+.TP
+.BR -b
+.br
+Specifies bar bottom placement.
+.TP
+.BR -S\ n
+.br
+Specifies screen on which bar should be placed, provided by n.
+.TP
+.BR -i
+.br
+Specifies icons instead of labels.
+.TP
+.BR -y\ n
+.br
+Specifies distance from top screen edge (by default), or bottom screen edge (if -b option is given) provide by n.
+.TP
+.BR -w\ [na]
+Specifies bar width, explicit, provided by n, or adjustable, provided bt a.
+.TP
+.BR -h\ n
+.br
+Specifies bar height, provided by n.
+.TP
+.BR -s\ n
+.br
+Specifies bar separator width (distance between modules), provided by n.
+.TP
+.BR -p\ n
+.br
+Specifies padding inside modules, provided by n.
+.TP
+.BR -O\ n
+.br
+Specifies offset at any place, provided by n. Can be used multiple times, before or after any module.
+.TP
+.BR -F\ n
+.br
+Specifies bar frame width, provided by n.
+.TP
+.BR -f\ n\ [auo]
+Specifies module frame width, provided by n. a (default) draws frame around, u under, and o over module.
+.TP
+.BR -N\ name
+Specifies bar name, by which you can refer to it via barctl.sh script.
+.br
+NOTE: This option is necessary in order to have multiple bars running simultaneously.
+.TP
+.BR -M
+.br
+Enables specific modules colors.
+.TP
+.BR -l
+.br
+Enables/disables module frame line. Can be used multiple times, before or after any module.
+.SH MODULES
+.TP
+.BR \-d\ [format]
+.br
+Shows date and time. Default format is only hours and minutes in am/pm, but also accepts custom format (use _ instead of blank spaces).
+.TP
+.BR \-C
+.br
+Shows cpu usage in percents. Left mouse button shows top 10 most cpu-intensive processes.
+.TP
+.BR \-R
+.br
+Same as above, but regarding memory instead.
+.TP
+.BR \-D
+.br
+Same as above, but regarding disk space instead. Left mouse button mounts and opens selected device, middle click unmounts it.
+.TP
+.BR \-U\ [c,d,r]
+Shows all (by default) or comma-separated specific usages mentioned above as single module, with ability to toggle show/hide.
+.TP
+.BR \-T
+.br
+Shows cpu temperature in celsius.
+.TP
+.BR \-B\ [pt]
+.br
+Shows battery info. Remaining power in percents, if -p is provided, or remaining time, if -t is provided. Shows both by default.
+.TP
+.BR \-E\ [ts]
+Shows weather info, both temperature and speed by default, or separately if option is provided.
+Shows weather info. Temperature if -t is provided, or speed if -s is provided. Shows both by default.
+.TP
+.BR \-t\ [a,c,lN,sN]
+.br
+Shows opened tasks (apps) from all workspaces, by default, or current workspace, if c is provided, or just currently active task, if a is provided.
+You can also specify window name length, provided by l and followed by N, as well as separation space between tasks, provided by s and followed by N.
+.br
+Shows opened tasks (apps). You can specify following options:
+a - shows only currently active window
+.br
+c - shows only currently active workspace's tasks
+.br
+l - length of task name, provided by N
+.br
+s - task separation width, provided by N
+.br
+Left mouse button brings up selected task (app).
+.TP
+.BR \-m\ [t,c,p,i,v,T,P,sN,dN]
+.br
+Shows mpd info. You can customize info to be shown, providing one or more comma-separated options.
+.br
+t - toggle icon, to show full module, or just song info
+.br
+c - controls (clickable icons)
+.br
+p - progressbar
+.br
+i - song info
+.br
+v - mpd volume info. Mouse scroll changes volume, and left click toggle button mode
+.br
+T - song time
+.br
+P - Specifies position from which secondary module color (default) will end, and primary module color will begin.
+.br
+s - scrollable info. You can specify how long song info should be in order to be scrollable, providing N.
+.br
+d - delay on starting and ending of scroll, provided by N.
+.TP
+.BR \-W\ [iln]
+.br
+Shows workspaces. You can choose icon, by providing i, label, by providing l, or numerical representation, by providing n.
+.TP
+.BR \-n
+.br
+Shows wifi network ssid.
+.TP
+.BR \-u
+.br
+Shows number of available updates.
+.TP
+.BR \-v
+.br
+Shows system volume info. Mouse scroll changes volume, and left click toggle button mode.
+.TP
+.BR \-e
+.br
+Shows number of unread emails.
+.TP
+.BR \-H\ [d,r]
+.br
+Shows hidden apps, such as dropdown terminal, and screen recording app. Shows all by default, you can choose specific apps.
+.TP
+.BR \-L
+.br
+Shows logout icon. Left module button launches a bar with reboot, logout and shut down buttons.
+.TP
+.BR \-a\ n
+.br
+Specifies font size, provided by n. By default, font size is half the bar's height.
+.br
+NOTE: You may have to manually calibrate icons size values with adjustable width.
+.TP
+.BR \-o
+.br
+Overwrites bar config with the same name.

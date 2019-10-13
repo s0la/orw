@@ -1,0 +1,313 @@
+.TH rice_and_shine 1
+.SH NAME
+rice_and_shine.sh \- script for managing colors and themes
+.SH SYNOPSIS
+.B rice_and_shine.sh [ \fIOPTIONS \fR]\fI...
+.SH DESCRIPTION
+.B rice_and_shine.sh
+helps you manage colors and themes of few of the most important ORW components:
+.br
+bar - ORW statusbar, rofi - app launcher, dunst - notifier, ncmpcpp - cli music player, termite - terminal, openbox wm itself, and some gtk2 atributes. 
+.SH OPTIONS
+.TP
+.BR \-m\ module
+.br
+Selects single or multiple (comma-separated) modules, on which properties following actions will be applied.
+.TP
+.BR \-p\ property\ [\ \fIcolor\ \fR|\ \fI-+offset\ \fR]
+.br
+Selects single or multiple (comma-separated or basic regex) properties, on which the following actions will be applied.
+.br
+If colorcheme is not given, color must be provided. Color can be provided by its label, or in hex format (it should be wrapped in quotes, or leading # should be escaped).
+.br
+NOTE:\ bash and ncmpcpp modules acceppt only terminal colors (8 basic, and their bright variants, prefixed with _br). 
+.br
+You can optionally provide an offset for color (+ for brighter, - for darker).
+.TP
+.BR \-M\ module
+.br
+Selects module from which property color should be inhereted.
+.TP
+.BR \-P\ property\ [\ \fI-+offset\ \fR]
+.br
+Selects SINGLE property from which property/ies provided by -p should inheret color.
+.br
+You can optionally provide an offset for color (+ for brighter, - for darker).
+.TP
+.BR \-s\ label\ [\ \fIcolor\ \fR]
+Saves provided color as label. Color can be provided by its label, or in hex format (it should be wrapped in quotes, or leading # should be escaped).
+.br
+You can also select module property instead of color.
+.TP
+.BR \-C\ colorcheme
+Selects colorcheme from which colors should be inhereted.
+.TP
+.BR \-b\ colorcheme
+Backups selected modules (all if modules are not given), as colorcheme by provided name.
+.TP
+.BR \-B\ colorcheme
+Backups all modules, even if specific modules are given.
+.TP
+.BR \-o\ -+n
+.br
+Setting offset to provided value, must be given prior to -p option.
+.TP
+.BR \-R
+.br
+Replaces all properties of given module that have same color as property given by -p.
+.br
+Replacement color (and offset) can be given after property -p, or as another module's property, given by -P.
+.SH MODULES
+.TP
+.BR ob\ -\ Openbox
+.br
+t - active window title color
+.br
+tb - active window titlebar color
+.br
+b - active window border color
+.br
+c - active window client (inner border) color
+.br
+i*) same as above, but for inactive window insted
+.br
+abt - all active window buttons color
+.br
+cbt - active window close button color
+.br
+mabt - active window maximize button color
+.br
+mibt - active window minimize button color
+.br
+*bth - same as above, but for hovered state color
+.br
+mbg - menu background color
+.br
+mfg - menu foreground color
+.br
+mtbg - menu title background color
+.br
+mtfg - menu title foreground color
+.br
+msbg - menu selected item background color
+.br
+msfg - menu selected item foreground color
+.br
+mb - menu border color
+.br
+ms - menu separator color
+.br
+osd - osd color color
+.br
+osdh - osd hilight color
+.br
+osdu - osd unhilight color
+
+.TP
+.BR gtk\ -\ gtk2
+fc - folder color
+.br
+ff - folder fill color
+.br
+fs - folder stroke color
+.br
+bg - background color
+.br
+fg - foreground color
+.br
+base - base color
+.br
+sbbg - sidebar background color
+.br
+sbfg - sidebar foreground color
+.br
+active - active item color
+
+.TP
+.BR dunst\ -\ notifier
+bg - background color
+.br
+fg - foreground color
+.br
+fc - frame color
+
+.TP
+.BR bar\ -\ statusbar
+bg - bar background color
+.br
+bbg - bottom bar background color
+.br
+bfc - bar frame color
+.br
+fc - module frame color
+.br
+pbg - primary module background color
+.br
+pfg - primary module foreground color
+.br
+sbg - secondary module background color
+.br
+sfg - secondary module foreground color
+.br
+pbfg - progressbar foreground color
+.br
+*[ps][bf]g - specific module primary/secondary background/foreground
+.br
+*fc - specific module frame color
+.br
+.BR NOTE:\ You\ can\ find\ list\ of\ available\ modules\ in\ bar's\ manpages.
+
+.TP
+.BR term\ -\ termite\ terminal
+bg - termite background color
+.br
+fg - termite foreground color
+.br
+color - any of 8 basic colors, and their bright variants, prefixed with br_
+.br
+
+.TP
+.BR vim\ -\ neovim\ editor
+fg - default foreground color
+.br
+ifg - identifier foreground color
+.br
+vfg - variable foreground color
+.br
+cfg - command foreground color
+.br
+ffg - function foreground color
+.br
+sfg - string foreground color
+.br
+lbg - line background color
+.br
+lfg - line foreground color
+.br
+lsbg - line selected background color
+.br
+lsfg - line selected foreground color
+.br
+syfg - syntax foreground color
+.br
+nbg - line numbers background color
+.br
+nfg - line numbers foreground color
+.br
+nmbg - normal mode background color
+.br
+imbg - insert mode background color
+.br
+vmbg - visual mode background color
+.br
+da - diff addition color
+.br
+dd - diff deletion color
+.br
+dc - diff changes color
+
+.TP
+.BR ncmpcpp\ -\ cli\ music\ player
+si - selected item color
+.br
+ec - empty color
+.br
+mc - main color
+.br
+c2 - color2 color
+.br
+pc - progressbar color
+.br
+sc - statusline/header color
+.br
+pec - progressbar elapsed color
+.br
+vc - visualizer color
+
+.TP
+.BR tmux\ -\ terminal\ multiplexer
+bg - background color
+.br
+bc - border color
+.br
+mc - message background color
+.br
+ibg - index background color
+.br
+ifg - index foreground color
+.br
+sfg - index : window separator color
+.br
+wbg - window background color
+.br
+wfg - window foreground color
+.br
+cbg - current window background color
+.br
+cfg - current window foreground color
+
+.TP
+.BR rofi\ -\ app\ launcher
+bg - background color
+.br
+fg - foreground color
+.br
+bc - border color
+.br
+ibg - input background color
+.br
+abg - avtive item background color
+.br
+afg - active item foreground color
+.br
+sbg - selected item background color
+.br
+selected item foreground color
+.br
+lpc - list prompt color
+.br
+dpc - dmenu prompt color
+.br
+btc - button foreground color
+.br
+sbtc - selected button foreground color
+.br
+btbc - button border color
+
+.TP
+.BR bash\ -\ shell
+ic - basic info color
+.br
+bg - background color
+.br
+gcc - git branch clean color
+.br
+gdc - git branch dirty color
+.br
+ve - virtual environment color
+.br
+fg - foreground color
+.br
+sc - prompt symbol color
+.br
+sec - prompt symbol color, when exit code is different than 0 
+
+.TP
+.BR fff\ -\ file\ manager
+st - statusline color
+.br
+dir - directory color
+.br
+sel - selection color
+.br
+cur - cursor color
+
+.TP
+.BR firefox\ -\ web\ browser
+mbg - main background color
+.br
+mfg - main foreground color
+.br
+sbg - selected background color
+.br
+sfg - selected foreground color

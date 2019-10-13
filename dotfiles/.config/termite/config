@@ -1,0 +1,176 @@
+[options]
+allow_bold = false
+#audible_bell = false
+#bold_is_bright = true
+#clickable_url = true
+#dynamic_title = true
+#font = Monaco for PowerLine 9
+#font = Roboto Mono 9
+#font = FiraCode-Regular 9
+font = Iosevka Orw 9
+#font = SF Pro Display 9
+#font = Rubik-Regular 9
+#fullscreen = true
+#icon_name = terminal
+#mouse_autohide = false
+#scroll_on_output = false
+#scroll_on_keystroke = true
+# Length of the scrollback buffer, 0 disabled the scrollback buffer
+# and setting it to a negative value means "infinite scrollback"
+scrollback_lines = 10000
+#search_wrap = true
+#urgent_on_bell = true
+#hyperlinks = false
+
+# $BROWSER is used by default if set, with xdg-open as a fallback
+#browser = xdg-open
+
+# "system", "on" or "off"
+cursor_blink = off
+
+# "block", "underline" or "ibeam"
+cursor_shape = block
+
+# Hide links that are no longer valid in url select overlay mode
+#filter_unmatched_urls = true
+
+# Emit escape sequences for extra modified keys
+#modify_other_keys = false
+
+# set size hints for the window
+#size_hints = false
+
+# "off", "left" or "right"
+#scrollbar = off
+
+[colors]
+# If both of these are unset, cursor falls back to the foreground color,
+# and cursor_foreground falls back to the background color.
+#cursor = #dcdccc
+#cursor_foreground = #dcdccc
+
+# If unset, will reverse foreground and background
+#highlight = #2f2f2f
+
+#colors
+foreground = #b0b0b0
+background = rgba(48,48,48,0.93)
+
+#palette
+color0 = #4a4a4a
+color1 = #A66C6C
+color2 = #807E60
+color3 = #DBBD7D
+color4 = #4c5359
+color5 = #8C7681
+color6 = #608985
+color7 = #999999
+color8 = #707070
+color9 = #b2908a
+color10 = #b5bc6d
+color11 = #877f69
+color12 = #81a2be
+color13 = #cca8bb
+color14 = #9FC2C2
+color15 = #b0b0b0
+color16 = #925858
+color17 = #a1a859
+color18 = #88b235
+color19 = #ce9494
+color20 = #806063
+color21 = #9E7C76
+color22 = #556659
+color23 = #9EAEB8
+color24 = #A9ACB0
+color25 = #545B6B
+color26 = #61605F
+color27 = #4f4e4d
+color28 = #b2908a
+color29 = #CCC2B6
+color30 = #b2908a
+color31 = #B3836B
+color32 = #9EA9AD
+color33 = #596D80
+color34 = #4D6066
+color35 = #5C737A
+color36 = #6b6a69
+color37 = #abbfca
+color38 = #969599
+color39 = #8D915B
+color40 = #7C98A6
+color41 = #C9CB60
+color42 = #A691BA
+color43 = #543b3b
+color44 = #B7B474
+color45 = #646b65
+color46 = #333634
+color47 = #6B7373
+color48 = #303738
+color49 = #7EBDC4
+color50 = #A6735B
+color51 = #8d9995
+color52 = #8d9995
+color53 = #BDBC83
+color54 = #8C7C7D
+color55 = #8C7C7D
+color56 = #B3B282
+color57 = #7F8D96
+color58 = #B3836B
+color59 = #807E60
+color60 = #FF9A8C
+color61 = #996B75
+color62 = #7B74A6
+color63 = #C6CA67
+color64 = #AA8F6D
+color65 = #a1b5c0
+color66 = #5e5e5e
+color67 = #707070
+color68 = #40403f
+color69 = #b8b3a3
+color70 = #6b6a69
+color71 = #736B5C
+color72 = #293239
+color73 = #21262C
+color74 = #575E6C
+color75 = #B8A095
+color76 = #B8A095
+color77 = #5D716F
+color78 = #FE9FA3
+color79 = #872842
+color80 = #7e7771
+color81 = #8A8A8A
+color82 = #958E9A
+color83 = #81625C
+color84 = #5e6e74
+color85 = #727f80
+color86 = #909d9e
+color87 = #756D7B
+color88 = #857b89
+color89 = #785b63
+color90 = #8c6f77
+color91 = #6f6b8c
+color92 = #72A792
+color93 = #79ae99
+color94 = #7cb19c
+color95 = #B79265
+color96 = #CDB06E
+color97 = #6b7c76
+color98 = #e48e7d
+color99 = #5d6474
+color100 = #b98c6f
+color101 = #8fa398
+color102 = #7FA891
+color103 = #89b2a8
+
+[hints]
+#font = Monospace 12
+#foreground = #dcdccc
+#background = #3f3f3f
+#active_foreground = #e68080
+#active_background = #3f3f3f
+#padding = 2
+#border = #3f3f3f
+#border_width = 0.5
+#roundness = 2.0
+
+# vim: ft=dosini cms=#%s

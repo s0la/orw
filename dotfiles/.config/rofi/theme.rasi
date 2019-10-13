@@ -1,0 +1,106 @@
+/* color definition */
+
+* {
+	bg: #303030;
+	fg: #777777;
+	bc: #b5bc6d;
+
+	ibg: #303030;
+	ibc: #373737;
+
+	abg: #867f8b;
+	afg: #d5d5d5;
+
+	sbg: #373737;
+	sfg: #aaaaaa;
+	sul: #373737;
+
+	lpc: #aaaaaa;
+	dpc: #373737;
+	btc: #4b4b4b;
+	sbtc: #B3836B;
+	btbc: #5a6368;
+
+	background-color: @bg;
+
+	font: "Iosevka Orw 8";
+}
+
+#window {
+	border: 2px;
+	border-color: @bc;
+}
+
+#element.normal.normal {
+	text-color:       @fg;
+	background-color: @bg;
+}
+
+#element.normal.active {
+	text-color:       @afg;
+	background-color: @abg;
+}
+
+#element.urgent.normal {
+	text-color:       @fg;
+	background-color: @bg;
+}
+
+#element.selected.normal {
+	text-color:       @sfg;
+	background-color: @sbg;
+}
+
+#element.selected.active {
+	text-color:       @afg;
+	background-color: @abg;
+}
+
+#element.selected.normal, element.selected.active {
+	border-color: @sul;
+}
+
+#element.alternate.normal {
+	text-color:       @fg;
+	background-color: @bg;
+}
+
+#element.alternate.urgent {
+	text-color:       @fg;
+	background-color: @bg;
+}
+
+#element.alternate.active {
+	text-color:       @afg;
+	background-color: @abg;
+}
+
+#listview {
+	border-color: @bg;
+}
+
+#entry {
+	text-color: @sfg;
+}
+
+#prompt {
+	text-color: @fg;
+}
+
+#textbox-prompt-colon {
+	text-color: @fg;
+}
+
+#sidebar {
+	margin: 10px 0 0 0;
+	border: 2px;
+	border-color: @btbc;
+}
+
+#button normal {
+	color: @btc;
+}
+
+#button selected {
+	color: @sbtc;
+}

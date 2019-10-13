@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+calculate_step	calibrate_steps.sh	/^function calculate_step() {$/;"	f
+calculate_step	manage_window.sh	/^function calculate_step() {$/;"	f
+calculate_step	resize.sh	/^function calculate_step() {$/;"	f
+calculate_step	resize_org.sh	/^function calculate_step() {$/;"	f
+check_distance	move.sh	/^function check_distance() {$/;"	f
+get_properties	calibrate_steps.sh	/^function get_properties() {$/;"	f
+print_size	manage_window.sh	/^function print_size() {$/;"	f
+print_size	resize.sh	/^function print_size() {$/;"	f
+print_size	resize_org.sh	/^function print_size() {$/;"	f
+replace	replace_bar_color.sh	/^replace() {$/;"	f
+replace_color	change_bar_colors.sh	/^replace_color() {$/;"	f
+replace_color	rofi_scripts/dmenu_scripts/scripts/change_bar_colors	/^replace_color() {$/;"	f
+resize	manage_window.sh	/^function resize() {$/;"	f
+resize	resize.sh	/^function resize() {$/;"	f
+resize	resize_org.sh	/^function resize() {$/;"	f
+resize_to_edge	manage_window.sh	/^function resize_to_edge() {$/;"	f
+set_properties	fit_window.sh	/^function set_properties() {$/;"	f
+set_properties	fit_window_old.sh	/^function set_properties() {$/;"	f
+set_properties	rofi_scripts/dmenu_scripts/scripts/fit_window	/^function set_properties() {$/;"	f
+set_walls	change_wallpaper_without_flags.sh	/^function set_walls() {$/;"	f
+set_walls	rofi_scripts/dmenu_scripts/scripts/change_wallpaper_without_flags	/^function set_walls() {$/;"	f
+to_the_edge	resize.sh	/^function to_the_edge() {$/;"	f
+to_the_edge	resize_org.sh	/^function to_the_edge() {$/;"	f

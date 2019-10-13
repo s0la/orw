@@ -1,0 +1,28 @@
+/* window config */
+
+@import "list"
+
+* {
+	fullscreen: true;
+	show-match: false;
+}
+
+#window {
+	padding:        200px;
+	width:          30%;
+}
+
+#listview {
+	margin:         4px 0px;
+	padding:        0px 400px 100px;
+	spacing:        10px;
+	scrollbar:      false;
+	border:         2px 0px 0px;
+	border-color:   @bg;
+	vertical-align: 0.5;
+}
+
+#inputbar {
+	margin:  200px 400px 10px;
+	children: [ prompt, entry ];
+}

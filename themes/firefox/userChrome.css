@@ -1,0 +1,590 @@
+@namespace url(http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul);
+@namespace html "http://www.w3.org/1999/xhtml";
+
+/* COLORS */
+
+/** DESCRIPTION : set the colors used **/
+:root {
+	--mbg: #444444 !important;
+	--mfg: #abaeb2 !important;
+	--sbg: #B3836B !important;
+	--sfg: #e0e0e0 !important;
+	--invert: invert(0) !important;
+}
+
+/* GENERAL */
+
+/** DESCRIPTION : set the main font and others details **/
+* {
+	font-family: "Roboto", "ぼくたちのゴシック２ボールド" !important;
+}
+
+*::-moz-focus-inner {
+	border: 0;
+}
+
+html {
+	overflow: auto;
+}
+
+#main-window:not([chromehidden*="toolbar"])[sizemode="normal"] {
+	margin-top: 0px !important;
+	margin-right: -2px !important;
+	margin-left: -1px !important;
+}
+
+#downloads-indicator-anchor,
+.toolbarbutton-1 > .toolbarbutton-icon,
+.toolbarbutton-1 > .toolbarbutton-badge-stack > .toolbarbutton-icon {
+	filter: brightness(1) var(--invert) !important;
+}
+
+#PersonalToolbar .toolbarbutton-1:not([disabled="true"]):not([checked]):not([open]):not(:active):hover,
+.tabbrowser-arrowscrollbox > .scrollbutton-up:not([disabled="true"]):hover,
+.tabbrowser-arrowscrollbox > .scrollbutton-down:not([disabled="true"]):hover,
+.findbar-button:not(:-moz-any([checked="true"], [disabled="true"])):hover > .toolbarbutton-text,
+toolbarbutton.bookmark-item:not(.subviewbutton):hover:not([disabled="true"]):not([open]),
+toolbar .toolbarbutton-1:not([disabled="true"]):not([checked]):not([open]):not(:active):hover > .toolbarbutton-icon,
+toolbar .toolbarbutton-1:not([disabled="true"]):not([checked]):not([open]):not(:active):hover > .toolbarbutton-text,
+toolbar .toolbarbutton-1:not([disabled="true"]):not([checked]):not([open]):not(:active):hover > .toolbarbutton-badge-stack {
+	background-color: transparent !important;
+}
+
+#toolbar-menubar {
+	max-height: 20px !important;
+	height: 0px !important;
+	font-size: 8pt;
+}
+
+#main-menubar > menu {
+	padding: 0 !important;
+	margin-top: -10px !important;
+	margin-left: -5px !important;
+	margin-right: 10px !important;
+	max-height: 20px !important;
+	color: var(--mfg) !important;
+	background-color: var(--sbg) !important;
+}
+
+.autocomplete-history-dropmarker.urlbar-history-dropmarker,
+#identity-box,
+#page-action-buttons,
+.panel-arrow,
+.search-one-offs,
+#sidebar-header,
+#stop-reload-button,
+.tabs-newtab-button,
+#TabsToolbar .tabbrowser-tab:after,
+#TabsToolbar .tabbrowser-tab:before,
+#titlebar-min,
+#titlebar-max,
+.titlebar-placeholder[type="pre-tabs"] {
+	display: none !important;
+}
+
+#PanelUI-menu-button
+{
+	list-style-image: none !important;
+	background: transparent url("https://s8.postimg.org/z5m57c739/blackcat.png") no-repeat  !important;
+	background-size: 18px !important;
+	background-color: unset !important;
+	box-shadow: none !important;
+	fill: var(--mfg) !important;
+	border: none !important;
+	height: 25px !important;
+	width: 25px !important;
+}
+
+/* POPUP */
+
+/** DESCRIPTION : change the elements of the popup dialog **/
+[class^=PanelUI-],
+#downloadsFooterButtons,
+#downloadsListBox,
+#emptyDownloads,
+.panel-subview-body,
+.panel-subview-footer,
+menupopup,
+menupopup > menu > menupopup,
+popup,
+popup > menu > menupopup {
+	-moz-appearance: none !important;
+	filter: brightness(105%) !important;
+	background: var(--mbg) !important;
+	border: none !important;
+}
+
+menupopup,
+menupopup > menu > menupopup,
+popup,
+popup > menu > menupopup {
+	padding: 0 !important;
+}
+
+menuitem,
+menupopup menu {
+	-moz-appearance: none !important;
+	color: var(--mfg)!important;
+	filter: brightness(80%) !important;
+	padding: 6px 3px !important;
+	font-size: 8pt !important;
+}
+
+menuitem:hover,
+menupopup menu:hover {
+	background-color: var(--mbg) !important;
+	color: var(--mfg) !important;
+	filter: brightness(93%) !important;
+}
+
+#context-openlinkprivate {
+	-moz-appearance: none !important;
+	background-color: var(--sbg) !important;
+}
+
+menupopup menuseparator {
+	-moz-appearance: none !important;
+	background: rgba(0, 0, 0, 0) !important;
+	border: 0 !important;
+}
+
+#context-navigation, #context-sep-navigation {
+	display: none !important
+}
+
+#context-navigation, #screenshots_mozilla_org-menuitem-_create-screenshot {
+	display: none !important
+}
+
+#context-back:hover image,
+#context-forward:hover image,
+#context-reload:hover image,
+#context-stop:hover image,
+#context-bookmarkpage:hover image{
+	color: var(--sfg) !important;
+}
+
+/* TOOLBAR */
+
+/** DESCRIPTION : change the elements in the toolbar **/
+#navigator-toolbox {
+	/*** TOOLBAR TOOLBOX ***/
+	background: var(--mbg) !important;
+}
+
+#navigator-toolbox > toolbar {
+	box-shadow: none !important;
+}
+
+#navigator-toolbox toolbar #menubar-items {
+	margin-top: 10px !important;
+	margin-bottom: 10px !important;
+	margin-left: 10px !important;
+}
+
+#navigator-toolbox toolbar #menubar-items * {
+	color: var(--mfg);
+	font-size: 8pt !important;
+}
+
+/* PERSONAL TOOLBAR */
+
+/** DESCRIPTION : change the elements of the personal toolbar **/
+#PersonalToolbar {
+	height: 40px !important;
+	padding-top: 2px !important;
+}
+
+/* TABBAR */
+
+/** DESCRIPTION : change the elements in the tabbar **/
+#TabsToolbar {
+	/*** TABBAR TOOLBAR ***/
+	background: var(--tool-bg) !important;
+	margin-bottom: 0 !important;
+	height: 20px !important;
+}
+
+.tabbrowser-tab {
+	/*** TABBAR TABS ***/
+	background: var(--mbg) !important;
+	filter: brightness(110%) !important;
+	transition: all 0.5s ease-in-out;
+	color: var(--mfg) !important;
+}
+
+.tab-background {
+	margin-top: -1px !important;
+}
+
+.tab-background[selected="true"] {
+	background-color: var(--mbg) !important;
+	margin-top: -3px !important;
+	filter: brightness(103%) !important;
+}
+
+.tabbrowser-tab:not([selected="true"]):hover {
+	filter: brightness(110%) !important;
+	transition: none !important;
+}
+
+.tabbrowser-tab .tab-line[selected="true"],
+.tabbrowser-tab .tab-line:not([selected="true"]),
+.tabbrowser-tab:hover .tab-line:not([selected="true"]){
+	background-color: var(--sbg) !important;
+}
+
+#tabbrowser-tabs ~ #alltabs-button {
+	visibility: visible !important;
+	color: var(--mfg) !important;
+}
+
+.tabbrowser-arrowscrollbox > .scrollbutton-up,
+.tabbrowser-arrowscrollbox > .scrollbutton-down {
+	display: none !important;
+}
+
+:root:not([uidensity="compact"]) .tab-content[pinned] {
+
+	/*** TABBAR TABS PINNED ***/
+	padding: 0 17px !important;
+}
+
+.tab-label-container {
+
+	/*** TABBAR TABS CONTENT ***/
+	font-size: 7pt !important;
+}
+
+.tab-icon-image:not([pinned]) {
+	margin-inline-end: 8px !important;
+	margin-left: 5px !important;
+	display: none;
+}
+
+#tabbrowser-tabs {
+	--tab-min-height: 20px !important;
+	margin-left: 0px !important;
+	height: 20px !important;
+}
+
+.tab-throbber::before {
+	fill: var(--sbg) !important;
+	opacity: 1 !important;
+}
+
+.tab-loading-burst[bursting]::before {
+	fill: var(--sbg) !important;
+}
+
+#tabbrowser-tabs .tab-close-button {
+	fill: var(--mfg) !important;
+	height: 12px !important;
+	width: 12px !important;
+	margin-left: 10px !important;
+}
+
+#tabbrowser-tabs .tab-close-button:hover {
+	fill: var(--sbg) !important;
+}
+
+#titlebar-close {
+
+	/*** TABBAR CLOSE BUTTON ***/
+	list-style-image: url("https://i.imgur.com/qzZ5RJH.png") !important;
+}
+
+.titlebar-button > .toolbarbutton-icon {
+	width: 15px !important;
+	height: 15px !important;
+}
+
+/* NAVBAR */
+
+/** DESCRIPTION : change the elements of the navbar **/
+#nav-bar {
+	border-bottom: 3px solid var(--sbg) !important;
+	margin-bottom: -1px !important;
+	height: 25px !important;
+}
+
+#navigator-toolbox > toolbar:not(#toolbar-menubar):not(#TabsToolbar) {
+	background: var(--mbg) !important;
+	border-color: transparent !important;
+}
+
+#nav-bar #back-button > .toolbarbutton-icon {
+	background-color: unset !important;
+	box-shadow: none !important;
+	fill: var(--mfg) !important;
+	border: none !important;
+	height: 25px !important;
+	width: 25px !important;
+}
+
+#nav-bar #back-button:not([disabled="true"]):hover > .toolbarbutton-icon {
+	fill: var(--sbg) !important;
+}
+
+#nav-bar #forward-button > .toolbarbutton-icon {
+	background-color: unset !important;
+	fill: var(--mfg) !important;
+	border: none !important;
+	height: 21px !important;
+	width: 21px !important;
+}
+
+#nav-bar #forward-button:not([disabled="true"]):hover > .toolbarbutton-icon {
+	fill: var(--sbg) !important;
+}
+
+#nav-bar {
+	width: 100% !important;
+}
+
+#searchbar > .searchbar-textbox,
+#urlbar {
+
+	/*** NAVBAR URL BAR ***/
+	background: var(--mbg) !important;
+	filter: brightness(100%) !important;
+	border-radius: 4px !important;
+	box-shadow: none !important;
+	color: var(--mfg) !important;
+	border: none !important;
+	text-align: center;
+	font-size: 8pt;
+}
+
+:root #urlbar,
+:root .searchbar-textbox {
+	min-height: 19px !important;
+}
+
+:root #nav-bar .toolbarbutton-1 {
+	padding: 0px !important;
+}
+
+:root #nav-bar .toolbarbutton-2 {
+	padding: 0px !important;
+}
+
+html|*.urlbar-input::-moz-selection {
+	background-color: var(--mbg) !important;
+	color: var(--sbg) !important;
+}
+
+.urlbar-textbox-container {
+
+	/*** NAVBAR URL BAR TEXT CONTAINER ***/
+	margin-left: 5px !important;
+}
+
+#PopupAutoCompleteRichResult {
+
+	/*** NAVBAR URL BAR DROP LIST ***/
+	border: none !important;
+	border-radius: 0px !important;
+	margin-top: -1px !important;
+}
+
+.autocomplete-richlistitem {
+	height: 30px !important;
+	border: none !important;
+	padding: 0 !important;
+	border-radius: 0px !important;
+}
+
+.autocomplete-richlistitem description {
+	color: var(--mfg) !important;
+	filter: brightness(80%) !important;
+}
+
+#urlbar .dropmarker-icon {
+	display: none !important;
+}
+
+.autocomplete-richlistitem[selected],
+.autocomplete-richlistitem description[selected],
+treechildren.searchbar-treebody::-moz-tree-row(selected) {
+	background-color: var(--mbg) !important;
+	color: var(--sbg) !important;
+	filter: brightness(120%) !important;
+}
+
+#PopupAutoCompleteRichResult .autocomplete-richlistbox {
+	background: var(--mbg) !important;
+	color: var(--mfg) !important;
+	margin: -1px !important;
+}
+
+#PopupAutoCompleteRichResult .autocomplete-richlistbox * {
+	font-size: 8pt !important;
+	padding: 0 !important;
+}
+
+#PopupAutoCompleteRichResult .autocomplete-richlistbox > scrollbox
+{
+	overflow-y: auto !important;
+	padding-right: 3px !important;
+}
+
+#PopupAutoCompleteRichResult .autocomplete-richlistbox
+{
+	width: 200px !important;
+	padding: 0 !important;
+}
+
+#nav-bar-overflow-button {
+	/*** NAVBAR ADDON BUTTON ***/
+	margin-right: 5px !important;
+}
+
+:root:not([uidensity="compact"]):not([chromehidden~="toolbar"]) #PanelUI-button {
+	/*** NAVBAR PANEL BUTTON ***/
+	border-color: transparent !important;
+	border-image: none !important;
+}
+
+:root:not([uidensity="compact"]):not([chromehidden~="toolbar"]) #PanelUI-button #PanelUI-menu-button {
+	filter: brigthness(1) var(--invert) !important;
+}
+
+/* HISTORY */
+
+/** DESCRIPTION : change the elements of the history sidebar **/
+#sidebar-box {
+	background-color: var(--mbg) !important;
+}
+
+hbox#sidebar-search-container textbox#search-box {
+	-moz-appearance: none!important;
+	background: var(--mbg) !important;
+	filter: brightness(110%) !important;
+	border: 1px solid var(--border-color) !important;
+	color: var(--mfg) !important;
+	font-size: 8pt !important;
+}
+
+.sidebar-placesTreechildren,
+#viewButton {
+	color: var(--mfg) !important;
+	font-size: 8pt !important;
+}
+
+.sidebar-placesTreechildren:hover {
+	background: var(--mbg) !important;
+	filter: brightness(110%) !important;
+}
+
+/* CUSTOMIZATION */
+
+/** DESCRIPTION : change the elements of the customization page **/
+#customization-container {
+	background: var(--tool-bg) !important;
+	color: var(--mfg) !important;
+}
+
+.customizationmode-button {
+	background: var(--mbg) !important;
+	filter: brightness(110%) !important;
+	border-color: var(--border-color) !important;
+	color: var(--mfg) !important;
+}
+
+#downloads-button[attention="success"] #downloads-indicator-progress-area
+{
+	display: -moz-box !important;
+	visibility: visible !important;
+}
+
+#downloads-button[attention="success"] > #downloads-indicator-anchor > #downloads-indicator-icon {
+	fill: var(--sbg) !important;
+	background-repeat: no-repeat !important;
+	margin-top: 5px !important;
+	background-size: 12px auto !important;
+}
+
+#downloads-button[attention="success"] > #downloads-indicator-anchor > #downloads-indicator-progress-outer {
+	display: none !important;
+}
+
+#downloads-button[progress] > #downloads-indicator-anchor > #downloads-indicator-icon,
+#downloads-button[progress] > #downloads-indicator-anchor > #downloads-indicator-progress-outer {
+	fill: var(--mfg) !important;
+}
+
+#downloads-button[notification="start"] > #downloads-indicator-anchor > #downloads-indicator-icon,
+#downloads-notification-anchor[notification="start"] > #downloads-indicator-notification {
+	fill: var(--mfg) !important;
+}
+
+#downloads-button > #downloads-indicator-anchor > #downloads-indicator-progress-outer > #downloads-indicator-progress-inner {
+	fill: var(--sbg) !important;
+}
+
+#downloads-button,
+#downloads-button[indicator="true"]:not([attention="success"]) #downloads-indicator-icon
+{
+	background-repeat: no-repeat !important;
+	background-size: 10px auto !important;
+	background-position: bottom center !important;
+	margin-top: -2px !important;
+	margin-bottom: 2px !important;
+}
+
+.downloadProgress {
+	-moz-appearance: none !important;
+	background: -moz-dialog !important;
+}
+
+.downloadProgress > .progress-bar {
+	-moz-appearance: none !important;
+	background: var(--sbg) !important;
+}
+
+.downloadProgress > .progress-remainder {
+	-moz-appearance: none !important;
+	background: var(--sfg) !important;
+	border: none !important;
+}
+
+findbar {
+	font-size: 8pt !important;
+	color: var(--mfg) !important;
+	margin-top: -6px !important;
+	padding: 5px !important;
+	height: 36px !important;
+	border: none !important;
+	-moz-appearance: none !important;
+	background-color: var(--mbg) !important;
+}
+
+.findbar-textbox {
+	font-size: 7pt !important;
+	margin: 0 px !important;
+	border-color: var(--sbg) !important;
+	border: none !important;
+	border-radius: 0 !important;
+	color: var(--mfg) !important;
+	-moz-appearance: none !important;
+}
+
+.findbar-find-next, .findbar-find-previous {
+	font-size: 6pt !important;
+	background-image: none !important;
+	background-color: var(--mbg) !important;
+	filter: brightness(92%) !important;
+	border-color: var(--mbg) !important;
+	border-width: 3px 0 !important;
+	height: 10px !important;
+}
+
+.findbar-container > .findbar-closebutton {
+	margin-right: 10px !important;
+	color: var(--mfg) !important;
+}
+
+.findbar-highlight[checked] > label {
+	color: #608985 !important;
+}

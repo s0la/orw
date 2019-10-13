@@ -1,0 +1,4 @@
+#define iconify_fat_width 6
+#define iconify_fat_height 6
+static unsigned char iconify_fat_bits[] = {
+   0x00, 0x00, 0x00, 0x00, 0x3f, 0x3f };

@@ -1,0 +1,55 @@
+Xft.dpi:        96
+Xft.antialias:  true
+Xft.hinting:    true
+Xft.rgba:       rgb
+Xft.hintstyle:  hintslight
+
+Xcursor.size: 8
+Xcursor.theme: Alkano-Aluminium
+
+!URxvt
+URxvt.depth: 24
+URxvt.letterSpace: -1
+URxvt.scrollBar: false
+URxvt.geometry: 120x30
+URxvt.internalBorder: 15
+URxvt.font: Monaco for Powerline:size=9:antialias=true, Font Awesome 5 Free:style=Solid:size=9
+URxvt.boldFont:
+
+URxvt*termName:rxvt-unicode-256color
+
+!colors
+*.foreground: #b8b3a3
+*.background: #3b3c3d
+
+!black
+*color0: #505050
+*color8: #5c5c5c
+
+!red
+*color1: #d77f7a
+*color9: #d77f7a
+
+!green
+*color2: #c6ca67
+*color10: #b5bc6d
+
+!yellow
+*color3: #f6d16a
+*color11: #877f69
+
+!blue
+*color4: #4c5359
+*color12: #89abba
+
+!magenta
+*color5: #99828e
+*color13: #cca8bb
+
+!cyan
+*color6: #a2ccca
+*color14: #a2ccca
+
+!white
+*color7: #5e5e5e
+*color15: #707070

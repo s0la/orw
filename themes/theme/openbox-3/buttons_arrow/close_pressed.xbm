@@ -1,0 +1,4 @@
+#define close12_width 8
+#define close12_height 8
+static unsigned char close12_bits[] = {
+   0x42, 0xc7, 0x66, 0x38, 0x38, 0x3c, 0xc7, 0x42 };
