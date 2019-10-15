@@ -75,7 +75,10 @@ func! GetBranch(bufnr)
 	let l:dir = join(split(l:path, '/')[:-2], '/')
 
 	return system("cd /" . l:dir . "/ && " .
-				\"git status 2> /dev/null | awk 'NR == 1 {print $NF}; NR > 2 {print \"*\";exit}' | xargs -i echo -n '{}'")
+				\"git status -sb 2> /dev/null | " .
+				\"awk -F '.' 'NR == 1 { print substr($1, 4) }" .
+				\"END { if(NR > 1) print \"*\" }' | xargs -i echo -n '{}'")
+				"\"git status 2> /dev/null | awk 'NR == 1 {print $NF}; NR > 2 {print \"*\";exit}' | xargs -i echo -n '{}'")
 endf
 
 func! MakeHiGroup(hi_group, fg, bg, ...)
