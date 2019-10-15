@@ -143,21 +143,33 @@ case $1 in
 			jt) pattern=label.*justify;;
 			pw) pattern=^padding.width;;
 			ph) pattern=^padding.height;;
+			md) pattern=^menu.overlap.x;;
 			mbw)
 				pattern=^menu.border.width
 				gtkrc2=~/.orw/themes/theme/gtk-2.0/gtkrc;;
 		esac
 
 		awk -i inplace '{ \
+			if("'$pattern'" ~ "menu") {
+				if(/^menu.border/) obw = $NF
+				if(/^menu.overlap/) {
+					if("'$pattern'" ~ "border") $NF = (obw + $NF) - nv
+				}
+			}
 			if(/'$pattern'/) {
 				nv = '${new_value:-\"$2\"}'
-				$NF = ("'$sign'") ? $NF '$sign' nv : nv
-				nv = $NF
-			}
-			if("'$pattern'" ~ "menu" && /^menu.overlap/) {
-				$NF = -(nv + 3)
-			}
-			if("'$pattern'" ~ "menu") { 
+
+				if(/overlap/) {
+					if("'$sign'") {
+						if("'$sign'" == "+") $NF -= nv; else $NF += nv
+					} else {
+						$NF = -(obw + nv)
+					}
+				} else {
+					$NF = ("'$sign'") ? $NF '$sign' nv : nv
+					nv = $NF
+				}
+			} if("'$pattern'" ~ "menu") { 
 				if(/^style "menu"/) set = 2
 				
 				if(/thickness/ && set) {
