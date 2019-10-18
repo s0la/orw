@@ -7,10 +7,13 @@ if [[ ! $pid ]]; then
 
 	while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
 		if ((position)); then
-			current_bar_height=$((bar_y + bar_height + frame + y_offset))
-			((current_bar_height > y_offset)) && y_offset=$current_bar_height
+			current_bar_height=$((bar_y + bar_height + frame))
+			((current_bar_height > max_bar_height)) && max_bar_height=$current_bar_height
 		fi
 	done <<< $(~/.orw/scripts/get_bar_info.sh)
+
+	dmenu_height=$(~/.orw/scripts/get_dmenu_height.sh)
+	(( y_offset += max_bar_height + dmenu_height ))
 
 	sed -i "s/\(^\s*geometry.*x[0-9]*\)[^\"]*/\1-$x_offset+$y_offset/" ~/.config/dunst/*
 
