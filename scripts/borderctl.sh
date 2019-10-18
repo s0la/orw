@@ -16,6 +16,9 @@ while getopts :c: flag; do
 	esac
 done
 
+[[ ! $rofi_mode ]] &&
+	rofi_mode=$(awk -F '"' 'END { print $(NF - 1) ".rasi" }' $rofi_path/main.rasi)
+
 if [[ $2 =~ [0-9]+ ]]; then
 	sign=${2%%[0-9]*}
 	new_value=${2#$sign}
@@ -42,20 +45,24 @@ case $1 in
 				if(/padding/ && set) {
 					set = 0
 
-					if(!av) {
+					if(av) {
+						if("'$rofi_mode'" ~ "dmenu") v2 = v1
+					} else {
 						fv = '$new_value'
 						sv = '${second_arg-0}'
-						av = gensub(".*([0-9]+).*([0-9]+).*", "\\1 \\2", 1)
+						av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
 						split(av, v)
 
 						v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
-						v2 = (sv) ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : v1
+						v2 = (sv) ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : \
+							("'$rofi_mode'" ~ "dmenu") ? v[2] : v1
 					}
 
-					$0 = gensub("([^0-9]*)[0-9]+(.* )[0-9]+(.*)", "\\1" v1 "\\2" v2 "\\3", 1)
+					#$0 = gensub("([^0-9]*)[0-9]+(.* )[0-9]+(.*)", "\\1" v1 "\\2" v2 "\\3", 1)
+					gsub("[0-9]+px [0-9]+", v1 "px " v2)
 				}
 				print
-			}' $rofi_path/${rofi_mode-list.rasi}
+			}' $rofi_path/$rofi_mode
 		else
 			case $1 in
 				rw) pattern=width;;
@@ -84,7 +91,7 @@ case $1 in
 					set = 1
 				}
 				print
-			}' $rofi_path/${rofi_conf:-${rofi_mode-list.rasi}}
+			}' $rofi_path/${rofi_conf:-$rofi_mode}
 		fi;;
 	tp)
 		awk -i inplace '\
@@ -113,9 +120,10 @@ case $1 in
 		[[ $1 == dp ]] && pattern=padding || pattern=frame_width
 
 		awk -i inplace '{ \
-			if(/^\s*'$pattern'/) {
+			if(/^\s*\w*'$pattern'/) {
 				nv = '$new_value'
-				$NF = ("'$sign'") ? $NF '$sign' nv : nv
+				#$NF = ("'$sign'") ? $NF '$sign' nv : nv
+				sub($NF, ("'$sign'") ? $NF '$sign' nv : nv)
 			}
 			print
 		}' $dunst_conf
