@@ -103,6 +103,8 @@ function get_color() {
 
 	if [[ ${2:-$offset} ]]; then
 		color=$(offset_color $color ${2:-$offset})
+		unset color_{index,name}
+		get_color_properties
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
@@ -308,7 +310,7 @@ function bar() {
 
 function ncmpcpp() {
 	reload_ncmpcpp=true
-	get_color_properties
+	[[ ! $color_index ]] && get_color_properties
 
 	if ((color_index)); then
 		case $property in
@@ -322,7 +324,7 @@ function ncmpcpp() {
 				local pattern='visualizer_color'
 				local old_color_index=$(sed -n "/^#/! s/visualizer_color[^0-9]*\([0-9]\+\).*/\1/p" $ncmpcpp_conf)
 
-				[[ -f $cava_conf ]] && get_color && sed -i "/^foreground\|color_1/ s/'.*'/'$color'/" $cava_conf;;
+				[[ -f $cava_conf ]] && sed -i "/^foreground\|color_1/ s/'.*'/'$color'/" $cava_conf;;
 			*)
 				case $property in
 					sc) local pattern='^header\|volume\|statusbar';;
