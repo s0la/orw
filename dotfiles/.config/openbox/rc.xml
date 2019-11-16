@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>6</size>
+      <size>9</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -333,14 +333,21 @@
         <command>~/.orw/scripts/windowctl.sh resize -r -50 -o</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-A-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r -50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -a resize -r -50</command>
       </action>
     </keybind>
-    <keybind key="C-W-A-Left">
+	-->
+    <keybind key="A-C-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o resize -r -50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -l +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-Left">
+      <action name="Execute">
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -l -50</command>
       </action>
     </keybind>
     <keybind key="S-Right">
@@ -348,14 +355,21 @@
         <command>~/.orw/scripts/windowctl.sh resize -r +50 -o</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-A-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r +50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -a resize -r +50</command>
       </action>
     </keybind>
-    <keybind key="C-W-A-Right">
+	-->
+    <keybind key="A-C-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o resize -r +50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -r +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-Right">
+      <action name="Execute">
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -r -50</command>
       </action>
     </keybind>
     <keybind key="S-Up">
@@ -363,14 +377,21 @@
         <command>~/.orw/scripts/windowctl.sh resize -b -50 -o</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-A-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b -50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -a resize -b -50</command>
       </action>
     </keybind>
-    <keybind key="C-W-A-Up">
+	-->
+    <keybind key="A-C-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o resize -b -50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -t +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-Up">
+      <action name="Execute">
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -t -50</command>
       </action>
     </keybind>
     <keybind key="S-Down">
@@ -378,14 +399,21 @@
         <command>~/.orw/scripts/windowctl.sh resize -b +50 -o</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-A-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b +50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -a resize -b +50</command>
       </action>
     </keybind>
-    <keybind key="C-W-A-Down">
+	-->
+    <keybind key="A-C-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o resize -b +50 -a</command>
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -b +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-Down">
+      <action name="Execute">
+        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -b -50</command>
       </action>
     </keybind>
     <keybind key="W-w">
@@ -944,7 +972,7 @@
   </menu>
   <applications>
     <application name="*">
-      <decor>yes</decor>
+      <decor>no</decor>
       <position force="yes">
         <x>center</x>
         <y>center</y>
@@ -962,8 +990,8 @@
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>1098</x>
-        <y>558</y>
+        <x>1355</x>
+        <y>510</y>
       </position>
       <size>
         <width>60</width>
@@ -977,7 +1005,7 @@
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>70</height>
+        <height>111</height>
         <width>70</width>
       </size>
     </application>
@@ -985,8 +1013,8 @@
     <application class="custom_position">
       <focus>yes</focus>
       <position force="yes">
-        <x>930</x>
-        <y>517</y>
+        <x>981</x>
+        <y>453</y>
       </position>
       <size>
         <width>70</width>
@@ -998,8 +1026,8 @@
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>1403</x>
-        <y>282</y>
+        <x>715</x>
+        <y>556</y>
       </position>
     </application>
 
@@ -1017,12 +1045,12 @@
       <focus>yes</focus>
       <desktop>all</desktop>
       <position force="yes">
-        <x>1436</x>
-        <y>25</y>
+        <x>528</x>
+        <y>31</y>
       </position>
       <size>
-        <width>480</width>
-        <height>633</height>
+        <width>864</width>
+        <height>470</height>
       </size>
     </application>
     <!--
