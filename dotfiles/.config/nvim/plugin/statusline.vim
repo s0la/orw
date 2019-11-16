@@ -5,24 +5,24 @@ exe 'hi StatusLight guibg=' . g:lfg . ' guifg=' . g:fg
 exe 'hi StatusDark guibg=' . g:lsbg . ' guifg=' . g:lsfg
 exe 'hi Statusline guibg=' . g:slbg . ' guifg=' . g:slfg . ' cterm=none'
 
-let s:settings = 'NMC.nmbg.,'
-let s:settings .= 'IMC.imbg.,'
-let s:settings .= 'VMC.vmbg.,'
-let s:settings .= 'BC.bcbg.,'
-let s:settings .= 'BU.bdbg.,'
-let s:settings .= 'b.b.,'
-let s:settings .= 'r.. RO ,'
-let s:settings .= 'm.mo.,'
-let s:settings .= 'f.s. %F ,'
-let s:settings .= 'cpi.imbg.● ,'
-let s:settings .= 'e.n.,'
-let s:settings .= 'ln.m. %l:%c ,'
+let s:settings = 'NMC.nmbg.;'
+let s:settings .= 'IMC.imbg.;'
+let s:settings .= 'VMC.vmbg.;'
+let s:settings .= 'BC.bcbg.;'
+let s:settings .= 'BU.bdbg.;'
+let s:settings .= 'b.b.;'
+let s:settings .= 'r.. RO ;'
+let s:settings .= 'm.mo.;'
+let s:settings .= 'f.s. %F ;'
+let s:settings .= 'cpi.imbg.● ;'
+let s:settings .= 'e..;'
+let s:settings .= 'lnpi.lsbg. line %l, column %c ;'
 let s:settings .= 't.. %Y '
 
 let s:swap_colors = 0
 
-let s:active_buffer_modules = 'ln.b.f.c.e'
-let s:inactive_buffer_modules = 'ln.b.f.c'
+let s:active_buffer_modules = 'm.b.f.c.e.ln'
+let s:inactive_buffer_modules = 'b.f.c.ln'
 
 func! MapModule(module)
 	if a:module ==? 'n'
@@ -65,6 +65,8 @@ func! MapModule(module)
 		return MapModule(a:module[:-3])
 	elseif a:module =~? 'r$'
 		return MapModule(a:module[:-2]) . 'Reverse'
+	else
+		let l:var = a:module
 	endif
 
 	return a:module =~ '[A-Z]' ? l:var : tolower(l:var)
@@ -94,14 +96,23 @@ func! MakeHiGroup(hi_group, fg, bg, ...)
 	return a:hi_group
 endf
 
-func! ReverseHiGroup(hi_group)
-	let l:hi_group = GetHiGroupColors(a:hi_group)
+func! ReverseHiGroup(module, hi_group)
+	if a:hi_group =~ '[bf]g$'
+		let l:bg = g:slbg
+		let l:fg = {'g:' . a:hi_group}
 
-	if len(l:hi_group) > 0
-		let l:fg = split(l:hi_group[0], '=')
-		let l:bg = split(l:hi_group[1], '=')
+		let l:hi_group_name = MapModule(a:module)
 
-		return MakeHiGroup(a:hi_group . 'Reverse', l:bg[1], l:fg[1])
+		return MakeHiGroup(l:hi_group_name, l:fg, l:bg)
+	else
+		let l:hi_group = GetHiGroupColors(MapModule(toupper(a:hi_group[:-2])))
+
+		if len(l:hi_group) > 0
+			let l:fg = split(l:hi_group[0], '=')
+			let l:bg = split(l:hi_group[1], '=')
+
+			return MakeHiGroup(a:hi_group . 'Reverse', l:bg[1], l:fg[1])
+		endif
 	endif
 
 	return a:hi_group . 'Reverse'
@@ -115,9 +126,7 @@ func! GetHiGroup(module, hi_group)
 
 		return MakeHiGroup(l:hi_group, l:fg, l:bg)
 	elseif a:hi_group =~ 'r$'
-		let l:hi_group = MapModule(toupper(a:hi_group[:-2]))
-
-		return ReverseHiGroup(l:hi_group)
+		return ReverseHiGroup(a:module, a:hi_group[:-2])
 	else
 		return MapModule(toupper(a:hi_group))
 	endif
@@ -135,8 +144,11 @@ func! GetAdjacentModuleBg(module, direction)
 		let l:adjacent_module = MapModule(module)
 
 		if {'s:' . l:adjacent_module . '_hi_group'} != ''
-			let l:adjacent_hi_group ={'s:' . l:adjacent_module . '_hi_group'}
-			break
+			let l:adjacent_hi_group = {'s:' . l:adjacent_module . '_hi_group'}
+
+			if l:adjacent_hi_group != 'None'
+				break
+			endif
 		endif
 	endfor
 
@@ -193,7 +205,7 @@ func! SetModeColor(mode, ...)
 endf
 
 func! MakeIndicator(module, hi_group)
-	let l:module = a:module[0]
+	let l:module = a:module[:-2]
 	let l:direction = a:module[-1:]
 
 	let l:var = MapModule(l:module)
@@ -303,7 +315,7 @@ func! GenerateStatusline(modules, bufnr)
 		let s:modules = split(a:modules, '\.')
 
 		if type(s:settings) == 1
-			let s:settings = split(s:settings, ',')
+			let s:settings = split(s:settings, ';')
 		endif
 
 		for color in s:settings

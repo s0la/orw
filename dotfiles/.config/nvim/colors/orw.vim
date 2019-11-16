@@ -31,9 +31,6 @@ let g:bcbg = '#b5bc6d'
 let g:bdbg = '#B3836B'
 
 let g:nmbg = '#c2b29b'
-"let g:nmbg = '#c2b29b'
-"let g:nmbg = '#c2b29b'
-"let g:nmbg = '#c2b29b'
 let g:imbg = '#a2b36d'
 let g:vmbg = '#a4745c'
 
