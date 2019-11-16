@@ -24,8 +24,7 @@
 }
 
 #element {
-	padding:      3px 10px;
-	margin:       0px 0 0 0;
+	padding:      3px 20px;
 }
 
 #element.selected.normal, element.selected.active {
@@ -33,7 +32,6 @@
 }
 
 #inputbar {
-	spacing: 0px;
 	padding: 3px 3px;
 	children: [ textbox-prompt-colon, entry ];
 	background-color: @ibg;
@@ -43,10 +41,10 @@
 	width:        10em;
 	expand:       false;
 	background-color: @ibg;
+	margin:       0 0 -1px;
 }
 
 #prompt {
-	spacing:      0;
 	padding:      0px 3px;
 	margin:       0 0 0 2px;
 	background-color: @ibg;
@@ -57,5 +55,5 @@
 	color:        @dpc;
 	expand:       false;
 	background-color: @ibg;
-	margin:       1px 5px 0 3px;
+	margin:       1px 3px -1px;
 }
