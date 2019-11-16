@@ -104,7 +104,6 @@ set_orientation_properties() {
 		opposite_start=$display_x
 		border=${edge_border:-$border_y}
 		bar_vertical_offset=$((bar_top_offset + bar_bottom_offset))
-
 	fi
 
 	start_index=$((index % 2 + 1))
@@ -247,81 +246,74 @@ sort_windows() {
 }
 
 fill() {
-	while read -r window_properties; do
-		local awp+=( "$window_properties" )
-	done <<< "$(list_all_windows | \
-		awk '{ cws = '${properties[start_index]}'; \
-			cwe = cws + '${properties[start_index + 2]}'; \
-			si = '$start_index' + 1; ws = $si; we = ws + $(si + 2); \
-				if ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) print $0 }' | \
-				sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)))"
 
-	local window_count=$((${#awp[*]} - 1))
+	local window_count
 
-	for w in ${!awp[*]}; do
-		if [[ ! ${awp[w]%% *} =~ ^0x ]]; then
-			bar_properties=( ${awp[w]} )
-			bar_height=$((${bar_properties[index]} + ${bar_properties[index + 2]} + ${bar_properties[5]}))
+	min_point=$offset
+	max_point=$original_max_point
 
-			if [[ $after_first_bars ]]; then
-				for i in "${awp[@]:w}"; do
-					[[ ${i%% *} =~ ^0x ]] && local after_next_bars=true
-				done
+	while read wid w_min w_max; do
+		if [[ $id != $wid ]]; then
+			[[ ! $wid =~ ^0x ]] && distance=$offset ||
+				distance=$((${margin:-$offset} + border))
 
-				if [[ ! $after_next_bars ]]; then
-					local max_delta=$((original_max_point - bar_height + ${bar_properties[index + 2]} + ${bar_properties[5]}))
-					last_bar_index=$w
-					break
+			if ((min_point == offset)); then
+				if [[ $wid =~ ^0x ]]; then
+					if ((w_min == min_point)); then
+						min_point=$((w_max + distance))
+						((window_count++))
+					else
+						max_point=$w_min && break
+					fi
+				else
+					((window_count)) && max_point=$w_min || 
+						min_point=$((w_max + distance))
 				fi
 			else
-				local min_delta=$bar_height
-				first_bar_index=$w
+					if ((w_min > min_point)); then
+						[[ ! $wid =~ ^0x ]] && ((!window_count)) &&
+							min_point=$((w_max + distance)) || max_point=$w_min && break
+					else
+						((w_max + distance > min_point)) && min_point=$((w_max + distance))
+					fi
 			fi
 		else
-			local after_first_bars=true
+			((window_count++))
 		fi
-	done
+	done <<< $(list_all_windows | awk '
+			BEGIN {
+				si = '$start_index' + 1
+				cws = '${properties[start_index]}'
+				cwe = cws + '${properties[start_index + 2]}'
+			}
+			{
+				ws = $si; we = ws + $(si + 2)
+				if ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) print $0
+			}' | sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)) | awk '
+					function assign(w_index) {
+						bb = ($1 ~ "0x") ? 0 : $NF
+						i = (w_index) ? w_index : (l) ? l : 1
+						mix_a[i] = $1 " " $pi " " $pi + $(pi + 2) + bb
+					}
 
-	min_point=$((original_min_point + offset + min_delta))
-	max_point=$((original_max_point - max_delta))
+					BEGIN { pi = '$index' + 1 }
+					{
+						if(NR == 1) {
+							assign()
+						} else {
+							l = length(mix_a)
+							split(mix_a[l], mix)
 
-	for window_index in ${!awp[*]}; do
-		properties=( ${awp[window_index]} )
-		[[ $properties =~ ${id#0x} ]] && local current=$window_index
+							if($pi == mix[2]) {
+								if($pi + $(pi + 2) > mix[3]) assign()
+							} else {
+								assign(l + 1)
+							}
+						}
+					}
+					END { for (w in mix_a) { print mix_a[w] } }')
 
-		if ((!first_bar_index || window_index > first_bar_index)); then
-			if ((${properties[index]} - min_point == 0)); then
-				[[ $current && $window_index -eq $current ]] && local consistent=true
-				min_point=$((${properties[index]} + ${properties[index + 2]} + ${properties[5]:-$border} + ${margin:-$offset}))
-			else
-				local inconsistent=true
-
-				if ((${properties[index]} < min_point && window_index == current)); then
-					local before_index=$window_index
-				else
-					local after_index=$window_index
-					break
-				fi
-			fi
-		fi
-	done
-
-	if [[ $inconsistent ]] ||
-		((window_index == current && min_point - ${margin:-$offset} < original_max_point - offset)); then
-		if ((window_count)); then
-			if ((before_index && current == before_index)); then
-				[[ $after_index ]] && max_point=${properties[index]}
-			elif [[ $after_index ]]; then
-				[[ $current && $current -eq $after_index ]] && local next_index=1
-				local next=( ${awp[after_index + next_index]} )
-				[[ $next ]] && max_point=${next[index]}
-			else
-				[[ $after_index || ! ${properties[0]} =~ ^0x ]] && max_point=${properties[index]}
-			fi
-		fi
-
-		[[ $consistent ]] && min_point=${original_properties[index]}
-
+	if [[ $inconsistent ]]; then
 		((max_point < original_max_point && current + 1 != last_bar_index)) && local last_offset=$margin
 
 		if [[ $orientation == h ]]; then
@@ -347,30 +339,81 @@ fill_adjucent() {
 		((index == 1)) && orientation=h || orientation=v
 	fi
 
-	option=fill
+	old_properties=( ${original_properties[*]} )
 
-	original_id=$id
-
-	for orientation in ${orientations:-$orientation}; do
-		set_base_values $orientation
-
-		while read -r id window_properties; do
-			properties=( $id $window_properties )
-			original_properties=( ${properties[*]} )
-
-			fill
-
-			update_properties
-		done <<< $(list_all_windows | awk '$1 ~ /^0x/ && $1 != "'$id'"' | sort $reverse -nk $((index + 2)))
+	for property_index in {1..4}; do
+		new_property=${properties[property_index]}
+		old_property=${old_properties[property_index]}
+		((new_property != old_property)) && break
 	done
 
-	for window in "${all_windows[@]}"; do
-		id=${window%% *}
+	option=fill
+	set_base_values $orientation
 
-		if [[ $id =~ ^0x && $id != $original_id ]]; then
-			generate_printable_properties "$window"
-			apply_new_properties
-		fi
+	get_adjucent() {
+		local reverse=$2
+		local properties=( $1 )
+
+		sort_windows | sort -n $reverse | awk '\
+			BEGIN {
+				r = "'$reverse'"
+				i = '$index' + 2
+				si = '$start_index' + 2
+				o = '${margin:-$offset}' + '$border'
+
+				id = "'${properties[0]}'"
+				cwsp = '${properties[index]}'
+				cwep = '${properties[index]}' + '${properties[index + 2]}'
+				cws = '${properties[start_index]}'
+				cwe = '${properties[start_index]}' + '${properties[start_index + 2]}'
+				
+				c = (r) ? cwep + o : cwsp - o
+			}
+
+				{
+				if($2 ~ "0x" && $2 != "'$original_id'") {
+					if($2 == id) exit
+					else {
+						ws = $si
+						we = ws + $(si + 2)
+						cp = (r) ? $i : $i + $(i + 2)
+
+						#print cp, c, cws, ws "        " cwe, we
+						if((cp == c) && ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe))) print
+					}
+				}
+			}'
+	}
+
+
+	add_adjucent_window() {
+		properties=( $1 )
+		id=${properties[0]}
+		original_properties=( ${properties[*]} )
+
+		fill
+
+		update_properties
+		adjucent_windows+=( "${properties[*]}" )
+	}
+
+	find_neighbour() {
+		while read -r c window; do
+			if [[ $c ]]; then
+				add_adjucent_window "$window"
+
+				[[ $2 ]] && ra='' || ra=-r
+				original_id=${1%% *}
+				find_neighbour "$window" $ra
+			fi
+		done <<< $(get_adjucent "$1" $2)
+	}
+
+
+	find_neighbour "${old_properties[*]}" $ra
+	for window in "${adjucent_windows[@]}"; do
+		generate_printable_properties "$window"
+		apply_new_properties
 	done
 }
 
