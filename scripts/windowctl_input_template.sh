@@ -32,6 +32,7 @@ evaluate() {
 			[[ $input == C ]] && stop=true;;
 		E) equal=true;;
 		M) mirror=-M;;
+		S) swap=true;;
 		[Rs])
 			[[ $all ]] && state=-${input^} || state=-${input,}
 			[[ $input == R ]] && stop=true;;
@@ -46,9 +47,11 @@ evaluate() {
 					stop=true
 				fi
 			else
-				if [[ $mirror ]]; then
-					mirror+=" $input"
+				if [[ $mirror || $swap ]]; then
 					stop=true
+					[[ $mirror ]] &&
+						mirror+=" $input" ||
+						option="move -S $input"
 				else
 					[[ $input == r ]] &&
 						option=resize ||
