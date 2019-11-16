@@ -3,8 +3,7 @@
 workspace_count=$(xdotool get_num_desktops)
 current_workspace=$(($(xdotool get_desktop) + 1))
 
-offset="\${$2}"
-space="\${padding}"
+offset=$2
 single_line=${@: -1}
 
 function set_line() {
@@ -34,6 +33,8 @@ for workspace_index in $(seq $workspace_count); do
 	bg="\${W${current}bg:-\${Wsbg:-\$${current}bg}}"
 	fg="\${W${current}fg:-\${Wsfg:-\$${current}fg}}"
 
+	[[ $fbg ]] || fbg=$bg
+
 	workspace="%{A:wmctrl -s $((workspace_index - 1)):}$bg$fg$label%{A}"
 
 	if [[ $single_line == true && $current == p ]]; then
@@ -44,7 +45,9 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-[[ $1 == i ]] && workspaces="$bg\$inner${workspaces%\%*}\$inner"
+#[[ $1 == i ]] && workspaces="$bg\$inner${workspaces%\%*}\$inner"
+#[[ $1 == i ]] && workspaces="$bg\${padding}${workspaces%\%*}\${padding}"
+[[ $1 == i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
 
 echo -e "%{A4:wmctrl -s $((current_workspace % workspace_count)):}\
 %{A5:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\

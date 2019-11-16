@@ -8,7 +8,7 @@ padding="%{O20}"
 separator="%{O5}"
 
 bar_height=16
-main_font_offset=0
+main_font_offset=1
 
 bar_name='main_bar'
 
@@ -32,8 +32,25 @@ get_apps() {
 }
 
 get_workspaces() {
-	[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset='inner' || offset='padding'
-	echo -e "WORKSPACES $($path/workspaces.sh ${workspaces_label-icon} $offset ${single_line-false})"
+	for arg in ${workspaces_args//,/ }; do
+		if [[ $arg =~ ^o ]]; then
+			value=${arg:1}
+
+			if [[ $value =~ [0-9] ]]; then
+				offset="%{O$value}"
+			else
+				[[ $value == p ]] && offset=$padding || offset=$inner
+			fi
+		else
+			workspaces_label=$arg
+		fi
+	done
+
+	if [[ ! $offset ]]; then
+		[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
+	fi
+
+	echo -e "WORKSPACES $($path/workspaces.sh ${workspaces_label-i} $offset ${single_line-false})"
 }
 
 get_full_usage() {
@@ -239,7 +256,7 @@ while getopts :bicrx:y:w:h:p:f:ls:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
         W)
 			[[ $single_line ]] && modules+='$workspaces' || format workspaces
 
-			check_arg workspaces_label ${!OPTIND} && shift
+			check_arg workspaces_args ${!OPTIND} && shift
 
 			run_function get_workspaces 1;;
         N)
@@ -440,7 +457,7 @@ while read -r module; do
 		PROGRESSBAR*) progressbar=$(eval "echo -e ${module:12}");;
 		CONTROLS*) controls=$(eval "echo -e \"${module:9}\"");;
 		MPD_VOLUME*) mpd_volume=$(eval "echo -e \"${module:11}\"");;
-		MPD*) mpd=$(eval "echo -e \"${module:4}\"");;
+		MPD*) mpd=$(eval "sed 's/\([^}]*}\)\([^}]*}\)/\2\1/' <<< \"${module:4}\"");;
 		APPS*) apps=$(eval "echo -e \"${module:5}\"");;
 		TORRENTS*) torrents=$(eval "echo -e \"${module:9}\"");;
 		WORKSPACES*) workspaces=$(eval "echo -e ${module:11}");;

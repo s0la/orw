@@ -1,6 +1,5 @@
 #!/bin/bash
 
-module=t
 lines=${@: -1}
 window_name_lenght=20
 
@@ -12,13 +11,21 @@ if [[ $# -gt 1 ]]; then
 			a) active=$current_window_id;;
 			c) current_desktop=$(xdotool get_desktop);;
 			*)
-				property=${argument%%[0-9]}
-				value=${argument#$property}
+				value=${argument:1}
+				property=${argument:0:1}
 
-				[[ $2 == true ]] && separator_color='${tfc:-$fc}'
+				[[ $2 == true ]] && separator_color='${Afc:-$fc}'
 
-				[[ $property == l ]] && window_name_lenght=$value ||
-					app_separator="%{B${separator_color:-\$bg}}%{O$value}";;
+				case $property in
+					l) window_name_lenght=$value;;
+					s) app_separator="%{B${separator_color:-\$bg}}%{O$value}";;
+					*)
+						if [[ $value =~ [0-9] ]]; then
+							offset="%{O$value}"
+						else
+							[[ $value == p ]] && offset='${padding}' || offset='${inner}'
+						fi;;
+				esac
 		esac
 	done
 fi
