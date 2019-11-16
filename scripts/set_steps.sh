@@ -11,6 +11,6 @@ read x y <<< $(~/.orw/scripts/get_window_position.sh)
 set_size_hints true
 
 termite -t calibrate --class=input \
-	-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh calibrate ~/.orw/scripts/calibrate_steps.sh'"
+	-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh calibrate ~/.orw/scripts/calibrate_steps.sh'" 2> /dev/null
 
 set_size_hints false
