@@ -72,11 +72,11 @@ save_color() {
 	while [[ $(grep "^${!var_name} " $all_colors) && $overwrite_color != y ]]; do
 		read -rsn 1 -p "${!var_name^^} is already defined, would you like to overwrite it? [y/N]"$'\n' overwrite_color
 
-		[[ $overwrite_color == y ]] && sed -i "/^${!var_name} / s/#\w*$/${!var}/" $all_colors ||
+		[[ $overwrite_color == y ]] && sed -i "/^${!var_name} / s/#\w*$/#${!var: -6}/" $all_colors ||
 			read -p 'Enter new color name: ' $var_name
 	done
 
-	[[ $overwrite_color != y ]] && echo "${!var_name} ${!var}" >> $all_colors
+	[[ $overwrite_color != y || $add_color ]] && echo "${!var_name} ${!var}" >> $all_colors
 	[[ $change_color_name ]] && sed -i "/^$existing_color /d" $all_colors
 
 	eval ${var}_index=$(wc -l < $all_colors)
@@ -98,7 +98,7 @@ function get_color() {
 		[[ $property_to_check && ${base_colors[${property_to_check#br_}]} && $colorscheme ]] &&
 			color=$(awk '/^colors/ { print $('$color_index' + 1) }' $colorscheme)
 
-		[[ ! $color ]] && echo "Color doesn't exist, exiting.." && exit
+		[[ ! $color =~ ^# ]] && echo "Color doesn't exist, exiting.." && exit
 	fi
 
 	if [[ ${2:-$offset} ]]; then
@@ -283,8 +283,8 @@ function term() {
 			for terminal_color in $(awk '/^('${property//\*/.*}')/ && NR < 17 { print $1 }' $all_colors); do
 				get_color_properties $terminal_color
 
-				sed -i "/^color$((color_index - 1)) / s/#\w*/$new_color/" $term_conf
-				sed -i "${color_index}s/#\w*/$new_color/" $all_colors
+				sed -i "/^color$((color_index - 1)) / s/#\w*/#${new_color: -6}/" $term_conf
+				sed -i "${color_index}s/#\w*/#${new_color: -6}/" $all_colors
 			done
 	esac
 }
@@ -297,10 +297,16 @@ function bar() {
 	reload_bar=true
 	bar_modules=${bar_conf%/*}/module_colors
 
-	[[ ${#color} -gt 7 && $transparency == true ]] && local hex_range=8 || local hex_range=6
+	if [[ $transparency ]]; then
+		((${#color} > 7)) && local hex_range=8 ||
+			local hex_range=6 pattern='\(#\w*\)\w\{6\}' group='\1'
+	else
+		local hex_range=6
+	fi
+
 
 	if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
-		sed -i "/^$property/ s/#\w*/#${color: -$hex_range}/" $bar_conf $bar_modules
+		sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" $bar_conf $bar_modules
 	else
 		color_type=${property: -2:1}
 		[[ $property =~ [bf]g$ ]] && local color_format="%{${color_type^}#${color: -$hex_range}}"
@@ -310,16 +316,15 @@ function bar() {
 
 function ncmpcpp() {
 	reload_ncmpcpp=true
-	[[ ! $color_index ]] && get_color_properties
+	get_color_properties
 
 	if ((color_index)); then
 		case $property in
-			ec) local pattern='empty';;
 			c2) local pattern='color_2';;
-			pc)
-				local pattern='progressbar_color';;
-			pec)
-				local pattern='progressbar_elapsed_color';;
+			pc) local pattern='progressbar_color';;
+			etc) local pattern='empty_tag_color';;
+			pec) local pattern='progressbar_elapsed_color';;
+			npp) local pattern='now_playing_prefix';;
 			vc)
 				local pattern='visualizer_color'
 				local old_color_index=$(sed -n "/^#/! s/visualizer_color[^0-9]*\([0-9]\+\).*/\1/p" $ncmpcpp_conf)
@@ -328,7 +333,7 @@ function ncmpcpp() {
 			*)
 				case $property in
 					sc) local pattern='^header\|volume\|statusbar';;
-					mc) local pattern='song_list\|main\|prefix';;
+					mc) local pattern='main\|^[^n].*prefix';;
 					*) local pattern='selected_item';;
 				esac
 		esac
@@ -390,7 +395,7 @@ function fff() {
 		sel*) col=3;;
 	esac
 
-	col_index=${base_colors[${terminal_color#br_}]}
+	col_index=${base_colors[${color_name#br_}]}
 	((!col_index)) && col_index=9
 
 	sed -i "/FFF_COL$col/ s/[0-9]$/$((col_index - 1))/" $fff_conf
@@ -508,8 +513,9 @@ function get_ncmpcpp() {
 	while read -r ncmpcpp_property index; do
 		get_color_properties $index
 		echo $ncmpcpp_property $color
-	done <<< $(sed -n "/main\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
-		{ /^#/! s/\(\w\)[^_]*\(_\)\?\(e\)\?.*\([2ic]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
+	done <<< $(sed -n "/main\|now_playing\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
+		{ /^#/! s/\(\w\)[^_]*\(_\)\?\([2eipt]\)\?.*\([2pc]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
+		#{ /^#/! s/\(\w\)[^_]*\(_\)\?\(e\|p\)\?.*\([2cip]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
 }
 
 function repeat_pattern() {
@@ -582,8 +588,12 @@ while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			assign_value color ${!OPTIND} && shift
 			assign_offset ${!OPTIND} && shift
 
-			[[ ! $color ]] && color=$(parse_module)
-			[[ $module == term ]] && get_color $property || get_color
+			if [[ ! $color ]]; then
+				[[ $module == term && ${base_colors[${property#br_}]} ]] &&
+					get_color $property || color=$(parse_module)
+			fi
+
+			get_color
 
 			if [[ $offset ]]; then
 				unset color_{index,name}
@@ -594,19 +604,25 @@ while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			color_name=$OPTARG
 
 			if [[ $existing_color ]]; then
-				echo "Color $color is already defined under name $existing_color."
-				read -rsn 1 -p "Would yo like to change its name to $color_name? [y/N]"$'\n' change_color_name
+				if (( ${base_colors[${existing_color#br_}]} )); then
+					echo "Color $color is already defined as base ${existing_color^^} color."
+					read -rsn 1 -p "Would yo like to add it anyway? [y/N]"$'\n' add_color
+				else
+					echo "Color $color is already defined under name $existing_color."
+					read -rsn 1 -p "Would yo like to change its name to $color_name? [y/N]"$'\n' change_color_name
+				fi
 
-				[[ $change_color_name == y ]] && save_color
-				unset change_color_name
+				[[ ${add_color:-$change_color_name} == y ]] && save_color
+				unset add_color change_color_name
 			else
 				save_color
 			fi
 
+			$root/scripts/notify.sh -p "$icon color saved as <b>$color_name</b>."
+
 			[[ $set_color ]] && get_color $set_color || unset color{_{name,index},}
 			[[ $set_offset ]] && offset=$set_offset || unset offset
 
-			$root/scripts/notify.sh -p "$icon color saved as <b>$color_name</b>."
 			$update_colors;;
 		t)
 			transparency=true
@@ -616,23 +632,46 @@ while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			fi
 
 			[[ ${transparency_level:-$transparency_offset} ]] && shift;;
-			#if [[ $replace_color ]]; then
-			#	new_transparency_value=${transparency_level:-$transparency_offset}
-			#	unset transparency_{level,offset}
-			#fi;;
 		c)
 			assign_value color ${!OPTIND} && shift
 			assign_offset ${!OPTIND} pick_offset && shift
 
 			if [[ ! $color ]]; then
+				display_color_preview() {
+					convert -size 100x100 xc:$color $preview
+					feh -g 100x100 --title 'image_preview' $preview &
+				}
+
 				echo "Pick a color:"
 				color=$($pick_color)
 
 				read -srn 1 -p $'Offset color? [y/N]\n' offset_color
 
 				if [[ $offset_color == y ]]; then
-					read -p 'Enter offset: ' offset
-					color=$($colorctl -o $offset -h $color)
+					preview=/tmp/color_preview.png
+
+					read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+					~/.orw/scripts/set_class_geometry.sh -c image_preview -x $x -y $y
+					display_color_preview
+
+					while
+						read -rsn 1 -p $'Whole/properties/done? [w/p/D]\n' offset_type
+						[[ $offset_type == w ]]
+					do
+						read -p 'Enter offset: ' offset
+						color=$($colorctl -o $offset -h $color)
+
+						kill $!
+						display_color_preview
+					done
+
+					kill $!
+
+					[[ $offset_type == p ]] && $colorctl -P $color
+
+					fifo=/tmp/color_preview.fifo
+					read color < $fifo
+					unset offset
 				fi
 			fi
 
