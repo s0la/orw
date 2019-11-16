@@ -1,7 +1,7 @@
 #!/bin/bash
 
 fifo=$1
-module=m
+bg='${msbg:-${mpbg:-$sbg}}'
 
 current_mode=controls
 [[ $current_mode == song_info ]] && mode=controls || mode=song_info
@@ -14,7 +14,9 @@ for m in ${2//,/ }; do
 		t) modules+="$toggle";;
 		p*)
 			modules+='$progressbar'
-			progression_step=${m#p};;
+			((${#m} == 1)) &&
+				progression_step=5 ||
+				progression_step=${m#p};;
 		c) modules+='$controls';;
 		i) modules+="$info";;
 		v) modules+='$mpd_volume';;
@@ -57,20 +59,22 @@ get_song_info() {
 
 if [[ $status == playing ]]; then
 	get_progressbar() {
-		read elapsed_percentage remaining_percentage <<< $(mpc | awk -F '[(%]' \
-			'NR == 2 { ps = '${progression_step:=5}'; t = 100 / ps; e = sprintf("%.0f", $(NF - 1) / ps); print e, t - e }')
-
 		draw() {
-			for p in $(seq $2); do
+			local var=$1_percentage
+
+			for p in $(seq ${!var}); do
 				((percentage += progression_step))
 				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
 			done
 		}
 
-		draw 'elapsed' $elapsed_percentage
-		draw 'remaining' $remaining_percentage
+		read elapsed_percentage remaining_percentage <<< $(mpc | awk -F '[(%]' \
+			'NR == 2 { ps = '$progression_step'; t = 100 / ps; e = sprintf("%.0f", $(NF - 1) / ps); print e, t - e }')
 
-		echo -e "\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner"
+		draw elapsed
+		draw remaining
+
+		echo -e "$bg\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner"
 	}
 
 	get_volume() {
@@ -78,35 +82,63 @@ if [[ $status == playing ]]; then
 		eval args=( $(${0%/*}/volume.sh mpd $1) )
 
 		if [[ $current_mpd_volume_mode == duo ]]; then
-			echo -e "\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner"
+			echo -e "$bg\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner"
 		else
-			echo -e "\$inner${args[*]}\$inner"
+			echo -e "$bg\$inner${args[*]}\$inner"
 		fi
 	}
 fi
 
-if [[ $current_mode == controls ]]; then
+get_controls() {
 	[[ $status == playing ]] && toggle_icon= || toggle_icon=
 
 	stop="%{A:mpc -q stop; echo 'PROGRESSBAR' > $fifo;"
 	stop+="echo 'SONG_INFO not playing' > $fifo;"
 	stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
 
-	controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
+	controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
+	controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
+	controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 
-	echo -e "CONTROLS \$inner\${msfg:-\$sfg}$controls\${inner}" > $fifo
-fi
+	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}\$inner"
+	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
+	#controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
 
-if [[ $status == playing ]]; then
-	echo -e "SONG_INFO $(get_song_info)"
+	echo -e "$bg\$inner\${msfg:-\$sfg}$controls\${inner}"
+}
 
-	if [[ $current_mode == controls ]]; then
-		echo -e "PROGRESSBAR $(get_progressbar)"
-		echo -e "MPD_VOLUME $(get_volume $3)"
-	fi
-fi > $fifo
+for m in ${2//,/ }; do
+	case $m in
+		t) modules+="$bg$toggle";;
+		p*)
+			modules+='$progressbar'
+			((${#m} == 1)) && progression_step=5 || progression_step=${m#p}
+
+			[[ $status == playing && $current_mode == controls ]] &&
+				echo -e "PROGRESSBAR $(get_progressbar)" > $fifo;;
+		c)
+			modules+='$controls'
+
+			[[ $current_mode == controls ]] &&
+				echo -e "CONTROLS $(get_controls)" > $fifo;;
+		i)
+			modules+="$bg$info"
+
+			[[ $status == playing ]] &&
+				echo -e "SONG_INFO $(get_song_info)" > $fifo;;
+		v)
+			modules+='$volume'
+
+			[[ $status == playing && $current_mode == controls ]] &&
+				echo -e "MPD_VOLUME $(get_volume $3)" > $fifo;;
+		P) bg='${mpbg:-$pbg}';;
+		T) show_time=true;;
+		d*) delay=${m#d};;
+		s*)
+			scroll=true
+			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
+	esac
+done
 
 [[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$info"
-echo -e "\${msbg:-\${mpbg:-\$sbg}}\${padding}${toggled_modules:-$modules}\$padding \$separator"
+echo -e "\${padding}${toggled_modules:-$modules}\$padding \$separator"
