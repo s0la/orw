@@ -5,12 +5,12 @@ get_bars() {
 }
 
 kill_bar() {
-	kill $(ps aux | awk '! /barctl.sh/ { if(/-n '$bar'($| )/) print $2 }' | xargs) &> /dev/null
+	kill $(ps aux | awk '!/barctl.sh/ { if(/-n '$bar'($| )/) print $2 }' | xargs) &> /dev/null
 }
 
 kill_bars() {
 	for bar in "${bars[@]}"; do
-		kill $(ps aux | awk '! /barctl.sh/ { if(/-n '$bar'$?/) print $2 }' | xargs) &> /dev/null
+		kill $(ps aux | awk '!/barctl.sh/ { if(/-n '$bar'$?/) print $2 }' | xargs) &> /dev/null
 	done
 }
 
@@ -28,9 +28,6 @@ monitor_memory_consumption() {
 		ram_usage_delta=$(((initial_ram_usage - current_ram_usage) * 2))
 
 	((ram_usage_delta >= ${ram_tolerance:-10})) && $0
-	#if ((ram_usage_delta >= ${ram_tolerance:-10})); then
-	#	$0 -d
-	#fi
 }
 
 initial_ram_usage=$(${0%/*}/check_memory_consumption.sh Xorg)

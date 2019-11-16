@@ -76,7 +76,7 @@ case $1 in
 				rbw)
 					px=px
 					pattern=border
-					rofi_conf=theme.rasi;;
+					[[ ! $rofi_mode =~ dmenu ]] && rofi_conf=theme.rasi;;
 				rln)
 					pattern=lines
 					rofi_conf=config.rasi;;
