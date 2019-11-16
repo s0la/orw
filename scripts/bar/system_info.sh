@@ -104,11 +104,7 @@ case $1 in
 			id=$(wmctrl -l | awk '/DROPDOWN/ {print $1}')
 
 			if [[ $id ]]; then
-				if [[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]]; then
-					fg="\${Apfg:-\${$pfg}}"
-				else
-					fg="\${Asfg:-\${$sfg}}"
-				fi
+				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg='${pfg}' || fg='${sfg}'
 
 				icon=%{I-}%{I-}
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
