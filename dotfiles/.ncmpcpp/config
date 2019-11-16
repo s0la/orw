@@ -1,45 +1,46 @@
 song_status_format = "{%a - %t}"
-song_list_format = "$1{%a - %t} $R {%l}"
-alternative_header_first_line_format = "{$5%t$/b}"
-alternative_header_second_line_format = "$7{$b%a$/b}$9 - $5{%b}$9 $8{(%y)}"
-
-message_delay_time = "1"
-playlist_display_mode = "classic"
-playlist_disable_highlight_delay = 1
-
-#now_playing_prefix = "$1»$1 "
-selected_item_prefix = "$1"
-browser_playlist_prefix = "$1>$1 "
+song_list_format = "{%a - %t} $R {%l}"
 song_window_title_format = "{%a - }{%t}|{%f}"
 
-song_columns_list_format = "$R(10)[white]{l}(40){a} > {t}]"
-discard_colors_if_item_is_selected = "yes"
-
-user_interface = "classic" (classic/alternative)
-display_remaining_time = "yes"
-statusbar_visibility = "yes"
-header_visibility = "no"
-titles_visibility = "no"
-cyclic_scrolling = "yes"
 external_editor = "vim"
-use_console_editor = "yes" (set to yes, if your editor is console app)
+user_interface = "classic"
+playlist_display_mode = "classic"
+
+message_delay_time = "1"
+playlist_disable_highlight_delay = 1
+
+now_playing_prefix = "$(2)"
+now_playing_suffix = "$0"
+selected_item_prefix = "$(1)"
+#current_item_prefix = "$(2)"
+current_item_prefix = "$(1)$r"
+browser_playlist_prefix = "$1»$1 "
 
 colors_enabled = "yes"
-empty_tag_color = "1"
-header_window_color = "9"
+cyclic_scrolling = "yes"
+use_console_editor = "yes"
+discard_colors_if_item_is_selected = "yes"
+
+header_visibility = "no"
+titles_visibility = "no"
+statusbar_visibility = "yes"
+display_remaining_time = "yes"
+
 volume_color = "9"
+statusbar_color = "9"
+header_window_color = "9"
+main_window_color = "1"
+empty_tag_color = "1"
+color2 = "4"
+
+color1 = "white"
 state_line_color = "white"
 state_flags_color = "white"
-main_window_color = "1"
-color1 = "white"
-color2 = "4"
-current_item_prefix = "$1$r"
-progressbar_color = "1"
-statusbar_color = "9"
-alternative_ui_separator_color = "black"
 window_border_color = "white"
 active_window_border = "cyan"
+alternative_ui_separator_color = "black"
 
+progressbar_color = "1"
 progressbar_look = "━━━"
 progressbar_elapsed_color = "11"
 
