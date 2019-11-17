@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [[ -z $@ ]]; then
-	echo -e 'fill\nmove\nresize\nevenly\ncenter\nleft half\nright half\nfullscreen\nsave window\nrestore window'
+	echo -e 'tile\nmove\nresize\nevenly\ncenter\nleft half\nright half\nfullscreen\nsave window\nrestore window'
 else
 	windowctl=~/.orw/scripts/windowctl.sh
 
 	case "$@" in
-		fill) $windowctl $@;;
+		tile) $windowctl $@;;
 		center*) $windowctl -c;;
 		evenly*) $windowctl resize -h ${@#* } -v ${@#* };;
 		left*) $windowctl move -v 1/1 -h 1/1 resize -h 1/2 -v 1/1;;

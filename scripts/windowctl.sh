@@ -172,12 +172,12 @@ set_base_values() {
 
 	update_properties
 
-	if [[ $option == fill ]]; then
+	if [[ $option == tile ]]; then
 		original_properties[1]=$x
 		original_properties[2]=$y
 	fi
 
-	[[ $option != fill ]] && min_point=$((original_min_point + offset))
+	[[ $option != tile ]] && min_point=$((original_min_point + offset))
 
 	get_bar_properties add
 }
@@ -245,8 +245,7 @@ sort_windows() {
 		else { if("'$1'" ~ /[LTlt]/) sc = $i + $(i + 2) }; print sc, $0 }' | sort $reverse -nk 1
 }
 
-fill() {
-
+tile() {
 	local window_count
 
 	min_point=$offset
@@ -290,28 +289,31 @@ fill() {
 				ws = $si; we = ws + $(si + 2)
 				if ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) print $0
 			}' | sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)) | awk '
-					function assign(w_index) {
-						bb = ($1 ~ "0x") ? 0 : $NF
-						i = (w_index) ? w_index : (l) ? l : 1
-						mix_a[i] = $1 " " $pi " " $pi + $(pi + 2) + bb
-					}
+				function assign(w_index) {
+					bb = ($1 ~ "0x") ? 0 : $NF
+					i = (w_index) ? w_index : (l) ? l : 1
+					mix_a[i] = $1 " " $pi " " $pi + $(pi + 2) + bb
+				}
 
-					BEGIN { pi = '$index' + 1 }
-					{
-						if(NR == 1) {
-							assign()
+				BEGIN { pi = '$index' + 1 }
+				{
+					if(NR == 1) {
+						assign()
+					} else {
+						l = length(mix_a)
+						split(mix_a[l], mix)
+
+						if($pi == mix[2]) {
+							if($pi + $(pi + 2) > mix[3]) assign()
 						} else {
-							l = length(mix_a)
-							split(mix_a[l], mix)
-
-							if($pi == mix[2]) {
-								if($pi + $(pi + 2) > mix[3]) assign()
-							} else {
-								assign(l + 1)
-							}
+							assign(l + 1)
 						}
 					}
-					END { for (w in mix_a) { print mix_a[w] } }')
+				}
+				END { for (w in mix_a) { print mix_a[w] } }')
+
+	((${properties[index]} != min_point || ${properties[index]} + ${properties[index + 2]} != max_point)) &&
+		local inconsistent=true
 
 	if [[ $inconsistent ]]; then
 		((max_point < original_max_point && current + 1 != last_bar_index)) && local last_offset=$margin
@@ -334,7 +336,7 @@ fill() {
 	fi
 }
 
-fill_adjucent() {
+tile_adjucent() {
 	if [[ ! $orientation ]]; then
 		((index == 1)) && orientation=h || orientation=v
 	fi
@@ -347,7 +349,7 @@ fill_adjucent() {
 		((new_property != old_property)) && break
 	done
 
-	option=fill
+	option=tile
 	set_base_values $orientation
 
 	get_adjucent() {
@@ -391,7 +393,7 @@ fill_adjucent() {
 		id=${properties[0]}
 		original_properties=( ${properties[*]} )
 
-		fill
+		tile
 
 		update_properties
 		adjucent_windows+=( "${properties[*]}" )
@@ -458,7 +460,7 @@ while ((argument_index <= $#)); do
 		[[ $option ]] && previous_option=$option
 		option=$argument
 
-		if [[ $option == fill ]]; then
+		if [[ $option == tile ]]; then
 			arguments=${@:argument_index}
 			orientations="${arguments%%[-mr]*}"
 			((argument_index += (${#orientations} + 1) / 2))
@@ -479,7 +481,7 @@ while ((argument_index <= $#)); do
 
 			for orientation in $orientations; do
 				set_base_values $orientation
-				fill
+				tile
 			done
 		else
 			[[ ! $previous_option =~ (resize|move) ]] && set_base_values $display_orientation
@@ -834,5 +836,5 @@ generate_printable_properties "${properties[*]}"
 apply_new_properties
 
 if [[ $adjucent ]]; then
-	fill_adjucent
+	tile_adjucent
 fi

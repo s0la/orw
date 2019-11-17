@@ -62,14 +62,14 @@ evaluate() {
 			option=resize
 			multi=-$input;;
 		[hv])
-			if [[ $option == fill || $center ]]; then
+			if [[ $option == tile || $center ]]; then
 				orientation=$input
 				stop=true
 			else
 				[[ $multi ]] && orientation=$input || orientation=-$input
 			fi;;
 		[fF])
-			option=fill
+			option=tile
 			if [[ $input == F || $orientation ]]; then
 				orientation=${orientation#-}
 				stop=true

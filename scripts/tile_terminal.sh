@@ -24,7 +24,7 @@ done <<< $(~/.orw/scripts/get_bar_info.sh)
 replace default
 
 ~/.orw/scripts/set_class_geometry.sh -c custom_size -w ${x:-${x_offset-70}} -h $((${y:-${y_offset-70}} + max_width))
-termite --class=custom_size -t termite -e "bash -c '~/.orw/scripts/windowctl.sh $arguments fill;bash'" &> /dev/null &
+termite --class=custom_size -t termite -e "bash -c '~/.orw/scripts/windowctl.sh $arguments tile;bash'" &> /dev/null &
 
 sleep 1
 replace
