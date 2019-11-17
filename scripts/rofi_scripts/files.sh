@@ -91,7 +91,6 @@ function extract_archive() {
 			*[bgx]z*)
 				[[ $regex ]] && var=regex || var=archive_single
 				path_levels=${!var//[^\/]/}
-				#path_levels=${archive_single//[^\/]/}
 				level_count=${#path_levels}
 
 				[[ $archive_single =~ /$ ]] && ((level_count--))
@@ -407,8 +406,6 @@ if [[ ${option% *} ]]; then
 								set archive_single "$@" || set regex "--wildcards $@"
 							un_set list
 						else
-							#[[ $list ]] && set regex "$@" ||
-							#	set regex "'$current'/$@"
 							set regex "'$current'/$@"
 							set options options
 							unset back
