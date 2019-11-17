@@ -8,7 +8,7 @@ khl="$(~/.orw/scripts/colorctl.sh -o -$delta -h ${rc:0:6})${rc: -2}"
 bshl="$(~/.orw/scripts/colorctl.sh -o +$delta -h ${rc:0:6})${rc: -2}"
 
 i3lock --blur $blur \
-	   --verifsize=16 \
+	   --verifsize=13 \
 	   --veriftext="..." \
 	   --radius $radius \
 	   --ring-width $width \
