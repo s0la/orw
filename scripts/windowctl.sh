@@ -504,6 +504,11 @@ while ((argument_index <= $#)); do
 						exit
 					else
 						current_desktop=$optarg
+
+						if [[ ! $properties ]]; then
+							id=$(get_windows | awk 'NR == 1 { print $1 }')
+							set_windows_properties
+						fi
 					fi
 				else
 					[[ $argument =~ [LR] ]] && set_orientation_properties h || set_orientation_properties v
