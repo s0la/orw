@@ -12,7 +12,7 @@ populate_menu 'rofi\nbash\ntmux\nbuttons\nfolders\ntitlebar'
 			case $toggle in
 				rofi) populate_menu 'mode\nprompt';;
 				mode) populate_menu 'list\ndmenu\nfullscreen';;
-				prompt) prompt='prompt -c' && populate_menu 'menu\ndmenu';;
+				prompt) prompt='prompt -c' && populate_menu 'list\ndmenu';;
 				*)
 					~/.orw/scripts/toggle.sh rofi $prompt $toggle
 					exit;;
