@@ -147,7 +147,7 @@ case $1 in
 		case $1 in
 			hw) pattern=handle.width;;
 			bw) pattern=^border.width;;
-			cw) pattern=client.*.width;;
+			cw) pattern='client.*.(width|height)';;
 			jt) pattern=label.*justify;;
 			pw) pattern=^padding.width;;
 			ph) pattern=^padding.height;;
