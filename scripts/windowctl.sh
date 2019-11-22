@@ -380,7 +380,6 @@ tile_adjucent() {
 						we = ws + $(si + 2)
 						cp = (r) ? $i : $i + $(i + 2)
 
-						#print cp, c, cws, ws "        " cwe, we
 						if((cp == c) && ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe))) print
 					}
 				}
