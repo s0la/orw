@@ -36,6 +36,7 @@ awk -i inplace '{ \
 			} else {
 				if("'$1'" == "rofi") {
 					cv = gensub("[^0-9]*([0-9]+).*", "\\1", 1)
+					f = "%d"
 				} else {
 					if(/^blur/) {
 						pa = "?"
