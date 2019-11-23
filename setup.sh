@@ -124,7 +124,7 @@ function deps() {
 		#Thunar 1.6
 		(wget https://aur.archlinux.org/cgit/aur.git/snapshot/thunar-gtk2.tar.gz -O ~/Downloads/thunar.tar.xz
 		tar xfC ~/Downloads/thunar.tar.xz ~/Downloads
-		cd ~/Downloads/thunar
+		cd ~/Downloads/thunar-gtk2
 		makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
 
 		echo 'cleaning..'
