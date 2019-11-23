@@ -33,12 +33,12 @@ get_app() {
 	cd && rm -rf ~/Downloads/$3) &> /dev/null
 }
 
-function apps() {
-	handle_failure() {
-		echo "${1:-Failed to install dependencies, please check your internet connection and available disk space, and try again.}"
-		exit
-	}
+handle_failure() {
+	echo "${1:-Failed to install dependencies, please check your internet connection and available disk space, and try again.}"
+	exit
+}
 
+function deps() {
 	install_termite() {
 		echo 'installing termite..'
 
@@ -90,12 +90,11 @@ function apps() {
 		#termite installation
 		install_termite
 
-		#cleaning
-		sudo apt clean
-
 		#dunst dependencies
 		sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
 
+		#cleaning
+		echo 'cleaning..'
 		sudo apt clean
 	elif [[ $(which pacman 2> /dev/null) ]]; then
 		generate_mirrors() {
@@ -112,7 +111,7 @@ function apps() {
 			done
 		}
 
-		generate_mirrors
+		#generate_mirrors
 
 		sudo pacman --noconfirm -Syy archlinux-keyring &> /dev/null
 		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> /dev/null
@@ -128,6 +127,7 @@ function apps() {
 		cd ~/Downloads/thunar
 		makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
 
+		echo 'cleaning..'
 		confirm 'y' 'y' | sudo pacman -Scc &> /dev/null || handle_failure 'Pacman error.'
 
 		( if [[ ! -f /lib/libreadline.so.8 ]]; then
@@ -139,7 +139,9 @@ function apps() {
 		echo "Try installing them manually, then run './setup.sh apps orw fonts man'"
 		exit
 	fi
+}
 
+function apps() {
 	#compton with kawase blur
 	get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
 
@@ -161,7 +163,7 @@ function apps() {
 	#colorpicker installation
 	get_app install ym1234 colorpicker || handle_failure "Failed to install colorpicker."
 
-	#i3lock installation
+	#i3lock-color installation
 	get_app install PandorasFox i3lock-color "autoreconf --force --install" \
 		"rm -rf build/" "mkdir -p build" "cd build/" "../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers"
 }
@@ -194,8 +196,8 @@ function firefox() {
 function orw() {
 	echo 'setting up orw..'
 
-	[[ -d ~/.icons ]] || mkdir ~/.icons
 	[[ -d ~/.fonts ]] || mkdir ~/.fonts
+	[[ -d ~/.icons ]] || mkdir ~/.icons
 	[[ -d ~/.themes ]] || mkdir ~/.themes
 
 	firefox
@@ -214,8 +216,9 @@ function orw() {
 	sudo ln -s $destination/dotfiles/services/* $services_dir
 
 	#deoplete - neovim completion plugin
-	get_app download Shougo deoplete.nvim 'cp -r {autoload,*plugin} ~/.config/nvim' || handle_failure
-	nvim -c UpdateRemotePlugins +qall!
+	get_app download Shougo deoplete.nvim 'cp -r {autoload,*plugin} ~/.config/nvim' ||
+		handle_failure 'Failed to install deoplete.'
+	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.mpd/mpd.conf)
 	sed -i "s/$ex_user/$(whoami)/" $destination/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.mpd/mpd.conf,.ncmpcpp/config*,services/change_wallpaper.service}}
