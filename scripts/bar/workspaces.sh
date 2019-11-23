@@ -23,9 +23,12 @@ for workspace_index in $(seq $workspace_count); do
 			{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')\${padding}";;
 		n) label="$offset$workspace_index$offset";;
 		*)
-			p_icon=""
-			[[ $2 == inner ]] && s_icon="" || s_icon=""
-			s_icon=""
+			case ${1: -1} in
+				e) p_icon="" s_icon="";;
+				h) p_icon="" s_icon="";;
+				*) p_icon="" s_icon="";;
+			esac
+
 			icon="${current}_icon"
 			label="$offset%{I-3}${!icon}%{I-}$offset";;
 	esac
