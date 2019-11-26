@@ -77,7 +77,7 @@ function deps() {
 
 	echo 'installing dependencies..'
 
-	common_apps=( cmake git neovim tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m thunar ffmpeg acpi )
+	common_apps=( cmake git neovim tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi )
 
 	if [[ $(which apt 2> /dev/null) ]]; then
 		sudo apt update &> /dev/null
@@ -92,7 +92,12 @@ function deps() {
 
 		#dunst dependencies
 		sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
-
+		
+		#Thunar 1.6
+		wget http://ftp.br.debian.org/debian/pool/main/t/thunar/thunar_1.6.11-1_amd64.deb -O ~/Downloads/thunar.deb
+		sudo dpkg -i ~/Downloads/thunar.deb
+		rm ~/Downloads/thunar.deb
+		
 		#cleaning
 		echo 'cleaning..'
 		sudo apt clean
@@ -126,6 +131,7 @@ function deps() {
 		tar xfC ~/Downloads/thunar.tar.xz ~/Downloads
 		cd ~/Downloads/thunar-gtk2
 		makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
+		rm -rf ~/Downloads/thunar-gtk2
 
 		echo 'cleaning..'
 		confirm 'y' 'y' | sudo pacman -Scc &> /dev/null || handle_failure 'Pacman error.'
