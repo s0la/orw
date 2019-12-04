@@ -10,6 +10,10 @@ if [[ $(sed -n '$s/.*"\(.*\)"/\1/p' .config/rofi/main.rasi) == dmenu ]]; then
 
 	while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
 		if ((position)); then
+			if ((adjustable_width)); then
+				read bar_width bar_height bar_x bar_y < ~/.config/orw/bar/geometries/$bar_name
+			fi
+
 			current_bar_height=$((bar_y + bar_height + frame + 2))
 
 			if ((current_bar_height > y_offset)); then
