@@ -99,8 +99,8 @@ rofi() {
 
 			sed -i "/import/ s/ .*/ \"$new_mode\"/" ~/.config/rofi/main.rasi
 
-			[[ $width ]] && ~/.orw/scripts/borderctl.sh rbw $width
-			[[ $property ]] && ~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P $property
+			~/.orw/scripts/borderctl.sh -c list rbw $width
+			~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P $property
 		fi
 	fi
 }
