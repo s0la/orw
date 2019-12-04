@@ -69,3 +69,5 @@ for bar in "${bars[@]}"; do
 	kill_bar
 	bash ~/.config/orw/bar/configs/$bar &
 done
+
+sed -i "/bar/ s/\w* &/${@: -1} \&/" ~/.config/openbox/autostart.sh
