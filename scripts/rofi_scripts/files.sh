@@ -121,6 +121,23 @@ function extract_archive() {
 	un_set archive archive_single password
 }
 
+check_git_files() {
+	aggregate_files() {
+		local field=$1
+		awk -F '['\''/]' '{ if(o !~ "\\|"$'$1'"($|\\|)") o = o "|" $'$1' } END { print substr(o, 2) }'
+	}
+
+	git="$current"
+	sub_dir=$(git rev-parse --show-prefix)
+	sub_depth=$(wc -L <<< ${sub_dir//[^\/]/})
+
+	staged=$(git diff --cached --name-only . | aggregate_files $((1 + sub_depth)))
+	unstaged=$(git add . -n | aggregate_files $((2 + sub_depth)))
+
+	set staged
+	set unstaged
+}
+
 function add_music() {
 	[[ ${music_directory: -1} == '/' ]] && music_directory=${music_directory%/*}
 
@@ -150,12 +167,16 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/ablive/Downloads/orw.vim"
+current="/home/sola/dir"
 torrent=""
 selection=""
 multiple_files=""
 music_directory="/home/ablive/Music"
 regex=""
+
+git=""
+staged=""
+unstaged=""
 
 list=""
 archive=""
@@ -170,23 +191,52 @@ echo -e 
 if [[ -z $@ ]]; then
 	set current "$HOME"
 elif [[ $file ]]; then
-	if [[ $selection ]]; then
-		[[ ${file: -1} == / ]] &&
-			file=$(list_archive | awk '/ '${file//\//\\/}'/ { sub("^[^ ]* ", "|"); f = f $0 } END { print substr(f, 2) }')
+	toggle_file() {
+		if [[ "${!1}" =~ \|"$file"$ ]]; then local toggle_file="|$file"
+		elif [[ "${!1}" == "$file" ]]; then local toggle_file="$file"
+		else local toggle_file="$file|"; fi
 
-		if [[ "$multiple_files" =~ "$file" ]]; then
-			if [[ "$multiple_files" =~ \|"$file"$ ]]; then toggle_file="|$file"
-			elif [[ "$multiple_files" == "$file" ]]; then toggle_file="$file"
-			else toggle_file="$file|"; fi
+		eval "$1=\${$1//"$toggle_file"}"
+		set $1
+	}
 
-			multiple_files="${multiple_files//"$toggle_file"/}"
+	if [[ $git ]]; then
+		cd "$current"
+
+		if [[ "$unstaged" =~ (^|\|)"$file"(\||$) ]]; then
+
+			toggle_file unstaged
+
+			((${#staged})) && staged+="|$file" || staged="$file"
+			set staged
+
+			git add -A "$file"
 		else
-			((${#multiple_files})) && multiple_files+="|$file" || multiple_files="$file"
-		fi
+			toggle_file staged
 
-		set multiple_files
+			((${#unstaged})) && unstaged+="|$file" || unstaged="$file"
+			set unstaged
+
+			commit_count=$(git rev-list --all --count)
+			((commit_count)) && command='restore --staged' || command='rm --cached'
+
+			git $command "$file" --quiet
+		fi
 	else
-		set current "$current/$file"
+		if [[ $selection ]]; then
+			[[ ${file: -1} == / ]] &&
+				file=$(list_archive | awk '/ '${file//\//\\/}'/ { sub("^[^ ]* ", "|"); f = f $0 } END { print substr(f, 2) }')
+
+			if [[ "$multiple_files" =~ "$file" ]]; then
+				toggle_file multiple_files
+			else
+				((${#multiple_files})) && multiple_files+="|$file" || multiple_files="$file"
+			fi
+
+			set multiple_files
+		else
+			set current "$current/$file"
+		fi
 	fi
 fi
 
@@ -214,6 +264,9 @@ if [[ ${option% *} ]]; then
 		sort)
 			set options sub_options
 			echo -e 'by_date\nby_size\nby_type\nreverse\nalphabetically';;
+		git)
+			set options sub_options
+			echo -e 'show\nhide';;
 		remove)
 			set options sub_options
 			echo -e 'yes\nno';;
@@ -286,6 +339,17 @@ if [[ ${option% *} ]]; then
 			[[ $options =~ options ]] && un_set options
 
 			case $option in
+				show)
+					cd "$current"
+					check_git_files
+					set git;;
+				hide)
+					set current "$git"
+					un_set git un{staged,};;
+				commit)
+					cd $git
+					git commit -m "${arg//\"/}" --quiet 
+					check_git_files;;
 				all) [[ $all ]] && un_set all || set all '-a';;
 				yes)
 					set_multiple_files "$current/"
@@ -437,13 +501,18 @@ if [[ $options == options ]]; then
 	options+=( 'set_as_wallpaper_directory' 'view_all_images' )
 
 	options+=( 'create_directory' )
+
+	cd "$current"
+	repo=$(git status -sb | wc -l)
+	[[ $git ]] && options+=( 'commit' )
+	[[ $git ]] || ((repo)) && options+=( 'git' )
 fi
 
-if [[ ! -d "$current" && ! $selection ]]; then
+if [[ ! -d "$current" && ! $selection && ! $git ]]; then
 	if [[ $back == true ]]; then
 		back
 	else
-		if [[ ! $list && ! $option == remove ]]; then
+		if [[ ! $list && ! $option == remove && ! $git ]]; then
 			options+=( 'move' 'copy' 'remove' 'xdg-open' )
 			mime=$(file --mime-type -b "$current")
 
@@ -469,20 +538,33 @@ if [[ -d "$current" && ! $options ]]; then
 	echo -e 
 	echo -e 
 
-	while read -r s file; do
-		if [[ $file ]]; then
-			if [[ $selection ]]; then
-				((s)) && icon= || icon=
-			else
-				if [[ -d "$current/$file" ]]; then
-					icon=
-				else
-					icon=
-				fi
-			fi
+	if [[ $git ]]; then
+		print_git_files() {
+			[[ $1 =~ ^un ]] && local icon= || local icon=
 
-			echo -e "$icon $file"
-		fi
-	done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
-		{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
+			for file in ${!1//|/ }; do
+				[[ $1 == staged && "$unstaged" =~ (^|\|)"$file"(\||$) ]] || echo $icon $file
+			done
+		}
+
+		print_git_files staged
+		print_git_files unstaged
+	else
+		while read -r s file; do
+			if [[ $file ]]; then
+				if [[ $selection ]]; then
+					((s)) && icon= || icon=
+				else
+					if [[ -d "$current/$file" ]]; then
+						icon=
+					else
+						icon=
+					fi
+				fi
+
+				echo -e "$icon $file"
+			fi
+		done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
+			{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
+	fi
 fi
