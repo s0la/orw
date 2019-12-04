@@ -39,16 +39,11 @@ get_rgb() {
 }
 
 get_hex() {
-	for rgb_value_index in ${!rgb_values[*]}; do
-		rgb_value=${rgb_values[rgb_value_index]}
+	for color in $rgb; do
+		hex+=$(printf "%.2x" $color)
+		full_rgb+="$((color ${sign:-+} offset))${separator-,}"
 
-		if ((${section-$rgb_value_index} == rgb_value_index)); then
-			((rgb_value ${sign:-+}= offset))
-			((offset -= degradation))
-		fi
-
-		[[ $convert ]] && hex+=$(printf "%.2x" $rgb_value)
-		full_rgb+="$rgb_value${separator-,}"
+		((offset -= degradation))
 	done
 }
 
@@ -89,37 +84,71 @@ while getopts :o:pdcs:S:r:h:P:Bb flag; do
 			[[ $brightness ]] && calculate_brightness_index
 			[[ $convert ]] && echo $rgb || echo "#$full_hex";;
 		P)
+			display_preview() {
+				preview_color="#$hex"
+				convert -size 100x100 xc:$preview_color $preview
+				feh -g 100x100 --title 'image_preview' $preview &
+			}
+
 			color=$OPTARG
 			[[ $color =~ ^# ]] && get_rgb ${color:1}
 
 			rgb=${rgb-$color}
 			rgb_values=( ${rgb//${separator:=,}/ } )
 
-			((${#rgb_values[*]} > 3)) && transparency=${rgb_values[0]}$separator
+			((${#rgb_values[*]} > 3)) && transparency=${rgb_values[0]}
 			rgb="${rgb_values[*]: -3}"
+			hsv=( $(~/.orw/scripts/rgb_to_hsv.py "$rgb") )
+
+			read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+			~/.orw/scripts/set_class_geometry.sh -c image_preview -x $x -y $y
+
+			preview=/tmp/color_preview.png
+			get_hex
+			display_preview
 
 			while
 				clear
 
-				for property in hue saturation value; do
-					((property_index++))
-					echo "$property_index) $property"
+				for property in hue saturation value done; do
+					echo -n "${property:0:1}) $property "
+					((hsv_index < 3)) && echo -e "(${hsv[hsv_index]})"
+					((hsv_index++))
 				done
 
-				read -rsn 1 -p $'\n#?\n' property_index
-				read -p $'\nOffset: ' offset
+				read -rsn 1 -p $'\n\n' choice
 
-				rgb="$(~/.orw/scripts/hsv.py "$rgb" $((property_index - 1)) $offset)"
-				fifo=/tmp/color_preview.fifo
-				echo $rgb > $fifo
-				unset property_index hex full_rgb
-
-				read -rsn 1 -p $'Continue: [y/N]\n' cont
-				[[ $cont == y ]]
+				[[ $choice != d ]]
 			do
-				continue
+				read -p $'Offset: ' offset
+
+				case $choice in
+					h) property_index=0;;
+					s) property_index=1;;
+					v) property_index=2;;
+				esac
+
+				hsv_rgb="$(~/.orw/scripts/hsv_to_rgb.py "$rgb" $property_index $offset)"
+				hsv=( ${hsv_rgb%-*} )
+				rgb=${hsv_rgb#*-}
+
+				[[ $preview_color ]] && kill $!
+
+				unset property_index hex full_rgb hsv_index
+				get_hex
+				display_preview
 			done
 
-			echo $transparency${rgb// /$separator}
+			kill $!
+
+			if [[ $transparency ]]; then
+				rgb="$transparency $rgb"
+				unset hex
+				get_hex
+			fi
+
+			fifo=/tmp/color_preview.fifo
+			[[ ! -p $fifo ]] && mkfifo $fifo
+			echo "#$hex" > /tmp/color_preview.fifo &
 	esac
 done
