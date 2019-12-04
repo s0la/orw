@@ -675,7 +675,8 @@ while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				fi
 			fi
 
-			get_color $color $pick_offset;;
+			get_color $color $pick_offset
+			unset transparency_{level,offset};;
 		p)
 			property=${OPTARG//,/|}
 
@@ -858,8 +859,16 @@ if [[ $replace_color ]]; then
 				if [[ $replace_module == lock ]]; then
 					sed -i "s/${color:3}${color:1:2}/${new_color:3}${new_color:1:2}/" ${!config_file}
 				else
+					if [[ $transparency ]]; then
+						((${#new_color} < 8)) && color=${color: -6}
+					else
+						new_color=${new_color: -6}
+					fi
+
 					[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
-					sed -i "s/$color/$new_color/" ${!config_file} $bar_module_colors
+					sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
+					#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
+					#sed -i "s/$color/$new_color/" ${!config_file} $bar_module_colors
 				fi
 			fi
 		fi
