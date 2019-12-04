@@ -26,6 +26,7 @@ for workspace_index in $(seq $workspace_count); do
 			case ${1: -1} in
 				e) p_icon="" s_icon="";;
 				h) p_icon="" s_icon="";;
+				d) p_icon="" s_icon="●";;
 				*) p_icon="" s_icon="";;
 			esac
 
@@ -48,9 +49,7 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-#[[ $1 == i ]] && workspaces="$bg\$inner${workspaces%\%*}\$inner"
-#[[ $1 == i ]] && workspaces="$bg\${padding}${workspaces%\%*}\${padding}"
-[[ $1 == i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
+[[ $1 =~ ^i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
 
 echo -e "%{A4:wmctrl -s $((current_workspace % workspace_count)):}\
 %{A5:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
