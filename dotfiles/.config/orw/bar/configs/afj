@@ -1,0 +1,2 @@
+.orw/scripts/bar/generate_bar.sh -x c -w 1000 -y 15 -h 30 -s 0 -p 15 -a 8 -n afj -M -l -m i,P,p4 -r -W oi -d
+#.orw/scripts/bar/generate_bar.sh -x c -w 1000 -y 15 -h 30 -s 0 -p 15 -a 8 -n afj -M -l -W oi -d -m i,P,s20,p4

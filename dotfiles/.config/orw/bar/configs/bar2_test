@@ -1,0 +1,1 @@
+.orw/scripts/bar/generate_bar.sh -x c -w a -f 2 -n bar2_test -M -l -m p6,s15,i -W -B p -v -d

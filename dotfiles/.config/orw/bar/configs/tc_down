@@ -1,0 +1,1 @@
+/home/sola/.orw/scripts/bar/generate_bar.sh -x c -w a -h 20 -b -f 3 -a 8 -p 50 -n tc_down -M -l -W l 

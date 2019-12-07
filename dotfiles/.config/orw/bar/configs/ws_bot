@@ -1,0 +1,1 @@
+.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -b -F 5 -f 2 u -a 8 -n ws_bot -M -l -c -W l

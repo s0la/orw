@@ -1,0 +1,1 @@
+.orw/scripts/bar/generate_bar.sh -y 30 -w a -F 3 -n top2 -W l

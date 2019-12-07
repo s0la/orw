@@ -1,0 +1,8 @@
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -m c,p,i,T,s20,d3 -c -e -R -B t -v -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -m i,T,s20,d3 -e -R -B t -v -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -e -R -m i,T,s20,d3 -v -B t -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -e -R -m i,T,s20,d3 -v -B t -r -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -m i,T,s20,d3 -e -R -v -B t -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -e -R -v -B t -d
+#.orw/scripts/bar/generate_bar.sh -h 18 -s 10 -f 2 -a 7 -M -n top_simple -l -m c,p,i,T,s20,d3 -r -e -R -v -B t -d
+.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -s 10 -a 7 -M -n top_simple -c -e -R -B t -v -d

@@ -1,0 +1,2 @@
+#.orw/scripts/bar/generate_bar.sh -F 2 -n main -M -l -t c -r -N -B p -v -d
+.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -n main -M -l -t c -r -N -B p -v -d

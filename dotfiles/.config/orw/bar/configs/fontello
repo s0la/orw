@@ -1,0 +1,1 @@
+.orw/scripts/bar/generate_bar.sh -x c -w a -n fontello -f 2 -M -i -l -B p -H -v -d

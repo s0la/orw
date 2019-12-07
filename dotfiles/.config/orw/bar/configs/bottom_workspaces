@@ -1,0 +1,1 @@
+.orw/scripts/bar/generate_bar.sh -x c -w a -h 24 -b -p 50 -a 8 -F 2 -M -n bottom_workspaces -W l

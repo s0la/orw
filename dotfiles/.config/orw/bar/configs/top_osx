@@ -1,0 +1,2 @@
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -p 15 -s 0 -f 2 u -i -M -n top_osx -l -W l -l -r -m t,i -v -d a,_b_y_I:M
+.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -p 15 -s 0 -f 2 u -i -M -n top_osx -l -W l -l -r -m t,i -v -d

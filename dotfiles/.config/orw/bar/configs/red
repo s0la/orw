@@ -1,0 +1,2 @@
+#.orw/scripts/bar/generate_bar.sh -x 300 -F 2 -f 2 u -n red -M -l -W n,o10 -l -c -d a,_d_b_I:M -r -m s16,i -E t -e -v
+.orw/scripts/bar/generate_bar.sh -x 300 -F 2 -f 2 u -n red -M -l -W n,o10 -l -c -m s30,i -r -u -e -v -d

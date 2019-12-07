@@ -1,0 +1,3 @@
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -p 20 -s 0 -n top_full -M -W l -r -m t,i,v,S,p,c,s20,d3 -e -v -d
+#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -p 20 -s 0 -n top_full -M -W l -c -m t,c,p,S,i,v,s20,d3 -r -e -R -v -d "a,_b_y"
+.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -p 20 -s 0 -n top_full -M -W l -r -e -R -v -d "a,_b_y"

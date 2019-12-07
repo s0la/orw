@@ -1,0 +1,2 @@
+#.orw/scripts/bar/generate_bar.sh -w a -f 2 -M -n left_mpd -l -m p,S,i,s,T,d3,v
+.orw/scripts/bar/generate_bar.sh -w a -F 2 -M -n left_mpd -l -m c,p,S,i,s,T,d3,v
