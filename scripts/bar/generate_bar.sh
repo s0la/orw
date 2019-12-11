@@ -457,7 +457,8 @@ while read -r module; do
 		PROGRESSBAR*) progressbar=$(eval "echo -e ${module:12}");;
 		CONTROLS*) controls=$(eval "echo -e \"${module:9}\"");;
 		MPD_VOLUME*) mpd_volume=$(eval "echo -e \"${module:11}\"");;
-		MPD*) mpd=$(eval "sed 's/\([^}]*}\)\([^}]*}\)/\2\1/' <<< \"${module:4}\"");;
+		#MPD*) mpd=$(eval "sed 's/\([^}]*}\)\([^}]*}\)/\2\1/' <<< \"${module:4}\"");;
+		MPD*) mpd=$(eval "sed 's/\(\(%[^}]*}\)*\)\(%{B[^}]*}\)/\3\1/' <<< \"${module:4}\"");;
 		APPS*) apps=$(eval "echo -e \"${module:5}\"");;
 		TORRENTS*) torrents=$(eval "echo -e \"${module:9}\"");;
 		WORKSPACES*) workspaces=$(eval "echo -e ${module:11}");;

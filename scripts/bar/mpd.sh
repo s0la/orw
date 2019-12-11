@@ -9,25 +9,25 @@ current_mode=controls
 toggle="\$inner\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
 info='${mpfg:-$pfg}${inner}${song_info-not playing}${inner}'
 
-for m in ${2//,/ }; do
-	case $m in
-		t) modules+="$toggle";;
-		p*)
-			modules+='$progressbar'
-			((${#m} == 1)) &&
-				progression_step=5 ||
-				progression_step=${m#p};;
-		c) modules+='$controls';;
-		i) modules+="$info";;
-		v) modules+='$mpd_volume';;
-		P) modules+='${mpbg:-$pbg}';;
-		T) show_time=true;;
-		d*) delay=${m#d};;
-		s*)
-			scroll=true
-			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
-	esac
-done
+#for m in ${2//,/ }; do
+#	case $m in
+#		t) modules+="$toggle";;
+#		p*)
+#			modules+='$progressbar'
+#			((${#m} == 1)) &&
+#				progression_step=5 ||
+#				progression_step=${m#p};;
+#		c) modules+='$controls';;
+#		i) modules+="$info";;
+#		v) modules+='$mpd_volume';;
+#		P) modules+='${mpbg:-$pbg}';;
+#		T) show_time=true;;
+#		d*) delay=${m#d};;
+#		s*)
+#			scroll=true
+#			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
+#	esac
+#done
 
 status=$(mpc | sed -n 's/.*\[\(.*\)\].*/\1/p')
 
@@ -54,7 +54,7 @@ get_song_info() {
 		song_info+=" $time"
 	fi
 
-	echo -e "%{A:~/.orw/scripts/song_notification.sh:}\${mpfg:-\$pfg}%{T1}$song_info%{A}"
+	echo -e "%{A:~/.orw/scripts/song_notification.sh:}\${mpfg:-\$pfg}%{T1}$offset$song_info%{A}"
 }
 
 if [[ $status == playing ]]; then
@@ -74,7 +74,7 @@ if [[ $status == playing ]]; then
 		draw elapsed
 		draw remaining
 
-		echo -e "$bg\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner"
+		echo -e "$bg$offset\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner"
 	}
 
 	get_volume() {
@@ -82,9 +82,9 @@ if [[ $status == playing ]]; then
 		eval args=( $(${0%/*}/volume.sh mpd $1) )
 
 		if [[ $current_mpd_volume_mode == duo ]]; then
-			echo -e "$bg\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner"
+			echo -e "$bg$offset\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner"
 		else
-			echo -e "$bg\$inner${args[*]}\$inner"
+			echo -e "$bg$offset\$inner${args[*]}\$inner"
 		fi
 	}
 fi
@@ -104,7 +104,7 @@ get_controls() {
 	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
 	#controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
 
-	echo -e "$bg\$inner\${msfg:-\$sfg}$controls\${inner}"
+	echo -e "$bg$offset\$inner\${msfg:-\$sfg}$controls\${inner}"
 }
 
 for m in ${2//,/ }; do
@@ -127,7 +127,7 @@ for m in ${2//,/ }; do
 			[[ $status == playing ]] &&
 				echo -e "SONG_INFO $(get_song_info)" > $fifo;;
 		v)
-			modules+='$volume'
+			modules+='$mpd_volume'
 
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "MPD_VOLUME $(get_volume $3)" > $fifo;;
@@ -137,7 +137,19 @@ for m in ${2//,/ }; do
 		s*)
 			scroll=true
 			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
+		o*)
+			offset=${m:2}
+			position=${m:1:1}
+
+			if [[ $position == f ]]; then
+				offset="%{O$offset}"
+			else
+				modules+="%{O$offset}"
+				unset offset
+			fi;;
 	esac
+
+	[[ $offset && ! $m =~ ^o ]] && unset offset
 done
 
 [[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$info"
