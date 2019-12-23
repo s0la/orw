@@ -1,5 +1,7 @@
 #!/bin/bash
 
+blacklist="Keyboard Status Monitor,DROPDOWN"
+
 set_window_id() {
 	id=$1
 
@@ -8,7 +10,7 @@ set_window_id() {
 }
 
 function get_windows() {
-	wmctrl -lG | awk '$2 == '$current_desktop' && $NF != "DROPDOWN" && $1 ~ /'$1'/ \
+	wmctrl -lG | awk '$2 == '$current_desktop' && ! /'"${blacklist//,/|}"'$/ && $1 ~ /'$1'/ \
 		{ print $1, $3 - '$border_x', $4 - ('$border_y' - '$border_x' / 2) * 2, $5, $6 }'
 }
 
