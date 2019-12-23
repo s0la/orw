@@ -30,10 +30,24 @@ monitor_memory_consumption() {
 	((ram_usage_delta >= ${ram_tolerance:-10})) && $0
 }
 
+start_bar_on_boot() {
+	[[ $1 ]] || bar_names="${bars[*]}"
+	sed -i "/bar/ s/\w* &/${1:-${bar_names// /,}} \&/" ~/.config/openbox/autostart.sh
+}
+
+
 initial_ram_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-while getopts :ds:c:b:r:kl flag; do
+while getopts :ds:c:gb:r:kla flag; do
 	case $flag in
+		g)
+			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
+
+			kill_bar
+			start_bar_on_boot $bar
+
+			~/.orw/scripts/bar/generate_bar.sh ${@:2}
+			exit;;
 		c) check_interval=$OPTARG;;
 		b) bars=( ${OPTARG//,/ } );;
 		r) ram_tolerance=$OPTARG;;
@@ -53,6 +67,9 @@ while getopts :ds:c:b:r:kl flag; do
 			get_bars
 			lower_bars
 			exit;;
+		a)
+			~/.orw/scripts/add_bar_launcher.sh ${@:2}
+			exit;;
 	esac
 done
 
@@ -70,4 +87,4 @@ for bar in "${bars[@]}"; do
 	bash ~/.config/orw/bar/configs/$bar &
 done
 
-sed -i "/bar/ s/\w* &/${@: -1} \&/" ~/.config/openbox/autostart.sh
+start_bar_on_boot
