@@ -56,15 +56,20 @@ base_command='TERM=xterm-256color tmux -S /tmp/ncmpcpp -f ~/.tmux_ncmpcpp.conf'
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 	case $flag in
 		p)
-			width=70
-			height=70
+
+			#[[ $V ]] && layout="move -h 2/3 -v 2/4 resize -h 1/3 -v 1/4" ||
+			#	layout="move -v 3/7 -h 8/12 resize -v 3/7 -e r -h 3/4 -l +21 -r +21"
+
+			width=${width:-500}
+			height=${height:-350}
 			title=ncmpcpp_playlist
 
 			[[ ! $pre ]] && pre="~/.orw/scripts/windowctl.sh "
 
-			[[ $V ]] && layout="move -h 2/3 -v 2/4 resize -h 1/3 -v 1/4" ||
-				layout="move -v 3/7 -h 8/12 resize -v 3/7 -e r -h 3/4 -l +21 -r +21"
+			[[ $V ]] && edge=b orientation=-v reverse_orientation=h ||
+				edge=r orientation=-h reverse_orientation=v
 
+			layout="move -e $edge $orientation 1/2 -c $reverse_orientation"
 			pre+="$layout && sleep 0.1 > /dev/null"
 
 			command='new -s playlist ncmpcpp';;
@@ -75,8 +80,20 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 			[[ ! $pre ]] && pre="~/.orw/scripts/windowctl.sh "
 
-			[[ $V ]] && layout="move -h 2/3 -v 3/4 resize -h 1/3 -v 1/4" progressbar=yes ||
-				layout="move -v 3/7 -h 2/4 resize -v 3/7 -h 1/3"
+			#[[ $V ]] && layout="move -h 2/3 -v 3/4 resize -h 1/3 -v 1/4" progressbar=yes ||
+			#	layout="move -v 3/7 -h 2/4 resize -v 3/7 -h 1/3"
+
+			if [[ $V ]]; then
+				width=${width:-500}
+				height=${height:-150}
+				edge=t orientation=-v reverse_orientation=h progressbar=yes
+			else
+				width=${width:-250}
+				height=${height:-350}
+				edge=l orientation=-h reverse_orientation=v
+			fi
+
+			layout="move -e $edge $orientation 2/2 -c $reverse_orientation"
 
 			pre+="$layout && sleep 0.1 > /dev/null"
 
@@ -128,7 +145,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		w) width=$OPTARG;;
 		h) height=$OPTARG;;
 		i)
-			if ! wmctrl -a ${title-ncmpcpp}; then
+			if ! xdotool search --name "'${title-ncmpcpp}'"; then
 				width=${width:-900}
 				height=${height:-500}
 
