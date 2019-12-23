@@ -314,12 +314,25 @@ function bar() {
 	fi
 }
 
+check_ncmpcpp_mode() {
+	[[ $ncmpcpp_mode ]] || ncmpcpp_mode=$(awk '/^song_list/ { print /[0-9]+/ ? "dual" : "single" }' $ncmpcpp_conf)
+}
+
 function ncmpcpp() {
 	reload_ncmpcpp=true
 	get_color_properties
 
 	if ((color_index)); then
 		case $property in
+			[at]c)
+				check_ncmpcpp_mode
+				[[ $ncmpcpp_mode != dual ]] && ~/.orw/scripts/toggle.sh ncmpcpp -r no
+				ncmpcpp_mode=dual
+
+				[[ $property == ac ]] && local property_index=1 || local property_index=2
+
+				local pattern='^song_list';;
+			ec) local pattern='empty';;
 			c2) local pattern='color_2';;
 			pc) local pattern='progressbar_color';;
 			etc) local pattern='empty_tag_color';;
@@ -338,7 +351,7 @@ function ncmpcpp() {
 				esac
 		esac
 
-		sed -i "/${pattern:-$property}/ s/\<${old_color_index-[0-9]\+}\>/$color_index/g" $ncmpcpp_conf*
+		sed -i "/${pattern:-$property}/ s/\<${old_color_index-[0-9]\+}\>/$color_index/${property_index-g}" $ncmpcpp_conf*
 	else
 		error_message='Provided color is not defined, please save it under some label.'
 		echo $error_message
@@ -361,14 +374,14 @@ function rofi() {
 	if [[ $property == ibg ]]; then
 		read rofi_bg rofi_bc <<< $(awk -F '[ ;]' '/^\s*b[cg]/ { print $(NF - 1) }' $rofi_conf | xargs)
 
-		[[ "#${color: -6}" == $rofi_bg ]] && padding=20 margin=10 ln=12
+		[[ "#${color: -6}" == $rofi_bg ]] && padding=20 margin=10 ln=14
 		[[ "#${color: -6}" == $rofi_bc ]] && padding=0 item_padding=10 margin=0 ln=8
 
 		if [[ $padding && $margin ]]; then
 			~/.orw/scripts/borderctl.sh rln $ln
 			~/.orw/scripts/borderctl.sh rim $margin
 			~/.orw/scripts/borderctl.sh rwp $padding
-			~/.orw/scripts/borderctl.sh rip ${item_padding-2 5}
+			~/.orw/scripts/borderctl.sh rip ${item_padding-4}
 		fi
 	fi
 }
@@ -513,9 +526,14 @@ function get_ncmpcpp() {
 	while read -r ncmpcpp_property index; do
 		get_color_properties $index
 		echo $ncmpcpp_property $color
-	done <<< $(sed -n "/main\|now_playing\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
-		{ /^#/! s/\(\w\)[^_]*\(_\)\?\([2eipt]\)\?.*\([2pc]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
-		#{ /^#/! s/\(\w\)[^_]*\(_\)\?\(e\|p\)\?.*\([2cip]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
+	done < <(\
+		check_ncmpcpp_mode ;
+		([[ $ncmpcpp_mode == dual ]] && sed -n '/^song_list/ s/.*(\([0-9]*\).*(\([0-9]*\).*/ac \1\ntc \2/p' $ncmpcpp_conf) ;
+
+		sed -n "/main\|now_playing\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
+			{ /^#/! s/\(\w\)[^_]*\(_\)\?\([2eipt]\)\?.*\([2pc]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
+		#sed -n "/main\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
+		#	{ /^#/! s/\(\w\)[^_]*\(_\)\?\(e\)\?.*\([2ic]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf )
 }
 
 function repeat_pattern() {
