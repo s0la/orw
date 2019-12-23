@@ -27,8 +27,13 @@ get_mpd() {
 }
 
 get_apps() {
-	[[ $single_line ]] && app_lines=single
-	echo -e "APPS $($path/apps.sh $apps_args ${app_lines:-${lines-false}})"
+	[[ $single_line ]] && apps_lines=single
+	echo -e "APPS $($path/apps.sh $apps_args ${apps_lines:-${lines-false}})"
+}
+
+get_launchers() {
+	[[ $single_line ]] && launchers_lines=single
+	echo -e "LAUNCHERS $($path/launchers.sh $launchers_args ${launchers_lines:-${lines-false}})"
 }
 
 get_workspaces() {
@@ -232,9 +237,15 @@ while getopts :bicrx:y:w:h:p:f:ls:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		s) separator="%{O$OPTARG}";;
 		S) get_display_properties $OPTARG;;
 		L)
-			format Logout
-			get_display_properties
-			Logout=$(eval "echo -e \"$($path/system_info.sh Logout ${display_width}x$display_height)\"");;
+			#format Logout
+			#get_display_properties
+			#Logout=$(eval "echo -e \"$($path/system_info.sh Logout ${display_width}x$display_height)\"");;
+
+			modules+='$launchers'
+
+			check_arg launchers_args ${!OPTIND} && shift
+
+			run_function get_launchers 1;;
 		m)
 			format mpd
 			check_arg mpd_modules ${!OPTIND} && shift
@@ -379,7 +390,7 @@ if [[ $bar_width =~ [a-z] ]]; then
 	[[ -f $geometry_file ]] && rm $geometry_file
 	[[ ! -d ${geometry_file%/*} ]] && mkdir -p ${geometry_file%/*}
 
-	bar_options='(A([0-9]?:?.*:$|$)|[BFU][#-]|I-|[TO][0-9-]+$|[lcr]$|[+-][ou])'
+	bar_options='(A([0-9]?:?.*:$|$)|[BFU][#-]|I[-+]|[TO][0-9-]+$|[lcr]$|[+-][ou])'
 fi
 
 if [[ $align_center ]]; then
@@ -416,21 +427,32 @@ calculate_width() {
 
 	while read content; do
 		if [[ $adjustable_width ]]; then
-			current_width=$(awk -F '%{|}' \
-				'{ fs = '$((font_size - 2))'; fw = fs; \
-				for(f = 1; f < NF; f++) \
-					{ if($f ~ /O[0-9]+$/) o += substr($f, 2); \
-						if($f ~ /I-[0-9A-Za-z]?$/) { is = substr($f, 3); \
-							if(is ~ /[0-9]/) iw = is; \
-							else if(is == "n") iw = 5; \
-							else if(is == "b") iw = 6; \
-							else if(is == "B") iw = 7; \
-							else if(is == "s") iw = 1; \
-							else if(is == "S") iw = 3; \
-							else icon = 0; \
-								if(is) { icon = 1; l += (is ~ /[Ss]/) ? fs - iw : fs + iw } } \
-								else if($f !~ /^'$bar_options'/) if(!icon) l += length($f) * fw } } 
-									END { print int(o + l) }' <<< "$content")
+			current_width=$(awk -F '%{|}' '\
+				{
+					fs = '$((font_size - 2))'
+					fw = fs
+					for(f = 1; f < NF; f++) {
+						if($f ~ /O[0-9]+$/) o += substr($f, 2)
+						if($f ~ /I[+-][0-9A-Za-z]{0,2}$/) {
+							is = substr($f, 3)
+							if(is ~ /[0-9]/) iw = is
+							else if(is == "n") iw = 5
+							else if(is == "b") iw = 6
+							else if(is == "B") iw = 7
+							else if(is == "s") iw = 1
+							else if(is == "S") iw = 3
+							else icon = 0
+
+							if(is) { icon = 1; l += (is ~ /[Ss]/ || $f ~ "-") ? fs - iw : fs + iw }
+						} else if($f !~ /^'$bar_options'/) {
+							if(!icon) l += length($f) * fw
+						}
+						
+						is = ""
+					}
+				} END { print int(o + l) }' <<< "$content")
+
+			#~/.orw/scripts/notify.sh "fs: $font_size"
 
 			if [[ ! -f $geometry_file ]]; then
 				other_geometry_parameters=${geometry#*x}
@@ -461,6 +483,7 @@ while read -r module; do
 		MPD*) mpd=$(eval "sed 's/\(\(%[^}]*}\)*\)\(%{B[^}]*}\)/\3\1/' <<< \"${module:4}\"");;
 		APPS*) apps=$(eval "echo -e \"${module:5}\"");;
 		TORRENTS*) torrents=$(eval "echo -e \"${module:9}\"");;
+		LAUNCHERS*) launchers=$(eval "echo -e ${module:10}");;
 		WORKSPACES*) workspaces=$(eval "echo -e ${module:11}");;
 		RAM*) ram=$(eval "echo -e ${module:4}");;
 		CPU*) cpu=$(eval "echo -e ${module:4}");;

@@ -4,6 +4,7 @@ path=~/.orw/scripts/rofi_scripts
 ${path%/*}/set_rofi_margins.sh
 
 modis+="window_action:$path/window_actions.sh,"
+modis+="bar_launchers:$path/bar_launchers.sh,"
 modis+="move_to:$path/workspaces.sh move,"
 modis+="wall:$path/workspaces.sh wall,"
 modis+="workspaces:$path/workspaces.sh,"

@@ -1,0 +1,5 @@
+%{I-1}%{I} "Mozilla Firefox" "firefox"
+%{I-}%{I} "DROPDOWN" ".orw/scripts/dropdown.sh"
+%{I-}%{I} "ncmpcpp_playlist" "~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -Vpi"
+%{I-}%{I} "File Manager" "thunar"
+%{I-1}%{I} "change_wall" "/home/sola/.orw/scripts/wallctl.sh"
