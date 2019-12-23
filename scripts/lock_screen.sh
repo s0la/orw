@@ -8,11 +8,15 @@ khl="$(~/.orw/scripts/colorctl.sh -o -$delta -h ${rc:0:6})${rc: -2}"
 bshl="$(~/.orw/scripts/colorctl.sh -o +$delta -h ${rc:0:6})${rc: -2}"
 
 i3lock --blur $blur \
-	   --verifsize=13 \
+	   --verifsize=16 \
 	   --veriftext="..." \
 	   --radius $radius \
 	   --ring-width $width \
-	   --indicator --clock --timestr="%H:%M" \
+	   --indicator --clock \
+	   --timesize=$timesize \
+	   --datesize=$datesize \
+	   --timestr="%I:%M" \
+	   --datestr="%B %d, %Y" \
 	   --linecolor=$blank \
 	   --insidecolor=$ic --ringcolor=$rc \
 	   --datecolor=$tc --timecolor=$tc \

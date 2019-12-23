@@ -21,7 +21,7 @@ done
 
 if [[ $2 =~ [0-9]+ ]]; then
 	sign=${2%%[0-9]*}
-	new_value=${2#$sign}
+	new_value=${2#"$sign"}
 fi
 
 case $1 in
@@ -131,10 +131,15 @@ case $1 in
 		killall dunst
 		dunst &;;
 	l*)
-		[[ $1 == lrw ]] && pattern=width || pattern=radius
+		case $1 in
+			lr) pattern=radius;;
+			lts) pattern=timesize;;
+			lds) pattern=datesize;;
+			*) pattern=width
+		esac
 
 		awk -i inplace '{ \
-			if(/^'${1: -1}'\w{3,5}/) {
+			if(/^'$pattern'/) {
 				nv = '$new_value'
 				cv = gensub(".*=", "", 1)
 				sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
