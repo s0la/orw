@@ -200,6 +200,11 @@
         <command>~/.orw/scripts/rofi_scripts/ncmpcpp_group.sh playback</command>
       </action>
     </keybind>
+    <keybind key="A-b">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/rofi_script.sh bar_launchers</command>
+      </action>
+    </keybind>
     <keybind key="A-t">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/toggle_dmenu.sh</command>
