@@ -54,7 +54,7 @@ get_song_info() {
 		song_info+=" $time"
 	fi
 
-	echo -e "%{A:~/.orw/scripts/song_notification.sh:}\${mpfg:-\$pfg}%{T1}$offset$song_info%{A}"
+	echo -e "%{A:~/.orw/scripts/song_notification.sh:}\${mpfg:-\$pfg}%{T1}$song_info%{A}"
 }
 
 if [[ $status == playing ]]; then
@@ -122,7 +122,7 @@ for m in ${2//,/ }; do
 			[[ $current_mode == controls ]] &&
 				echo -e "CONTROLS $(get_controls)" > $fifo;;
 		i)
-			modules+="$bg$info"
+			modules+="$bg$offset$info"
 
 			[[ $status == playing ]] &&
 				echo -e "SONG_INFO $(get_song_info)" > $fifo;;
