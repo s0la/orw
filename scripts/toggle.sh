@@ -116,7 +116,11 @@ function bash() {
 		m = (em == "") ? ($NF == m1) ? m2 : m1 : em; gsub("\\w*$", m) }; { print }' $bash_conf
 }
 
-function tmux() {
+vim() {
+	awk -i inplace '/^let s:swap/ { $NF = !$NF } { print }' ~/.config/nvim/plugin/statusline.vim 
+}
+
+tmux() {
 	mode=$(awk '/current/ { print (/cbg/) ? "simple" : "rice" }' $tmux_conf)
 
 	if [[ ${1:-$mode} == simple ]]; then
@@ -133,6 +137,25 @@ function tmux() {
 titlebar() {
     state=$(awk '/name=\"\*\"/ { nr = NR + 1 }; NR == nr { print (/no/) ? "yes" : "no" }' $openbox_conf)
 	sed -i "/name=\"\*\"/ { n; s/>\w\+</>${1:-$state}</ }" $openbox_conf
+}
+
+ncmpcpp() {
+	config=~/.orw/dotfiles/.ncmpcpp/config
+	eval configs=$config*
+
+	mode=$(awk '/^song_list/ { print /[0-9]+/ ? "single" : "dual" }' ~/.ncmpcpp/config)
+
+	if [[ ${1:-$mode} == single ]]; then
+		sed -i '/^song_list/ s/".*"/"{%a - %t} $R {%l}"/' $configs
+		sed -i '/suffix/ s/0[^"]*/0/' $configs
+	else
+		read npp mc <<< $(sed -n '/\(main_window\|now_playing_prefix\)/ s/[^0-9]*\([0-9]\+\).*/\1/p' $config | xargs)
+
+		sed -i "/^song_list/ s/\".*\"/\"\$($npp){%a} \$($mc) {%t} \$R \"/" $configs
+		sed -i '/suffix/ s/0/0●/' $configs
+	fi
+
+	~/.orw/scripts/ncmpcpp.sh -a
 }
 
 blur() {
