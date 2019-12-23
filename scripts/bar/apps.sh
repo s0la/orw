@@ -69,8 +69,8 @@ while read -r window_id window_name; do
 
 		windows+="$window$app_separator"
 	fi
-done <<< $(wmctrl -l | awk '$1 ~ /'$active'/ && $2 ~ /^'${current_desktop-[0-9]}'/ && !/ (input|image_preview)/ \
-	{ print $1, (NF > 3) ? substr($0, index($0, $4)) : "no name" }')
+done <<< $(wmctrl -l | awk '$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
+		print $1, (NF > 3) ? substr($0, index($0, $4)) : "no name" }')
 
 [[ $app_separator ]] && windows=${windows%\%*}
 [[ $windows && $lines == true ]] && windows="%{U$fc}\${start_line:-$left_frame}$windows\${end_line:-$right_frame}"
