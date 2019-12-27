@@ -10,7 +10,7 @@ message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
 now_playing_prefix = "$(2)"
-now_playing_suffix = "$0●"
+now_playing_suffix = "●$0"
 selected_item_prefix = "$(1)"
 #current_item_prefix = "$(2)"
 current_item_prefix = "$(1)$r"

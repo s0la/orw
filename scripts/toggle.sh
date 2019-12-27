@@ -146,13 +146,15 @@ ncmpcpp() {
 	mode=$(awk '/^song_list/ { print /[0-9]+/ ? "single" : "dual" }' ~/.ncmpcpp/config)
 
 	if [[ ${1:-$mode} == single ]]; then
+		#sed -i '/suffix/ s/0[^"]*/0/' $configs
+		sed -i '/suffix/ s/"./"/' $configs
 		sed -i '/^song_list/ s/".*"/"{%a - %t} $R {%l}"/' $configs
-		sed -i '/suffix/ s/0[^"]*/0/' $configs
 	else
 		read npp mc <<< $(sed -n '/\(main_window\|now_playing_prefix\)/ s/[^0-9]*\([0-9]\+\).*/\1/p' $config | xargs)
 
+		#sed -i '/suffix/ s/0/0●/' $configs
+		sed -i '/suffix/ s/"/"●/' $configs
 		sed -i "/^song_list/ s/\".*\"/\"\$($npp){%a} \$($mc) {%t} \$R \"/" $configs
-		sed -i '/suffix/ s/0/0●/' $configs
 	fi
 
 	~/.orw/scripts/ncmpcpp.sh -a
