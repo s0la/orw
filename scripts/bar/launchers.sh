@@ -8,7 +8,7 @@ if [[ $# -gt 1 ]]; then
 		value=${argument:1}
 		property=${argument:0:1}
 
-		[[ $2 == true ]] && separator_color='${Afc:-$fc}'
+		[[ $2 == true ]] && separator_color='${Lfc:-$fc}'
 
 		if [[ $property == s ]]; then
 			separator="%{B${separator_color:-\$bg}}%{O$value}"
