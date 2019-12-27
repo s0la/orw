@@ -173,6 +173,7 @@ case $1 in
 
 		[[ $w ]] && format fading ${!3:-$label} "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
 	Cpu)
+		icon=
 		usage=$(top -bn 2 | awk '/%Cpu/ {print $2}' | tail -1)
 
 		[[ $@ =~ trim ]] && style=trim
