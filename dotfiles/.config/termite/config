@@ -127,6 +127,23 @@ color66 = #b8987e
 color67 = #72736E
 color68 = #a6bbbf
 color69 = #a28d9f
+color70 = #735a56
+color71 = #B4938A
+color72 = #715d5f
+color73 = #6d7875
+color74 = #999FAD
+color75 = #B5BEC7
+color76 = #2e2f31
+color77 = #a7bbd9
+color78 = #b6cae8
+color79 = #b4b8bf
+color80 = #94a4b2
+color81 = #282828
+color82 = #FD7F19
+color83 = #D9BC2E
+color84 = #83A598
+color85 = #D39221
+color86 = #95941A
 
 [hints]
 #font = Monospace 12
