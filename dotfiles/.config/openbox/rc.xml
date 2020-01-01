@@ -186,7 +186,6 @@
     </keybind>
     <keybind key="A-Tab">
       <action name="Execute">
-		  <!--<command>~/.orw/scripts/rofi_scripts/rofi_script.sh window</command>-->
         <command>rofi -show window -theme main</command>
       </action>
     </keybind>
@@ -232,7 +231,6 @@
     </keybind>
     <keybind key="A-f">
       <action name="Execute">
-		  <!--<command>~/.orw/scripts/rofi_scripts/rofi_script.sh files large_list</command>-->
 		  <command>rofi -modi files:~/.orw/scripts/rofi_scripts/files.sh -show files -theme large_list</command>
       </action>
     </keybind>
@@ -241,14 +239,8 @@
         <command>~/.orw/scripts/rofi_scripts/rofi_script.sh rec</command>
       </action>
     </keybind>
-    <!-- <keybind key="A-R">
-      <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/rofi_script.sh run</command>
-      </action>
-    </keybind> -->
     <keybind key="A-s">
       <action name="Execute">
-		  <!--<command>~/.orw/scripts/rofi_scripts/rofi_script.sh wallpapers</command>-->
 		  <command>rofi -modi walls:~/.orw/scripts/rofi_scripts/wallpapers.sh -show walls -theme main</command>
       </action>
     </keybind>
@@ -269,7 +261,6 @@
     </keybind>
     <keybind key="A-n">
       <action name="Execute">
-		  <!--<command>~/.orw/scripts/rofi_scripts/rofi_script.sh networks</command>-->
         <command>rofi -modi networks:~/.orw/scripts/rofi_scripts/networks.sh -show networks -theme main</command>
       </action>
     </keybind>
@@ -338,13 +329,6 @@
         <command>~/.orw/scripts/windowctl.sh resize -r -50 -o</command>
       </action>
     </keybind>
-	<!--
-    <keybind key="C-A-Left">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -a resize -r -50</command>
-      </action>
-    </keybind>
-	-->
     <keybind key="A-C-Left">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -o -b -a resize -l +50</command>
@@ -360,13 +344,6 @@
         <command>~/.orw/scripts/windowctl.sh resize -r +50 -o</command>
       </action>
     </keybind>
-	<!--
-    <keybind key="C-A-Right">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -a resize -r +50</command>
-      </action>
-    </keybind>
-	-->
     <keybind key="A-C-Right">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -o -b -a resize -r +50</command>
@@ -382,13 +359,6 @@
         <command>~/.orw/scripts/windowctl.sh resize -b -50 -o</command>
       </action>
     </keybind>
-	<!--
-    <keybind key="C-A-Up">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -a resize -b -50</command>
-      </action>
-    </keybind>
-	-->
     <keybind key="A-C-Up">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -o -b -a resize -t +50</command>
@@ -404,13 +374,6 @@
         <command>~/.orw/scripts/windowctl.sh resize -b +50 -o</command>
       </action>
     </keybind>
-	<!--
-    <keybind key="C-A-Down">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -a resize -b +50</command>
-      </action>
-    </keybind>
-	-->
     <keybind key="A-C-Down">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -o -b -a resize -b +50</command>
