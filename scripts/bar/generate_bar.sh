@@ -202,13 +202,47 @@ run_function() {
 
 all_arguments="$@"
 
-while getopts :bicrx:y:w:h:p:f:ls:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
+while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 	case $flag in
 		b)
 			bg=$bbg
 			bottom=-b;;
-		i) label=icon;;
-		c) modules+='%{c}';;
+		I) label=icon;;
+		i)
+			check_arg label_type ${!OPTIND} && shift
+
+			if [[ $label_type ]]; then
+				label=$label_type
+			else
+				[[ ! $label ]] && label=icon || unset label
+			fi;;
+		c)
+			check_arg colorscheme ${!OPTIND} && shift
+			
+			if [[ $colorscheme ]]; then
+				[[ $@ =~ -M ]] || base=7
+
+				
+				eval $(awk '\
+					/#bar/ { 
+						nr = NR
+						b = '${base:-0}'
+					} nr && NR > nr {
+						if($1 ~ "^[^b].*g$") {
+							l = length($1)
+							p = substr($1, l - 1, 1)
+							c = "%{" toupper(p) $2 "}"
+						} else { c = $2 }
+						if($1) print $1 "=\"" c "\""
+					} nr && (/^$/ || (b && NR > nr + b)) { exit }' ~/.config/orw/colorschemes/$colorscheme.ocs)
+
+				[[ $@ =~ -b ]] && bg=$bbg
+				[[ $bar_frame ]] && bar_frame="-R$bfc -r $bar_frame_width"
+
+				unset colorscheme
+			else
+				modules+='%{c}'
+			fi;;
 		r) modules+='%{r}';;
 		x)
 			if [[ $OPTARG == r ]]; then
