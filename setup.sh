@@ -122,7 +122,7 @@ function deps() {
 		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> /dev/null
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_apps[*]} base-devel llvm-libs ninja python-pip bash-completion \
-			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot \
+			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
 			gtk-engine-murrine unzip termite dunst icu glibc libxml2 mpfr openssl wpa_supplicant &> /dev/null ||
 			handle_failure
 
