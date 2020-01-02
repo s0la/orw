@@ -35,30 +35,33 @@ list_launchers() {
 				print "━━━━━━"
 			}
 		}
-		{
+
+		/^#?icon/ {
+			nr = NR + 1
+			i = gensub(/[\0-\177]/, "", "g", $2)
 			if("'$toggle'") s = /^#/ ? " " : " "
-			gsub(/[\0-\177]/, "", $2)
-			print s $2, $4
-		}' $launchers
+		} NR == nr { print s i, $2 }' $launchers
 }
 
 toggle_launchers() {
-	[[ $1 =~ ^(all|none)$ ]] && all=$1 || single="${current// /\.*}"
+	[[ $1 =~ ^(all|none)$ ]] && all=$1 || single="${current#* }"
 
 	awk -i inplace '\
-		BEGIN { 
-			a = "'$all'"
-			s = ! a
-		}
-		/'"$single"'/ {
+		BEGIN { a = "'$all'" }
+		{
+			if(/#'"${single:-###}"'/) { s = 1 }
+			if(/^$/) { s = 0 }
+
 			p = r = ""
 
-			if(a == "all" || (s && /^#/)) {
-				p = "^#"
-				r = ""
-			} else if((a == "none" && !/^#/) || s) {
-				p = "^"
-				r = "#"
+			if($0) {
+				if((a == "all" || s) && /^#.*"/) {
+					p = "^#"
+					r = ""
+				} else if((a == "none" || s) && (!/^#/ && /.*"/)) {
+					p = "^"
+					r = "#"
+				}
 			}
 
 			if(p) sub(p, r)
@@ -66,13 +69,13 @@ toggle_launchers() {
 }
 
 resize_launchers() {
-	[[ $current ]] && single="${current// /\.*}"
+	[[ $current ]] && single="${current%% *}"
 
 	awk -i inplace -F 'I|}' '\
-		/'"$single"'/ {
-			v = $2 '$sign' '${value:-1}'
-			if(v >= 0) s = "+"
-			sub("[+-][^}]*", s v)
+		/^#?icon.*'"$single"'/ {
+		v = $2 '$sign' '${value:-1}'
+		if(v >= 0) s = "+"
+		sub("[+-][^}]*", s v)
 		} { print }' $launchers
 }
 
@@ -82,7 +85,7 @@ if [[ -z $@ ]]; then
 	unset current
 	set current
 else
-	if [[ $@ =~ ^(( | )[an]|( | )$| | |.* (toggle|resize|move)$) ]]; then
+	if [[ $@ =~ ^(( | )[an]|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
 		if [[ $@ =~   ]]; then
 			continue
 		elif [[ $@ =~ ( | ) ]]; then
@@ -97,7 +100,6 @@ else
 			fi
 		elif [[ $@ =~ ( | ) ]]; then
 			if [[ $resize ]]; then
-				[[ $@ =~ [0-9]$ ]] && value=${@##* }
 				[[ $@ =~   ]] && sign=- || sign=+
 
 				resize_launchers
@@ -105,10 +107,22 @@ else
 				echo -e ' \n \n '
 				exit
 			else
-				[[ $@ =~   ]] && position=a || position=i
+				move_whole=$(sed -n "/^#$move/,/^$/p" $launchers)
 
-				sed -i "/${move//\//\\\/}/d" $launchers
-				sed -i "/$current/$position $move" $launchers
+				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\ \n'
+				line=$(awk '/^#'"${current#* }"'/ { sl = NR } sl && /^$/ { el = NR; exit } END { print '$direction' }' $launchers)
+
+				sed -i "/^#$move/,/^$/d" $launchers
+
+				if ((line)); then
+					sed -i "${line}i$before_line${move_whole//$'\n'/\\n}$after_line" $launchers
+				else
+					~/.orw/scripts/notify.sh "HERE"
+					echo -e "\n$move_whole" >> $launchers
+				fi
+
+				last_line=$(sed -n '$p' $launchers)
+				[[ $last_line ]] || sed -i '$d' $launchers
 
 				unset move current
 				set current
@@ -127,11 +141,11 @@ else
 	else
 		if [[ $toggle ]]; then
 			current="${@#* }"
-			toggle_launchers "${current// /\.*}"
+			toggle_launchers
 
 			list_launchers
 		else
-			current="${@// /\.*}"
+			current="$@"
 			set current
 
 			if [[ $resize || $move ]]; then
@@ -139,7 +153,7 @@ else
 
 				[[ $resize ]] && echo -e ' '
 			else
-				eval move="'$(sed -n "/[^\"]*$current/p" $lines)'"
+				move="${current#* }"
 				set move
 
 				list_launchers

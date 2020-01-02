@@ -45,41 +45,43 @@ make_launcher() {
 
 	read count position ids <<< $(wmctrl -l | awk '\
 		BEGIN { c = 0 }
-		/'"$name"'/ {
+		$NF != "input" && /'"$name"'/ {
 			if($1 == "'$current_id'") p = c
 			ids = ids " " $1
 			c++
 		} END { print c, p, ids }')
 
-	if [[ $command_up && $command_down ]]; then
-		local current=s
-		local up="$command_up"
-		local down="$command_down"
+	if [[ $name =~ ^bar ]]; then
+		current=$(ps aux | awk '{ b = (/-n '${name#*_}'$/); if(b) exit } END { print b ? "p" : "s" }')
 	else
-		if ((count)); then
-			ids=( $ids )
-			local current=p
-
-			[[ ${ids[position]} == $current_id ]] &&
-				local toggle="xdotool getactivewindow windowminimize" ||
-				local focus="wmctrl -a $name"
-
-			if ((count > 1)); then
-				local next_index=$(((position + 1) % count))
-				local previous_index=$(((position + count - 1) % count))
-
-				local down="wmctrl -ia ${ids[next_index]}"
-				local up="wmctrl -ia ${ids[previous_index]}"
-			fi
-		else
+		if [[ $up && $down ]]; then
 			local current=s
+		else
+			if ((count)); then
+				ids=( $ids )
+				local current=p
+
+				[[ ${ids[position]} == $current_id ]] &&
+					local toggle="xdotool getactivewindow windowminimize" ||
+					local focus="wmctrl -a $name"
+
+				if ((count > 1)); then
+					local next_index=$(((position + 1) % count))
+					local previous_index=$(((position + count - 1) % count))
+
+					local down="wmctrl -ia ${ids[next_index]}"
+					local up="wmctrl -ia ${ids[previous_index]}"
+				fi
+			else
+				local current=s
+			fi
 		fi
 	fi
 
 	error='\&\> \/dev\/null \&'
-	local left="${toggle:-${focus:-$command $error}}"
-	local middle="wmctrl -ic ${ids[position]}"
-	local right="$command $error"
+	left="${toggle:-${focus:-$left $error}}"
+	[[ $right ]] || right="$left $error"
+	[[ $middle ]] || middle="wmctrl -ic ${ids[position]}"
 
 	[[ $left ]] && commands+="%{A1:$left:}" && closing+="%{A}"
 	[[ $middle ]] && commands+="%{A2:$middle:}" && closing+="%{A}"
@@ -97,10 +99,17 @@ make_launcher() {
 	fi
 }
 
-while IFS='"' read _ icon _ name _ command _ command_up _ command_down; do
+while read launcher_properties; do
+		eval ${launcher_properties//\&/\\&}
 		make_launcher
 		launchers+="$launcher$separator"
-done < <(grep -v ^\# ~/.orw/scripts/bar/launchers)
+done <<< $(awk '{ if(/^$/) { if(l) la[++i] = l; l = "" }
+					else { if(!/^#/) l = l " " $0 }
+				} END { for(li in la) print la[li]; print l }' ~/Desktop/l1)
+#done < <(grep -v ^\# ~/.orw/scripts/bar/launchers)
+
+#echo -e $launchers
+#exit
 
 [[ $separator ]] && launchers=${launchers%\%*}
 [[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"

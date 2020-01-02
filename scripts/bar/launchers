@@ -1,5 +1,50 @@
-%{I-1}%{I} "Mozilla Firefox" "firefox"
-%{I-}%{I} "DROPDOWN" ".orw/scripts/dropdown.sh"
-%{I-}%{I} "ncmpcpp_playlist" "~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -Vpi"
-%{I-}%{I} "File Manager" "thunar"
-%{I-1}%{I} "change_wall" "/home/sola/.orw/scripts/wallctl.sh"
+#change_wall
+#icon="%{I+3}%{I-}"
+#name="change_wall"
+#left="/home/sola/.orw/scripts/wallctl.sh"
+#up="/home/sola/.orw/scripts/wallctl.sh -co prev"
+#down="/home/sola/.orw/scripts/wallctl.sh -co next"
+
+#Mozilla Firefox
+#icon="%{I+7}%{I-}"
+#name="Mozilla Firefox"
+#left="firefox"
+
+#termite
+icon="%{I+7}%{I-}"
+name="termite"
+left="termite -t termite"
+
+#DROPDOWN
+#icon="%{I+7}%{I-}"
+#name="DROPDOWN"
+#left=".orw/scripts/dropdown.sh"
+
+#File Manager
+icon="%{I+7}%{I-}"
+name="File Manager"
+left="thunar"
+
+#ncmpcpp
+icon="%{I+7}%{I-}"
+name="ncmpcpp"
+left="~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -Vpi"
+
+#visualizer
+icon="%{I+7}%{I-}"
+name="visualizer"
+left="~/.orw/scripts/ncmpcpp.sh -w 450 -Vvi"
+
+#lock_screen
+icon="%{I+5}%{I-}"
+name="lock_screen"
+left="/home/sola/.orw/scripts/lock_screen.sh"
+
+#bar_mwc
+icon="%{I+7}%{I-}"
+name="bar_mwc"
+left="~/Desktop/mwc.sh"
+middle="~/.orw/scripts/barctl.sh -b mwi,mwp,mwc -k && tmux -S /tmp/ncmpcpp kill-session -t visualizer"
+right="mpc -q toggle"
+up="mpc -q prev"
+down="mpc -q next"
