@@ -162,7 +162,6 @@ case $1 in
 			*) icon=;;
 		esac
 
-		label=${w^^}
 		icon="%{I-4}$icon%{I-}"
 
 		[[ $info == s ]] && s="${s#* }"
@@ -171,7 +170,21 @@ case $1 in
 			weather+="${!i}\${padding}"
 		done
 
-		[[ $w ]] && format fading ${!3:-$label} "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
+		if [[ $3 =~ (no|only) ]]; then
+			style=mono
+
+			if [[ $3 == no ]]; then
+				mono_fg="\${$pfg}"
+			else
+				label=$icon
+				mono_fg="\${$sfg}"
+				unset weather
+			fi
+		else
+			label=${!3:-${w^^}}
+		fi
+
+		[[ $w ]] && format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
 	Cpu)
 		icon=
 		usage=$(top -bn 2 | awk '/%Cpu/ {print $2}' | tail -1)
