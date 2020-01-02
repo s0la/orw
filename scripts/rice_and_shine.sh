@@ -240,6 +240,16 @@ function gtk() {
 		ff) folder fill;;
 		fs) folder stroke;;
 		*)
+			#if [[ $property == active ]]; then
+			#	[[ $(which convert) ]] &&
+			#		convert -size 2x2 xc:\#${color: -6} ${gtk_conf%/*}/apps/assets/underline.png
+			#		exit
+			#fi
+			if [[ $property == active && $(which convert) ]]; then
+				convert -size 2x2 xc:$color ${gtk_conf%/*}/apps/assets/active.png
+				convert -size 2x2 xc:$(offset_color $color ${secondary_shade_offset-+30}) ${gtk_conf%/*}/apps/assets/hover.png
+			fi
+
 			sed -i "/\<${property}_color\>/ s/#\w\{6\}/#${color: -6}/" $gtk_conf
 	esac
 }
@@ -408,12 +418,12 @@ function fff() {
 		sel*) col=3;;
 	esac
 
-	col_index=${base_colors[${color_name#br_}]}
-	((!col_index)) && col_index=9
+	#col_index=${base_colors[${color_name#br_}]}
+	#((!col_index)) && col_index=9
 
 	sed -i "/FFF_COL$col/ s/[0-9]$/$((col_index - 1))/" $fff_conf
 
-	export FFF_COL$col=$((col_index - 1))
+	#export FFF_COL$col=$((col_index - 1))
 }
 
 function firefox() {
@@ -595,7 +605,7 @@ add_notification() {
 
 all_modules=( ob gtk dunst term vim bar ncmpcpp tmux rofi bash lock firefox $wall )
 
-while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
+while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 	case $flag in
 		o) shade_offset=$OPTARG;;
 		O) secondary_shade_offset=$OPTARG;;
@@ -712,6 +722,29 @@ while getopts :o:O:tCp:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				new_color_index=$color_index
 				unset color offset color_index
 			fi;;
+		e)
+			colorscheme_name=$OPTARG
+
+			[[ $color ]] || get_color $(parse_module)
+			colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
+
+			if [[ ! ${property//[A-Za-z_]/} ]]; then
+				grep -h "^$property" $colorscheme &> /dev/null ||
+					(echo "$property $color" >> $colorscheme && exit)
+			fi
+
+			awk -i inplace '/^('${property//\*/\.\*/}') / { $NF = "'$color'" } { print }' $colorscheme
+
+			bar=$(ps aux | awk '\
+					BEGIN { b = "" }
+					/-c '$colorscheme_name'/ { 
+						n = gensub(".*-n (\\w*).*", "\\1", 1)
+						if(b !~ n) b = b "," n
+					}
+					END { print substr(b, 2) }')
+
+			[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+			exit;;
 		R)
 			replace_color=true
 			[[ ${!OPTIND} =~ ^a ]] && replace_all_modules=( ${all_modules[*]} ) && shift;;
@@ -859,12 +892,12 @@ if [[ $replace_color ]]; then
 				else
 					pattern='/delay\|columns\|interval\|change/!'
 					all_indexes=$(awk 'BEGIN { c = "'$color'" } \
-						$2 == c { ai = ai "|" NR } END { print substr(ai, 2) }' $all_colors)
+						$2 == c { ai = ai "\\\\|" NR } END { print substr(ai, 2) }' $all_colors)
 
-					sed -i "/^foreground/ s/#\w*/$new_color/" $cava_conf
+					sed -i "/^foreground/ s/$color/$new_color/" $cava_conf
 				fi
 
-				sed -i "$pattern s/\<\(${all_indexes//|/\\|}\)\>/$new_color_index/g" ${!config_file}
+				sed -i "$pattern s/\<\($all_indexes\)\>/$new_color_index/g" ${!config_file}
 			fi
 		else
 			if [[ $replace_module != term ]]; then
