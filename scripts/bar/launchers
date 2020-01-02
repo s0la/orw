@@ -43,8 +43,14 @@ left="/home/sola/.orw/scripts/lock_screen.sh"
 #bar_mwc
 icon="%{I+7}%{I-}"
 name="bar_mwc"
-left="~/Desktop/mwc.sh"
-middle="~/.orw/scripts/barctl.sh -b mwi,mwp,mwc -k && tmux -S /tmp/ncmpcpp kill-session -t visualizer"
+left="~/.orw/scripts/music_widget.sh"
+middle="~/.orw/scripts/barctl.sh -b mw* -k && tmux -S /tmp/ncmpcpp kill-session -t visualizer"
 right="mpc -q toggle"
 up="mpc -q prev"
 down="mpc -q next"
+
+#bar_wwi
+icon="%{I+3}%{I-}"
+name="bar_wwi"
+left="~/.orw/scripts/barctl.sh -b ww*"
+middle="~/.orw/scripts/barctl.sh -b ww* -k"
