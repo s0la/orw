@@ -152,7 +152,9 @@ get_bar_properties() {
 
 				[[ $bar_offset ]] && bar_x=$display_x bar_width=$width
 
-				all_windows+=( "$bar_name $bar_x $bar_y $bar_width $bar_height $frame" )
+				bar_properties="$bar_name $bar_x $bar_y $bar_width $bar_height $frame"
+				all_windows+=( "$bar_properties" )
+				bars+=( "$bar_properties" )
 			fi
 		done <<< $(~/.orw/scripts/get_bar_info.sh $display)
 	fi
@@ -733,6 +735,8 @@ while ((argument_index <= $#)); do
 
 				optind=${!argument_index}
 
+				get_bar_properties add
+
 				case $optarg in
 					[trbl])
 						[[ $optarg =~ [lr] ]] && index=1 || index=2
@@ -740,22 +744,33 @@ while ((argument_index <= $#)); do
 
 						start_index=$((index % 2 + 1))
 
+						#mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
+						#	'$2 ~ /^0x/ { cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+						#	if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
+						#	wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+						#	print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 { gsub(/.*0x\w* /, "", $0); print }') );;
+
 						mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
-							'$2 ~ /^0x/ { cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+							'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
 							if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
-							wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
-							print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 { gsub(/.*0x\w* /, "", $0); print }') );;
+								wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+								print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
+								{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
+								print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
 					*)
 						if [[ $optarg =~ ^0x ]]; then
 							mirror_window_id=$optarg
 						else
-							mirror_window_id=$(wmctrl -l | awk '/'$optarg'/ { print $1; exit }')
+							mirror_window_id=$((wmctrl -l && list_bars) | awk '/'$optarg'/ { print $1; exit }')
 
 							optind=$((argument_index + 1))
 							optind=${!optind}
 						fi
 
-						mirror_window_properties=( $(list_all_windows | awk '/'$mirror_window_id'/ { print substr($0, 12) }') )
+						mirror_window_properties=( $(list_all_windows | \
+							awk '$1 == "'$mirror_window_id'" {
+								if(NF > 5) { $4 += ($NF - '$border_x'); $5 += ($NF - '$border_y') }
+									print gensub("(" $1 "|" $6 "$)", "", "g") }') )
 				esac
 
 				if [[ $optind =~ ^[xywh,]+$ ]]; then
