@@ -34,10 +34,10 @@ monitor_memory_consumption() {
 
 start_bar_on_boot() {
 	[[ $1 ]] || bar_names="${bars[*]}"
-	sed -i "/bar/ s/\w* &/${1:-${bar_names// /,}} \&/" ~/.config/openbox/autostart.sh
+	sed -i "/bar/ s/[^ ]*$/${1:-${bar_names// /,}}/" ~/.config/openbox/autostart.sh
 }
 
-
+configs=~/.config/orw/bar/configs
 initial_ram_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
 while getopts :ds:c:gb:r:E:e:kla flag; do
@@ -52,10 +52,11 @@ while getopts :ds:c:gb:r:E:e:kla flag; do
 			exit;;
 		c) check_interval=$OPTARG;;
 		b)
-			bars=( ${OPTARG//,/ } )
+			[[ ${OPTARG//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] && pattern="^(${OPTARG//,/|})$" || pattern="$OPTARG"
+			read -a bars <<< $(ls $configs | awk -F '/' '$NF ~ /'${pattern//\*/\.\*}'/ { print $NF }' | xargs)
 			bar_count=${#bars[*]};;
 		r) ram_tolerance=$OPTARG;;
-		E) inherit_config=~/.config/orw/bar/configs/$OPTARG;;
+		E) inherit_config=$configs/$OPTARG;;
 		e)
 			all="$@"
 			replace="${all#*-e }"
@@ -82,7 +83,7 @@ while getopts :ds:c:gb:r:E:e:kla flag; do
 			((bar_count)) || get_bars
 			((bar_count > 1)) && all_bars="${bars[*]}" || bar=$bars
 
-			replace_config=$(eval echo ~/.config/orw/bar/configs/${bar:-{${all_bars// /,}\}})
+			replace_config=$(eval echo $configs/${bar:-{${all_bars// /,}\}})
 
 			awk -i inplace '\
 				BEGIN {
@@ -137,7 +138,7 @@ done &
 
 for bar in "${bars[@]}"; do
 	kill_bar
-	bash ~/.config/orw/bar/configs/$bar &
+	bash $configs/$bar &
 done
 
 start_bar_on_boot
