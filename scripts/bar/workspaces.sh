@@ -51,6 +51,6 @@ done
 
 [[ $1 =~ ^i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
 
-echo -e "%{A4:wmctrl -s $((current_workspace % workspace_count)):}\
-%{A5:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
+echo -e "%{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
+%{A5:wmctrl -s $((current_workspace % workspace_count)):}\
 $workspaces%{A}%{A}%{B\$bg}$format_delimiter\$separator"
