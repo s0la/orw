@@ -268,7 +268,14 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			bar_frame="-R$bfc -r $bar_frame_width"
 
 			[[ $bottom ]] && ((y_offset += 2 * bar_frame_width));;
-		s) separator="%{O$OPTARG}";;
+		s)
+			check_arg separator_sign "${!OPTIND}" && shift
+
+			if [[ $separator_sign ]]; then
+				separator="%{O$OPTARG}$separator_sign%{O$OPTARG}"
+			else
+				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator=$separator$OPTARG$separator
+			fi;;
 		S) get_display_properties $OPTARG;;
 		L)
 			#format Logout
