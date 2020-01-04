@@ -97,6 +97,8 @@ make_launcher() {
 	if [[ $current == p && $lines == single ]]; then
 		launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
 	fi
+
+	unset right middle up down
 }
 
 while read launcher_properties; do
