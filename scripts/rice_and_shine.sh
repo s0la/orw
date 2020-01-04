@@ -108,12 +108,26 @@ function get_color() {
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
-		if [[ $transparency_offset ]]; then
-			local transparency_level=${color:1: -6}
-			transparency_hex=$($colorctl -s '' -o $transparency_offset -ph ${transparency_level:-ff})
-		else
-			transparency_hex=$($colorctl -c -r $(((transparency_level * 255) / 100)))
-		fi
+	#	if [[ $transparency_offset ]]; then
+	#		local transparency_level=${color:1: -6}
+	#		transparency_hex=$($colorctl -s '' -o $transparency_offset -ph ${transparency_level:-ff})
+	#	else
+	#		transparency_hex=$($colorctl -c -r $(((transparency_level * 255) / 100)))
+	#	fi
+
+	#	color="$transparency_hex${color: -6}"
+	#fi
+
+		transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
+			awk -Wposix '/^'${property%%[^[:alnum:]_]*}' / {
+				l = length($NF)
+				tl = '${transparency_level:-0}'
+				if(!tl) {
+					tl = (l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
+					ntl = int(tl '$transparency_offset' * 2.55)
+				}
+				t = ntl ? ntl : int(tl * 2.55)
+				printf("#%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0) }')
 
 		color="$transparency_hex${color: -6}"
 	fi
@@ -313,7 +327,6 @@ function bar() {
 	else
 		local hex_range=6
 	fi
-
 
 	if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
 		sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" $bar_conf $bar_modules
@@ -722,29 +735,29 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				new_color_index=$color_index
 				unset color offset color_index
 			fi;;
-		e)
-			colorscheme_name=$OPTARG
+		e) edit_colorscheme=~/.config/orw/colorschemes/$OPTARG.ocs;;
+			#colorscheme_name=$OPTARG
 
-			[[ $color ]] || get_color $(parse_module)
-			colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
+			#[[ $color ]] || get_color $(parse_module)
+			#colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
 
-			if [[ ! ${property//[A-Za-z_]/} ]]; then
-				grep -h "^$property" $colorscheme &> /dev/null ||
-					(echo "$property $color" >> $colorscheme && exit)
-			fi
+			#if [[ ! ${property//[A-Za-z_]/} ]]; then
+			#	grep -h "^$property" $colorscheme &> /dev/null ||
+			#		(echo "$property $color" >> $colorscheme && exit)
+			#fi
 
-			awk -i inplace '/^('${property//\*/\.\*/}') / { $NF = "'$color'" } { print }' $colorscheme
+			#awk -i inplace '/^('${property//\*/\.\*/}') / { $NF = "'$color'" } { print }' $colorscheme
 
-			bar=$(ps aux | awk '\
-					BEGIN { b = "" }
-					/-c '$colorscheme_name'/ { 
-						n = gensub(".*-n (\\w*).*", "\\1", 1)
-						if(b !~ n) b = b "," n
-					}
-					END { print substr(b, 2) }')
+			#bar=$(ps aux | awk '\
+			#		BEGIN { b = "" }
+			#		/-c '$colorscheme_name'/ { 
+			#			n = gensub(".*-n (\\w*).*", "\\1", 1)
+			#			if(b !~ n) b = b "," n
+			#		}
+			#		END { print substr(b, 2) }')
 
-			[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-			exit;;
+			#[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+			#exit;;
 		R)
 			replace_color=true
 			[[ ${!OPTIND} =~ ^a ]] && replace_all_modules=( ${all_modules[*]} ) && shift;;
@@ -779,12 +792,16 @@ function inherit() {
 		[[ ${inherited_property:-$property} =~ ^[a-z_]+$ ]] &&
 			get_color ${inherited_property:-$property} || multiple_colors=true
 	else
+		[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
 		[[ $inherited_property ]] && property_to_check=inherited_property || property_to_check=property
 		[[ ${!property_to_check} && ! ${!property_to_check//[A-Za-z_]/} ]] && get_color $(parse_module)
 	fi
 }
 
+
 if [[ ! $color && ! $backup ]]; then
+	[[ $new_color ]] && unset transparency_{level,offset}
+
 	inherit
 
 	if [[ $replace_color && ! $new_color ]]; then
@@ -793,6 +810,44 @@ if [[ ! $color && ! $backup ]]; then
 
 		inherit
 	fi
+fi
+
+if [[ $edit_colorscheme ]]; then
+	if [[ $new_color ]]; then
+		if [[ $transparency ]]; then
+			((${#new_color} < 8)) && color=${color: -6}
+		else
+			new_color=${new_color: -6}
+		fi
+
+		current_color=${color#\#}
+		new_color=${new_color#\#}
+		edit_pattern=.*
+	else
+		[[ $color ]] || get_color $(parse_module)
+
+		if [[ ! ${property//[A-Za-z_]/} ]]; then
+			grep -h "^$property" $edit_colorscheme &> /dev/null ||
+				(echo "$property $color" >> $edit_colorscheme && exit)
+		fi
+	fi
+
+	awk -i inplace '/^('${edit_pattern:-${property//\*/\.\*}}') / {
+		sub("'${current_color:-.*}'", "'${new_color:-$color}'", $NF)
+	} { print }' $edit_colorscheme
+
+	edit_colorscheme=${edit_colorscheme##*/}
+
+	bar=$(ps aux | awk '\
+		BEGIN { b = "" }
+			/-c '${edit_colorscheme%.*}'/ { 
+				n = gensub(".*-n (\\w*).*", "\\1", 1)
+				if(b !~ n) b = b "," n
+			}
+		END { print substr(b, 2) }')
+
+		[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+		exit
 fi
 
 if [[ $backup ]]; then
