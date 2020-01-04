@@ -23,24 +23,24 @@ lower_bars() {
 }
 
 monitor_memory_consumption() {
-	current_ram_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
+	current_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-	((current_ram_usage > initial_ram_usage)) && 
-		ram_usage_delta=$((current_ram_usage - initial_ram_usage)) ||
-		ram_usage_delta=$(((initial_ram_usage - current_ram_usage) * 2))
+	((current_memory_usage > initial_memory_usage)) && 
+		memory_usage_delta=$((current_memory_usage - initial_memory_usage)) ||
+		memory_usage_delta=$(((initial_memory_usage - current_memory_usage) * 2))
 
-	((ram_usage_delta >= ${ram_tolerance:-10})) && $0
+	((memory_usage_delta >= ${memory_tolerance:-10})) && $0
 }
 
 start_bar_on_boot() {
 	[[ $1 ]] || bar_names="${bars[*]}"
-	sed -i "/bar/ s/[^ ]*$/${1:-${bar_names// /,}}/" ~/.config/openbox/autostart.sh
+	sed -i "/bar/ s/[^ ]*$/${1:-${bar_expr:-${bar_names// /,}}}/" ~/.config/openbox/autostart.sh
 }
 
 configs=~/.config/orw/bar/configs
-initial_ram_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
+initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-while getopts :ds:c:gb:r:E:e:kla flag; do
+while getopts :ds:c:gb:m:E:e:r:kla flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
@@ -52,23 +52,22 @@ while getopts :ds:c:gb:r:E:e:kla flag; do
 			exit;;
 		c) check_interval=$OPTARG;;
 		b)
-			[[ ${OPTARG//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] && pattern="^(${OPTARG//,/|})$" || pattern="$OPTARG"
+			bar_expr=$OPTARG
+			[[ ${bar_expr//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] && pattern="^(${bar_expr//,/|})$" || pattern="${bar_expr//,/|}"
 			read -a bars <<< $(ls $configs | awk -F '/' '$NF ~ /'${pattern//\*/\.\*}'/ { print $NF }' | xargs)
 			bar_count=${#bars[*]};;
-		r) ram_tolerance=$OPTARG;;
+		m) memory_tolerance=$OPTARG;;
 		E) inherit_config=$configs/$OPTARG;;
-		e)
+		[er])
 			all="$@"
-			replace="${all#*-e }"
+			replace="${all#*-[er] }"
 
-			[[ $inherit_config ]] &&
-				args=$(sed -n "s/.*\($replace[^-]*\).*/\1/p" $inherit_config) || args="${replace#* }"
+			edit_args="${replace#* }"
+			edit_flag="-${replace%% *}"
 
-			flag="${replace%% *}"
-
-			if [[ $args =~ [+-][0-9] ]]; then
-				pre="${args%%[+-][0-9]*}"
-				post="${args#$pre}"
+			if [[ $edit_args =~ [+-][0-9] ]]; then
+				pre="${edit_args%%[+-][0-9]*}"
+				post="${edit_args#$pre}"
 
 				relative=${post%% *}
 				sign=${relative:0:1}
@@ -78,8 +77,6 @@ while getopts :ds:c:gb:r:E:e:kla flag; do
 				index="${#spaces}"
 			fi
 
-			[[ $first_arg =~ [+-][0-9] ]] && sign=${first_arg}
-
 			((bar_count)) || get_bars
 			((bar_count > 1)) && all_bars="${bars[*]}" || bar=$bars
 
@@ -87,23 +84,32 @@ while getopts :ds:c:gb:r:E:e:kla flag; do
 
 			awk -i inplace '\
 				BEGIN {
-					f = "'$flag'"
 					v = '${value:-0}'
 					i = '${index:-0}'
+					f = "'$edit_flag'"
+					ic = ("'$inherit_config'")
 				} {
-					if("'$sign'") {
-						cv = gensub(".*" f "( [^ ]*){" i + 1 "}.*", "\\1", 1)
-						nv = cv '$sign' v
+					if((ic && !p) || !ic) {
+						if("'$sign'") {
+							cv = gensub(".*" f "( [^ ]*){" i + 1 "}.*", "\\1", 1)
+							nv = cv '$sign' v
 
-						p = "'"$pre"'" nv " '"${post/$relative/}"'"
-					} else {
-						p = "'"$args"' "
+							p = "'"$pre"'" nv " '"${post/$relative/}"'"
+						} else {
+							if("'$inherit_config'") {
+								p = gensub(".*" f " ([^-]*).*", "\\1", 1)
+							} else {
+								p = "'"$edit_args"' "
+							}
+						}
 					}
 
-					gsub(f "[^-]*", f " " p)
-				} {
-					print
-				}' $replace_config
+					if(ic && NR == FNR) nextfile
+
+					r = ("'$flag'" == "r") ? "" : f " " p
+					print "r", "'$flag'"
+					gsub(f "[^-]*", r)
+				} { print }' $inherit_config $replace_config
 			break;;
 		k)
 			if [[ $bars ]]; then
