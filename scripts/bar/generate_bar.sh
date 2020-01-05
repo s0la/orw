@@ -244,9 +244,11 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 				unset colorscheme
 			else
-				modules+='%{c}'
+				#modules+='%{c}'
+				modules="${modules%\$*}%{c}"
 			fi;;
-		r) modules+='%{r}';;
+		#r) modules+='%{r}';;
+		r) modules="${modules%\$*}%{r}";;
 		x)
 			if [[ $OPTARG == r ]]; then
 				align_right=true
@@ -275,9 +277,9 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg separator_sign "${!OPTIND}" && shift
 
 			if [[ $separator_sign ]]; then
-				separator="%{O$OPTARG}$separator_sign%{O$OPTARG}"
+				separator="%{O$OPTARG}$bsfg${separator_sign// /}%{O$OPTARG}"
 			else
-				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator="$separator$bsfg$OPTARG$separator"
+				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator="$separator$bsfg${OPTARG// /}$separator"
 			fi
 
 			separator="$bsbg$separator";;
