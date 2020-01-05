@@ -120,14 +120,16 @@ function get_color() {
 
 		transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
 			awk -Wposix '/^'${property%%[^[:alnum:]_]*}' / {
-				l = length($NF)
-				tl = '${transparency_level:-0}'
-				if(!tl) {
-					tl = (l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
-					ntl = int(tl '$transparency_offset' * 2.55)
-				}
-				t = ntl ? ntl : int(tl * 2.55)
-				printf("#%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0) }')
+					l = length($NF)
+				} END {
+					tl = '${transparency_level:-0}'
+					if(!tl) {
+						tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
+						ntl = int(tl '$transparency_offset' * 2.55)
+					}
+					t = ntl ? ntl : int(tl * 2.55)
+					printf("#%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
+				}')
 
 		color="$transparency_hex${color: -6}"
 	fi
