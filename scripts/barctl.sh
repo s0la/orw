@@ -107,7 +107,6 @@ while getopts :ds:c:gb:m:E:e:r:kla flag; do
 					if(ic && NR == FNR) nextfile
 
 					r = ("'$flag'" == "r") ? "" : f " " p
-					print "r", "'$flag'"
 					gsub(f "[^-]*", r)
 				} { print }' $inherit_config $replace_config
 			break;;
