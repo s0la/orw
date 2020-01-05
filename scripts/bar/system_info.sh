@@ -137,8 +137,8 @@ case $1 in
 
 		ssid=$(nmcli dev wifi | awk ' \
 			NR == 1 {
-					si = index($0, "SSID")
-					mi = index($0, "MODE")
+					si = index($0, " SSID")
+					mi = index($0, " MODE")
 				}
 			/^*/ { nn = substr($0, si, mi - si)
 			print gensub(" {2,}", "", 1, nn) }')
