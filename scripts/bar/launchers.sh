@@ -105,13 +105,10 @@ while read launcher_properties; do
 		eval ${launcher_properties//\&/\\&}
 		make_launcher
 		launchers+="$launcher$separator"
-done <<< $(awk '{ if(/^$/) { if(l) la[++i] = l; l = "" }
-					else { if(!/^#/) l = l " " $0 }
-				} END { for(li in la) print la[li]; print l }' ~/Desktop/l1)
-#done < <(grep -v ^\# ~/.orw/scripts/bar/launchers)
-
-#echo -e $launchers
-#exit
+done <<< $(awk '{ if(/^$/) {
+						if(l) la[++i] = l; l = ""
+					} else { if(!/^#/) l = l " " $0 }
+					} END { for(li in la) print la[li]; print l }' ~/.orw/scripts/bar/launchers)
 
 [[ $separator ]] && launchers=${launchers%\%*}
 [[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
