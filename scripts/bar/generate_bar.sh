@@ -16,6 +16,8 @@ bg="#303030"
 fc="#303030"
 bfc="#303030"
 bbg="#303030"
+bsbg="%{B#303030}"
+bsfg="%{F#303030}"
 
 pbg="%{B#3a3a3a}"
 pfg="%{F#abaeb2}"
@@ -220,7 +222,8 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg colorscheme ${!OPTIND} && shift
 			
 			if [[ $colorscheme ]]; then
-				[[ $@ =~ -M ]] || base=7
+				[[ $@ =~ -M ]] || base=9
+				#eval $(sed -n "/bar/,${base:-/^$/} s/ /=/p" ~/.config/orw/colorschemes/$colorscheme.ocs)
 
 				
 				eval $(awk '\
@@ -274,8 +277,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			if [[ $separator_sign ]]; then
 				separator="%{O$OPTARG}$separator_sign%{O$OPTARG}"
 			else
-				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator=$separator$OPTARG$separator
-			fi;;
+				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator="$separator$bsfg$OPTARG$separator"
+			fi
+
+			separator="$bsbg$separator";;
 		S) get_display_properties $OPTARG;;
 		L)
 			#format Logout
@@ -544,8 +549,15 @@ while read -r module; do
 
 	all_modules=$(eval "echo -e \"$modules\"")
 
+	#[[ $all_modules ]] && last_offset="%${all_modules##*%}"
+
+	#[[ $last_offset == $separator ]] && all_modules="${all_modules%\%*}" || all_modules="${all_modules%\%*\%*}$last_offset"
+
 	[[ $all_modules ]] && last_offset="%${all_modules##*%}"
-	[[ $last_offset == $separator ]] && all_modules="${all_modules%\%*}" || all_modules="${all_modules%\%*\%*}$last_offset"
+	[[ "$separator" =~ "$last_offset"$ ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}$last_offset"
+
+	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
+	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
 	echo -e "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
