@@ -1,0 +1,1 @@
+/home/sola/.orw/scripts/bar/generate_bar.sh -x c -w 1000 -y 15 -h 30 -a 8 -F 2 -i -n lau_top -M -m c,P,s20,of5,i -c -A a -r -N -v -d 
