@@ -78,6 +78,7 @@ function deps() {
 	echo 'installing dependencies..'
 
 	common_apps=( cmake git neovim tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi )
+	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then
 		sudo apt update &> /dev/null
@@ -85,7 +86,7 @@ function deps() {
 			libnotify-dev libreadline-dev libcurl4-gnutls-dev libxft-dev libx11-xcb-dev libxcb-randr0-dev libxcb-xinerama0-dev \
 			libtool{,-bin} libfftw3-dev libasound2-dev libncursesw5-dev libpulse-dev \
 			libxml2-utils curl thunar gawk &> /dev/null ||
-			handle_failure
+			handle_failure "$failure_message"
 
 		#termite installation
 		install_termite
@@ -124,7 +125,7 @@ function deps() {
 		confirm '' 'y' 'y' | sudo pacman -S ${common_apps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
 			libconfig gtk-engine-murrine unzip termite dunst icu glibc libxml2 mpfr openssl wpa_supplicant &> /dev/null ||
-			handle_failure
+			handle_failure "$failure_message"
 
 		#Thunar 1.6
 		(wget https://aur.archlinux.org/cgit/aur.git/snapshot/thunar-gtk2.tar.gz -O ~/Downloads/thunar.tar.xz
