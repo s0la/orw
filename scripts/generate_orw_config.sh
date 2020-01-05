@@ -10,8 +10,8 @@ general() {
 }
 
 display() {
-	full_resolution=$(xrandr -q | awk -F '[x, ]' '/current/ {print "full_resolution " $10 " " $13}')
-	no_primary=$(xrandr -q | awk '/primary/ { if ($2 == "disconnected") print "true"; else print ""}')
+	full_resolution=$(xrandr -q | awk -F '[x, ]' '/current/ { print "full_resolution " $10 " " $13 }')
+	no_primary=$(xrandr -q | awk '/primary/ { print $2 == "disconnected" }')
 
 	local width height
 
@@ -23,7 +23,7 @@ display() {
 		displays+="display_${index}_xy $x $y\n"
 		displays+="display_$index $width $height\n"
 
-		if [[ $no_primary && $index -eq 1 ]]; then
+		if ((no_primary && index == 1)); then
 			xrandr --output $display --primary
 			is_primary=true
 		fi
@@ -34,12 +34,12 @@ display() {
 	primary_display="primary display_${primary_index:-$index}"
 
 	if ((index > 1)); then
-		((x_sum > 0)) && orientation=horizontal || orientation=vertical
+		((x_sum)) && orientation=horizontal || orientation=vertical
 	else
 		((primary_width > primary_height)) && orientation=horizontal || orientation=vertical
 	fi
 
-	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}\n\n"
+	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}"
 }
 
 wallpapers() {
