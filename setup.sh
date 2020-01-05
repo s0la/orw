@@ -123,7 +123,7 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_apps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip termite dunst icu glibc libxml2 mpfr openssl wpa_supplicant &> /dev/null ||
+			libconfig gtk-engine-murrine unzip termite dunst icu glibc libxml2 mpfr openssl wpa_supplicant &> /dev/null ||
 			handle_failure
 
 		#Thunar 1.6
