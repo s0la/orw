@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path=~/.orw/scripts/bar/
+path=~/.orw/scripts/bar
 config_path=~/.config/orw/bar
 
 inner="%{O5}"
@@ -390,7 +390,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		n) bar_name="$OPTARG";;
 		o)
 			overwrite=true
-			flags="$path/generate_bar.sh ${all_arguments%-o*}${all_arguments#*-o}";;
+			flags="${path/$HOME/\~}/generate_bar.sh ${all_arguments%-o*}${all_arguments#*-o}";;
 		a) font_size=$OPTARG;;
 	esac
 done
