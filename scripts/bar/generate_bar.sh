@@ -244,11 +244,9 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 				unset colorscheme
 			else
-				#modules+='%{c}'
-				modules="${modules%\$*}%{c}"
+				modules+='%{c}'
 			fi;;
-		#r) modules+='%{r}';;
-		r) modules="${modules%\$*}%{r}";;
+		r) modules+='%{r}';;
 		x)
 			if [[ $OPTARG == r ]]; then
 				align_right=true
@@ -561,7 +559,7 @@ while read -r module; do
 	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
 	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
-	echo -e "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
+	sed "s/$separator\(%{[cr]}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
 	-f "$font2" -o ${icomoon_offset:-$((font_offset - 0))} \
