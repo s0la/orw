@@ -30,7 +30,7 @@ folders() {
 }
 
 buttons() {
-	all=( ox box bars fat owl fira turq dots real plus slim bar_slim small default numix round sharp arrow elegant )
+	all=( ox box bars fat owl fira turq dots real plus slim bar_slim small default numix round sharp arrow elegant surreal )
 	path=~/.themes/orw/openbox-3
 	find_current buttons
 

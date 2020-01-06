@@ -20,7 +20,7 @@ populate_menu 'rofi\nbash\ntmux\nbuttons\nfolders\ntitlebar'
 		done;;
 	titlebar) ~/.orw/scripts/toggle.sh titlebar;;
 	buttons)
-		populate_menu 'box\nbars\nturq\ndots\nplus\nslim\nsmall\nnumix\nround\nsharp\nelegant'
+		populate_menu 'box\nbars\nturq\ndots\nplus\nslim\nsmall\nnumix\nround\nsharp\nelegant\nsurreal'
 		[[ $toggle ]] && ~/.orw/scripts/toggle.sh buttons $toggle;;
 	folders) ~/.orw/scripts/toggle.sh folders;;
 	*) ~/.orw/scripts/toggle.sh $toggle;;
