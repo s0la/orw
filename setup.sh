@@ -21,8 +21,8 @@ get_app() {
 	cd ~/Downloads/$3
 	rm -rf .git
 
-	for command in $(seq 4 $#); do
-		eval "\$$command"
+	for arg in "${@:4}"; do
+		eval $arg
 	done
 
 	if [[ $1 == install ]]; then
@@ -124,7 +124,8 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_apps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			libconfig gtk-engine-murrine unzip termite dunst icu glibc libxml2 mpfr openssl wpa_supplicant &> /dev/null ||
+			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant &> /dev/null \
+			libconfig libev xcb-util-image libxml2 glibc icu ||
 			handle_failure "$failure_message"
 
 		#Thunar 1.6
