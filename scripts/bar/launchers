@@ -1,14 +1,7 @@
-#change_wall
-#icon="%{I+3}%{I-}"
-#name="change_wall"
-#left="/home/sola/.orw/scripts/wallctl.sh"
-#up="/home/sola/.orw/scripts/wallctl.sh -co prev"
-#down="/home/sola/.orw/scripts/wallctl.sh -co next"
-
 #Mozilla Firefox
-#icon="%{I+7}%{I-}"
-#name="Mozilla Firefox"
-#left="firefox"
+icon="%{I+7}%{I-}"
+name="Mozilla Firefox"
+left="firefox"
 
 #termite
 icon="%{I+7}%{I-}"
@@ -35,11 +28,6 @@ icon="%{I+7}%{I-}"
 name="visualizer"
 left="~/.orw/scripts/ncmpcpp.sh -w 450 -Vvi"
 
-#lock_screen
-icon="%{I+5}%{I-}"
-name="lock_screen"
-left="/home/sola/.orw/scripts/lock_screen.sh"
-
 #bar_mwc
 icon="%{I+7}%{I-}"
 name="bar_mwc"
@@ -54,3 +42,15 @@ icon="%{I+3}%{I-}"
 name="bar_wwi"
 left="~/.orw/scripts/barctl.sh -b ww*"
 middle="~/.orw/scripts/barctl.sh -b ww* -k"
+down="/home/sola/.orw/scripts/wallctl.sh -co next"
+
+#change_wall
+#icon="%{I+3}%{I-}"
+#name="change_wall"
+#left="/home/sola/.orw/scripts/wallctl.sh"
+#up="/home/sola/.orw/scripts/wallctl.sh -co prev"
+
+#lock_screen
+icon="%{I+5}%{I-}"
+name="lock_screen"
+left="/home/sola/.orw/scripts/lock_screen.sh"

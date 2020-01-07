@@ -6,7 +6,7 @@ toggle=''
 resize=''
 current=''
 
-launchers=~/.orw/scripts/bar/launchers.sh
+launchers=~/.orw/scripts/bar/launchers
 
 set() {
 	sed -i "/^$1/ s/'.*'/'${!1//\//\\\/}'/" $0
@@ -109,13 +109,13 @@ else
 			else
 				move_whole=$(sed -n "/^#$move/,/^$/p" $launchers)
 
-				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\ \n'
-				line=$(awk '/^#'"${current#* }"'/ { sl = NR } sl && /^$/ { el = NR; exit } END { print '$direction' }' $launchers)
-
 				sed -i "/^#$move/,/^$/d" $launchers
 
+				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\\n'
+				line=$(awk '/^#'"${current#* }"'/ { sl = NR } sl && /^$/ { el = NR; exit } END { print '$direction' }' $launchers)
+
 				if ((line)); then
-					sed -i "${line}i$before_line${move_whole//$'\n'/\\n}$after_line" $launchers
+					sed -i "${line}i${before_line}${move_whole//$'\n'/\\n}$after_line" $launchers
 				else
 					~/.orw/scripts/notify.sh "HERE"
 					echo -e "\n$move_whole" >> $launchers
