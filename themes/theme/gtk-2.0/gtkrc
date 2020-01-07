@@ -3,10 +3,11 @@
 
 gtk-color-scheme = "bg_color:#eeeeee"
 gtk-color-scheme = "fg_color:#656565"
-gtk-color-scheme = "base_color:#3a3a3a"
 gtk-color-scheme = "sbbg_color:#3d3d3d"
 gtk-color-scheme = "sbfg_color:#777777"
-gtk-color-scheme = "active_color:#b2908a"
+gtk-color-scheme = "active_color:#a6bbbf"
+gtk-color-scheme = "base_bg_color:#303030"
+gtk-color-scheme = "base_fg_color:#c0c0c0"
 
 gtk-color-scheme = "mbg_color:#3a3a3a"
 gtk-color-scheme = "mfg_color:#6d6d6d"
@@ -53,7 +54,7 @@ style "default"
     GtkMenu::horizontal-padding                = 0
     GtkMenu::vertical-padding                  = 0
 
-    GtkPaned::handle-size                      = 2
+    GtkPaned::handle-size                      = 0
 
     GtkNotebook::tab-overlap                   = 0
 
@@ -96,23 +97,23 @@ style "default"
     xthickness = 1
     ythickness = 1
 
-	fg[NORMAL]        = @fg_color
-	fg[PRELIGHT]      = shade(1.0, @fg_color)
-	fg[SELECTED]      = shade(1.0, @fg_color)
-    fg[ACTIVE]        = shade(1.0, @fg_color)
-	fg[INSENSITIVE]   = shade(1.0, @fg_color)
+	fg[NORMAL]        = @base_fg_color
+	fg[PRELIGHT]      = shade(1.0, @base_fg_color)
+	fg[SELECTED]      = shade(1.0, @base_fg_color)
+    fg[ACTIVE]        = shade(1.0, @base_fg_color)
+	fg[INSENSITIVE]   = shade(1.0, @base_fg_color)
 
-	bg[NORMAL]        = @base_color
+	bg[NORMAL]        = @base_bg_color
 	bg[PRELIGHT]      = @active_color
-	bg[ACTIVE]        = @base_color
+	bg[ACTIVE]        = @base_bg_color
 	bg[SELECTED]	  = @active_color
-	bg[INSENSITIVE]   = @base_color
+	bg[INSENSITIVE]   = @base_bg_color
 
 	base[NORMAL]      = @bg_color
 	base[PRELIGHT]    = @active_color
 	base[ACTIVE]      = @bg_color
 	base[SELECTED]    = @bg_color
-	base[INSENSITIVE] = @base_color
+	base[INSENSITIVE] = @base_bg_color
 
 	text[NORMAL]      = @fg_color
 	text[PRELIGHT]    = @active_color
@@ -128,7 +129,7 @@ style "default"
         cellstyle            = 0
 		comboboxstyle        = 0                 # 0 = normal combobox, 1 = colorized combobox below arrow
 		contrast             = 0.0               # 0.8 for less contrast, more than 1.0 for more contrast on borders
-		default_button_color  = shade(0.9, @base_color)
+		default_button_color  = shade(0.9, @base_bg_color)
 		expanderstyle        = 0
 		focus_color          = @active_color
 		focusstyle           = 0
@@ -209,9 +210,9 @@ style "wider" {
 }
 
 style "entry" = "wider" {
-	bg[SELECTED]      = @base_color
+	bg[SELECTED]      = @base_bg_color
 	fg[SELECTED]      = @text_color
-	base[INSENSITIVE] = @base_color
+	base[INSENSITIVE] = @base_bg_color
 }
 
 style "button" = "wider" {
@@ -220,17 +221,17 @@ style "button" = "wider" {
 
 	font_name = '8'
 
-	bg[NORMAL]      = shade(0.88, @base_color)
-	bg[ACTIVE]      = shade(0.84, @base_color)
-	bg[PRELIGHT]    = shade(0.84, @base_color)
-	bg[SELECTED]    = shade(0.84, @base_color)
-	bg[INSENSITIVE] = shade(1.0, @base_color)
+	bg[NORMAL]      = shade(0.88, @base_bg_color)
+	bg[ACTIVE]      = shade(0.84, @base_bg_color)
+	bg[PRELIGHT]    = shade(0.84, @base_bg_color)
+	bg[SELECTED]    = shade(0.84, @base_bg_color)
+	bg[INSENSITIVE] = shade(1.0, @base_bg_color)
 
-	fg[NORMAL]      = @fg_color
-	fg[ACTIVE]      = shade(0.88, @base_color)
+	fg[NORMAL]      = @base_fg_color
+	fg[ACTIVE]      = shade(0.88, @base_bg_color)
 	fg[PRELIGHT]    = shade(0.88, @active_color)
-	fg[SELECTED]    = shade(0.88, @base_color)
-	fg[INSENSITIVE] = shade(1.0, @base_color)
+	fg[SELECTED]    = shade(0.88, @base_bg_color)
+	fg[INSENSITIVE] = shade(1.0, @base_bg_color)
 
 	engine "pixmap" {
 		image {
@@ -266,10 +267,10 @@ style "button" = "wider" {
 		}
 	}
 
-    engine "murrine" {
-		focusstyle  = 0
-		reliefstyle = 0
-	}
+    #engine "murrine" {
+	#	focusstyle  = 0
+	#	reliefstyle = 0
+	#}
 }
 
 style "notebook-button" = "notebook-bg" {
@@ -278,7 +279,7 @@ style "notebook-button" = "notebook-bg" {
 
     font_name = '8'
 
-    bg[PRELIGHT] = shade(1.08, @base_color)
+    bg[PRELIGHT] = shade(1.08, @base_bg_color)
 
     #engine "murrine" {
 	#}
@@ -288,13 +289,13 @@ style "notebook-bg"
 {
     font_name = '8'
 
-	bg[NORMAL]   = shade(1.0, @base_color)
-	bg[ACTIVE]   = shade(0.95, @base_color)
+	bg[NORMAL]   = shade(1.0, @base_bg_color)
+	bg[ACTIVE]   = shade(0.95, @base_bg_color)
 
-	fg[NORMAL]   = shade(1.0, @fg_color)
-	fg[ACTIVE]   = shade(0.9, @fg_color)
-	fg[PRELIGHT] = shade(1.2, @fg_color)
-    fg[SELECTED] = shade(1.00, @base_color)
+	fg[NORMAL]   = shade(1.0, @base_fg_color)
+	fg[ACTIVE]   = shade(0.9, @base_fg_color)
+	fg[PRELIGHT] = shade(1.2, @base_fg_color)
+    fg[SELECTED] = shade(1.00, @base_bg_color)
 
 
 	engine "murrine" {
@@ -360,7 +361,7 @@ style "menubar" = "menu" {
 	xthickness = 4
 	ythickness = 4
 
-	bg[NORMAL] = @base_color
+	bg[NORMAL] = @base_bg_color
 
 	engine "murrine" {
 		roundness = 0
@@ -371,14 +372,14 @@ style "menubar-menuitem" {
 	ythickness = 4
 	xthickness = 2
 
-	bg[PRELIGHT]   = @base_color
-	bg[SELECTED]   = @base_color
+	bg[PRELIGHT]   = @base_bg_color
+	bg[SELECTED]   = @base_bg_color
 
-	fg[NORMAL]     = @fg_color
+	fg[NORMAL]     = @base_fg_color
 	fg[PRELIGHT]   = @active_color
 	fg[SELECTED]   = @active_color
 
-	text[NORMAL]   = @fg_color
+	text[NORMAL]   = @base_fg_color
 	text[PRELIGHT] = @active_color
 	text[SELECTED] = @active_color
 
@@ -416,10 +417,10 @@ style "treeview-header" = "button" {
 	xthickness   = 2
 	ythickness   = 0
 
-	bg[NORMAL]   = shade(1.0, @base_color)
-	bg[ACTIVE]   = shade(1.03, @base_color)
-	bg[PRELIGHT] = shade(0.88, @base_color)
-    bg[SELECTED] = shade(1.00, @base_color)
+	bg[NORMAL]   = shade(1.0, @base_bg_color)
+	bg[ACTIVE]   = shade(1.03, @base_bg_color)
+	bg[PRELIGHT] = shade(0.88, @base_bg_color)
+    bg[SELECTED] = shade(1.00, @base_bg_color)
 
 	engine "murrine" {
 		roundness       = 0  # This makes treeview progressbars square.
@@ -441,7 +442,7 @@ style "tooltips" = "wider" {
 
     font_name = "10"
 
-	bg[NORMAL]   = shade(0.8, @base_color)
+	bg[NORMAL]   = shade(0.8, @base_bg_color)
 	bg[SELECTED] = "#eeeeee"
 
 	fg[NORMAL]   = @fg_color
@@ -474,9 +475,9 @@ style "progressbar" {
 }
 
 style "scrollbar" {
-	bg[NORMAL]   = shade(0.55, @base_color)
-	bg[ACTIVE]   = shade(0.82, @base_color)
-	bg[PRELIGHT] = shade(0.82, @base_color)
+	bg[NORMAL]   = shade(0.55, @base_bg_color)
+	bg[ACTIVE]   = shade(0.82, @base_bg_color)
+	bg[PRELIGHT] = shade(0.82, @base_bg_color)
 
 	engine "murrine" {
 		contrast      = .0
@@ -532,8 +533,8 @@ style "scale" = "button" {
 	GtkWidget::focus-padding    = 0
 	GtkWidget::focus-line-width = 0
 
-	bg[NORMAL]      = shade(0.8, @base_color)
-	bg[ACTIVE]      = mix(0.7, shade(1.0, @base_color), shade(0.8, @base_color))
+	bg[NORMAL]      = shade(0.8, @base_bg_color)
+	bg[ACTIVE]      = mix(0.7, shade(1.0, @base_bg_color), shade(0.8, @base_bg_color))
 	bg[PRELIGHT]    = shade(1.0, @active_color)
 	bg[SELECTED]    = shade(1.0, @active_color)
 	bg[INSENSITIVE] = shade (0.98, @bg_color)
@@ -557,7 +558,7 @@ style "radiocheck" {
 	bg[NORMAL]      = shade (1.06, @bg_color)
 	bg[ACTIVE]      = shade (0.85, @bg_color)
 	bg[PRELIGHT]    = shade (1.06, @bg_color)
-	bg[SELECTED]    = @base_color
+	bg[SELECTED]    = @base_bg_color
 	bg[INSENSITIVE] = shade (0.95, @bg_color)
 
 	fg[ACTIVE]      = @fg_color
@@ -625,7 +626,7 @@ style "xfwm-tabwin" {
 
 	font_name = "bold 0"
 
-	bg[NORMAL]      = shade (0.7, @base_color)
+	bg[NORMAL]      = shade (0.7, @base_bg_color)
 
 	fg[NORMAL]      = "#c1c1c1"
 	fg[ACTIVE]      = "#c1c1c1"
@@ -645,8 +646,8 @@ style "xfdesktop-icon-view" {
 	XfdesktopIconView::shadow-y-offset = 0
 	XfdesktopIconView::selected-shadow-x-offset = 0
 	XfdesktopIconView::selected-shadow-y-offset = 0
-	XfdesktopIconView::shadow-color = @base_color
-	XfdesktopIconView::selected-shadow-color = @base_color
+	XfdesktopIconView::shadow-color = @base_bg_color
+	XfdesktopIconView::selected-shadow-color = @base_bg_color
 	XfdesktopIconView::cell-spacing = 0
 	XfdesktopIconView::cell-padding = 0
     XfdesktopIconVIew::ellipsize-icon-labels = 1
@@ -720,7 +721,7 @@ style "chrome-gtk-frame" {
     ChromeGtkFrame::frame-gradient-size = 100
     ChromeGtkFrame::frame-gradient-color = shade (1.08,@bg_color)
     ChromeGtkFrame::inactive-frame-gradient-color = shade (1.08,@bg_color)
-    ChromeGtkFrame::scrollbar-trough-color = @base_color
+    ChromeGtkFrame::scrollbar-trough-color = @base_bg_color
     ChromeGtkFrame::scrollbar-slider-prelight-color = @panel_bg
     ChromeGtkFrame::scrollbar-slider-normal-color = shade (1.4, @panel_bg)
 }
