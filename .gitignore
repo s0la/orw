@@ -1,3 +1,6 @@
 scripts/auth
 dotfiles/.mpd/mpd.db
 dotfiles/.config/orw/config
+
+dotfiles/.config/nvim/**/deoplete*
+*pyc
