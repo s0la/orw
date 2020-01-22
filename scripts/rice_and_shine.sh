@@ -318,6 +318,7 @@ function term() {
 }
 
 function vim() {
+	reload_vim=true
 	sed -i "/[gs]:$property / s/#\w*/#${color: -6}/" $vim_conf
 }
 
@@ -1066,14 +1067,11 @@ if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh -d &> /dev/null & fi
 	if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
 	if [[ $reload_term ]]; then killall -USR1 termite & fi
+	if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
 	if [[ $reload_vifm ]]; then
 		vifm=$(which vifm)
 		[[ $($vifm --server-list) ]] && $vifm --remote -c "colorscheme orw"
 	fi
-	#if [[ $reload_vifm ]]; then
-	#	tmux=$(which tmux)
-	#	$tmux -S /tmp/vifm ls &> /dev/null && $tmux -S /tmp/vifm send -t vifm "ss" &
-	#fi
 	if [[ $reload_qb ]]; then
 		qb_pid=$(pgrep qutebrowser)
 		((qb_pid)) && qutebrowser ":config-source" &> /dev/null

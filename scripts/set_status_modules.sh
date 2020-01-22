@@ -13,6 +13,8 @@ vim() {
 			m) sed -i "/let.*:active/ s/'.*'/'$OPTARG'/" $statusline;;
 		esac
 	done
+
+	~/.orw/scripts/source_neovim_colors.py
 }
 
 bash() {
