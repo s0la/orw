@@ -39,7 +39,7 @@ display() {
 		((primary_width > primary_height)) && orientation=horizontal || orientation=vertical
 	fi
 
-	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}"
+	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}\n\n"
 }
 
 wallpapers() {
@@ -50,7 +50,7 @@ wallpapers() {
 		desktops+="desktop_$desktop $displays\n"
 	done
 
-	echo "#wallpapers\ndirectory \nrecursion 1\n${desktops%\\n}"
+	echo "#wallpapers\nrecursion 1\ndirectory \n${desktops%\\n}"
 }
 
 if [[ -f $conf ]]; then
