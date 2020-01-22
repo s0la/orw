@@ -4,7 +4,10 @@ echo "Please enter your email credentials"
 read -p 'Username: ' username
 read -sp 'Password: ' password
 
-path=~/.orw/scripts/auth/email
+auth=~/.orw/scripts/auth
+path=$auth/email
+
+[[ -d $root ]] || mkdir $auth
 
 cat <<- EOF > $path
 username: $username
