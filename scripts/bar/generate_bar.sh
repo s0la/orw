@@ -16,7 +16,7 @@ bg="#303030"
 fc="#303030"
 bfc="#303030"
 bbg="#303030"
-bsbg="%{B#303030}"
+bsbg="%{B#3a3a3a}"
 bsfg="%{F#303030}"
 
 pbg="%{B#3a3a3a}"
@@ -223,8 +223,6 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			
 			if [[ $colorscheme ]]; then
 				[[ $@ =~ -M ]] || base=9
-				#eval $(sed -n "/bar/,${base:-/^$/} s/ /=/p" ~/.config/orw/colorschemes/$colorscheme.ocs)
-
 				
 				eval $(awk '\
 					/#bar/ { 
@@ -559,7 +557,7 @@ while read -r module; do
 	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
 	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
-	sed "s/$separator\(%{[cr]}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
+	sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
 	-f "$font2" -o ${icomoon_offset:-$((font_offset - 0))} \
