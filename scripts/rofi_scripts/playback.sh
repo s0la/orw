@@ -1,5 +1,8 @@
 #!/bin/bash
 
+current_song="$(mpc current -f "%artist% - %title%")"
+[[ $current_song ]] && empty='  '
+
 if [[ -z $@ ]]; then
 	echo -e '  play\n  stop\n  next\n  prev\n  random\n  volume up\n  volume down\n  toggle controls\n  playlist'
 else
@@ -11,12 +14,16 @@ else
 			[[ ${volume##* } == up ]] && direction=+ || direction=-
 
 			mpc -q volume $direction$((${multiplier:-1} * 5));;
-		*playlist) mpc playlist;;
+		*playlist)
+			indicator=''
+			mpc playlist | awk '{ p = ($0 == "'"$current_song"'") ? "'$indicator' " : "'"$empty"'"; print p $0 }';;
 		*controls*)
 			mpd=~/.orw/scripts/bar/mpd.sh
 			mode=$(awk -F '=' '/^current_mode/ { if ($2 == "controls") print "song_info"; else print "controls"}' $mpd)
 			sed -i "/^current_mode/ s/=.*/=$mode/" $mpd;;
-		*-*) ~/.orw/scripts/play_song_from_playlist.sh "$@";;
+		*-*)
+			song="$@"
+			~/.orw/scripts/play_song_from_playlist.sh "${song:${#empty}}";;
 		*)
 			mpc -q ${@#* }
 

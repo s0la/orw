@@ -1,42 +1,63 @@
 #!/bin/bash
 
-workspaces=( $(wmctrl -d | awk '{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }') )
+workspaces=( $(wmctrl -d | awk '\
+	{
+		wn = $NF
+
+		if(wn ~ /^[0-9]+$/) {
+			if(wn > 1) tc = wn - 1
+			wn = "tmp" tc
+		}
+
+		print wn
+	}') )
+
 workspace_count=${#workspaces[*]}
+
+current_workspace=$(xdotool get_desktop)
+indicator=''
+indicator=''
 
 [[ $@ =~ move ]] && move=true
 
 if [[ -z $@ || $@ =~ (move|wall)$ ]]; then
-	for workspace in ${workspaces[*]}; do
-		echo $workspace
+	for workspace_index in ${!workspaces[*]}; do
+		((workspace_index == current_workspace)) && echo -n "$indicator" || echo -n " "
+		echo " ${workspaces[workspace_index]}"
 	done
 
 	#[[ $move ]] && echo  
-	[[ $move ]] && echo +tmp
+	[[ $move ]] && echo " +tmp"
 else
 	killall rofi
 
 	window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
+
 
 	#if [[ "$@" =~   ]]; then
 	if [[ "$@" =~ \+tmp  ]]; then
 		new_workspace_name='tmp'
 		new_workspace_index=$workspace_count
 
-		((workspace_count++))
 		wmctrl -n $workspace_count
+		((workspace_count++))
 	else
 		new_workspace_name="${desktop:-${@: -1}}"
+		new_workspace_name="${new_workspace_name:2}"
 
 		for new_workspace_index in ${!workspaces[*]}; do
+			#~/.orw/scripts/notify.sh "^${workspaces[new_workspace_index]}$\n^$new_workspace_name$"
 			[[ ${workspaces[new_workspace_index]} == $new_workspace_name ]] && break
+			#[[ ${workspaces[new_workspace_index]} == ${new_workspace_name#$indicator } ]] && break
 		done
+		#~/.orw/scripts/notify.sh "wi: $new_workspace_index"
 	fi
 
 	if [[ $move ]]; then
 		windowctl=~/.orw/scripts/windowctl.sh
 
 		current_workspace_index=$(wmctrl -l | awk '$1 == "'$window_id'" { print $2 }')
-		current_workspace_name=${workspaces[current_workspace_index]}
+		current_workspace_name=${workspaces[current_workspace_index]:2}
 
 		#[[ ! $current_workspace_name =~ ^tmp && $new_workspace_name =~ ^tmp[0-9]+?$ ]] && $windowctl -S
 		wmctrl -i -r $window_id -t $new_workspace_index
@@ -70,6 +91,6 @@ else
 
 	wmctrl -s $new_workspace_index
 
-	[[ $(wmctrl -l | awk '$NF == "ncmpcpp_with_cover_art" && $2 == '$new_workspace_index'') ]] && ~/.orw/scripts/ncmpcpp.sh -R
+	#[[ $(wmctrl -l | awk '$NF == "ncmpcpp_with_cover_art" && $2 == '$new_workspace_index'') ]] && ~/.orw/scripts/ncmpcpp.sh -R
 	[[ $@ =~ wall ]] && ~/.orw/scripts/wallctl.sh -c -r
 fi
