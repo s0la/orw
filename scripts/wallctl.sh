@@ -19,10 +19,21 @@ function replace() {
 }
 
 function set_aspect() {
-	if [[ -f "$1" ]]; then
-		read aspect xinerama <<< $(file -b "$1" | awk -F '[x,]' '{ o = "'${orientation:0:1}'"; \
-			field = ("'${1##*.}'" == "png") ? 2 : NF - 2; ww = $field; wh = $(field + 1); \
-			if ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) print "--bg-scale --no-xinerama"; else print "--bg-fill" }')
+	local file="$(eval ls "$1")"
+
+	if [[ -f "$file" ]]; then
+		read aspect xinerama <<< $(file -b "$file" |\
+			awk -F '[x,]' '{
+				o = "'${orientation:0:1}'"
+				f = ("'${1##*.}'" == "png") ? 2 : NF - 2
+				ww = $f; wh = $(f + 1)
+
+				if ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) {
+					print "--bg-scale --no-xinerama"
+				} else {
+					print "--bg-fill"
+				}
+			}')
 	fi
 }
 
@@ -31,8 +42,30 @@ function assign_value() {
 }
 
 function get_directory_path() {
-	[[ ! $1 =~ ^/ ]] && current_directory="$(pwd)/"
-	echo "$current_directory${1}"
+	[[ ! $1 =~ ^/ ]] && local current_directory="$(pwd)/"
+	echo "$current_directory$1"
+}
+
+function parse_directory() {
+	local tail="${directory##*/}"
+	[[ $tail =~ ^\{.*\}$ ]] && local multi_directories="(${tail:1: -1})"
+	[[ $multi_directories ]] && echo "${directory%/*}/${multi_directories//,/|}" || echo "$directory"
+}
+
+make_tail() {
+	local tails="${1##*/}"
+	local tail_directories tail
+
+	[[ $tails =~ ^\{.*\}$ ]] && tails="${tails:1: -1}"
+	IFS=, read -a tail_directories <<< "$tails"
+
+	for tail_directory in "${tail_directories[@]}"; do
+		[[ $tail_directory =~ ^\' ]] || tail_directory="'$tail_directory'"
+		[[ $tail_directory =~ \'?${tail_directories[-1]}\'? ]] || tail_directory+=,
+		tail+="$tail_directory"
+	done
+
+	echo "$tail"
 }
 
 function read_wallpapers() {
@@ -40,7 +73,7 @@ function read_wallpapers() {
 }
 
 function write_wallpapers() {
-	[[ -f "${directories[$2 - 1]:-$directory}/$1" || $1 =~ ^# ]] &&
+	eval [[ -f "${directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
 		awk -i inplace 'BEGIN {
 				wi = '$2'
 				dc = '$display_count'
@@ -220,8 +253,12 @@ try_wall() {
 
 current_desktop=$(xdotool get_desktop)
 
-read directory recursion <<< $(awk '/^directory|recursion/ {print $2}' $config | xargs)
-read orientation display_count <<< $(awk -F '[_ ]' '/^orientation/ {o = $NF}; /^display_[0-9] / {dc = $2}; END {print o, dc}' $config)
+read recursion directory <<< $(awk '\
+	/^directory|recursion/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
+read orientation display_count <<< $(awk -F '[_ ]' '\
+	/^orientation/ { o = $NF }
+	/^display_[0-9] / { dc = $2 }
+	END { print o, dc }' $config)
 
 [[ "$@" =~ -U ]] && unsplash=true
 
@@ -234,7 +271,8 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 		w) current_desktop=$OPTARG;;
 		s)
 			add_wallpaper() {
-				[[ $(get_directory_path ${arg%/*}) =~ $directory ]] && local path_level=$recursion
+				local arg="${arg//\\ / }"
+				eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$recursion
 
 				for level in $(seq 1 $path_level); do
 					local wallpaper_section_expression+='/*'
@@ -243,17 +281,16 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 				wallpaper_index=$((${display_number:-1} + $1 - 1))
 
 				if (($1 <= arg_count)); then
-					[[ $arg =~ / ]] && local directory_section="${arg%$wallpaper_section_expression}/"
-					wallpaper_directory=$(get_directory_path $directory_section)
-					wallpaper=${arg#$directory_section}
+					[[ $arg =~ / ]] && local directory_section="${arg%$wallpaper_section_expression}"
+					wallpaper_directory="'$(get_directory_path "$directory_section")'"
+					wallpaper="${arg#$directory_section/}"
 
-					directories[wallpaper_index]="$wallpaper_directory"
 					wallpapers[wallpaper_index]="$wallpaper"
 				fi
 
 				directories[wallpaper_index]="$wallpaper_directory"
 
-				[[ ${wallpaper_directory:-$directory} =~ ^$directory || $wallpaper =~ ^# ]] &&
+				[[ "$directory" =~ "${wallpaper_directory:-$directory}" || $wallpaper =~ ^# ]] &&
 					write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
 			}
 
@@ -266,7 +303,7 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 
 			((arg_count--))
 
-			if ((display_number == 0 && arg_count == 0)); then
+			if ((! display_number && ! arg_count)); then
 				arg=${!initial_index}
 
 				for display in $(seq 0 $((display_count - 1))); do
@@ -282,14 +319,42 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 
 			shift $arg_count;;
 		d)
-			directory="$OPTARG"
-			[[ ${directory: -1} == '/' ]] && directory=${directory%/*}
-			directory=$(get_directory_path $directory)
+			directory="$(sed "s/\(^'\|\/\?['\/]$\|'\(\/\)\)/\2/g" <<< $OPTARG)"
+			directory="$(get_directory_path "${directory//\\ / }")"
+
+			root="${directory%/*}"
+			tail="$(make_tail "$directory")"
+			[[ $tail =~ , ]] && tail="{$tail}"
+			directory="'$root'/$tail"
 
 			replace directory;;
 		D)
-			directory="${directory%/*}/$OPTARG"
-			replace directory;;
+			modify=$OPTARG
+			tail=$(make_tail "${!OPTIND}") && shift
+
+			awk '/^directory/ {
+				ct = gensub(".*/{?([^}]*).*", "\\1", 1)
+
+				mt = "'"$tail"'"
+				a = ("'$modify'" == "add")
+				split(a ? mt : ct, ota, ",")
+				mp = gensub(",", "|", "g", a ? ct : mt)
+
+				for(ti in ota) {
+					t = ota[ti]
+					if(t !~ "^(" mp ")$") nt = nt "," t
+				}
+
+				if(a) {
+					at = "{" ct nt "}"
+				} else {
+					at = substr(nt, 2)
+					if(at && at ~ ",") at = "{" at "}"
+				}
+
+				$0 = gensub("{?" ct "}?", at, 1)
+			} { print }' $config
+			exit;;
 		r)
 			read_wallpapers
 
@@ -329,7 +394,6 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 
 			order=$OPTARG
 
-			#sudo sed -i "s/\(ExecStart.* \).*\"/\1$mode\"/" ~/.orw/dotfiles/services/change_wallpaper.service;;
 			sed -i "/Exec/ s/-o \w*/-o $order/" ~/.orw/dotfiles/services/change_wallpaper.service;;
 		o)
 			order=$OPTARG
@@ -1074,7 +1138,7 @@ if [[ ! $wallpapers ]]; then
 	while read -r wallpaper; do
 		[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
 		all_wallpapers+=("$wallpaper")
-	done <<< $(find $directory/ -maxdepth $recursion -type f -iregex ".*\(jpe?g\|png\)" | awk -F '/' \
+	done <<< $(eval find $directory/ -maxdepth $recursion -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
 		'{ w = ""; r = '$((recursion - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
 
 	wallpaper_count=${#all_wallpapers[*]}
@@ -1099,10 +1163,10 @@ for wallpaper_index in "${!wallpapers[@]}"; do
 	if [[ ${wallpaper//\"/} =~ ^# ]]; then
 		((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
 	else
-		wallpaper_path="${directories[wallpaper_index]:-$directory}/$wallpaper"
-		set_aspect "${wallpaper_path//\"/}"
+		wallpaper_path="${directories[wallpaper_index]:-${directory%\{*}}/'$wallpaper'"
+		set_aspect "$wallpaper_path"
 
-		wallpapers_to_set+="$aspect $xinerama \"$wallpaper_path\" "
+		wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
 	fi
 done
 

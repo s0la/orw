@@ -1,7 +1,9 @@
 #!/bin/bash
 
 get_directory() {
-	directory="$(sed -n 's/^directory //p' ~/.config/orw/config)"
+	#directory="$(sed -n 's/^directory //p' ~/.config/orw/config)"
+	read recursion directory <<< $(awk '\
+		/^directory|recursion/ { sub("[^ ]* ", ""); print }' ~/.config/orw/config | xargs -d '\n')
 }
 
 if [[ -z $@ ]]; then
@@ -11,7 +13,9 @@ else
 
 	if [[ $@ =~ select ]]; then
 		get_directory
-		ls "$directory"
+		#eval ls "$directory"
+		eval find $directory/ -maxdepth $recursion -type f -iregex "'.*\(jpe?g\|png\)'" |\
+			awk '{ print gensub(".*/(.*(/.*){" '$recursion' - 1 "})$", "\\1", 1) }'
 	else
 		killall rofi
 
@@ -22,7 +26,11 @@ else
 			*auto*) $wallctl -A;;
 			*.*)
 				get_directory
-				$wallctl -s "$directory/$@";;
+				[[ $directory =~ \{.*\} ]] && directory="${directory%/*}"
+				#$wallctl -s "${directory:1: -1}/$@";;
+				eval $wallctl -s "$directory/$@";;
+				#~/.orw/scripts/notify.sh "$directory/$@"
+				#$wallctl -s "$directory/$@";;
 			*) $wallctl -o $@;;
 		esac
 	fi
