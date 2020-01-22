@@ -22,7 +22,9 @@ config=$dotfiles/.config
 dunst_conf=$config/dunst/*
 rofi_conf=$config/rofi/theme.rasi
 vim_conf=$config/nvim/colors/orw.vim
+vifm_conf=$config/vifm/colors/orw.vifm
 term_conf=~/.config/termite/config
+qb_conf=$config/qutebrowser/config.py
 
 themes=$root/themes
 gtk_conf=$themes/theme/gtk-2.0/gtkrc
@@ -319,6 +321,12 @@ function vim() {
 	sed -i "/[gs]:$property / s/#\w*/#${color: -6}/" $vim_conf
 }
 
+function vifm() {
+	reload_vifm=true
+	get_color_properties
+	sed -i "/^let \$$property / s/\w*$/$((color_index - 1))/" $vifm_conf
+}
+
 function bar() {
 	reload_bar=true
 	bar_modules=${bar_conf%/*}/module_colors
@@ -441,6 +449,10 @@ function fff() {
 	#export FFF_COL$col=$((col_index - 1))
 }
 
+function qb() {
+	sed -i "/^$property/ s/'.*'/'$color'/" $qb_conf
+}
+
 function firefox() {
 	sed -i "/--$property:/ s/#\w\{6\}/$color/" $firefox_conf
 }
@@ -542,6 +554,13 @@ get_vim() {
 	sed -n '/let.*g:bg/,/^$/ s/.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
 }
 
+get_vifm() {
+	while read vifm_property index; do
+		get_color_properties $((index + 1))
+		echo $vifm_property $color
+	done <<< $(sed -n 's/^let \$\(\w*\) =/\1/p' $vifm_conf)
+}
+
 function get_bar() {
 	bar_modules=${bar_conf%/*}/module_colors
 	awk '/^\w{1,4}[cg]=/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' $bar_conf $bar_modules
@@ -601,6 +620,10 @@ function get_firefox() {
 	sed -n 's/.*--\(.*\):.*\(#\w\{6\}\).*/\1 \2/p' $firefox_conf
 }
 
+function get_qb() {
+	sed -n "s/\(^\w*[bf]g\)[^#]*\(#\w*\)./\1 \2/p" $qb_conf
+}
+
 function get_wall() {
 	awk -F '['\'']' '/desktop_'$current_desktop'/ \
 		{ wall = $(NF - 1); if(wall ~ /^#/) print "wall", wall }' ~/.config/orw/config
@@ -618,7 +641,8 @@ add_notification() {
 	full_message+="$notification\n"
 }
 
-all_modules=( ob gtk dunst term vim bar ncmpcpp tmux rofi bash lock firefox $wall )
+#all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash lock firefox $wall )
+all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qt lock $wall )
 
 while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 	case $flag in
@@ -794,12 +818,11 @@ function inherit() {
 		[[ ${inherited_property:-$property} =~ ^[a-z_]+$ ]] &&
 			get_color ${inherited_property:-$property} || multiple_colors=true
 	else
-		[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
+		#[[ $edit_colorscheme && ! $inherited_module ]] && colorscheme=$edit_colorscheme
 		[[ $inherited_property ]] && property_to_check=inherited_property || property_to_check=property
 		[[ ${!property_to_check} && ! ${!property_to_check//[A-Za-z_]/} ]] && get_color $(parse_module)
 	fi
 }
-
 
 if [[ ! $color && ! $backup ]]; then
 	[[ $new_color ]] && unset transparency_{level,offset}
@@ -815,6 +838,16 @@ if [[ ! $color && ! $backup ]]; then
 fi
 
 if [[ $edit_colorscheme ]]; then
+	colorscheme_name=${edit_colorscheme##*/}
+
+	bar=$(ps aux | awk '\
+		BEGIN { b = "" }
+			/-c '${colorscheme_name%.*}'/ { 
+				n = gensub(".*-n (\\w*).*", "\\1", 1)
+				if(b !~ n) b = b "," n
+			}
+		END { print substr(b, 2) }')
+
 	if [[ $new_color ]]; then
 		if [[ $transparency ]]; then
 			((${#new_color} < 8)) && color=${color: -6}
@@ -830,7 +863,9 @@ if [[ $edit_colorscheme ]]; then
 
 		if [[ ! ${property//[A-Za-z_]/} ]]; then
 			grep -h "^$property" $edit_colorscheme &> /dev/null ||
-				(echo "$property $color" >> $edit_colorscheme && exit)
+				(echo "$property $color" >> $edit_colorscheme
+				[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+				exit)
 		fi
 	fi
 
@@ -838,18 +873,8 @@ if [[ $edit_colorscheme ]]; then
 		sub("'${current_color:-.*}'", "'${new_color:-$color}'", $NF)
 	} { print }' $edit_colorscheme
 
-	edit_colorscheme=${edit_colorscheme##*/}
-
-	bar=$(ps aux | awk '\
-		BEGIN { b = "" }
-			/-c '${edit_colorscheme%.*}'/ { 
-				n = gensub(".*-n (\\w*).*", "\\1", 1)
-				if(b !~ n) b = b "," n
-			}
-		END { print substr(b, 2) }')
-
-		[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-		exit
+	[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+	exit
 fi
 
 if [[ $backup ]]; then
@@ -1041,6 +1066,18 @@ if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh -d &> /dev/null & fi
 	if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
 	if [[ $reload_term ]]; then killall -USR1 termite & fi
+	if [[ $reload_vifm ]]; then
+		vifm=$(which vifm)
+		[[ $($vifm --server-list) ]] && $vifm --remote -c "colorscheme orw"
+	fi
+	#if [[ $reload_vifm ]]; then
+	#	tmux=$(which tmux)
+	#	$tmux -S /tmp/vifm ls &> /dev/null && $tmux -S /tmp/vifm send -t vifm "ss" &
+	#fi
+	if [[ $reload_qb ]]; then
+		qb_pid=$(pgrep qutebrowser)
+		((qb_pid)) && qutebrowser ":config-source" &> /dev/null
+	fi
 	if [[ $reload_tmux ]]; then
 		tmux=$(which tmux)
 		if [[ $($tmux ls 2> /dev/null) ]]; then $tmux source-file $tmux_conf & fi

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+fifo=/tmp/vifm_image_preview.fifo
+
+close_preview() {
+	rm $fifo
+	killall ueberzug
+}
+
+[[ -e $fifo ]] || mkfifo $fifo
+trap close_preview EXIT
+
+tail -f $fifo | ueberzug layer --silent --parser bash &
+
+vifm $@

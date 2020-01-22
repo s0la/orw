@@ -1,0 +1,7 @@
+#!/bin/bash
+
+music_directory="$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.mpd/mpd.conf)"
+
+for file in "$@"; do
+	mpc add "${file#$music_directory/}"
+done

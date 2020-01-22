@@ -1,0 +1,20 @@
+#!/bin/bash
+
+action=$1
+
+case $action in
+	*dir)
+		for tail in "${@:2}"; do
+			tails+="$tail"
+			[[ "$tail" != "${@: -1}" ]] && tails+=,
+		done
+
+		case $action in
+			set*) flag=d;;
+			*) modify=${action%%_*}
+		esac
+
+		~/.orw/scripts/wallctl.sh -${flag-D} $modify "$tails";;
+	*wall)
+		~/.orw/scripts/wallctl.sh -s "${@:2}"
+esac

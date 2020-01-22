@@ -1,0 +1,48 @@
+let $fg = 0
+let $dfg = 63
+let $efg = 10
+let $sfg = 72
+let $tfg = 8
+let $slbg = 4
+let $slfg = 80
+
+highlight clear
+
+" highlight Border cterm=none ctermfg=0 ctermbg=default
+highlight TopLine cterm=none ctermfg=0 ctermbg=default
+highlight TopLineSel cterm=none ctermfg=0 ctermbg=default
+
+highlight CurrLine cterm=reverse ctermfg=default ctermbg=default
+highlight OtherLine cterm=bold ctermfg=default ctermbg=default
+
+highlight JobLine cterm=bold ctermfg=default ctermbg=default
+highlight CmdLine cterm=none ctermfg=default ctermbg=default
+
+highlight Link cterm=none ctermfg=132 ctermbg=default
+highlight BrokenLink cterm=bold ctermfg=167 ctermbg=default
+highlight Device cterm=none,standout ctermfg=214 ctermbg=default
+highlight Fifo cterm=none ctermfg=172 ctermbg=default
+highlight Socket cterm=bold ctermfg=223 ctermbg=default
+
+"let $bbg = (layoutis('split')) ? 0 : 'default'
+if layoutis('split')
+	let $bbg = 'default'
+else
+	let $bbg = 'default'
+endif
+
+execute 'highlight Border cterm=none ctermfg=' . $slfg . ' ctermbg=' . $bbg
+execute 'highlight TopLine cterm=none ctermfg=' . 'default' . ' ctermbg=' . $bbg
+execute 'highlight TopLineSel cterm=none ctermfg=' . 'default' . ' ctermbg=' . $bbg
+
+execute 'highlight Win cterm=none ctermfg=' . $fg . ' ctermbg=default'
+execute 'highlight TabLine cterm=none ctermfg=' . $tfg . ' ctermbg=' . $slbg
+execute 'highlight TabLineSel cterm=none ctermfg=' . $slfg . ' ctermbg=' . $slbg
+execute 'highlight Selected cterm=none ctermfg=' . $sfg . ' ctermbg=default'
+execute 'highlight Directory cterm=bold ctermfg=' . $dfg . ' ctermbg=default'
+execute 'highlight StatusLine cterm=none ctermfg=' . $slfg . ' ctermbg=' . $slbg
+execute 'highlight ErrorMsg cterm=bold ctermfg=' . $sfg . ' ctermbg=default'
+execute 'highlight WildMenu cterm=none ctermfg=' . $sfg . ' ctermbg=default'
+execute 'highlight Executable cterm=bold ctermfg=' . $efg . ' ctermbg=default'
+
+highlight WildMenu cterm=reverse ctermfg=default ctermbg=default
