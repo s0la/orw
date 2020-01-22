@@ -9,36 +9,19 @@ current_mode=controls
 toggle="\$inner\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
 info='${mpfg:-$pfg}${inner}${song_info-not playing}${inner}'
 
-#for m in ${2//,/ }; do
-#	case $m in
-#		t) modules+="$toggle";;
-#		p*)
-#			modules+='$progressbar'
-#			((${#m} == 1)) &&
-#				progression_step=5 ||
-#				progression_step=${m#p};;
-#		c) modules+='$controls';;
-#		i) modules+="$info";;
-#		v) modules+='$mpd_volume';;
-#		P) modules+='${mpbg:-$pbg}';;
-#		T) show_time=true;;
-#		d*) delay=${m#d};;
-#		s*)
-#			scroll=true
-#			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
-#	esac
-#done
-
-status=$(mpc | sed -n 's/.*\[\(.*\)\].*/\1/p')
+status=$(mpc | sed -n 's/^\[\(.*\)\].*/\1/p')
 
 get_song_info() {
 	time=$(mpc | awk 'NR == 2 {print $3}') elapsed_time=${time%/*}
+	[[ $show_time ]] && time_length=${#time}
+
 	minutes=${elapsed_time%:*} seconds=${elapsed_time#*:}
 	song_info="$(mpc current -f "%artist% - %title%")"
 	scrollable_area=${scrollable_area-25}
 	delay=${delay-3}
 
-	if [[ $scroll ]] && (( ${#song_info} - ${#time} - 3 > $scrollable_area )); then
+	#if [[ $scroll ]] && (( ${#song_info} - ${#time} - 3 > $scrollable_area )); then
+	if [[ $scroll ]] && ((${#song_info} - time_length - 3 > $scrollable_area)); then
 		final_index=$((${#song_info} - scrollable_area))
 		(( $minutes == 0 && ${seconds#0} < 5 )) && song_info_index=0 ||
 			song_info_index=$(((minutes * 60 + ${seconds#0}) % (final_index + 2 * delay)))
@@ -65,6 +48,7 @@ if [[ $status == playing ]]; then
 			for p in $(seq ${!var}); do
 				((percentage += progression_step))
 				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}■%{I-}%{A}\"
 			done
 		}
 
@@ -96,23 +80,23 @@ get_controls() {
 	stop+="echo 'SONG_INFO not playing' > $fifo;"
 	stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
 
-	controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
-	controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
-	controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
+	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
+	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
+	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 
-	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}\$inner"
-	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
-	#controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
+	controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}\$inner"
+	controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
+	controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
 
 	echo -e "$bg$offset\$inner\${msfg:-\$sfg}$controls\${inner}"
 }
 
-for m in ${2//,/ }; do
-	case $m in
+for module in ${2//,/ }; do
+	case $module in
 		t) modules+="$bg$toggle";;
 		p*)
 			modules+='$progressbar'
-			((${#m} == 1)) && progression_step=5 || progression_step=${m#p}
+			((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
 
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "PROGRESSBAR $(get_progressbar)" > $fifo;;
@@ -133,13 +117,13 @@ for m in ${2//,/ }; do
 				echo -e "MPD_VOLUME $(get_volume $3)" > $fifo;;
 		P) bg='${mpbg:-$pbg}';;
 		T) show_time=true;;
-		d*) delay=${m#d};;
+		d*) delay=${module#d};;
 		s*)
 			scroll=true
-			[[ ${#m} -gt 1 ]] && scrollable_area=${m#s};;
+			[[ ${#module} -gt 1 ]] && scrollable_area=${module#s};;
 		o*)
-			offset=${m:2}
-			position=${m:1:1}
+			offset=${module:2}
+			position=${module:1:1}
 
 			if [[ $position == f ]]; then
 				offset="%{O$offset}"
@@ -149,7 +133,7 @@ for m in ${2//,/ }; do
 			fi;;
 	esac
 
-	[[ $offset && ! $m =~ ^o ]] && unset offset
+	[[ $offset && ! $module =~ ^o ]] && unset offset
 done
 
 [[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$info"
