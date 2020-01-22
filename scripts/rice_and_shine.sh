@@ -13,6 +13,7 @@ root=~/.orw
 dotfiles=$root/dotfiles
 bash_conf=$dotfiles/.bashrc
 tmux_conf=$dotfiles/.tmux.conf
+tmux_hidden=$dotfiles/.tmux_hidden.conf
 lock_conf=$dotfiles/.config/i3lockrc
 cava_conf=$dotfiles/.config/cava/config
 ncmpcpp_conf=$dotfiles/.ncmpcpp/config
@@ -298,7 +299,7 @@ function term() {
 			rgb=$($colorctl -c -h "#${color: -6}")
 			sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf
 
-			property=bc && tmux ~/.tmux_ncmpcpp.conf;;
+			property=bc && tmux $tmux_hidden;;
 		fg) sed -i "/^foreground/ s/#.*/#${color: -6}/" $term_conf;;
 		colors)
 			awk -i inplace 'NR == FNR { a[ci++] = $1; next } \
@@ -394,10 +395,10 @@ function ncmpcpp() {
 }
 
 function tmux() {
-	tmux_ncmpcpp=$1
 	reload_tmux=true
+	[[ $1 ]] && reload_tmux_hidden=true
 
-	sed -i "/^$property=/ s/#\w*/#${color: -6}/" $tmux_conf
+	sed -i "/^$property=/ s/#\w*/#${color: -6}/" ${1:-$tmux_conf}
 }
 
 function rofi() {
@@ -1079,7 +1080,9 @@ if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_tmux ]]; then
 		tmux=$(which tmux)
 		if [[ $($tmux ls 2> /dev/null) ]]; then $tmux source-file $tmux_conf & fi
-		if [[ $tmux_ncmpcpp && $($tmux -S /tmp/ncmpcpp ls 2> /dev/null) ]]; then $tmux -S /tmp/ncmpcpp source-file $tmux_ncmpcpp & fi
+		if [[ $reload_tmux_hidden && $($tmux -S /tmp/ncmpcpp ls 2> /dev/null) ]]; then
+			$tmux -S /tmp/ncmpcpp source-file $tmux_hidden &
+		fi
 	fi
 	if [[ $reload_dunst ]]; then
 		killall dunst

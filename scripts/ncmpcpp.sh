@@ -1,8 +1,9 @@
 #!/bin/bash
 
-[[ ! -f ~/.config/orw/config ]] && ~/.orw/scripts/generate_orw_config.sh
-font_width=$(sed -n 's/font_width //p' ~/.config/orw/config)
-font_height=$(sed -n 's/font_height //p' ~/.config/orw/config)
+function show_status() {
+	[[ $1 =~ (true|yes) ]] && local status=yes
+	sed -i "/^statusbar_visibility/ s/\".*/\"${status:-no}\"/" ~/.orw/dotfiles/.ncmpcpp/config{,_cover_art}
+}
 
 function show_progessbar() {
 	if [[ $1 =~ (true|yes) ]]; then
@@ -17,12 +18,10 @@ function show_progessbar() {
 		list_status="no"
 	fi
 
-	sed -i "/^progressbar_look/ s/\".*/\"$list_bar\"/" ~/.ncmpcpp/config
-	sed -i "/^statusbar_visibility/ s/\".*/\"$list_status\"/" ~/.ncmpcpp/config
-	sed -i "/^progressbar_look/ s/\".*/\"$list_bar\"/" ~/.ncmpcpp/config_cover_art
-	sed -i "/^statusbar_visibility/ s/\".*/\"$list_status\"/" ~/.ncmpcpp/config_cover_art
 	sed -i "/^progressbar_look/ s/\".*/\"$vis_bar\"/" ~/.ncmpcpp/config_visualizer
-	sed -i "/^statusbar_visibility/ s/\".*/\"$vis_status\"/" ~/.ncmpcpp/config_visualizer
+	sed -i "/^progressbar_look/ s/\".*/\"$list_bar\"/" ~/.ncmpcpp/config{,_cover_art}
+	#sed -i "/^statusbar_visibility/ s/\".*/\"$vis_status\"/" ~/.ncmpcpp/config_visualizer
+	#sed -i "/^statusbar_visibility/ s/\".*/\"$list_status\"/" ~/.ncmpcpp/config{,_cover_art}
 }
 
 function get_cover_properties() {
@@ -34,7 +33,7 @@ function get_cover_properties() {
 		awk '$NF == "ncmpcpp_with_cover_art" { print $5 - ('$padding' * 2), $6 - ('$padding' * 2) }')
 	fi
 
-	sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.ncmpcpp/config_cover_art
+	sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.orw/dotfiles/.ncmpcpp/config_cover_art
 
 	read s x y r <<< $(awk 'BEGIN { \
 		r = 0.'$ratio'; w = '$width'; h = '$height'; \
@@ -51,7 +50,7 @@ function draw_cover_art() {
 	exit
 }
 
-base_command='TERM=xterm-256color tmux -S /tmp/ncmpcpp -f ~/.tmux_ncmpcpp.conf'
+base_command='TERM=xterm-256color tmux -S /tmp/ncmpcpp -f ~/.tmux_hidden.conf'
 
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 	case $flag in
@@ -74,9 +73,10 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 			command='new -s playlist ncmpcpp';;
 		v)
-			width=70
-			height=70
+			#width=70
+			#height=70
 			title=visualizer
+			progressbar=yes
 
 			[[ ! $pre ]] && pre="~/.orw/scripts/windowctl.sh "
 
@@ -100,13 +100,14 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			command='new -s visualizer cava'
 			show_progessbar ${progressbar-no};;
 		s)
-			width=${width-55}
-			height=${height-40}
+			width=${width-450}
+			height=${height-600}
 			title=ncmpcpp_split
 
-			progressbar=no
+			#progressbar=no
+			show_status no
 
-			command='new -s split ncmpcpp \; splitw -p 25 cava \; selectp -U';;
+			command='new -s split ncmpcpp \; splitw -p 20 cava \; selectp -U';;
 		c)
 			[[ $@ =~ -i ]] && width=${width-550} height=${height-200}
 			title=ncmpcpp_with_cover_art
@@ -114,7 +115,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			get_cover_properties
 			show_progessbar yes
 
-			command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.ncmpcpp/config_cover_art";;
+			command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.orw/dotfiles/.ncmpcpp/config_cover_art";;
 		d)
 			~/.orw/scripts/ncmpcpp.sh $display $V -v -i
 			until [[ $(wmctrl -l | awk '$NF ~ "visualizer"') ]]; do continue; done
@@ -128,11 +129,11 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			pre="~/.orw/scripts/windowctl.sh -d $OPTARG move";;
 		V) V=-V;;
 		R)
-			ratio=$(sed -n 's/^execute.*[^0-9]\([0-9]\+\).*/\1/p' ~/.ncmpcpp/config_cover_art)
+			ratio=$(sed -n 's/^execute.*[^0-9]\([0-9]\+\).*/\1/p' ~/.orw/dotfiles/.ncmpcpp/config_cover_art)
 			command="send -t ncmpcpp_with_cover_art:0.0 'clear && sleep 0.1 && $0 -r $ratio -C' Enter";;
 		r) ratio=$OPTARG;;
 		a)
-			for session in $(tmux -S /tmp/ncmpcpp ls 2> /dev/null |awk -F ':' '{print $1}'); do
+			for session in $(tmux -S /tmp/ncmpcpp ls 2> /dev/null | awk -F ':' '{ print $1 }'); do
 				case $session in
 					*play*) pane=0;;
 					*cover*) pane=1;;
@@ -149,6 +150,8 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				width=${width:-900}
 				height=${height:-500}
 
+				[[ $title ]] || show_status yes
+
 				~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
 
 				termite -t ${title-ncmpcpp} --class=custom_size \
@@ -159,5 +162,6 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		esac
 done
 
+show_status yes
 show_progessbar ${progressbar-yes}
 eval "$base_command ${command-new -s ncmpcpp ncmpcpp}"
