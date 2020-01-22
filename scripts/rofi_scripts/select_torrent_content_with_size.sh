@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function set() {
-	eval $1='$(sed "s/\(\\*\)\?\([()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
 	sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
 }
 
@@ -18,7 +18,6 @@ agregate() {
 				s = ts
 				cfn = pfn
 				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
-				#cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
 			}
 
 			tc = 0; sc = 0; ts = 0;
@@ -137,8 +136,9 @@ offset=$(awk '
 depth="2"
 final_depth="0"
 current="done"
-full_path="Buckethead"
+full_path=""
 
+#torrent_id=${1:-$(transmission-remote -l | awk '$1 ~ /^[0-9]+/ { ti = $1 } END { print gensub("([0-9]+).*", "\\1", 1, ti) }')}
 torrent_id=$(transmission-remote -l | awk '$1 ~ /^[0-9]+/ { ti = $1 } END { print gensub("([0-9]+).*", "\\1", 1, ti) }')
 
 if [[ -z $@ ]]; then
