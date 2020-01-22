@@ -77,7 +77,7 @@ function deps() {
 
 	echo 'installing dependencies..'
 
-	common_apps=( cmake git neovim tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi )
+	common_apps=( cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then
@@ -94,10 +94,10 @@ function deps() {
 		#dunst dependencies
 		sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
 		
-		#Thunar 1.6
-		wget http://ftp.br.debian.org/debian/pool/main/t/thunar/thunar_1.6.11-1_amd64.deb -O ~/Downloads/thunar.deb
-		sudo dpkg -i ~/Downloads/thunar.deb
-		rm ~/Downloads/thunar.deb
+		##Thunar 1.6
+		#wget http://ftp.br.debian.org/debian/pool/main/t/thunar/thunar_1.6.11-1_amd64.deb -O ~/Downloads/thunar.deb
+		#sudo dpkg -i ~/Downloads/thunar.deb
+		#rm ~/Downloads/thunar.deb
 		
 		#cleaning
 		echo 'cleaning..'
@@ -128,12 +128,12 @@ function deps() {
 			libconfig libev xcb-util-image libxml2 glibc icu ||
 			handle_failure "$failure_message"
 
-		#Thunar 1.6
-		(wget https://aur.archlinux.org/cgit/aur.git/snapshot/thunar-gtk2.tar.gz -O ~/Downloads/thunar.tar.xz
-		tar xfC ~/Downloads/thunar.tar.xz ~/Downloads
-		cd ~/Downloads/thunar-gtk2
-		makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
-		rm -rf ~/Downloads/thunar-gtk2
+		##Thunar 1.6
+		#(wget https://aur.archlinux.org/cgit/aur.git/snapshot/thunar-gtk2.tar.gz -O ~/Downloads/thunar.tar.xz
+		#tar xfC ~/Downloads/thunar.tar.xz ~/Downloads
+		#cd ~/Downloads/thunar-gtk2
+		#makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
+		#rm -rf ~/Downloads/thunar-gtk2
 
 		echo 'cleaning..'
 		confirm 'y' 'y' | sudo pacman -Scc &> /dev/null || handle_failure 'Pacman error.'
@@ -153,8 +153,11 @@ function apps() {
 	#compton with kawase blur
 	get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
 
-	#pip neovim installation
-	sudo pip3 install neovim &> /dev/null || handle_failure "Failed to install pip neovim."
+	#neovim python3 installation
+	sudo pip3 install neovim &> /dev/null || handle_failure "Failed to install neovim python3."
+
+	#ueberzug installation
+	sudo pip3 install ueberzug &> /dev/null || handle_failure "Failed to install ueberzug."
 
 	#cava installation
 	get_app install karlstav cava ./autogen.sh ./configure || handle_failure "Failed to install cava."
@@ -165,8 +168,8 @@ function apps() {
 	#dunst installation
 	get_app install dunst-project dunst "make dunstify" "sudo cp dunstify /usr/local/bin"
 
-	#fff installation
-	get_app install dylanaraps fff || handle_failure "Failed to install fff."
+	##fff installation
+	#get_app install dylanaraps fff || handle_failure "Failed to install fff."
 
 	#colorpicker installation
 	get_app install ym1234 colorpicker || handle_failure "Failed to install colorpicker."
