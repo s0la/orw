@@ -11,6 +11,12 @@ back() {
 	set_current "$current"
 }
 
+notify_on_finish() {
+	while kill -0 $pid 2> /dev/null; do
+		sleep 1
+	done && ~/.orw/scripts/notify.sh "Music library updated."
+}
+
 current=''
 
 if [[ -z $@ ]]; then
@@ -18,6 +24,10 @@ if [[ -z $@ ]]; then
 else
 	case "$@" in
 		back) back;;
+		update)
+			coproc (mpc -q update &)
+			pid=$((COPROC_PID + 1))
+			coproc (notify_on_finish &);;
 		add_all)
 			mpc add "$current"
 			back;;
@@ -31,7 +41,7 @@ else
 	esac
 fi
 
-[[ $current ]] && echo back
+[[ $current ]] && echo -e 'back\nupdate'
 echo add_all
 
 mpc ls "$current" | awk -F '/' '! /m3u$/ { print $NF }'
