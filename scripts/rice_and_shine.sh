@@ -13,7 +13,7 @@ root=~/.orw
 dotfiles=$root/dotfiles
 bash_conf=$dotfiles/.bashrc
 tmux_conf=$dotfiles/.tmux.conf
-tmux_hidden=$dotfiles/.tmux_hidden.conf
+tmux_hidden_conf=$dotfiles/.tmux_hidden.conf
 lock_conf=$dotfiles/.config/i3lockrc
 cava_conf=$dotfiles/.config/cava/config
 ncmpcpp_conf=$dotfiles/.ncmpcpp/config
@@ -291,9 +291,7 @@ function term() {
 	case $property in
 		bg)
 			rgb=$($colorctl -c -h "#${color: -6}")
-			sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf
-
-			property=bc && tmux $tmux_hidden;;
+			sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf;;
 		fg) sed -i "/^foreground/ s/#.*/#${color: -6}/" $term_conf;;
 		colors)
 			awk -i inplace 'NR == FNR { a[ci++] = $1; next } \
@@ -390,9 +388,12 @@ function ncmpcpp() {
 
 function tmux() {
 	reload_tmux=true
-	[[ $1 ]] && reload_tmux_hidden=true
+	if [[ $property =~ ^(bg|mc) ]]; then
+		reload_tmux_hidden=true
+		local hidden=$tmux_hidden_conf
+	fi
 
-	sed -i "/^$property=/ s/#\w*/#${color: -6}/" ${1:-$tmux_conf}
+	sed -i "/^$property=/ s/#\w*/#${color: -6}/" $tmux_conf $hidden
 }
 
 function rofi() {
@@ -446,6 +447,7 @@ function fff() {
 }
 
 function qb() {
+	reload_qb=true
 	sed -i "/^$property/ s/'.*'/'$color'/" $qb_conf
 }
 
@@ -786,7 +788,15 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 		m)
 			module="${OPTARG//,/ }"
 			[[ $module =~ ':' ]] && multiple_modules=true
-			[[ $module =~ bar ]] && bar_modules=${bar_conf%/*}/module_colors;;
+			[[ $module =~ bar ]] && bar_modules=${bar_conf%/*}/module_colors
+			if [[ $module =~ tmux ]]; then
+				assign_value tmux_hidden ${!OPTIND} && shift
+
+				if [[ $tmux_hidden ]]; then
+					reload_tmux_hidden=true
+					tmux_conf=$tmux_hidden_conf
+				fi
+			fi;;
 		C)
 			arg=${!OPTIND}
 			[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$colorschemes/default.ocs
@@ -1067,17 +1077,17 @@ if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
 	if [[ $reload_vifm ]]; then
 		vifm=$(which vifm)
-		[[ $($vifm --server-list) ]] && $vifm --remote -c "colorscheme orw"
+		[[ $($vifm --server-list) ]] && $vifm --remote -c "colorscheme orw" &
 	fi
 	if [[ $reload_qb ]]; then
 		qb_pid=$(pgrep qutebrowser)
-		((qb_pid)) && qutebrowser ":config-source" &> /dev/null
+		((qb_pid)) && qutebrowser ":config-source" &> /dev/null &
 	fi
 	if [[ $reload_tmux ]]; then
 		tmux=$(which tmux)
-		if [[ $($tmux ls 2> /dev/null) ]]; then $tmux source-file $tmux_conf & fi
-		if [[ $reload_tmux_hidden && $($tmux -S /tmp/ncmpcpp ls 2> /dev/null) ]]; then
-			$tmux -S /tmp/ncmpcpp source-file $tmux_hidden &
+		if [[ $($tmux ls 2> /dev/null) ]]; then [[ $tmux_hidden ]] || $tmux source-file $tmux_conf & fi
+		if [[ $reload_tmux_hidden && $($tmux -S /tmp/tmux_hidden ls 2> /dev/null) ]]; then
+			$tmux -S /tmp/tmux_hidden source-file $tmux_hidden_conf &
 		fi
 	fi
 	if [[ $reload_dunst ]]; then

@@ -50,7 +50,7 @@ function draw_cover_art() {
 	exit
 }
 
-base_command='TERM=xterm-256color tmux -S /tmp/ncmpcpp -f ~/.tmux_hidden.conf'
+base_command='TERM=xterm-256color tmux -S /tmp/tmux_hidden -f ~/.tmux_hidden.conf'
 
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 	case $flag in
@@ -133,7 +133,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			command="send -t ncmpcpp_with_cover_art:0.0 'clear && sleep 0.1 && $0 -r $ratio -C' Enter";;
 		r) ratio=$OPTARG;;
 		a)
-			for session in $(tmux -S /tmp/ncmpcpp ls 2> /dev/null | awk -F ':' '{ print $1 }'); do
+			for session in $(tmux -S /tmp/tmux_hidden ls 2> /dev/null | awk -F ':' '{ print $1 }'); do
 				case $session in
 					*play*) pane=0;;
 					*cover*) pane=1;;
@@ -141,7 +141,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 					visualizer) pane=0;;
 				esac
 
-				tmux -S /tmp/ncmpcpp respawn-pane -k -t ${session}:0.$pane
+				tmux -S /tmp/tmux_hidden respawn-pane -k -t ${session}:0.$pane
 			done && exit;;
 		w) width=$OPTARG;;
 		h) height=$OPTARG;;
