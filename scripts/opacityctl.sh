@@ -7,11 +7,10 @@ compton_conf=~/.orw/dotfiles/.config/compton.conf
 
 if [[ $1 =~ bar|lock ]]; then
 	[[ $1 == bar ]] && property=bg || property=ic
-	~/.orw/scripts/rice_and_shine.sh -R -m $1 -p $property -t $2 -P $property
+	[[ $3 ]] && edit="-e $3"
+
+	~/.orw/scripts/rice_and_shine.sh -R -m $1 -p $property -t $2 -P $property "$edit"
 	exit
-elif [[ $1 == lock ]]; then
-	pattern=blur
-	conf=lock_conf
 elif [[ $1 =~ term|dunst ]]; then
 	conf="$1_conf"
 	[[ $1 == term ]] && pattern='^background' || pattern='^\s*transparency'
