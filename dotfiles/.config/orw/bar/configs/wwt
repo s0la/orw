@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x r 50 -y 230 -w 220 -h 30 -a 12 -M -n wwt -c -l -i no -E t belgrade 
+~/.orw/scripts/bar/generate_bar.sh -x r 50 -y 230 -w 160 -h 26 -f 8 o -a 13 -c bar_ww -M -n wwt -c -l -i no -E t belgrade 

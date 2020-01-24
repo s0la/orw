@@ -1,1 +1,1 @@
-/home/ablive/.orw/scripts/bar/generate_bar.sh -x c -y 13 -w 1000 -h 20 -a 8 -s 10 ● -F 3 -M -n sep_test -W id -r -N -e -u -v -d
+~/.orw/scripts/bar/generate_bar.sh -x c -y 13 -w 1200 -h 20 -a 8 -s 10 ● -F 3 -M -n sep_test -W id,o3 -r -t b -O 20 -N -e -u -v -d
