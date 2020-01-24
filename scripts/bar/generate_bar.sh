@@ -12,17 +12,17 @@ main_font_offset=1
 
 bar_name='main_bar'
 
-bg="#303030"
-fc="#303030"
-bfc="#303030"
-bbg="#303030"
+bg="#2e2e2e"
+fc="#2e2e2e"
+bfc="#2e2e2e"
+bbg="#2e2e2e"
 bsbg="%{B#3a3a3a}"
 bsfg="%{F#303030}"
 
 pbg="%{B#3a3a3a}"
 pfg="%{F#abaeb2}"
 sbg="%{B#3a3a3a}"
-sfg="%{F#797c80}"
+sfg="%{F#5f6266}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -263,7 +263,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg frame_style ${!OPTIND} && shift;;
 		l)
 			[[ $lines ]] && unset lines all_lines single_line {start,end}_line {left,right}_frame || set_lines;;
-		M) source $path/module_colors;;
+		M) [[ $colorscheme ]] || source $path/module_colors;;
         F)
 			bar_frame_width=$OPTARG
 			bar_frame="-R$bfc -r $bar_frame_width"
