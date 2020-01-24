@@ -6,14 +6,8 @@ get_bars() {
 }
 
 kill_bar() {
-	local pid=$(ps aux | awk '!/barctl.sh/ { if(/-n '$bar'($| )/) print $2 }' | xargs)
+	local pid=$(ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs)
 	[[ $pid ]] && kill $pid
-}
-
-kill_bars() {
-	for bar in "${bars[@]}"; do
-		kill $(ps aux | awk '!/barctl.sh/ { if(/-n '$bar'$?/) print $2 }' | xargs) &> /dev/null
-	done
 }
 
 lower_bars() {
