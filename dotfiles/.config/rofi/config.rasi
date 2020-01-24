@@ -6,6 +6,9 @@ configuration {
 	show-match:       false;
 	sidebar-mode:     false;
 
+	kb-cancel:        "Escape";
+	kb-page-prev:     "Alt+Up";
+	kb-page-next:     "Alt+Down";
 	kb-mode-next:     "Alt+Right";
 	kb-delete-entry:  "Alt+Delete";
 	kb-mode-previous: "Alt+Left";
