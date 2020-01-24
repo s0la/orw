@@ -111,30 +111,24 @@ function get_color() {
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
-	#	if [[ $transparency_offset ]]; then
-	#		local transparency_level=${color:1: -6}
-	#		transparency_hex=$($colorctl -s '' -o $transparency_offset -ph ${transparency_level:-ff})
-	#	else
-	#		transparency_hex=$($colorctl -c -r $(((transparency_level * 255) / 100)))
-	#	fi
-
-	#	color="$transparency_hex${color: -6}"
-	#fi
-
 		transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
-			awk -Wposix '/^'${property%%[^[:alnum:]_]*}' / {
+			awk -Wposix '/^('${property//\*/\.\*}') / {
 					l = length($NF)
+					exit
 				} END {
 					tl = '${transparency_level:-0}'
-					if(!tl) {
+
+					if(tl == 100) exit
+					else if(!tl) {
 						tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
 						ntl = int(tl '$transparency_offset' * 2.55)
 					}
+
 					t = ntl ? ntl : int(tl * 2.55)
-					printf("#%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
+					printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
 				}')
 
-		color="$transparency_hex${color: -6}"
+		color="#$transparency_hex${color: -6}"
 	fi
 }
 
