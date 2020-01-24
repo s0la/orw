@@ -29,24 +29,26 @@ if [[ -z $@ ]]; then
 
 	#echo -e "lock\ntile\n${termite}termite\n${dropdown}dropdown\n${vifm}file manager\n${qutebrowser}web browser"
 	#echo -e "  lock\n  tile\n${vifm- } vifm\n${termite- } termite\n${dropdown- } dropdown\n${qutebrowser- } qutebrowser"
-	echo -e "${empty}lock\
-			\n${empty}tile\
-			\n${vifm-$empty}vifm\
-			\n${termite-$empty}termite\
-			\n${dropdown-$empty}dropdown\
-			\n${qutebrowser-$empty}qutebrowser"
+	cat <<- EOF
+		${empty}lock
+		${empty}tile
+		${vifm-$empty}vifm
+		${termite-$empty}termite
+		${dropdown-$empty}dropdown
+		${qutebrowser-$empty}qutebrowser
+	EOF
 else
 	killall rofi 2> /dev/null
 
     case "$@" in
         *dropdown*) ~/.orw/scripts/dropdown.sh ${@#*dropdown};;
-		tile*) ~/.orw/scripts/tile_terminal.sh ${@#tile};;
+		*tile*) ~/.orw/scripts/tile_terminal.sh ${@#tile};;
         *termite*) termite -t termite ${@#*termite};;
         #*file*) ~/.orw/scripts/vifm.sh ${@#*manager};;
         #*web*) qutebrowser ${@#*browser};;
         *vifm*) ~/.orw/scripts/vifm.sh ${@#*vifm};;
         *qutebrowser*) qutebrowser ${@#*browser};;
-		lock) ~/.orw/scripts/lock_screen.sh;;
+		*lock) ~/.orw/scripts/lock_screen.sh;;
         #web*) firefox ${@#*browser};;
         #*file*) thunar ${@#*manager};;
     esac

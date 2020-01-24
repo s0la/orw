@@ -23,13 +23,15 @@ if [[ -z $@ ]]; then
 
 	[[ $running ]] && eval "$running empty='  '"
 
-	echo -e "${default-$empty}default\
-		\n${vertical-$empty}vertical\
-		\n${split-$empty}split\
-		\n${cover-$empty}cover\
-		\n${dual_h-$empty}dual horizontal\
-		\n${dual_v-$empty}dual vertical\
-		\n${empty}set cover art\n${empty}ncmpcpp"
+	cat <<- EOF
+		${default-$empty}default
+		${vertical-$empty}vertical
+		${split-$empty}split
+		${cover-$empty}cover
+		${dual_h-$empty}dual horizontal
+		${dual_v-$empty}dual vertical
+		${empty}ncmpcpp
+	EOF
 else
 	killall rofi
 	ncmpcpp=~/.orw/scripts/ncmpcpp.sh
