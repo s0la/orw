@@ -33,7 +33,7 @@ function format() {
 
 				echo -e $hidden;;
 			mono)
-				echo -e "\${$pbg}\$padding\${$pfg}$icon_width$1%{I-}\$padding$2 \$separator";;
+				echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 \$separator";;
 			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 \$separator";;
 			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} \$separator";;
 		esac
@@ -54,7 +54,7 @@ case $1 in
 		icon= 
 		lines=${@: -1}
 
-		old_mail_count=18
+		old_mail_count=5
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -137,9 +137,9 @@ case $1 in
 
 		ssid=$(nmcli dev wifi | awk ' \
 			NR == 1 {
-					si = index($0, " SSID")
-					mi = index($0, " MODE")
-				}
+				si = index($0, " SSID")
+				mi = index($0, " MODE")
+			}
 			/^*/ { nn = substr($0, si, mi - si)
 			print gensub(" {2,}", "", 1, nn) }')
 
