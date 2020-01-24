@@ -829,6 +829,8 @@ if [[ ! $color && ! $backup ]]; then
 		new_color=$color new_color_index=$color_index new_color_name=$color_name
 		unset inherited_module inherited_property colorscheme color offset transparency_{level,offset}
 
+		[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
+
 		inherit
 	fi
 fi
