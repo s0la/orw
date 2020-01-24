@@ -1,7 +1,7 @@
 #Mozilla Firefox
 icon="%{I+7}%{I-}"
-name="Mozilla Firefox"
-left="firefox"
+name="qutebrowser"
+left="qutebrowser"
 
 #termite
 icon="%{I+7}%{I-}"
@@ -15,8 +15,8 @@ left="termite -t termite"
 
 #File Manager
 icon="%{I+7}%{I-}"
-name="File Manager"
-left="thunar"
+name="vifm"
+left="~/.orw/scripts/vifm.sh"
 
 #ncmpcpp
 icon="%{I+7}%{I-}"
@@ -31,8 +31,8 @@ left="~/.orw/scripts/ncmpcpp.sh -w 450 -Vvi"
 #bar_mwc
 icon="%{I+7}%{I-}"
 name="bar_mwc"
-left="~/.orw/scripts/music_widget.sh"
-middle="~/.orw/scripts/barctl.sh -b mw* -k && tmux -S /tmp/ncmpcpp kill-session -t visualizer"
+left="~/.orw/scripts/widgets.sh music"
+middle="~/.orw/scripts/widgets.sh music -k"
 right="mpc -q toggle"
 up="mpc -q prev"
 down="mpc -q next"
@@ -40,15 +40,15 @@ down="mpc -q next"
 #bar_wwi
 icon="%{I+3}%{I-}"
 name="bar_wwi"
-left="~/.orw/scripts/barctl.sh -b ww*"
-middle="~/.orw/scripts/barctl.sh -b ww* -k"
-down="/home/sola/.orw/scripts/wallctl.sh -co next"
+left="~/.orw/scripts/widgets.sh weather"
+middle="~/.orw/scripts/widgets.sh weather -k"
 
 #change_wall
 #icon="%{I+3}%{I-}"
 #name="change_wall"
 #left="/home/sola/.orw/scripts/wallctl.sh"
 #up="/home/sola/.orw/scripts/wallctl.sh -co prev"
+#down="/home/sola/.orw/scripts/wallctl.sh -co next"
 
 #lock_screen
 icon="%{I+5}%{I-}"
