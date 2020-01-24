@@ -6,8 +6,10 @@ if((only)); then
 	read width height <<< "$(wmctrl -lG | awk '$NF == "vifm" { print $5, $6 }')"
 	((height > width)) && command=sp || command=vs
 	[[ $1 =~ ^OPEN_DIRECTORY ]] && command+=" ${@#* }"
+	[[ $1 =~ ^view ]] && command+=" | view!"
 else
-	command=only
+	[[ $1 =~ ^view ]] && command="view | "
+	command+=only
 fi
 
 vifm --remote -c "$command"

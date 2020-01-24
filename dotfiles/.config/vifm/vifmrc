@@ -243,45 +243,12 @@ fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
         \ %pc
         \ image_preview clear
 
-" command! setwall ~/.orw/scripts/wallctl.sh -s %d/%c
-" command! pdir ~/Desktop/test.sh "'%d'/{'%f'}"
-" command! setwall ~/Desktop/test.sh set_wall %f:p &
-" command! setwalldir ~/Desktop/test.sh set_wall_dir %f &
-" command! addwalldir ~/Desktop/test.sh add_wall_dir %f &
-" command! deletewalldir ~/Desktop/test.sh delete_wall_dir %f &
-
-" " smart splitting
-" command! smartsplit smart_split "%a %f" &
-" nnoremap ss :smartsplit<cr>
-" nnoremap sd :smartsplit OPEN_DIRECTORY<cr>
-" nnoremap e :if layoutis('only') | smartsplit | endif | view<cr>
-" 
-" " adding music
-" command! addsong add_music %f:p &
-" nnoremap as :addsong<cr>
-" 
-" command! adddirectory add_music %d:p &
-" nnoremap ad :adddirectory<cr>
-" 
-" " wallpaper management
-" command! setwall ~/Desktop/test.sh set_wall %f:p &
-" nnoremap sw :setwall<cr>
-" 
-" command! setwalldir ~/Desktop/test.sh set_wall_dir %f &
-" nnoremap sd :setwalldir<cr>
-" 
-" command! addwalldir ~/Desktop/test.sh add_wall_dir %f &
-" nnoremap awd :addwalldir<cr>
-" 
-" command! deletewalldir ~/Desktop/test.sh delete_wall_dir %f &
-" nnoremap dwd :deletewalldir<cr>
-
 " smart splitting
 command! smartsplit smart_split "%a %f" &
 
 nnoremap ss :smartsplit<cr>
 nnoremap sd :smartsplit OPEN_DIRECTORY<cr>
-nnoremap e :if layoutis('only') | smartsplit | endif | view<cr>
+nnoremap e :smartsplit view<cr>
 
 " adding music
 command! addsong add_music %f:p &
