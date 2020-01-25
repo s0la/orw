@@ -125,9 +125,9 @@ while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
 
 			break;;
 		R)
-			modules="$1"
+			modules="$OPTARG"
 			colorscheme_name="${!OPTIND}"
-			[[ ! $1 =~ '^' ]] && modules="${1//\*/\.\*}"
+			[[ ! $modules =~ '^' ]] && modules="${modules//\*/\.\*}"
 
 			if [[ $colorscheme_name ]]; then
 				colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
