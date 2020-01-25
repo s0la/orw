@@ -1,8 +1,8 @@
-bg = '#333333'
-fg = '#505050'
-sbg = '#2d2d2d'
-sfg = '#c2c2c2'
-mfg = '#608985'
+bg = '#3a3a3a'
+fg = '#5f6266'
+sbg = '#2e2e2e'
+sfg = '#abaeb2'
+mfg = '#b8987e'
 stbg = '#202020'
 
 font_size = 8

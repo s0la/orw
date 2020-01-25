@@ -9,7 +9,7 @@ playlist_display_mode = "classic"
 message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
-now_playing_prefix = "$(2)"
+now_playing_prefix = "$(72)"
 now_playing_suffix = "$0"
 selected_item_prefix = "$(1)"
 #current_item_prefix = "$(2)"
@@ -23,7 +23,7 @@ discard_colors_if_item_is_selected = "yes"
 
 header_visibility = "no"
 titles_visibility = "no"
-statusbar_visibility = "yes"
+statusbar_visibility = "no"
 display_remaining_time = "yes"
 
 volume_color = "9"
@@ -42,7 +42,7 @@ alternative_ui_separator_color = "black"
 
 progressbar_color = "1"
 progressbar_look = "━━━"
-progressbar_elapsed_color = "11"
+progressbar_elapsed_color = "67"
 
 visualizer_in_stereo = "no"
 visualizer_fifo_path = "/home/sola/.mpd/mpd.fifo"
@@ -50,6 +50,6 @@ visualizer_output_name = "mpd_fifo"
 visualizer_sync_interval = "30"
 visualizer_look = "○▋"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_color = 11,11,11,11,11,11,11,11,11,11,11
+visualizer_color = 67,67,67,67,67,67,67,67,67,67,67
 
 execute_on_song_change = "~/.orw/scripts/song_notification.sh"

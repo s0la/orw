@@ -799,7 +799,7 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			fi;;
 		C)
 			arg=${!OPTIND}
-			[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$colorschemes/default.ocs
+			[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$colorschemes/orw_default.ocs
 			[[ ! -f $colorscheme ]] && echo "colorscheme doesn't exist, please try again." && exit 1;;
 		M) inherited_module=$OPTARG;;
 		P)
@@ -930,7 +930,7 @@ multiple_properties() {
 	else
 		while read -r property color; do
 			$module
-		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/default.ocs} $bar_modules | \
+		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
 			awk -F '[= ]' 'BEGIN { c = "'$color'" }
 				/^('${property//\*/.*}')[= ]/ { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
 	fi

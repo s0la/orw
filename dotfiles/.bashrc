@@ -219,13 +219,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="default"
-	fg="157;156;155;"
-	sc="181;188;109;"
+	bg="58;58;58;"
+	fg="101;101;101;"
+	sc="101;101;101;"
 	ic="149;142;154;"
 	sec="129;98;92;"
-	gcc="191;198;119;"
-	gdc="184;136;112;"
+	gcc="217;185;159;"
+	gdc="169;136;127;"
 	vc="96;137;133;"
 
 	((exit_code)) && sc=$sec || sc=$sc
@@ -237,7 +237,7 @@ generate_ps1() {
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=simple
+		mode=rice
 		edge_mode=flat
 
 		[[ $edge_mode != flat ]] && case $edge_mode in
