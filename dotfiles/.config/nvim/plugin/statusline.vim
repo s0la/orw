@@ -1,8 +1,7 @@
 source ~/.config/nvim/colors/orw.vim
 
 exe 'hi None guibg=none guifg=none'
-exe 'hi StatusLight guibg=' . g:lfg . ' guifg=' . g:fg
-exe 'hi StatusDark guibg=' . g:lsbg . ' guifg=' . g:lsfg
+exe 'hi StatusLight guibg=' . g:lbg . ' guifg=' . g:lfg
 exe 'hi Statusline guibg=' . g:slbg . ' guifg=' . g:slfg . ' cterm=none'
 
 let s:settings = 'NMC.nmbg.;'
@@ -14,14 +13,17 @@ let s:settings .= 'b.b.;'
 let s:settings .= 'r.. RO ;'
 let s:settings .= 'm.mo.;'
 let s:settings .= 'f.s. %F ;'
-let s:settings .= 'cpi.imbg.● ;'
+"let s:settings .= 'cpi.imbg.● ;'
+let s:settings .= 'c.lfgr.● ;'
 let s:settings .= 'e..;'
-let s:settings .= 'lnpi.lsbg. line %l, column %c ;'
+let s:settings .= 'ln.c.  %l:%c  .fr;'
 let s:settings .= 't.. %Y '
 
 let s:swap_colors = 0
 
-let s:active_buffer_modules = 'm.b.f.c.e.ln'
+let s:separator = "%#None#"
+
+let s:active_buffer_modules = 'm.b.s.f.e.s.ln'
 let s:inactive_buffer_modules = 'b.f.c.ln'
 
 func! MapModule(module)
@@ -80,7 +82,6 @@ func! GetBranch(bufnr)
 				\"git status -sb 2> /dev/null | " .
 				\"awk -F '.' 'NR == 1 { print substr($1, 4) }" .
 				\"END { if(NR > 1) print \"*\" }' | xargs -i echo -n '{}'")
-				"\"git status 2> /dev/null | awk 'NR == 1 {print $NF}; NR > 2 {print \"*\";exit}' | xargs -i echo -n '{}'")
 endf
 
 func! MakeHiGroup(hi_group, fg, bg, ...)
@@ -105,7 +106,7 @@ func! ReverseHiGroup(module, hi_group)
 
 		return MakeHiGroup(l:hi_group_name, l:fg, l:bg)
 	else
-		let l:hi_group = GetHiGroupColors(MapModule(toupper(a:hi_group[:-2])))
+		let l:hi_group = GetHiGroupColors(a:hi_group)
 
 		if len(l:hi_group) > 0
 			let l:fg = split(l:hi_group[0], '=')
@@ -126,7 +127,14 @@ func! GetHiGroup(module, hi_group)
 
 		return MakeHiGroup(l:hi_group, l:fg, l:bg)
 	elseif a:hi_group =~ 'r$'
-		return ReverseHiGroup(a:module, a:hi_group[:-2])
+		if a:hi_group[-3:-2] =~ '[bf]g'
+			let l:reversed_hi_group = a:hi_group[:-2]
+		else
+			let l:var_name = 's:' . MapModule(a:hi_group[:-2]) . '_hi_group'
+			let l:reversed_hi_group = exists(l:var_name) ? {l:var_name} : MapModule(toupper(a:hi_group[:-2]))
+		endif
+
+		return ReverseHiGroup(a:module, l:reversed_hi_group)
 	else
 		return MapModule(toupper(a:hi_group))
 	endif
@@ -141,13 +149,15 @@ func! GetAdjacentModuleBg(module, direction)
 	let l:adjacent_modules = (a:direction == 'n') ? s:modules[l:index + 1:] : reverse(s:modules[:l:index - 1])
 
 	for module in l:adjacent_modules
-		let l:adjacent_module = MapModule(module)
+		if module != "s"
+			let l:adjacent_module = MapModule(module)
 
-		if {'s:' . l:adjacent_module . '_hi_group'} != ''
-			let l:adjacent_hi_group = {'s:' . l:adjacent_module . '_hi_group'}
+			if {'s:' . l:adjacent_module . '_hi_group'} != ''
+				let l:adjacent_hi_group = {'s:' . l:adjacent_module . '_hi_group'}
 
-			if l:adjacent_hi_group != 'None'
-				break
+				if l:adjacent_hi_group != 'None'
+					break
+				endif
 			endif
 		endif
 	endfor
@@ -214,7 +224,6 @@ func! MakeIndicator(module, hi_group)
 	let l:adjacent_module_bg = GetAdjacentModuleBg(l:module, l:direction)
 	let l:bg = split(l:adjacent_module_bg, '=')[1]
 
-	"let {'s:' . l:var . '_hi_group'} = MakeHiGroup(l:hi_group, a:hi_group, l:bg)
 	let {'s:' . l:var . '_hi_group'} = MakeHiGroup(l:hi_group, a:hi_group, l:bg, 'i')
 endf
 
@@ -252,18 +261,18 @@ endf
 
 func! SetChangedColor(module, hi_group, ...)
 	if getbufvar(b:bufnr, '&mod')
-		if !exists('s:tab_changed_hi_group')
-			if a:hi_group =~ 'g$\|[A-Z]'
-				let l:fg = {'g:' . (a:hi_group =~ '[A-Z]' ? MapModule(a:hi_group) : a:hi_group)}
-			else
-				let l:hi_group = MapModule(toupper(a:hi_group))
-				let l:guibg = GetHiGroupColors(l:hi_group)[1]
-				let l:fg = split(l:guibg, '=')[1]
-			endif
+		"if !exists('s:tab_changed_hi_group')
+		"	if a:hi_group =~ 'gr?$\|[A-Z]'
+		"		let l:fg = {'g:' . (a:hi_group =~ '[A-Z]' ? MapModule(a:hi_group) : a:hi_group)}
+		"	else
+		"		let l:hi_group = MapModule(toupper(a:hi_group))
+		"		let l:guibg = GetHiGroupColors(l:hi_group)[1]
+		"		let l:fg = split(l:guibg, '=')[1]
+		"	endif
 
-			let s:tab_changed_hi_group = MakeHiGroup('TabChanged', l:fg, g:lbg)
-			let s:tab_changed_label = a:1
-		endif
+		"	let s:tab_changed_hi_group = MakeHiGroup('TabChanged', l:fg, g:lbg)
+		"	let s:tab_changed_label = a:1
+		"endif
 
 		call SetVar(a:module, a:hi_group, a:000)
 	else
@@ -281,12 +290,15 @@ func! SetVar(module, hi_group, ...)
 			if a:hi_group =~ 'g$'
 				let l:hi_group = GetHiGroup(a:module, a:hi_group)
 			else
-				let l:hi_group_var = 's:' . MapModule(a:hi_group) . '_hi_group'
+				let l:reverse = a:hi_group[-1:] == 'r'
+				let l:hi_group_var = 's:' . MapModule(l:reverse ? a:hi_group[:-2] : a:hi_group) . '_hi_group'
 
 				if exists(l:hi_group_var)
 					let l:hi_group = {l:hi_group_var}
 
-					if l:hi_group == ''
+					if l:reverse
+						let l:hi_group = ReverseHiGroup(a:module, l:hi_group)
+					elseif l:hi_group == ''
 						let l:module_hi_group = MapModule(toupper(a:module))
 						let l:hi_group = hlexists(l:module_hi_group) ? l:module_hi_group : GetHiGroup(a:module, a:1[1])
 					endif
@@ -361,12 +373,23 @@ func! GenerateStatusline(modules, bufnr)
 		endfor
 
 		for module in s:modules
-			let l:var = MapModule(module)
-			let l:hi_group = 's:' . l:var . '_hi_group'
-			let l:label = 's:' . l:var . '_label'
+			if module =~ '^s'
+				if len(module) > 1
+					let l:multi = module[1:]
+					let l:expr = printf('%*s', l:multi, ' ')
+				endif
 
-			let s:status .= (exists(l:hi_group) && {l:hi_group} != '' ? '%#' . {l:hi_group} . '#' : '')
-			let s:status .= (exists(l:label) ? {l:label} : '')
+				let l:space = (exists('l:expr')) ? substitute('', '', l:expr, '') : ' '
+
+				let s:status .= s:separator . l:space
+			else
+				let l:var = MapModule(module)
+				let l:hi_group = 's:' . l:var . '_hi_group'
+				let l:label = 's:' . l:var . '_label'
+
+				let s:status .= (exists(l:hi_group) && {l:hi_group} != '' ? '%#' . {l:hi_group} . '#' : '')
+				let s:status .= (exists(l:label) ? {l:label} : '')
+			endif
 		endfor
 
 		return s:status
