@@ -9,7 +9,10 @@ set noshowmode
 set shortmess+=c
 set termguicolors
 
-set list lcs=tab:\▏\ 
+" set list lcs=tab:\▏\ 
+" set list lcs=tab:\\ 
+" set list lcs=tab:\\ 
+set list lcs=tab:\\ 
 set fillchars=vert:┃
 
 set completeopt-=preview
