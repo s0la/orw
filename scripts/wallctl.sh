@@ -332,7 +332,7 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 			modify=$OPTARG
 			tail=$(make_tail "${!OPTIND}") && shift
 
-			awk '/^directory/ {
+			awk -i inplace '/^directory/ {
 				ct = gensub(".*/{?([^}]*).*", "\\1", 1)
 
 				mt = "'"$tail"'"

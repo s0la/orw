@@ -139,8 +139,6 @@ check_git_files() {
 }
 
 function add_music() {
-	#[[ ${music_directory: -1} == '/' ]] && music_directory=${music_directory%/*}
-
 	[[ ${current#$music_directory} ]] && music_files_directory="${current#$music_directory/}/"
 	set_multiple_files "$music_files_directory"
 
@@ -167,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola/Music/metal"
+current=""
 torrent=""
 selection=""
 multiple_files=""
@@ -454,15 +452,18 @@ if [[ ${option% *} ]]; then
 					set current "$current/$arg"
 					mkdir "$current";;
 				add_to_playlist) add_music;;
-				set_as_wallpaper_directory)
-					set_multiple_files "$current/"
-					#[[ $files ]] && files="$(sed "s/'\?\/'\?/\//g" <<< $files)"
+				*_wallpaper_directory)
+					if [[ $option =~ ^set ]]; then
+						flag=d
+					else
+						flag=D
+						modify=${option%%_*}
+					fi
 
+					set_multiple_files "$current/"
 					[[ $files ]] && files="${files//\'/}"
-					#exit
-					#[[ $files ]] && files="${files/\/\'\{/\'\/\{}"
-					#~/.orw/scripts/wallctl.sh -d "${files:-$current}";;
-					~/Desktop/wall.sh -d "${files:-$current}";;
+
+					~/.orw/scripts/wallctl.sh -$flag $modify "${files:-$current}";;
 				set_as_wallpaper)
 					set_multiple_files "$current/"
 					eval ~/.orw/scripts/wallctl.sh -s "${files:-'$current'}";;
@@ -507,7 +508,7 @@ if [[ $options == options ]]; then
 	#[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\"/\1/p' ~/.mpd/mpd.conf)"
 	[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.mpd/mpd.conf)"
 	[[ "$current" =~ "$music_directory" ]] && options+=( 'add_to_playlist' )
-	options+=( 'set_as_wallpaper_directory' 'view_all_images' )
+	options+=( 'set_as_wallpaper_directory' 'add_wallpaper_directory' 'remove_wallpaper_directory' 'view_all_images' )
 
 	options+=( 'create_directory' )
 
