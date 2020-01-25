@@ -18,4 +18,4 @@ fun! SyncColors()
 	endif
 endf
 
-au FocusGained,BufEnter * :call SyncColors()
+" au FocusGained,BufEnter * :call SyncColors()
