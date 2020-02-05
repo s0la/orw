@@ -20,6 +20,12 @@ get_song_info() {
 	scrollable_area=${scrollable_area-25}
 	delay=${delay-3}
 
+	commands='%{A:mpc -q toggle:}'
+	commands+='%{A3:~/.orw/scripts/song_notification.sh:}'
+	commands+='%{A4:mpc -q prev:}'
+	commands+='%{A5:mpc -q next:}'
+	commands_end='%{A}%{A}%{A}%{A}'
+
 	#if [[ $scroll ]] && (( ${#song_info} - ${#time} - 3 > $scrollable_area )); then
 	if [[ $scroll ]] && ((${#song_info} - time_length - 3 > $scrollable_area)); then
 		final_index=$((${#song_info} - scrollable_area))
@@ -37,7 +43,7 @@ get_song_info() {
 		song_info+=" $time"
 	fi
 
-	echo -e "%{A:~/.orw/scripts/song_notification.sh:}\${mpfg:-\$pfg}%{T1}$song_info%{A}"
+	echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
 }
 
 if [[ $status == playing ]]; then
@@ -48,12 +54,12 @@ if [[ $status == playing ]]; then
 			for p in $(seq ${!var}); do
 				((percentage += progression_step))
 				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
-				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}■%{I-}%{A}\"
 			done
 		}
 
-		read elapsed_percentage remaining_percentage <<< $(mpc | awk -F '[(%]' \
-			'NR == 2 { ps = '$progression_step'; t = 100 / ps; e = sprintf("%.0f", $(NF - 1) / ps); print e, t - e }')
+		read elapsed_percentage remaining_percentage <<< $(mpc | awk -F '[(%]' 'NR == 2 {
+			ps = '$progression_step'; t = 100 / ps; e = sprintf("%.0f", $(NF - 1) / ps)
+			print e, t - e }')
 
 		draw elapsed
 		draw remaining
