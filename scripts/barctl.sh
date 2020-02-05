@@ -34,7 +34,7 @@ start_bar_on_boot() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
+while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
@@ -74,15 +74,11 @@ while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
 
 			awk -i inplace '\
 				function get_new_values(flag) {
-					a = aa[ai]
-					as = substr(a, 1, 1)
-					av = int(substr(a, 2))
-					cv =  gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
-					naa[ai] = (as == "+") ? cv + av : cv - av
+					return gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
 				}
 
 				function replace_value() {
-					$0 = gensub("(.*-" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\2" naa[ai] "\\6", 1)
+					$0 = gensub("(.*-" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\2" nv "\\6", 1)
 				}
 
 				BEGIN {
@@ -93,9 +89,10 @@ while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
 					split(e_a, aa)
 					split(e_f, fa, ",")
 				} {
-					if(e_a ~ /[+-][0-9]/) {
+					if(e_a ~ /[+-][0-9]?/) {
 						if(i_f && NR == FNR) {
-							for(ai in aa) get_new_values(i_f)
+							for(ai in aa) naa[ai] = get_new_values(i_f)
+							print
 							nextfile
 						}
 
@@ -103,13 +100,22 @@ while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
 							f = fa[fi]
 
 							for(ai in aa) {
-								if(! i_f) get_new_values(f)
+								a = aa[ai]
+								as = substr(a, 1, 1)
+								av = int(substr(a, 2))
+								cv = get_new_values(f)
+
+								fo = (length(naa[1])) ? naa[ai] : cv
+								so = (av) ? av : cv
+								nv = (as == "+") ? fo + so : fo - so
+
 								replace_value()
 							}
 						}
 					} else {
 						if(i_f && ! p) {
 							p = gensub(".*-" i_f " ([^-]*).*", "\\1", 1)
+							print
 							nextfile
 						}
 
@@ -162,22 +168,25 @@ while getopts :ds:c:gb:m:E:e:r:R:kla flag; do
 		a)
 			~/.orw/scripts/add_bar_launcher.sh ${@:2}
 			exit;;
+		n) no_reload=true;;
 	esac
 done
 
-current_pid=$$
-ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
+if [[ ! $no_reload ]]; then
+	current_pid=$$
+	ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
 
-while true; do
-	monitor_memory_consumption
-	sleep ${check_interval:-100}
-done &
+	while true; do
+		monitor_memory_consumption
+		sleep ${check_interval:-100}
+	done &
 
-[[ ! $bars ]] && get_bars
+	[[ ! $bars ]] && get_bars
 
-for bar in "${bars[@]}"; do
-	kill_bar
-	bash $configs/$bar &
-done
+	for bar in "${bars[@]}"; do
+		kill_bar
+		bash $configs/$bar &
+	done
 
-start_bar_on_boot
+	start_bar_on_boot
+fi
