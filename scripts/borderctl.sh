@@ -117,7 +117,13 @@ case $1 in
 			print
 		}' $openbox_conf;;
 	d*)
-		[[ $1 == dp ]] && pattern=padding || pattern=frame_width
+		#[[ $1 == dp ]] && pattern=padding || pattern=frame_width
+		if [[ $1 =~ df ]]; then
+			pattern=frame_width
+		else
+			[[ $1 =~ h ]] && pattern=horizontal_
+			pattern+=padding
+		fi
 
 		awk -i inplace '{ \
 			if(/^\s*\w*'$pattern'/) {
