@@ -1,7 +1,8 @@
 song_status_format = "{%a - %t}"
-song_list_format = "{%a - %t} $R {%l}"
+song_list_format = "$(72){%a} $(1) {%t} $R "
 song_window_title_format = "{%a - }{%t}|{%f}"
 
+mpd_music_dir = "/home/sola/Music"
 external_editor = "vim"
 user_interface = "classic"
 playlist_display_mode = "classic"
@@ -10,9 +11,8 @@ message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
 now_playing_prefix = "$(72)"
-now_playing_suffix = "$0"
+now_playing_suffix = "●$0"
 selected_item_prefix = "$(1)"
-#current_item_prefix = "$(2)"
 current_item_prefix = "$(1)$r"
 browser_playlist_prefix = "$1»$1 "
 
@@ -23,7 +23,7 @@ discard_colors_if_item_is_selected = "yes"
 
 header_visibility = "no"
 titles_visibility = "no"
-statusbar_visibility = "no"
+statusbar_visibility = "yes"
 display_remaining_time = "yes"
 
 volume_color = "9"
@@ -52,4 +52,4 @@ visualizer_look = "○▋"
 visualizer_type = "spectrum" (spectrum/wave)
 visualizer_color = 67,67,67,67,67,67,67,67,67,67,67
 
-execute_on_song_change = "~/.orw/scripts/song_notification.sh"
+#execute_on_song_change = "~/.orw/scripts/song_notification.sh"

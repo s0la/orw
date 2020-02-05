@@ -1,7 +1,8 @@
 song_status_format = "{%a - %t}"
-song_list_format = "{%a - %t} $R {%l}"
+song_list_format = "$(72){%a} $(1) {%t} $R "
 song_window_title_format = "{%a - }{%t}|{%f}"
 
+mpd_music_dir = "/home/sola/Music"
 external_editor = "vim"
 user_interface = "classic"
 playlist_display_mode = "classic"
@@ -10,7 +11,7 @@ message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
 now_playing_prefix = "$(72)"
-now_playing_suffix = "$0"
+now_playing_suffix = "●$0"
 selected_item_prefix = "$(1)"
 #current_item_prefix = "$(2)"
 current_item_prefix = "$(1)$r"
