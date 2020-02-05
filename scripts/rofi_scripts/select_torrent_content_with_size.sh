@@ -5,6 +5,14 @@ function set() {
 	sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
 }
 
+set_torrent_id() {
+	[[ $1 ]] && torrent_id=$1 ||
+		torrent_id=$(transmission-remote -l | awk '\
+		$1 ~ /^[0-9]+/ { ti = $1 } END { print gensub("([0-9]+).*", "\\1", 1, ti) }')
+	set torrent_id
+	exit
+}
+
 agregate() {
 	[[ $1 ]] && local print=true
 
@@ -84,15 +92,16 @@ agregate() {
 				}
 			}
 		} END {
-		if(p) {
-			if(tc) format_output()
-			if(d > 2) print "back"
-			print "done\nnone\nall" af
-		} else {
-			if(!did) d++
-			print d, fd, o, si ? si : substr(ai, 2)
-		}
-	}'
+			if(p) {
+				if(tc) format_output()
+				if(d > 2) print "back"
+				#print "done\nnone\nall\n━━━" af
+				print "done\nnone\nall" af
+			} else {
+				if(!did) d++
+				print d, fd, o, si ? si : substr(ai, 2)
+			}
+		}'
 }
 
 id=$(xdotool getactivewindow)
@@ -133,26 +142,39 @@ offset=$(awk '
 	/padding/ && NR < nr + 5 { p = get_value() }
 	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' .config/rofi/large_list.rasi)
 
+torrent_id="16"
+current=""
+full_path="Spaceslug - Discography"
+
 depth="2"
 final_depth="0"
-current="done"
-full_path=""
+
+[[ $@ =~ ^set_torrent_id ]] && $@
 
 #torrent_id=${1:-$(transmission-remote -l | awk '$1 ~ /^[0-9]+/ { ti = $1 } END { print gensub("([0-9]+).*", "\\1", 1, ti) }')}
-torrent_id=$(transmission-remote -l | awk '$1 ~ /^[0-9]+/ { ti = $1 } END { print gensub("([0-9]+).*", "\\1", 1, ti) }')
 
+#~/.orw/scripts/notify.sh "$full_path"
 if [[ -z $@ ]]; then
 	depth=2
 	current=""
 	set full_path "$(transmission-remote -t $torrent_id -i | awk '/^\s*Name/ { sub("^[^:]*: *", ""); print }')"
 else
-	if [[ ${@%% *} == [![:ascii:]] ]]; then
-		current=$(awk '{ si = gensub("([^ ]* *).*", "\\1", 1); sil = length(si) + 1; \
-			lf = $(NF - 2); li = index($0, lf) + length(lf); \
-			print substr($0, sil, li - sil) }' <<< "$@")
-	else
+	#if [[ ${@%% *} == [![:ascii:]] ]]; then
+	#	current=$(awk '{ si = gensub("([^ ]* *).*", "\\1", 1); sil = length(si) + 1; \
+	#		lf = $(NF - 2); li = index($0, lf) + length(lf); \
+	#		print substr($0, sil, li - sil) }' <<< "$@")
+	#else
+	#	current=$@
+	#fi
+	[[ ${@%% *} == [![:ascii:]] ]] &&
+		current=$(awk '{
+			si = gensub("([^ ]* *).*", "\\1", 1)
+			sil = length(si) + 1
+			lf = $(NF - 2)
+			li = index($0, lf) + length(lf)
+			print substr($0, sil, li - sil)
+		}' <<< "$@") ||
 		current=$@
-	fi
 
 	set current
 
