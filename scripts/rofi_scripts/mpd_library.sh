@@ -41,7 +41,7 @@ else
 	esac
 fi
 
-[[ $current ]] && echo -e 'back\nupdate'
-echo add_all
+[[ $current ]] && echo -e 'back'
+echo -e 'update\nadd_all\n━━━━━━━'
 
 mpc ls "$current" | awk -F '/' '! /m3u$/ { print $NF }'
