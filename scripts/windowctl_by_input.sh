@@ -1,23 +1,15 @@
 #!/bin/bash
 
-read_named_pipe() {
-	read input < $named_pipe
-	echo $input
-}
-
 read_keyboard_input() {
-	exec 3< <(read_named_pipe)
-
 	$(declare -F get_argument_count)
 
 	read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
-	termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null
+	termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null &
 
-	read <&3 input
-
+	read input < $named_pipe
 	evaluate $input
 
-	[[ $stop ]] && return || read_keyboard_input
+	[[ $stop ]] || read_keyboard_input
 }
 
 named_pipe=/tmp/keyboard_input
@@ -47,7 +39,5 @@ read input_x input_y <<< $(awk '/^display/ { \
 source ~/.orw/scripts/${1}_input_template.sh "${@:2}"
 
 $(declare -F prepare)
-
 read_keyboard_input
-
 execute
