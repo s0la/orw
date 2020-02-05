@@ -65,7 +65,8 @@ else
 
 		if [[ ! $password ]]; then
 			killall rofi
-			termite -t network_auth -e "bash -c \"~/.orw/scripts/network_auth.sh ${network_name//\'/\\\'}\"" $> /dev/null
+			termite -t network_input -e \
+				"bash -c \"~/.orw/scripts/network_auth.sh ${network_name//\'/\\\'}\"" $> /dev/null
 			get_password
 		fi
 
