@@ -122,7 +122,11 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			~/.orw/scripts/ncmpcpp.sh $display $V -p -i
 			exit;;
 		C) get_cover_properties && draw_cover_art;;
-		P) show_progessbar $OPTARG && exit;;
+		[PS])
+			[[ $flag == S ]] && show_status $OPTARG || show_progessbar $OPTARG
+			(($# + 1 == OPTIND)) && exit 0;;
+		#S) show_status $OPTARG && exit;;
+		#P) show_progessbar $OPTARG && exit;;
 		L) pre="~/.orw/scripts/windowctl.sh $OPTARG";;
 		D)
 			display="-D $OPTARG"
