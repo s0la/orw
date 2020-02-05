@@ -5,13 +5,17 @@ blacklist="Keyboard Status Monitor,DROPDOWN"
 set_window_id() {
 	id=$1
 
-	border_x=$(xwininfo -id $id | awk '/Relative.*X/ {print $NF * 2}')
-	border_y=$(xwininfo -id $id | awk '/Relative.*Y/ {print $NF + ('$border_x' / 2)}')
+	read border_x border_y <<< $([[ $id =~ ^0x ]] && xwininfo -id $id | awk '\
+		/Relative/ { if(!x) x = $NF; else y = $NF + x } END { print 2 * x, y }')
+	#if [[ $id =~ ^0x ]]; then
+	#	border_x=$(xwininfo -id $id | awk '/Relative.*X/ { print $NF * 2 }')
+	#	border_y=$(xwininfo -id $id | awk '/Relative.*Y/ { print $NF + ('$border_x' / 2) }')
+	#fi
 }
 
 function get_windows() {
-	wmctrl -lG | awk '$2 == '$current_desktop' && ! /'"${blacklist//,/|}"'$/ && $1 ~ /'$1'/ \
-		{ print $1, $3 - '$border_x', $4 - ('$border_y' - '$border_x' / 2) * 2, $5, $6 }'
+	wmctrl -lG | awk '$2 == '$current_desktop' && ! /('"${blacklist//,/|}"')$/ && $1 ~ /'$1'/ \
+		{ print $1, $3 - '${border_x:=0}', $4 - ('${border_y:=0}' - '$border_x' / 2) * 2, $5, $6 }'
 }
 
 function set_windows_properties() {
@@ -46,7 +50,8 @@ function generate_printable_properties() {
 }
 
 function save_properties() {
-	[[ -f $property_log ]] && echo $id $printable_properties >> $property_log
+	#[[ -f $property_log ]] && echo $id $printable_properties >> $property_log
+	echo $id $printable_properties >> $property_log
 }
 
 function backtrace_properties() {
@@ -440,10 +445,11 @@ get_optarg() {
 
 arguments="$@"
 argument_index=1
+options='(resize|move|tile)'
 
 config=~/.config/orw/config
 offsets_file=~/.config/orw/offsets
-property_log=~/.config/orw/windows_properties.txt
+property_log=~/.config/orw/windows_properties
 
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
@@ -459,7 +465,7 @@ while ((argument_index <= $#)); do
 	argument=${!argument_index#-}
 	((argument_index++))
 
-	if [[ $argument =~ [[:alpha:]]{4,} ]]; then
+	if [[ $argument =~ $options ]]; then
 		[[ $option ]] && previous_option=$option
 		option=$argument
 
@@ -491,8 +497,8 @@ while ((argument_index <= $#)); do
 		fi
 	else
 		optarg=${!argument_index}
-
-		[[ $argument =~ ^[SRMTRBLHDtrblhvjxymoidsrcp]$ && ! $optarg =~ ^(-[A-Za-z]|[a-z]{3,}+)$ ]] && ((argument_index++))
+		[[ $argument =~ ^[SRMTRBLHDtrblhvjxymoidsrcp]$ &&
+			! $optarg =~ ^(-[A-Za-z]|$options)$ ]] && ((argument_index++))
 
 		case $argument in
 			[TRBLHD])
@@ -566,16 +572,17 @@ while ((argument_index <= $#)); do
 					unset max
 				fi;;
 			[hv])
-				numerator=${optarg%/*}
-				denominator=${optarg#*/}
-
 				set_orientation_properties $argument
 
-				calculate_size
+				if [[ $optarg =~ / ]]; then
+					numerator=${optarg%/*}
+					denominator=${optarg#*/}
+					calculate_size
+				fi
 
 				if [[ $option == move ]]; then
 					[[ $edge =~ [br] ]] && properties[index]=$((end_point - properties[index + 2])) ||
-						properties[index]=$start_point
+						properties[index]=${start_point:-$optarg}
 				else
 					if [[ $edge ]]; then
 						set_sign +
@@ -588,7 +595,7 @@ while ((argument_index <= $#)); do
 
 						resize $edge $value
 					else
-						properties[index + 2]=$size
+						properties[index + 2]=${size:-$optarg}
 					fi
 				fi
 
@@ -610,7 +617,20 @@ while ((argument_index <= $#)); do
 
 				update_properties;;
 			i) set_window_id $optarg;;
-			n) set_window_id $(printf "0x%.8x" $(xdotool search --name "$optarg"));;
+			n)
+				name="$optarg"
+				#set_window_id $(printf "0x%.8x" $(xdotool search --name "$name"))
+				id=$(wmctrl -lG | awk '$NF ~ "'$name'" { print $1 }')
+
+				if [[ $id ]]; then
+					set_window_id $id
+					properties=( $(get_windows $id) )
+				else
+					set_windows_properties $display_orientation
+					id="$name"
+					get_bar_properties add
+					properties=( $(list_all_windows | grep "$name") )
+				fi;;
 			D) current_desktop=$optarg;;
 			d) display=$optarg;;
 			[trbl])
@@ -743,13 +763,6 @@ while ((argument_index <= $#)); do
 						[[ $optarg =~ [br] ]] && reverse=-r
 
 						start_index=$((index % 2 + 1))
-
-						#mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
-						#	'$2 ~ /^0x/ { cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
-						#	if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
-						#	wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
-						#	print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 { gsub(/.*0x\w* /, "", $0); print }') );;
-
 						mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
 							'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
 							if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
@@ -758,29 +771,47 @@ while ((argument_index <= $#)); do
 								{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
 								print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
 					*)
-						if [[ $optarg =~ ^0x ]]; then
-							mirror_window_id=$optarg
-						else
-							mirror_window_id=$((wmctrl -l && list_bars) | awk '/'$optarg'/ { print $1; exit }')
-
-							optind=$((argument_index + 1))
-							optind=${!optind}
-						fi
+						[[ $optarg =~ ^0x ]] && mirror_window_id=$optarg ||
+							mirror_window_id=$((wmctrl -l && list_bars) |\
+							awk '/'$optarg'/ { print $1; exit }')
 
 						mirror_window_properties=( $(list_all_windows | \
 							awk '$1 == "'$mirror_window_id'" {
-								if(NF > 5) { $4 += ($NF - '$border_x'); $5 += ($NF - '$border_y') }
+								if(NF > 5) { $4 += ($NF - '${border_x:=0}'); $5 += ($NF - '${border_y:=0}') }
 									print gensub("(" $1 "|" $6 "$)", "", "g") }') )
 				esac
 
-				if [[ $optind =~ ^[xywh,]+$ ]]; then
+				#if [[ $optind =~ ^[xseywh,]+$ ]]; then
+				if [[ $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
 					for specific_mirror_property in ${optind//,/ }; do 
+						unset operation operand
+
 						case $specific_mirror_property in
-							x) mirror_window_property_index=0;;
-							y) mirror_window_property_index=1;;
-							w) mirror_window_property_index=2;;
-							h) mirror_window_property_index=3;;
+							x*) mirror_window_property_index=0;;
+							y*) mirror_window_property_index=1;;
+							w*) mirror_window_property_index=2;;
+							h*) mirror_window_property_index=3;;
 						esac
+
+						#if ((${#specific_mirror_property} > 1)); then
+						if [[ ${specific_mirror_property:1:1} =~ [se] ]]; then
+							mirror_border=border_${specific_mirror_property:0:1}
+							[[ ${specific_mirror_property:1:1} == s ]] &&
+								((mirror_window_properties[mirror_window_property_index] -= (${properties[mirror_window_property_index + 3]} + ${!mirror_border:-0}))) ||
+								((mirror_window_properties[mirror_window_property_index] += (${mirror_window_properties[mirror_window_property_index + 2]} + ${!mirror_border:-0})))
+						fi
+
+						if [[ $specific_mirror_property =~ [+-/*] ]]; then
+							read operation operand <<< \
+								$(sed 's/\w*\(.\)\([^+-]*\).*/\1 \2/' <<< $specific_mirror_property)
+							((operand)) &&
+								((mirror_window_properties[mirror_window_property_index] $operation= operand))
+
+							if [[ $specific_mirror_property =~ [+-]$ ]]; then
+								((properties[mirror_window_property_index + 1] ${specific_mirror_property: -1}= ${mirror_window_properties[mirror_window_property_index]}))
+								continue
+							fi
+						fi
 
 						properties[mirror_window_property_index + 1]=${mirror_window_properties[mirror_window_property_index]}
 					done
@@ -795,7 +826,9 @@ while ((argument_index <= $#)); do
 					properties+=( "${mirror_window_properties[*]:index}" )
 				else
 					echo "Mirror window wasn't found in specified direction, please try another direction.."
-				fi;;
+				fi
+
+				update_properties;;
 			x)
 				x_offset=$optarg
 				add_offset x_offset;;
@@ -843,8 +876,16 @@ while ((argument_index <= $#)); do
 					fi
 				fi;;
 			p)
-				echo -n "$border_x $border_y "
-				get_windows $id | cut -d ' ' -f 2-
+				if ((${#properties[*]} > 5)); then
+					[[ $display_orientation == h ]] && index=1 || index=2
+					get_display_properties $index
+					awk '{ if(NF > 5 && $3 < 0) $3 += '$display_y' + '$height'; print }' <<< ${properties[*]}
+				else
+					echo -n "$border_x $border_y "
+					echo ${properties[*]}
+				fi
+				#echo -n "$border_x $border_y "
+				#get_windows ${id:-name} | cut -d ' ' -f 2-
 				exit;;
 			o) overwrite=true;;
 			a) adjucent=true;;
