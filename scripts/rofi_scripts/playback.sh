@@ -27,15 +27,15 @@ else
 		*)
 			mpc -q ${@#* }
 
-			if [[ ${@##* } == stop ]]; then
-				bar_name=$(ps aux | awk -F '[- ]' \
-					'!/awk/ && /generate_bar.* -m/ { for(f = 9; f <= NF; f++) if($f == "n") { print $(f + 1); exit } }')
+			#if [[ ${@##* } == stop ]]; then
+			#	bar_name=$(ps aux | awk -F '[- ]' \
+			#		'!/awk/ && /generate_bar.* -m/ { for(f = 9; f <= NF; f++) if($f == "n") { print $(f + 1); exit } }')
 
-				[[ $bar_name ]] && cat <<- EOF > ~/.config/orw/bar/fifos/$bar_name.fifo
-					PROGRESSBAR
-					SONG_INFO not playing
-					MPD_VOLUME
-				EOF
-			fi
+			#	[[ $bar_name ]] && cat <<- EOF > ~/.config/orw/bar/fifos/$bar_name.fifo
+			#		PROGRESSBAR
+			#		SONG_INFO not playing
+			#		MPD_VOLUME
+			#	EOF
+			#fi
 	esac
 fi
