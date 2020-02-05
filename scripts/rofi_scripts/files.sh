@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current=""
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
@@ -177,9 +177,9 @@ staged=""
 unstaged=""
 
 list=""
-archive=""
+archive="/home/sola/sola.zip"
 password=""
-archive_single=""
+archive_single="sola.txt"
 archive_multiple=""
 
 bookmarks=${0%/*}/bookmarks
@@ -423,10 +423,11 @@ if [[ ${option% *} ]]; then
 					fi;;
 				*torrent*)
 						[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
-						[[ $option == select_torrent_content ]] && torrent_state="--start-paused"
+						#[[ $option == select_torrent_content ]] && torrent_state="--start-paused"
+						[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
 
 						if [[ ! $option =~ destination ]]; then
-							pidof transmission-daemon > /dev/null || transmission-daemon && sleep 0.1
+							pidof transmission-daemon > /dev/null || transmission-daemon
 							eval transmission-remote -a "${regex:-'$torrent'}" -w "${torrent_directory-~/Downloads/}" $torrent_state &> /dev/null
 
 							notify "Adding torrent\n${torrent:-$current}"
@@ -434,8 +435,10 @@ if [[ ${option% *} ]]; then
 							un_set regex torrent
 						fi
 
-						if [[ $torrent_state ]]; then
+						if [[ $option == select_torrent_content ]]; then
 							killall rofi
+
+							~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id
 							~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content
 							exit
 						fi;;
@@ -502,7 +505,7 @@ if [[ $options == options ]]; then
 	options+=( 'remove' 'selection' 'add_to_bookmarks' 'add_content_to_archive' 'add_directory_to_archive' )
 
 	[[ "$archive" || "$archive_multiple" ]] && options+=( 'extract_archive' )
-	[[ "$torrent" ]] && options+=( 'download_torrent' 'select_torrent_content' )
+	[[ "$torrent" ]] && options+=( 'add_torrent' 'start_torrent' 'select_torrent_content' )
 
 	[[ $multiple_files ]] && options+=( 'set_as_wallpaper' 'edit_text' )
 	#[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\"/\1/p' ~/.mpd/mpd.conf)"

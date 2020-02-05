@@ -206,7 +206,7 @@
     </keybind>
     <keybind key="A-t">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/toggle_dmenu.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/torrents_group.sh torrents</command>
       </action>
     </keybind>
     <keybind key="A-e">
@@ -231,7 +231,7 @@
     </keybind>
     <keybind key="A-f">
       <action name="Execute">
-		  <command>rofi -modi files:~/.orw/scripts/rofi_scripts/files.sh -show files -theme large_list</command>
+        <command>rofi -modi files:~/.orw/scripts/rofi_scripts/files.sh -show files -theme large_list</command>
       </action>
     </keybind>
     <keybind key="A-r">
@@ -241,7 +241,7 @@
     </keybind>
     <keybind key="A-s">
       <action name="Execute">
-		  <command>rofi -modi walls:~/.orw/scripts/rofi_scripts/wallpapers.sh -show walls -theme main</command>
+        <command>rofi -modi walls:~/.orw/scripts/rofi_scripts/wallpapers.sh -show walls -theme main</command>
       </action>
     </keybind>
     <keybind key="A-w">
@@ -409,7 +409,7 @@
         <command>~/.orw/scripts/windowctl_by_input.sh windowctl -o move -O -v</command>
       </action>
     </keybind>
-	<!--
+    <!--
     <keybind key="C-A-Left">
       <action name="GoToDesktop">
         <to>left</to>
@@ -946,79 +946,77 @@
         <y>center</y>
       </position>
     </application>
-
     <application title="Open Location">
       <layer>below</layer>
       <focus>yes</focus>
       <decor>yes</decor>
     </application>
-
     <application class="input">
       <decor>no</decor>
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>1355</x>
-        <y>510</y>
+        <x>655</x>
+        <y>535</y>
       </position>
       <size>
         <width>60</width>
         <height>60</height>
       </size>
     </application>
-
     <application class="custom_size">
       <focus>yes</focus>
       <position force="yes">
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>111</height>
-        <width>70</width>
+        <height>60</height>
+        <width>60</width>
       </size>
     </application>
-
     <application class="custom_position">
       <focus>yes</focus>
       <position force="yes">
-        <x>981</x>
-        <y>453</y>
+        <x>655</x>
+        <y>535</y>
       </position>
       <size>
-        <width>70</width>
-        <height>70</height>
+        <width>60</width>
+        <height>60</height>
       </size>
     </application>
-
     <application title="image_preview">
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>715</x>
-        <y>556</y>
+        <x>655</x>
+        <y>535</y>
       </position>
     </application>
-
-    <application title="*_auth">
+    <application title="cover_art_widget">
+      <decor>no</decor>
+      <layer>below</layer>
+      <focus>no</focus>
+    </application>
+    <application title="*_input">
       <focus>yes</focus>
       <decor>no</decor>
       <size>
-        <width>350</width>
-        <height>80</height>
+        <width>60</width>
+        <height>60</height>
       </size>
     </application>
-
     <application class="dropdown">
       <decor>no</decor>
       <focus>yes</focus>
       <desktop>all</desktop>
       <position force="yes">
-        <x>528</x>
-        <y>31</y>
+        <x>655</x>
+        <y>535</y>
       </position>
       <size>
-        <width>864</width>
-        <height>470</height>
+        <width>60</width>
+        <height>60</height>
       </size>
     </application>
     <!--
