@@ -9,7 +9,7 @@ read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4
 ~/.orw/scripts/set_class_geometry.sh -c image_preview -x $x -y $y
 
 while
-	color=$(colorpicker -os)
+	color=$(colorpicker -od)
 	[[ $pick_offset ]] && color=$($colorctl -o $pick_offset -h $color)
 
 	convert -size 100x100 xc:$color $preview
