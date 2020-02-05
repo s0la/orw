@@ -114,12 +114,8 @@ else
 				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\\n'
 				line=$(awk '/^#'"${current#* }"'/ { sl = NR } sl && /^$/ { el = NR; exit } END { print '$direction' }' $launchers)
 
-				if ((line)); then
+				((!line)) && echo -e "\n$move_whole" >> $launchers ||
 					sed -i "${line}i${before_line}${move_whole//$'\n'/\\n}$after_line" $launchers
-				else
-					~/.orw/scripts/notify.sh "HERE"
-					echo -e "\n$move_whole" >> $launchers
-				fi
 
 				last_line=$(sed -n '$p' $launchers)
 				[[ $last_line ]] || sed -i '$d' $launchers
