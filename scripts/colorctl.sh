@@ -25,7 +25,6 @@ get_rgb() {
 
 		if ((${section-$rgb_value_index} == rgb_value_index)); then
 			if [[ ! $balance && $offset ]]; then
-				#rgb_value=$((rgb_value ${sign:-+} offset))
 				((rgb_value ${sign:-+}= offset))
 				((rgb_value > 255)) && rgb_value=255
 				((rgb_value < 0)) && rgb_value=0
