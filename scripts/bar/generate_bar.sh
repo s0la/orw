@@ -12,17 +12,17 @@ main_font_offset=1
 
 bar_name='main_bar'
 
-bg="#2e2e2e"
+bg="#b12e2e2e"
 fc="#2e2e2e"
-bfc="#2e2e2e"
+bfc="#b12e2e2e"
 bbg="#2e2e2e"
 bsbg="%{B#3a3a3a}"
-bsfg="%{F#303030}"
+bsfg="%{F#313131}"
 
 pbg="%{B#3a3a3a}"
 pfg="%{F#abaeb2}"
 sbg="%{B#3a3a3a}"
-sfg="%{F#5f6266}"
+sfg="%{F#64676b}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -204,7 +204,7 @@ run_function() {
 
 all_arguments="$@"
 
-while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
+while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 	case $flag in
 		b)
 			bg=$bbg
@@ -246,11 +246,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			fi;;
 		r) modules+='%{r}';;
 		x)
-			if [[ $OPTARG == r ]]; then
-				align_right=true
+			if [[ $OPTARG =~ [cr] ]]; then
+				unset x_offset
 				check_arg x_offset ${!OPTIND} && shift
-			elif [[ $OPTARG == c ]]; then
-				align_center=true
+				[[ $OPTARG == c ]] && align_center=true || align_right=true
 			else
 				x_offset=$OPTARG
 			fi;;
@@ -280,11 +279,11 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:MmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			separator="$bsbg$separator";;
 		S) get_display_properties $OPTARG;;
+		P)
+			format Power
+			get_display_properties
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height)\"");;
 		L)
-			#format Logout
-			#get_display_properties
-			#Logout=$(eval "echo -e \"$($path/system_info.sh Logout ${display_width}x$display_height)\"");;
-
 			modules+='$launchers'
 
 			check_arg launchers_args ${!OPTIND} && shift
@@ -438,7 +437,13 @@ if [[ $bar_width =~ [a-z] ]]; then
 fi
 
 if [[ $align_center ]]; then
-	[[ $adjustable_width ]] && x_offset=0 || x_offset=$(((display_width - bar_width) / 2))
+	[[ $adjustable_width ]] && x_offset=0 || x_offset=$((((display_width - bar_width) / 2) $x_offset))
+	#if [[ $adjustable_width ]]; then
+	#	x_offset=0
+	#else
+	#	#[[ $x_offset ]] && center_offset=$x_offset
+	#	x_offset=$((((display_width - bar_width) / 2) $x_offset))
+	#fi
 fi
 
 if [[ $align_right ]]; then
