@@ -640,7 +640,8 @@ add_notification() {
 }
 
 #all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash lock firefox $wall )
-all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
+#all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
+all_modules=( ob dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
 
 while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 	case $flag in
