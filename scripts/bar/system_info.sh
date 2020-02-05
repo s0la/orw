@@ -54,13 +54,13 @@ case $1 in
 		icon= 
 		lines=${@: -1}
 
-		old_mail_count=5
+		old_mail_count=11
 
 		email_auth=~/.orw/scripts/auth/email
 
 		if [[ ! -f $email_auth ]]; then
 			waiting_for_auth=$(wmctrl -l | awk '{ waiting += $NF == "email_auth" } END { print waiting }')
-			((!waiting_for_auth)) && termite -t email_auth -e ~/.orw/scripts/email_auth.sh &> /dev/null &&
+			((!waiting_for_auth)) && termite -t email_input -e ~/.orw/scripts/email_auth.sh &> /dev/null &&
 				~/.orw/scripts/barctl.sh -d
 		fi
 
@@ -69,18 +69,20 @@ case $1 in
 		read mail_count notification <<< $(curl -u $username:$password --silent "https://mail.google.com/mail/feed/atom" |
 			xmllint --format - 2> /dev/null | awk -F '[><]' \
 			'/<(fullcount|title|name)/ && ! /Inbox/ { if($2 ~ /count/) c = $3; \
-			else if($2 == "title" && $3) t = " - " $3; \
-			else { print c, $3 t; exit } }')
+			else if($2 == "title" && $3) t = $3; \
+			else { print c, "<b>" $3 "</b>\\\\n" t; exit } }')
 
 		if ((mail_count != old_mail_count)); then
+			#notification_icon="<span font='Roboto 15'>$icon</span>"
+			#((mail_count > old_mail_count)) && ~/.orw/scripts/notify.sh -i ~/.orw/themes/icons/64x64/apps/mail.png \
 			sed -i "/^\s*old_mail_count=/ s/=.*/=$mail_count/" $0
-			((mail_count > old_mail_count)) && ~/.orw/scripts/notify.sh -i ~/.orw/themes/icons/64x64/apps/mail.png \
-				-t 10 -p "$notification"
+			((mail_count > old_mail_count)) &&
+				~/.orw/scripts/notify.sh -t 10 -p "new mail:\n\n$notification"
 		fi
 
 		[[ $(which mutt 2> /dev/null) ]] && command1='termite -e mutt' ||
 			command1="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
-		command2="~/.orw/scripts/show_mail_info.sh $username $password"
+		command2="~/.orw/scripts/show_mail_info.sh $username $password 5"
 
 		((mail_count)) && format fading "%{A:$command1:}%{A3:$command2:}${!2-MAIL}%{A}%{A}" $mail_count;;
 	volume*)
@@ -279,20 +281,40 @@ case $1 in
 	torrents)
 		icon=
 
-		(($(pidof transmission-daemon))) && read c p b <<< $(transmission-remote -l | awk '\
+		step=${2//[^0-9]/}
+
+		(($(pidof transmission-daemon))) && read ids s c p b <<< $(transmission-remote -l | awk '\
 			function make_progressbar(percent) {
 				if(percent > 0) return gensub(/ /, "■", "g", sprintf("%*s", percent, " "))
-			};
-			NR == 1 { ss = index($0, "Status"); ns = index($0, "Name") } \
-				{ ts = substr($0, ss, ns - ss); if(ts ~ /^Downloading/) { \
-					tp += $2; ap = tp / ++c } } END { s = 5; pd = sprintf("%.0f", ap / s); pr = 100 / s - pd; \
-					if(c) print c, ap "%", "${tbfg:-${pbfg:-${'$pfg'}}}" make_progressbar(pd) "${'$sfg'}" make_progressbar(pr) }' 2> /dev/null)
+			}
+
+			NR == 1 {
+				ns = index($0, "Name")
+				ss = index($0, "Status")
+			} {
+				if($2 ~ "^[0-9]{1,2}%") {
+					tp += $2
+					ap = tp / ++c
+
+					i = i "," $1
+					ts = substr($0, ss)
+					ns = (ts ~ "^Stopped") ? "s" : "S"
+				}
+			} END {
+				s = '${step:-5}'
+				pd = sprintf("%.0f", ap / s); pr = 100 / s - pd
+				if(c) print substr(i, 2), ns, c,
+					ap "%", "${tbefg:-${pbfg:-${'$pfg'}}}" make_progressbar(pd) "${tbfg:-${'$sfg'}}" make_progressbar(pr)
+			}' 2> /dev/null)
 
 		for torrent_info in ${2//,/ }; do
 			torrents+="${!torrent_info}\${padding}"
 		done
 
-		((c)) && format fading "%{A:~/.orw/scripts/show_torrents_info.sh:}${!3-TOR}%{A}" "${torrents%\$*}";;
+		left_command="transmission-remote -t $ids -$s &> /dev/null"
+		right_command="~/.orw/scripts/show_torrents_info.sh"
+
+		((c)) && format fading "%{A:$left_command:}%{A3:$right_command:}${!3-TOR}%{A}%{A}" "${torrents%\$*}";;
 	updates)
 		lines=${@: -1}
 		icon=%{I-4}%{I-}
@@ -317,7 +339,7 @@ case $1 in
 		esac
 
 		format "${!2-TEMP}" "$temp";;
-	Logout)
+	Power)
 		style=mono
-		format "%{A:~/.orw/scripts/bar/shut_down.sh $2 &:}%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}%{A}";;
 esac
