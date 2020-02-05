@@ -18,24 +18,37 @@ icon="%{I+7}%{I-}"
 name="vifm"
 left="~/.orw/scripts/vifm.sh"
 
+#bar_mwc
+icon="%{I+7}%{I-}"
+name="bar_mwc"
+left="~/.orw/scripts/widgets.sh controls"
+middle="~/.orw/scripts/widgets.sh controls -k"
+right="mpc -q toggle"
+up="mpc -q prev"
+down="mpc -q next"
+
+#cover_art_widget
+icon="%{I+7}%{I-}"
+name="cover_art_widget"
+left="~/.orw/scripts/widgets.sh cover"
+middle="~/.orw/scripts/widgets.sh cover -k"
+
+#input
+icon="%{F#333333}%{I+7}%{I-}"
+name="input"
+left="~/.orw/scripts/widgets.sh toggle_input"
+
 #ncmpcpp
-icon="%{I+7}%{I-}"
+icon="%{I+7}%{I-}"
 name="ncmpcpp"
-left="~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -Vpi"
+left="~/.orw/scripts/widgets.sh playlist"
+middle="~/.orw/scripts/widgets.sh playlist -k"
 
 #visualizer
 icon="%{I+7}%{I-}"
 name="visualizer"
-left="~/.orw/scripts/ncmpcpp.sh -w 450 -Vvi"
-
-#bar_mwc
-icon="%{I+7}%{I-}"
-name="bar_mwc"
-left="~/.orw/scripts/widgets.sh music"
-middle="~/.orw/scripts/widgets.sh music -k"
-right="mpc -q toggle"
-up="mpc -q prev"
-down="mpc -q next"
+left="~/.orw/scripts/widgets.sh visualizer"
+middle="~/.orw/scripts/widgets.sh visualizer -k"
 
 #bar_wwi
 icon="%{I+3}%{I-}"
