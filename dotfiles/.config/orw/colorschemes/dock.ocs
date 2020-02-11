@@ -1,13 +1,13 @@
 #bar
-bg #c81a1a1a
+bg #de1a1a1a
 fc #303030
-bfc #c81a1a1a
-bbg #c81a1a1a
-bsbg #c81a1a1a
+bfc #de1a1a1a
+bbg #de1a1a1a
+bsbg #de1a1a1a
 bsfg #303030
-pbg #c81a1a1a
-pfg #bd9d83
-sbg #c81a1a1a
-sfg #808387
+pbg #de1a1a1a
+pfg #B4938A
+sbg #de1a1a1a
+sfg #333333
 Afc #b5bc6d
 pbefg #b5bc6d

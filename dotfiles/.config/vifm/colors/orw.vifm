@@ -1,9 +1,9 @@
 let $fg = 0
-let $dfg = 66
-let $efg = 10
-let $sfg = 72
+let $dfg = 22
+let $efg = 44
+let $sfg = 3
 let $tfg = 8
-let $slbg = 71
+let $slbg = 66
 let $slfg = 0
 
 highlight clear
