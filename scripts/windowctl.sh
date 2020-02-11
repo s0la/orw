@@ -781,10 +781,9 @@ while ((argument_index <= $#)); do
 									print gensub("(" $1 "|" $6 "$)", "", "g") }') )
 				esac
 
-				#if [[ $optind =~ ^[xseywh,]+$ ]]; then
 				if [[ $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
 					for specific_mirror_property in ${optind//,/ }; do 
-						unset operation operand
+						unset operation operand additional_{operation,operand} mirror_value
 
 						case $specific_mirror_property in
 							x*) mirror_window_property_index=0;;
@@ -793,27 +792,33 @@ while ((argument_index <= $#)); do
 							h*) mirror_window_property_index=3;;
 						esac
 
-						#if ((${#specific_mirror_property} > 1)); then
 						if [[ ${specific_mirror_property:1:1} =~ [se] ]]; then
 							mirror_border=border_${specific_mirror_property:0:1}
-							[[ ${specific_mirror_property:1:1} == s ]] &&
-								((mirror_window_properties[mirror_window_property_index] -= (${properties[mirror_window_property_index + 3]} + ${!mirror_border:-0}))) ||
-								((mirror_window_properties[mirror_window_property_index] += (${mirror_window_properties[mirror_window_property_index + 2]} + ${!mirror_border:-0})))
+
+							if [[ $specific_mirror_property =~ ee ]]; then
+								mirror_value=$((mirror_window_properties[mirror_window_property_index] + (${mirror_window_properties[mirror_window_property_index + 2]} - ${properties[mirror_window_property_index + 3]})))
+							else
+								[[ ${specific_mirror_property:1:1} == s ]] &&
+									mirror_value=$((mirror_window_properties[mirror_window_property_index] - (${properties[mirror_window_property_index + 3]} + ${!mirror_border:-0}))) ||
+									mirror_value=$((mirror_window_properties[mirror_window_property_index] + (${mirror_window_properties[mirror_window_property_index + 2]} + ${!mirror_border:-0})))
+							fi
 						fi
 
 						if [[ $specific_mirror_property =~ [+-/*] ]]; then
-							read operation operand <<< \
-								$(sed 's/\w*\(.\)\([^+-]*\).*/\1 \2/' <<< $specific_mirror_property)
+							read operation operand additional_operation additional_operand<<< \
+								$(sed 's/\w*\(.\)\([^+-]*\)\(.\)\?\(.*\)/\1 \2 \3 \4/' <<< $specific_mirror_property)
 							((operand)) &&
-								((mirror_window_properties[mirror_window_property_index] $operation= operand))
+								mirror_value=$((${mirror_value:-${mirror_window_properties[mirror_window_property_index]}} $operation operand))
+							((additional_operand)) &&
+								mirror_value=$((${mirror_value:-${mirror_window_properties[mirror_window_property_index]}} $additional_operation additional_operand))
 
 							if [[ $specific_mirror_property =~ [+-]$ ]]; then
-								((properties[mirror_window_property_index + 1] ${specific_mirror_property: -1}= ${mirror_window_properties[mirror_window_property_index]}))
+								((properties[mirror_window_property_index + 1] ${specific_mirror_property: -1}= ${mirror_value:-${mirror_window_properties[mirror_window_property_index]}}))
 								continue
 							fi
 						fi
 
-						properties[mirror_window_property_index + 1]=${mirror_window_properties[mirror_window_property_index]}
+						properties[mirror_window_property_index + 1]=${mirror_value:-${mirror_window_properties[mirror_window_property_index]}}
 					done
 
 					shift
