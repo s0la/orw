@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -w 1000 -y 13 -h 22 -a 8 -F 2 -M -n road  -m c,oe3,s22,T,P,of3,i -c -W ie,o3 -r -i -H -i -t b -e -v -d
