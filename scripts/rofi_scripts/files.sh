@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola"
+current=""
 torrent=""
 selection=""
 multiple_files=""
@@ -177,9 +177,9 @@ staged=""
 unstaged=""
 
 list=""
-archive="/home/sola/sola.zip"
+archive=""
 password=""
-archive_single="sola.txt"
+archive_single=""
 archive_multiple=""
 
 bookmarks=${0%/*}/bookmarks
@@ -423,7 +423,6 @@ if [[ ${option% *} ]]; then
 					fi;;
 				*torrent*)
 						[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
-						#[[ $option == select_torrent_content ]] && torrent_state="--start-paused"
 						[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
 
 						if [[ ! $option =~ destination ]]; then
@@ -456,17 +455,20 @@ if [[ ${option% *} ]]; then
 					mkdir "$current";;
 				add_to_playlist) add_music;;
 				*_wallpaper_directory)
-					if [[ $option =~ ^set ]]; then
-						flag=d
-					else
-						flag=D
-						modify=${option%%_*}
-					fi
+					[[ ! $option =~ ^set ]] &&
+						flag=M modify=${option%%_*}
+
+					#if [[ $option =~ ^set ]]; then
+					#	flag=d
+					#else
+					#	flag=M
+					#	modify=${option%%_*}
+					#fi
 
 					set_multiple_files "$current/"
 					[[ $files ]] && files="${files//\'/}"
 
-					~/.orw/scripts/wallctl.sh -$flag $modify "${files:-$current}";;
+					~/.orw/scripts/wallctl.sh -${flag:-d} $modify "${files:-$current}";;
 				set_as_wallpaper)
 					set_multiple_files "$current/"
 					eval ~/.orw/scripts/wallctl.sh -s "${files:-'$current'}";;
@@ -530,7 +532,8 @@ if [[ ! -d "$current" && ! $selection && ! $git ]]; then
 			mime=$(file --mime-type -b "$current")
 
 			case $mime in
-				*torrent) options+=( 'download_torrent' 'select_torrent_destination' 'select_torrent_content' );;
+				*torrent)
+					options+=( 'add_torrent' 'start_torrent' 'select_torrent_destination' 'select_torrent_content' );;
 				*[bgx]z|*zip*|*rar) options+=( 'password' 'list_archive' 'extract_archive' );;
 				*image*) options+=( 'set_as_wallpaper' );;
 				*audio*) options+=( 'add_to_playlist' );;

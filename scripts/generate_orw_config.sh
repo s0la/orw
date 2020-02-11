@@ -50,7 +50,7 @@ wallpapers() {
 		desktops+="desktop_$desktop $displays\n"
 	done
 
-	echo "#wallpapers\nrecursion 1\ndirectory \n${desktops%\\n}"
+	echo "#wallpapers\ndepth 1\ndirectory \n${desktops%\\n}"
 }
 
 if [[ -f $conf ]]; then

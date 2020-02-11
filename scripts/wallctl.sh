@@ -5,12 +5,8 @@ notify=~/.orw/scripts/notify.sh
 services=~/.orw/dotfiles/services
 all_colors=~/.config/orw/colorschemes/colors
 
-function set_notification_icon() {
-	icon="<span font='Roboto Mono 15'>$notification_icon    </span>"
-}
-
 function replace() {
-	sed -i "s#^$1.*#$1 ${!1}#" $config
+	sed -i "s#^$1.*#$1 ${2:-${!1}}#" $config
 
 	if [[ $1 == directory ]]; then
 		$notify -p "$icon directory <b>$directory</b>\nhas been successfully set as default directory."
@@ -253,8 +249,8 @@ try_wall() {
 
 current_desktop=$(xdotool get_desktop)
 
-read recursion directory <<< $(awk '\
-	/^directory|recursion/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
+read depth directory <<< $(awk '\
+	/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
 read orientation display_count <<< $(awk -F '[_ ]' '\
 	/^orientation/ { o = $NF }
 	/^display_[0-9] / { dc = $2 }
@@ -262,17 +258,17 @@ read orientation display_count <<< $(awk -F '[_ ]' '\
 
 [[ "$@" =~ -U ]] && unsplash=true
 
-while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
+while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:UW flag; do
 	case $flag in
 		i) index=$((OPTARG - 1));;
-		m)
+		n)
 			read_wallpapers
 			display_number=$OPTARG;;
 		w) current_desktop=$OPTARG;;
 		s)
 			add_wallpaper() {
 				local arg="${arg//\\ / }"
-				eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$recursion
+				eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$depth
 
 				for level in $(seq 1 $path_level); do
 					local wallpaper_section_expression+='/*'
@@ -327,8 +323,26 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 			[[ $tail =~ , ]] && tail="{$tail}"
 			directory="'$root'/$tail"
 
+			new_depth=$(eval find $directory -type d | awk '\
+				function get_depth(dir) {
+					return gensub("[^/]*/?", "/", "g", dir ? dir : $0)
+				}
+
+				BEGIN {
+					d = get_depth("'"$directory"'")
+					dd = length(d)
+				} {
+					cp = get_depth()
+					cd = length(cp) - dd
+					if(cd > md) md = cd
+				} END {
+					if("'"$tail"'" ~ "\\{.*\\}") md++
+					if(md) print ++md
+				}')
+
+			((new_depth)) && replace depth new_depth
 			replace directory;;
-		D)
+		M)
 			modify=$OPTARG
 			tail=$(make_tail "${!OPTIND}") && shift
 
@@ -363,9 +377,9 @@ while getopts :i:m:w:sd:D:rR:o:acAI:O:P:p:t:q:UW flag; do
 					write_wallpapers "${wallpapers[wallpaper_index]}" $((wallpaper_index + 1))
 				done
 			fi;;
-		R)
-			recursion=$OPTARG
-			replace recursion;;
+		D)
+			depth=$OPTARG
+			replace depth;;
 		a) all_desktops=*;;
 		A)
 			service=true
@@ -1108,6 +1122,10 @@ done
 
 if [[ ! $wallpapers ]]; then
 	if [[ $service ]]; then
+		function set_notification_icon() {
+			icon="<span font='Roboto Mono 15'>$notification_icon    </span>"
+		}
+
 		if [[ $new_state ]]; then
 			(systemctl --user $boot change_wallpaper.timer
 			systemctl --user $new_state change_wallpaper.timer) &> /dev/null
@@ -1138,8 +1156,8 @@ if [[ ! $wallpapers ]]; then
 	while read -r wallpaper; do
 		[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
 		all_wallpapers+=("$wallpaper")
-	done <<< $(eval find $directory/ -maxdepth $recursion -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
-		'{ w = ""; r = '$((recursion - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
+	done <<< $(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
+		'{ w = ""; r = '$((depth - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
 
 	wallpaper_count=${#all_wallpapers[*]}
 
