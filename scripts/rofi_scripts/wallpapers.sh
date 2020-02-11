@@ -1,9 +1,10 @@
 #!/bin/bash
 
+config=~/.config/orw/config
+
 get_directory() {
-	#directory="$(sed -n 's/^directory //p' ~/.config/orw/config)"
-	read recursion directory <<< $(awk '\
-		/^directory|recursion/ { sub("[^ ]* ", ""); print }' ~/.config/orw/config | xargs -d '\n')
+	read depth directory <<< $(awk '\
+		/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
 }
 
 if [[ -z $@ ]]; then
@@ -12,10 +13,17 @@ else
 	wallctl=~/.orw/scripts/wallctl.sh
 
 	if [[ $@ =~ select ]]; then
+		indicator='●'
+		indicator=''
+
 		get_directory
-		#eval ls "$directory"
-		eval find $directory/ -maxdepth $recursion -type f -iregex "'.*\(jpe?g\|png\)'" |\
-			awk '{ print gensub(".*/(.*(/.*){" '$recursion' - 1 "})$", "\\1", 1) }'
+
+		current_desktop=$(xdotool get_desktop)
+		current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+
+		eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" |\
+			awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+				print i, gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
 	else
 		killall rofi
 
@@ -25,12 +33,10 @@ else
 			*restore*) $wallctl -r;;
 			*auto*) $wallctl -A;;
 			*.*)
+				wall="$@"
 				get_directory
 				[[ $directory =~ \{.*\} ]] && directory="${directory%/*}"
-				#$wallctl -s "${directory:1: -1}/$@";;
-				eval $wallctl -s "$directory/$@";;
-				#~/.orw/scripts/notify.sh "$directory/$@"
-				#$wallctl -s "$directory/$@";;
+				eval $wallctl -s "$directory/${wall:2}";;
 			*) $wallctl -o $@;;
 		esac
 	fi

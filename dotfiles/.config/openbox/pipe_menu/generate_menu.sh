@@ -13,7 +13,8 @@ while getopts :m:c:is flag; do
 done
 
 function make_item() {
-	[[ $command =~ (playlist|mount).sh$ ]] && replacement=' ' || replacement='__'
+	[[ $command =~ (playlist|wallctl|mount).sh ]] &&
+		replacement=' ' || replacement='__'
 
 	cat <<- EOF
 		<item label="${1//_/$replacement}">
