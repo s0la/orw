@@ -451,8 +451,8 @@ function fff() {
 
 function qb() {
 	reload_qb=true
-	sed -i "/^$property/ s/'.*'/'#${color: -6}'/" $qb_conf
-	#sed -i "/\(^\|--\)$property/ s/#\w*/#${color: -6}/" $qb_conf ${qb_conf%/*}/home.css
+	#sed -i "/^$property/ s/'.*'/'#${color: -6}'/" $qb_conf
+	sed -i "/\(^\|--\)$property/ s/#\w*/#${color: -6}/" $qb_conf ${qb_conf%/*}/home.css
 }
 
 function firefox() {

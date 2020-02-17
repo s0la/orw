@@ -1,0 +1,60 @@
+:root {
+	--bg: #1e2327;
+	--fg: #44494d;
+	--sbg: #161b1f;
+	--sfg: #828a95;
+	--mfg: #817b8c;
+}
+
+@font-face {
+	font-family: "Iosewka Orw";
+	src: url("/home/sola/.fonts/iosevka-orw-medium.ttf");
+}
+
+body {
+	background-color: var(--bg);
+	font-family: "Iosewka Orw";
+}
+
+#content {
+	width: 30%;
+	padding: 50px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+	color: var(--fg);
+}
+
+#links {
+	display: inline-block;
+	text-align: center;
+	margin: 0 auto;
+	padding: 10px;
+	width: 100%;
+}
+
+#links a {
+	color: var(--fg);
+	padding: 10px;
+	font-size: 20px;
+	text-decoration: none;
+}
+
+#input {
+	background-color: var(--sbg);
+	margin: auto;
+	border: none;
+	border-bottom: 3px solid var(--mfg);
+	width: 100%;
+	padding: 10px 10px;
+	font-size: 15px;
+	color: var(--sfg);
+}
+
+#input:focus {
+	outline: 0;
+	outline-color: transparent;
+	outline-style: none;
+}
