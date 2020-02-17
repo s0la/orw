@@ -116,12 +116,15 @@ function get_color() {
 					l = length($NF)
 					exit
 				} END {
-					tl = '${transparency_level:-0}'
+					tl = '$transparency_level'
 
 					if(tl == 100) exit
 					else if(!tl) {
-						tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
-						ntl = int(tl '$transparency_offset' * 2.55)
+						if(length(tl)) tl = 0
+						else {
+							tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
+							ntl = int(tl '$transparency_offset' * 2.55)
+						}
 					}
 
 					t = ntl ? ntl : int(tl * 2.55)
@@ -448,7 +451,8 @@ function fff() {
 
 function qb() {
 	reload_qb=true
-	sed -i "/^$property/ s/'.*'/'$color'/" $qb_conf
+	sed -i "/^$property/ s/'.*'/'#${color: -6}'/" $qb_conf
+	#sed -i "/\(^\|--\)$property/ s/#\w*/#${color: -6}/" $qb_conf ${qb_conf%/*}/home.css
 }
 
 function firefox() {
