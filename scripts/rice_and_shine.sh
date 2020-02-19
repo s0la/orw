@@ -321,7 +321,13 @@ function vim() {
 function vifm() {
 	reload_vifm=true
 	get_color_properties
-	sed -i "/^let \$$property / s/\w*$/$((color_index - 1))/" $vifm_conf
+
+	#[[ $color =~ \# ]] && local color=$((color_index - 1 ))
+	#sed -i "/^let \$$property / s/\w*$/$color/" $vifm_conf
+
+	awk -i inplace '{ if(/let \$'$property'/ && ! d++)
+			sub("[^ ]?\\w+.?$", ("'$color'" ~ "^#") ? '$color_index' - 1 : "'\''default'\''")
+		print }' $vifm_conf
 }
 
 function bar() {
@@ -407,7 +413,7 @@ function rofi() {
 	if [[ $property == ibg ]]; then
 		read rofi_bg rofi_bc <<< $(awk -F '[ ;]' '/^\s*b[cg]/ { print $(NF - 1) }' $rofi_conf | xargs)
 
-		[[ "#${color: -6}" == $rofi_bg ]] && padding=20 margin=10 ln=14
+		[[ "#${color: -6}" == $rofi_bg ]] && padding=20 margin=10 ln=12
 		[[ "#${color: -6}" == $rofi_bc ]] && padding=0 item_padding=10 margin=0 ln=8
 
 		if [[ $padding && $margin ]]; then
@@ -451,7 +457,6 @@ function fff() {
 
 function qb() {
 	reload_qb=true
-	#sed -i "/^$property/ s/'.*'/'#${color: -6}'/" $qb_conf
 	sed -i "/\(^\|--\)$property/ s/#\w*/#${color: -6}/" $qb_conf ${qb_conf%/*}/home.css
 }
 
