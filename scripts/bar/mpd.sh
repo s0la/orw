@@ -40,7 +40,7 @@ get_song_info() {
 
 		song_info="$left_limiter ${song_info:$song_info_index:$scrollable_area} $right_limiter"
 	elif [[ $show_time ]]; then
-		song_info+=" $time"
+		song_info+="  $time"
 	fi
 
 	echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
@@ -90,9 +90,9 @@ get_controls() {
 	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
 	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 
-	controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}\$inner"
+	controls="%{T3}%{A:mpc -q prev:}%{I+n}%{I-}%{A}\$inner"
+	controls+="\$inner%{A:mpc -q toggle:}%{I+n}$toggle_icon%{I-}%{A}\$inner"
+	controls+="\$inner%{A:mpc -q next:}%{I+n}%{I-}%{A}%{T-}\$inner"
 
 	echo -e "$bg$offset\$inner\${msfg:-\$sfg}$controls\${inner}"
 }
