@@ -219,12 +219,12 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="58;58;58;"
-	fg="101;101;101;"
-	sc="101;101;101;"
+	bg="default"
+	fg="60;65;69;"
+	sc="60;65;69;"
 	ic="149;142;154;"
 	sec="129;98;92;"
-	gcc="217;185;159;"
+	gcc="162;141;159;"
 	gdc="169;136;127;"
 	vc="96;137;133;"
 
@@ -237,7 +237,7 @@ generate_ps1() {
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=rice
+		mode=simple
 		edge_mode=flat
 
 		[[ $edge_mode != flat ]] && case $edge_mode in
@@ -276,6 +276,7 @@ generate_ps1() {
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 
 			format_module -f $sc -c "$symbol_start"
 			format_module -f $bg
@@ -367,3 +368,5 @@ alias toggle_tmux="$scripts/toggle.sh tmux"
 
 #source bashrc
 alias sb="source ~/.bashrc"
+
+source /home/sola/.config/broot/launcher/bash/br

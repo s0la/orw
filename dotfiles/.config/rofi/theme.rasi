@@ -1,25 +1,25 @@
 /* color definition */
 
 * {
-	bg: #303030;
-	fg: #777777;
-	bc: #B4938A;
+	bg: #161b1f;
+	fg: #373c40;
+	bc: #202529;
 
-	ibg: #303030;
-	ibc: #373737;
+	ibg: #161b1f;
+	ibc: #797b8c;
 
 	abg: #867f8b;
 	afg: #d5d5d5;
 
-	sbg: #373737;
-	sfg: #aaaaaa;
+	sbg: #21262a;
+	sfg: #a3abb6;
 	sul: #373737;
 
 	lpc: #aaaaaa;
 	dpc: #373737;
-	btc: #4b4b4b;
-	sbtc: #B3836B;
-	btbc: #5a6368;
+	btc: #161b1f;
+	sbtc: #161b1f;
+	btbc: #161b1f;
 
 	background-color: @bg;
 
