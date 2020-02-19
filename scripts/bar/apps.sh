@@ -1,12 +1,13 @@
 #!/bin/bash
 
+separator="$2"
 lines=${@: -1}
 window_name_lenght=20
 
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
 
-if [[ $# -gt 1 ]]; then
-	for argument in ${1//,/ }; do
+if [[ $# -gt 2 ]]; then
+	for argument in ${2//,/ }; do
 		case $argument in
 			a) active=$current_window_id;;
 			c) current_desktop=$(xdotool get_desktop);;
@@ -14,7 +15,7 @@ if [[ $# -gt 1 ]]; then
 				value=${argument:1}
 				property=${argument:0:1}
 
-				[[ $2 == true ]] && separator_color='${Afc:-$fc}'
+				[[ $3 == true ]] && separator_color='${Afc:-$fc}'
 
 				case $property in
 					l) window_name_lenght=$value;;

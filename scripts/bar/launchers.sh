@@ -1,17 +1,18 @@
 #!/bin/bash
 
+separator="$1"
 lines=${@: -1}
 offset='${padding}'
 
-if [[ $# -gt 1 ]]; then
-	for argument in ${1//,/ }; do
+if (($# > 2)); then
+	for argument in ${2//,/ }; do
 		value=${argument:1}
 		property=${argument:0:1}
 
-		[[ $2 == true ]] && separator_color='${Lfc:-$fc}'
+		[[ $3 == true ]] && separator_color='${Lfc:-$fc}'
 
 		if [[ $property == s ]]; then
-			separator="%{B${separator_color:-\$bg}}%{O$value}"
+			launcher_separator="%{B${separator_color:-\$bg}}%{O$value}"
 		else
 			if [[ $value =~ [0-9] ]]; then
 				offset="%{O$value}"
@@ -104,13 +105,13 @@ make_launcher() {
 while read launcher_properties; do
 		eval ${launcher_properties//\&/\\&}
 		make_launcher
-		launchers+="$launcher$separator"
+		launchers+="$launcher$launcher_separator"
 done <<< $(awk '{ if(/^$/) {
-						if(l) la[++i] = l; l = ""
+						if(l) al[++i] = l; l = ""
 					} else { if(!/^#/) l = l " " $0 }
-					} END { for(li in la) print la[li]; print l }' ~/.orw/scripts/bar/launchers)
+					} END { for(li in al) print al[li]; print l }' ~/.orw/scripts/bar/launchers)
 
-[[ $separator ]] && launchers=${launchers%\%*}
+[[ $launcher_separator ]] && launchers=${launchers%\%*}
 [[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
 
-[[ $launchers ]] && echo -e "$launchers%{B\$bg}\$separator"
+[[ $launchers ]] && echo -e "$launchers%{B\$bg}$separator"

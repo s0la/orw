@@ -3,7 +3,8 @@
 workspace_count=$(xdotool get_num_desktops)
 current_workspace=$(($(xdotool get_desktop) + 1))
 
-offset=$2
+offset=$3
+separator="$1"
 single_line=${@: -1}
 
 function set_line() {
@@ -18,20 +19,24 @@ function set_line() {
 for workspace_index in $(seq $workspace_count); do
 	[ $workspace_index -eq $current_workspace ] && current=p || current=s
 
-	case $1 in
+	case $2 in
 		l) label="\${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
 			{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')\${padding}";;
 		n) label="$offset$workspace_index$offset";;
 		*)
-			case ${1: -1} in
+			case ${2: -1} in
 				e) p_icon="" s_icon="";;
-				h) p_icon="" s_icon="";;
-				d) p_icon="" s_icon="●";;
+				h)
+					size=n
+					p_icon="" s_icon="";;
+				d)
+					size=1
+					p_icon="" s_icon="●";;
 				*) p_icon="" s_icon="";;
 			esac
 
 			icon="${current}_icon"
-			label="$offset%{I-3}${!icon}%{I-}$offset";;
+			label="$offset%{I+${size:-3}}${!icon}%{I-}$offset";;
 	esac
 
 	bg="\${W${current}bg:-\${Wsbg:-\$${current}bg}}"
@@ -49,8 +54,8 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-[[ $1 =~ ^i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
+[[ $2 =~ ^i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
 
 echo -e "%{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
 %{A5:wmctrl -s $((current_workspace % workspace_count)):}\
-$workspaces%{A}%{A}%{B\$bg}$format_delimiter\$separator"
+$workspaces%{A}%{A}%{B\$bg}$format_delimiter$separator"

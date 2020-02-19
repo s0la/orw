@@ -1,7 +1,8 @@
-#Mozilla Firefox
+#qutebrowser
 icon="%{I+7}%{I-}"
 name="qutebrowser"
 left="qutebrowser"
+middle="~/Desktop/wq"
 
 #termite
 icon="%{I+7}%{I-}"
@@ -34,12 +35,12 @@ left="~/.orw/scripts/widgets.sh cover"
 middle="~/.orw/scripts/widgets.sh cover -k"
 
 #input
-icon="%{F#333333}%{I+7}%{I-}"
+icon="%{F#23282c}%{I+7}%{I-}"
 name="input"
 left="~/.orw/scripts/widgets.sh toggle_input"
 
 #ncmpcpp
-icon="%{I+7}%{I-}"
+icon="%{I+7}%{I-}"
 name="ncmpcpp"
 left="~/.orw/scripts/widgets.sh playlist"
 middle="~/.orw/scripts/widgets.sh playlist -k"

@@ -33,18 +33,18 @@ function format() {
 
 				echo -e $hidden;;
 			mono)
-				echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 \$separator";;
-			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 \$separator";;
-			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} \$separator";;
+				echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 ${separator:-\$separator}";;
+			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 ${separator:-\$separator}";;
+			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} ${separator:-\$separator}";;
 		esac
 	else
 		[[ $style == hidden ]] && formated="${@:2}" || formated="$(format "${@:2}")"
 
 		if [[ $lines != true ]]; then
-			echo -e "${formated% *}%{B\$bg}\$separator"
+			echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
 		else
 			set_line
-			echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}\$separator"
+			echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
 		fi
 	fi
 }
@@ -52,9 +52,10 @@ function format() {
 case $1 in
 	email*)
 		icon= 
+		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=11
+		old_mail_count=12
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -84,7 +85,7 @@ case $1 in
 			command1="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
 		command2="~/.orw/scripts/show_mail_info.sh $username $password 5"
 
-		((mail_count)) && format fading "%{A:$command1:}%{A3:$command2:}${!2-MAIL}%{A}%{A}" $mail_count;;
+		((mail_count)) && format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count;;
 	volume*)
         current_system_volume_mode=duo
         style=$current_system_volume_mode
@@ -100,15 +101,16 @@ case $1 in
 		format "$date" $time;;
 	Hidden*)
 		style=hidden
+		separator="$2"
 		lines=${@: -1}
 
 		dropdown() {
-			id=$(wmctrl -l | awk '/DROPDOWN/ {print $1}')
+			id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
 
 			if [[ $id ]]; then
 				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg='${pfg}' || fg='${sfg}'
 
-				icon=%{I-}%{I-}
+				icon=%{I+3}%{I-}
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
 			fi
 		}
@@ -117,7 +119,7 @@ case $1 in
 		state=rec
 		[[ $state == stop ]] && icon= fg=\${$pfg} || icon= fg=\${$sfg}
 
-		pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ {print $2}')
+		pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
 
 		if [[ $pid ]]; then
 			rec_command="~/.orw/scripts/record_screen.sh"
@@ -126,12 +128,13 @@ case $1 in
 		fi
 	}
 
-	if [[ $2 == all ]]; then
-		dropdown $3
-		recorder $3
+	if [[ $3 == all ]]; then
+		dropdown $4
+		recorder $4
 	fi
 
-	hidden="\${$sbg}\${inner}$term$separator$rec\$inner \$separator"
+	#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
+	hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
 	[[ $term || $rec ]] && format fading "$hidden";;
 	network)
@@ -147,9 +150,10 @@ case $1 in
 
 		[[ $ssid ]] && format ${!2-NET} $ssid;;
 	Weather*)
+		separator="$2"
 		lines=${@: -1}
-		info="${2//,/ }"
-		(($# == 5)) && city=$4
+		info="${3//,/ }"
+		(($# == 6)) && city=$5
 		[[ $info =~ s ]] && nr=6
 
 		read w $info <<< $(curl -s wttr.in/$city | awk 'NR > 2 && NR < '${nr-5}' \
@@ -172,10 +176,10 @@ case $1 in
 			weather+="${!i}\${padding}"
 		done
 
-		if [[ $3 =~ (no|only) ]]; then
+		if [[ $4 =~ (no|only) ]]; then
 			style=mono
 
-			if [[ $3 == no ]]; then
+			if [[ $4 == no ]]; then
 				mono_fg="\${$pfg}"
 			else
 				label=$icon
@@ -183,7 +187,7 @@ case $1 in
 				unset weather
 			fi
 		else
-			label=${!3:-${w^^}}
+			label=${!4:-${w^^}}
 		fi
 
 		[[ $w ]] && format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
@@ -214,19 +218,20 @@ case $1 in
 
 		echo -e "${disk%\*}";;
 	Usage*)
+		separator="$2"
 		current_usage_mode=extended
 
 		if [[ $current_usage_mode == hidden ]]; then
 			icon=%{I-n}%{I-}
 			index=2
 			usage_mode=extended
-			button="\${$pbg}\$padding\${$pfg}${!3-SHOW}\$padding"
+			button="\${$pbg}\$padding\${$pfg}${!4-SHOW}\$padding"
 		else
 			icon=%{I-n}%{I-}
 			usage_mode=hidden
 			usage="\${$sbg}\$inner"
 
-			for item in ${2//,/ }; do
+			for item in ${3//,/ }; do
 				case $item in
 					c) usage+='$cpu';;
 					r) usage+='$ram';;
@@ -234,10 +239,10 @@ case $1 in
 				esac
 			done
 
-			button="\${$sbg}\$padding\${$sfg}${!3-HIDE}\$padding"
+			button="\${$sbg}\$padding\${$sfg}${!4-HIDE}\$padding"
 		fi
 
-		echo -e "%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-} \$separator";;
+		echo -e "%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-} ${separator:-\$separator}";;
 	Battery)
 		icon=
 		icon=%{I-b}%{I-}
@@ -279,9 +284,11 @@ case $1 in
 
 		format ${!3-${label:-$s}} "${out%\$*}";;
 	torrents)
-		icon=
-
-		step=${2//[^0-9]/}
+		separator="$2"
+		lines=${@: -1}
+		#icon=%{I+n}%{I-}
+		icon=%{I+n}%{I-}
+		step=${3//[^0-9]/}
 
 		(($(pidof transmission-daemon))) && read ids s c p b <<< $(transmission-remote -l | awk '\
 			function make_progressbar(percent) {
@@ -307,15 +314,16 @@ case $1 in
 					ap "%", "${tbefg:-${pbfg:-${'$pfg'}}}" make_progressbar(pd) "${tbfg:-${'$sfg'}}" make_progressbar(pr)
 			}' 2> /dev/null)
 
-		for torrent_info in ${2//,/ }; do
+		for torrent_info in ${3//[0-9,]/ }; do
 			torrents+="${!torrent_info}\${padding}"
 		done
 
 		left_command="transmission-remote -t $ids -$s &> /dev/null"
 		right_command="~/.orw/scripts/show_torrents_info.sh"
 
-		((c)) && format fading "%{A:$left_command:}%{A3:$right_command:}${!3-TOR}%{A}%{A}" "${torrents%\$*}";;
+		((c)) && format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TOR}%{A}%{A}" "${torrents%\$*}";;
 	updates)
+		separator="$2"
 		lines=${@: -1}
 		icon=%{I-4}%{I-}
 
@@ -326,7 +334,7 @@ case $1 in
 			updates_count=$(apt list --upgradable 2> /dev/null | wc -l)
 		fi
 		
-		((updates_count)) && format fading ${!2-UPD} $updates_count;;
+		((updates_count)) && format fading ${!3-UPD} $updates_count;;
 	Temp)
 		temp=$(awk '{printf("%d°C", $NF / 1000)}' /sys/class/thermal/thermal_zone*/temp)
 

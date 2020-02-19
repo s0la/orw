@@ -6,23 +6,24 @@ config_path=~/.config/orw/bar
 inner="%{O5}"
 padding="%{O20}"
 separator="%{O5}"
+separator_offset="5"
+separator="%{O$separator_offset}"
 
 bar_height=16
-main_font_offset=1
-
+main_font_offset=0
 bar_name='main_bar'
 
-bg="#b12e2e2e"
-fc="#2e2e2e"
-bfc="#b12e2e2e"
+bg="#00161b1f"
+fc="#98a0ab"
+bfc="#363E48"
 bbg="#2e2e2e"
-bsbg="%{B#3a3a3a}"
+bsbg="%{B#003a3a3a}"
 bsfg="%{F#313131}"
 
-pbg="%{B#3a3a3a}"
-pfg="%{F#abaeb2}"
-sbg="%{B#3a3a3a}"
-sfg="%{F#64676b}"
+pbg="%{B#2c3135}"
+pfg="%{F#817b8c}"
+sbg="%{B#2c3135}"
+sfg="%{F#4a4f53}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -30,12 +31,12 @@ get_mpd() {
 
 get_apps() {
 	[[ $single_line ]] && apps_lines=single
-	echo -e "APPS $($path/apps.sh $apps_args ${apps_lines:-${lines-false}})"
+	echo -e "APPS $($path/apps.sh $separator $apps_args ${apps_lines:-${lines-false}})"
 }
 
 get_launchers() {
 	[[ $single_line ]] && launchers_lines=single
-	echo -e "LAUNCHERS $($path/launchers.sh $launchers_args ${launchers_lines:-${lines-false}})"
+	echo -e "LAUNCHERS $($path/launchers.sh $separator $launchers_args ${launchers_lines:-${lines-false}})"
 }
 
 get_workspaces() {
@@ -57,7 +58,7 @@ get_workspaces() {
 		[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
 	fi
 
-	echo -e "WORKSPACES $($path/workspaces.sh ${workspaces_label-i} $offset ${single_line-false})"
+	echo -e "WORKSPACES $($path/workspaces.sh $separator ${workspaces_label-i} $offset ${single_line-false})"
 }
 
 get_full_usage() {
@@ -85,7 +86,7 @@ get_network() {
 }
 
 get_email() {
-	echo -e "EMAIL $($path/system_info.sh email $label ${lines-false})"
+	echo -e "EMAIL $($path/system_info.sh email $separator $label ${lines-false})"
 }
 
 get_volume() {
@@ -93,11 +94,11 @@ get_volume() {
 }
 
 get_weather() {
-	echo -e "WEATHER $($path/system_info.sh Weather ${weather_info-t,s} $label $city ${lines-false})"
+	echo -e "WEATHER $($path/system_info.sh Weather $separator ${weather_info-t,s} $label $city ${lines-false})"
 }
 
 get_hidden() {
-	echo -e "HIDDEN $($path/system_info.sh Hidden ${apps-all} $label ${lines-false})"
+	echo -e "HIDDEN $($path/system_info.sh Hidden $separator ${apps-all} $label ${lines-false})"
 }
 
 get_battery() {
@@ -105,7 +106,7 @@ get_battery() {
 }
 
 get_torrents() {
-	echo -e "TORRENTS $($path/system_info.sh torrents ${torrents_info-c,p} $label ${lines-false})"
+	echo -e "TORRENTS $($path/system_info.sh torrents $separator ${torrents_info-c,p} $label ${lines-false})"
 }
 
 get_date() {
@@ -113,7 +114,7 @@ get_date() {
 }
 
 get_updates() {
-	echo -e "UPDATES $($path/system_info.sh updates $label ${lines-false})"
+	echo -e "UPDATES $($path/system_info.sh updates $separator $label ${lines-false})"
 }
 
 config=~/.config/orw/config
@@ -248,8 +249,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		x)
 			if [[ $OPTARG =~ [cr] ]]; then
 				unset x_offset
-				check_arg x_offset ${!OPTIND} && shift
+
 				[[ $OPTARG == c ]] && align_center=true || align_right=true
+				[[ ${!OPTIND} == r ]] && align_right=true && shift
+				check_arg x_offset ${!OPTIND} && shift
 			else
 				x_offset=$OPTARG
 			fi;;
@@ -269,15 +272,33 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			[[ $bottom ]] && ((y_offset += 2 * bar_frame_width));;
 		s)
-			check_arg separator_sign "${!OPTIND}" && shift
+			#check_arg separator_sign "${!OPTIND}" && shift
 
-			if [[ $separator_sign ]]; then
-				separator="%{O$OPTARG}$bsfg${separator_sign// /}%{O$OPTARG}"
-			else
-				[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator="$separator$bsfg${OPTARG// /}$separator"
+			#if [[ $separator_sign ]]; then
+			#	separator="%{O$OPTARG}$bsfg${separator_sign// /}%{O$OPTARG}"
+			#else
+			#	[[ $OPTARG =~ [0-9] ]] && separator="%{O$OPTARG}" || separator="$separator$bsfg${OPTARG// /}$separator"
+			#fi
+
+			#separator="$bsbg$separator";;
+
+			check_arg sign "${!OPTIND}" && separator_offset=$OPTARG && shift
+
+			if [[ ! $sign ]]; then
+				[[ $OPTARG =~ [0-9] ]] && separator_offset=$OPTARG || separator_sign=$OPTARG
 			fi
 
-			separator="$bsbg$separator";;
+			[[ ${sign:-$separator_sign} ]] && separator="%{O$separator_offset}${separator_sign:-${sign// /}}%{O$separator_offset}" ||
+				separator="%{O$separator_offset}"
+
+			#separator_sign="$bsfg${separator_sign// /}"
+			#separator="$bsbg%{O$separator_offset}$separator_sign%{O$separator_offset}"
+			separator="$bsbg$bsfg$separator"
+
+			if [[ $sign ]]; then
+				separator_sign=$sign
+				unset sign
+			fi;;
 		S) get_display_properties $OPTARG;;
 		P)
 			format Power
@@ -437,7 +458,20 @@ if [[ $bar_width =~ [a-z] ]]; then
 fi
 
 if [[ $align_center ]]; then
-	[[ $adjustable_width ]] && x_offset=0 || x_offset=$((((display_width - bar_width) / 2) $x_offset))
+	#if ((x_offset)); then
+	#	#[[ $align_right ]] && offset_direction=-
+	#	#x_offset=$(((display_width / 2) ${offset_direction-+} x_offset))
+	#	((x_offset += (display_width / 2)))
+	#else
+	if [[ $adjustable_width ]]; then
+		center_offset=$x_offset
+		x_offset=0
+	else
+		((x_offset)) &&
+			((x_offset += (display_width / 2))) ||
+			x_offset=$(((display_width - bar_width) / 2))
+	fi
+	#fi
 	#if [[ $adjustable_width ]]; then
 	#	x_offset=0
 	#else
@@ -459,18 +493,34 @@ if [[ ! $bar_width ]]; then
 fi
 
 bar_height=$((bar_height + ${frame_count-2} * frame_width))
-
 geometry="${bar_width}x${bar_height}+${bar_x}+${bar_y}"
 
 get_fifo
 
 calculate_width() {
 	apply_geometry() {
-		[[ $align_center ]] && bar_x=$((x - real_x + (display_width - (current_width + 2 * bar_frame_width)) / 2))
-		[[ $align_right ]] && bar_x=$((x - real_x + display_width - right_x_offset - (current_width + 2 * bar_frame_width)))
+		#[[ $align_center ]] && bar_x=$((x - real_x + (display_width - (current_width + 2 * bar_frame_width)) / 2))
+		#[[ $align_right ]] && bar_x=$((x - real_x + display_width - right_x_offset - (current_width + 2 * bar_frame_width)))
+		full_width=$((current_width + 2 * bar_frame_width))
+
+		#~/.orw/scripts/notify.sh "new: $current_width"
+
+		if ((center_offset)); then
+			[[ ! $align_right ]] &&
+				offset=$center_offset ||
+				offset=$((center_offset + full_width)) offset_direction=-
+
+			bar_x=$(((display_width / 2) ${offset_direction-+} offset))
+		else
+			[[ $align_center ]] &&
+				bar_x=$((x - real_x + (display_width - full_width) / 2))
+			[[ $align_right ]] &&
+				bar_x=$((x - real_x + display_width - right_x_offset - full_width))
+		fi
 
 		xdotool search --name "^$bar_name$" windowsize $current_width $bar_height windowmove $bar_x $bar_y
 
+		#~/.orw/scripts/notify.sh "$current_width $bar_width"
 		echo $current_width $bar_height $bar_x $bar_y > $geometry_file
 	}
 
@@ -501,6 +551,7 @@ calculate_width() {
 					}
 				} END { print int(o + l) }' <<< "$content")
 
+			#~/.orw/scripts/notify.sh "$current_width"
 			#~/.orw/scripts/notify.sh "fs: $font_size"
 
 			if [[ ! -f $geometry_file ]]; then
@@ -513,6 +564,7 @@ calculate_width() {
 				apply_geometry
 			else
 				read bar_width bar_height bar_x bar_y < $geometry_file
+				#~/.orw/scripts/notify.sh "$current_width $bar_width"
 
 				((current_width != bar_width)) && apply_geometry
 			fi
