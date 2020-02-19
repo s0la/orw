@@ -45,8 +45,8 @@ else
 		*split*) flags+=' -s -i';;
 		*set*) flags+=' -R';;
 		*cover*) flags+=' -c -i';;
-		*dual*h*) flags+=' -d';;
-		*dual*v*) flags+=' -V -d';;
+		*dual*h*) flags+=' -S yes -d';;
+		*dual*v*) flags+=' -S yes -Vd';;
 		*vertical*) flags+=' -w 450 -h 600 -i';;
 	esac
 

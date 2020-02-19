@@ -93,7 +93,7 @@ cover() {
 	}
 
 	previous_geometry='65x65+785+916'
-	previous_bg='#2e2e2e'
+	previous_bg='#161b1f'
 
 	check_cover
 
@@ -161,6 +161,8 @@ layout() {
 					local mirror=mwc
 					local delta=$(~/.orw/scripts/windowctl.sh -n mwc -p |\
 						awk '{ s = '$size'; d = ($4 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
+
+					[[ $1 == playlist ]] && progressbar=no status=no
 				fi
 
 				layout="-M cover_art_widget x,w,h*$height,ys-10 -M $mirror w$delta+"
@@ -173,8 +175,9 @@ layout() {
 			fi
 		fi
 
-		[[ ! $layout ]] && ~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -P yes -S yes -V${1:0:1}i ||
-			~/.orw/scripts/ncmpcpp.sh -w 100 -h 100 -V${1:0:1} -S no -P no -L "-n $1 $layout" -i
+		[[ ! $layout ]] &&
+			~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -P yes -V${1:0:1}i ||
+			~/.orw/scripts/ncmpcpp.sh -w 100 -h 100 -V${1:0:1} -P ${progressbar-yes} -L "-n $1 $layout" -i
 	fi
 }
 
