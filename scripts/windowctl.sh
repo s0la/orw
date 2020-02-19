@@ -279,8 +279,12 @@ tile() {
 				fi
 			else
 					if ((w_min > min_point)); then
-						[[ ! $wid =~ ^0x ]] && ((!window_count)) &&
-							min_point=$((w_max + distance)) || max_point=$w_min && break
+						if [[ ! $wid =~ ^0x && ! $window_count ]]; then
+							min_point=$((w_max + distance))
+						else 
+							max_point=$w_min
+							break
+						fi
 					else
 						((w_max + distance > min_point)) && min_point=$((w_max + distance))
 					fi
@@ -293,8 +297,7 @@ tile() {
 				si = '$start_index' + 1
 				cws = '${properties[start_index]}'
 				cwe = cws + '${properties[start_index + 2]}'
-			}
-			{
+			} {
 				ws = $si; we = ws + $(si + 2)
 				if ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) print $0
 			}' | sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)) | awk '
@@ -321,11 +324,11 @@ tile() {
 				}
 				END { for (w in mix_a) { print mix_a[w] } }')
 
-	((${properties[index]} != min_point || ${properties[index]} + ${properties[index + 2]} != max_point)) &&
-		local inconsistent=true
-
-	if [[ $inconsistent ]]; then
-		((max_point < original_max_point && current + 1 != last_bar_index)) && local last_offset=$margin
+	if ((${properties[index]} != min_point ||
+		${properties[index]} + ${properties[index + 2]} != max_point)); then
+		#((max_point < original_max_point && wid != max_point)) && [[ ! $wid =~ ^0x ]] && 
+		((max_point < original_max_point)) && [[ $wid =~ ^0x ]] && 
+			local last_offset=$margin
 
 		if [[ $orientation == h ]]; then
 			win_x=$min_point
@@ -427,15 +430,34 @@ tile_adjucent() {
 	done
 }
 
+#add_offset() {
+#	[[ ! $now ]] && now=$(date +%s)
+#
+#	if [[ -f $offsets_file ]]; then
+#		offsets_date=$(date +%s -r $offsets_file)
+#		((now - offsets_date > 5)) && rm $offsets_file
+#	fi
+#
+#	echo $1=${!1} >> $offsets_file
+#}
+
 add_offset() {
-	[[ ! $now ]] && now=$(date +%s)
+	#if [[ $arguments =~ " -o " ]]; then
+	#	grep $1 $offsets_file &> /dev/null &&
+	#		sed -i "/^$1/ s/[0-9]\+/${!1}/" $offsets_file ||
+	#		echo "$1=${!1}" >> $offsets_file
+	#fi
 
-	if [[ -f $offsets_file ]]; then
-		offsets_date=$(date +%s -r $offsets_file)
-		((now - offsets_date > 5)) && rm $offsets_file
-	fi
-
-	echo $1=${!1} >> $offsets_file
+	 eval $(awk '/^'$1'=/ {
+		e = 1
+		cv = gensub("[^0-9]*", "", 1)
+		sub("[0-9]+", ("'${!1}'" ~ "[+-]") ? cv '${!1}' : '${!1}')
+	} { o = o "\n" $0 }
+		END {
+			if(!e) o = o "'$1=${!1}'"
+			print o | "xargs"
+			print substr(o, 2)
+		}' $offsets_file | sponge | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
 }
 
 get_optarg() {
@@ -843,8 +865,7 @@ while ((argument_index <= $#)); do
 			m)
 				margin=$optarg
 				add_offset margin;;
-			o)
-				[[ -f $offsets_file ]] && eval $(cat $offsets_file | xargs);;
+			o) [[ -f $offsets_file ]] && eval $(cat $offsets_file | xargs);;
 			e) edge=$optarg;;
 			[Ss])
 				if [[ $option == move ]]; then
@@ -884,10 +905,15 @@ while ((argument_index <= $#)); do
 				if ((${#properties[*]} > 5)); then
 					[[ $display_orientation == h ]] && index=1 || index=2
 					get_display_properties $index
-					awk '{ if(NF > 5 && $3 < 0) $3 += '$display_y' + '$height'; print }' <<< ${properties[*]}
+					awk '{
+						if(NF > 5 && $3 < 0) $3 += '$display_y' + '$height'
+						print
+					}' <<< ${properties[*]}
 				else
 					echo -n "$border_x $border_y "
-					echo ${properties[*]}
+
+					[[ $properties ]] && echo ${properties[*]} ||
+						get_windows ${id:-name} | cut -d ' ' -f 2-
 				fi
 				#echo -n "$border_x $border_y "
 				#get_windows ${id:-name} | cut -d ' ' -f 2-
