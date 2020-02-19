@@ -64,8 +64,8 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			all="$@"
 			args="${all#*-[er] }"
 
-			edit_args="${args#* }"
 			edit_flag="${args%% *}"
+			edit_args="${args#$edit_flag}"
 
 			((bar_count)) || get_bars
 			((bar_count > 1)) && all_bars="${bars[*]}" || bar=$bars
@@ -131,9 +131,10 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 
 			break;;
 		R)
-			modules="$OPTARG"
+			#modules="$OPTARG"
+			modules="${OPTARG//\*/\.\*}"
 			colorscheme_name="${!OPTIND}"
-			[[ ! $modules =~ '^' ]] && modules="${modules//\*/\.\*}"
+			#[[ ! $modules =~ '^' ]] && modules="${modules//\*/\.\*}"
 
 			if [[ $colorscheme_name ]]; then
 				colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
