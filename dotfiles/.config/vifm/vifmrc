@@ -413,6 +413,18 @@ filextype */
 " For Windows:
 " filetype * start, explorer
 
+set classify=' ::../::, :dir:, :reg:, :exe:,'
+
+" archives
+set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
+
+" images
+set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
+
+" audio
+set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
+
+
 " ------------------------------------------------------------------------------
 
 " What should be saved automatically between vifm sessions.  Drop "savedirs"
