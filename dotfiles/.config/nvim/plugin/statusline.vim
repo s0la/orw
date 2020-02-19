@@ -14,17 +14,17 @@ let s:settings .= 'r.. RO ;'
 let s:settings .= 'm.mo.;'
 let s:settings .= 'f.s. %F ;'
 "let s:settings .= 'cpi.imbg.● ;'
-let s:settings .= 'c.lfgr.● ;'
-let s:settings .= 'e..;'
-let s:settings .= 'ln.c.  %l:%c  .fr;'
+let s:settings .= 'cpi.lfg.● ;'
+let s:settings .= 'e.n.;'
+let s:settings .= 'ln.fr.  %l:%c  .fr;'
 let s:settings .= 't.. %Y '
 
 let s:swap_colors = 0
 
 let s:separator = "%#None#"
 
-let s:active_buffer_modules = 'm.b.s.f.e.s.ln'
-let s:inactive_buffer_modules = 'b.f.c.ln'
+let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
+let s:inactive_buffer_modules = 'f.c.e.ln'
 
 func! MapModule(module)
 	if a:module ==? 'n'
