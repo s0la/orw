@@ -430,31 +430,14 @@ tile_adjucent() {
 	done
 }
 
-#add_offset() {
-#	[[ ! $now ]] && now=$(date +%s)
-#
-#	if [[ -f $offsets_file ]]; then
-#		offsets_date=$(date +%s -r $offsets_file)
-#		((now - offsets_date > 5)) && rm $offsets_file
-#	fi
-#
-#	echo $1=${!1} >> $offsets_file
-#}
-
 add_offset() {
-	#if [[ $arguments =~ " -o " ]]; then
-	#	grep $1 $offsets_file &> /dev/null &&
-	#		sed -i "/^$1/ s/[0-9]\+/${!1}/" $offsets_file ||
-	#		echo "$1=${!1}" >> $offsets_file
-	#fi
-
 	 eval $(awk '/^'$1'=/ {
 		e = 1
 		cv = gensub("[^0-9]*", "", 1)
 		sub("[0-9]+", ("'${!1}'" ~ "[+-]") ? cv '${!1}' : '${!1}')
 	} { o = o "\n" $0 }
 		END {
-			if(!e) o = o "'$1=${!1}'"
+			if(!e) o = o "\n'$1=${!1}'"
 			print o | "xargs"
 			print substr(o, 2)
 		}' $offsets_file | sponge | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
@@ -499,15 +482,24 @@ while ((argument_index <= $#)); do
 			set_windows_properties $display_orientation
 
 			if [[ ! $orientations ]]; then
-				window_x=$(wmctrl -lG | awk '$1 == "'$id'" {print $3}')
-				width=$(awk '/^display/ {width += $2; if ('$window_x' < width) {print $2; exit}}' $config)
+				window_x=$(wmctrl -lG | awk '$1 == "'$id'" { print $3 }')
+				width=$(awk '/^display/ { width += $2; if ('$window_x' < width) { print $2; exit } }' $config)
 
 				orientations=$(list_all_windows | sort -nk 2,4 -uk 2 | \
-					awk '$1 ~ /^0x/ && $1 != "'$id'" { xo = '$x_offset'; xb = '$border_x'; m = '${margin:-$x_offset}'; \
-					if(!x) x = '$display_x' + xo; \
-					if($2 >= x) { x = $2 + $4 + xb + m; w += $4; c++ } }; \
-					END { mw = '$width' - ((2 * xo) + (c * xb) + (c - 1) * m); \
-					if(mw - 1 > w && mw > w) print "h v"; else print "v h" }')
+					awk '$1 ~ /^0x/ && $1 != "'$id'" {
+						xo = '$x_offset'
+						xb = '$border_x'
+						m = '${margin:-$x_offset}'
+						if(!x) x = '$display_x' + xo
+
+						if($2 >= x) {
+							x = $2 + $4 + xb + m
+							w += $4; c++
+						}
+					} END {
+						mw = '$width' - ((2 * xo) + (c * xb) + (c - 1) * m)
+						if(mw - 1 > w && mw > w) print "h v"; else print "v h"
+					}')
 			fi
 
 			for orientation in $orientations; do
