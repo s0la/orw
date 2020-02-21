@@ -13,17 +13,17 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#00161b1f"
-fc="#98a0ab"
+bg="#2D2E30"
+fc="#877f69"
 bfc="#363E48"
 bbg="#2e2e2e"
 bsbg="%{B#003a3a3a}"
 bsfg="%{F#313131}"
 
-pbg="%{B#2c3135}"
-pfg="%{F#817b8c}"
-sbg="%{B#2c3135}"
-sfg="%{F#4a4f53}"
+pbg="%{B#2D2E30}"
+pfg="%{F#979392}"
+sbg="%{B#2D2E30}"
+sfg="%{F#4e4f51}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"

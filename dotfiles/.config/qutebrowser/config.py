@@ -1,9 +1,9 @@
-bg = '#1e2327'
-fg = '#44494d'
-sbg = '#161b1f'
-sfg = '#828a95'
-mfg = '#817b8c'
-sbbg = '#161b1f'
+bg = '#1c1d21'
+fg = '#3a3b3f'
+sbg = '#1a1b1f'
+sfg = '#ada9a8'
+mfg = '#666660'
+sbbg = '#191a1e'
 
 font_size = 8
 v_padding = 3

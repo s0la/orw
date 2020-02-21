@@ -23,7 +23,7 @@ fi
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-pbfg='#817b8c'
+pbfg='#979392'
 epbfg=$(~/.orw/scripts/colorctl.sh -o +20 -h $bg)
 
 while getopts :i:F:f:o:r:c:t:P:p flag; do

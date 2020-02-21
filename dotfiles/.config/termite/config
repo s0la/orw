@@ -54,7 +54,7 @@ cursor_shape = block
 
 #colors
 foreground = #b0b0b0
-background = rgba(22,27,31,1.00)
+background = rgba(28,29,33,1.00)
 
 #palette
 color0 = #494a4c
@@ -145,6 +145,8 @@ color84 = #83A598
 color85 = #D39221
 color86 = #95941A
 color87 = #817b8c
+color88 = #666660
+color89 = #88786b
 
 [hints]
 #font = Monospace 12

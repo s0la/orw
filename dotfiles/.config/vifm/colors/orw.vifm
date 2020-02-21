@@ -1,9 +1,9 @@
-let $fg = 75
-let $dfg = 64
-let $efg = 69
+let $fg = 23
+let $dfg = 0
+let $efg = 66
 let $sfg = 3
 let $tfg = 8
-let $slbg = 63
+let $slbg = 89
 let $slfg = 76
 
 highlight clear
@@ -24,7 +24,7 @@ highlight Fifo cterm=none ctermfg=172 ctermbg=default
 highlight Socket cterm=bold ctermfg=223 ctermbg=default
 
 if layoutis('split')
-	let $bbg = 64
+	let $bbg = 76
 	let $bfg = 74
 else
 	let $bbg = 'default'
@@ -39,10 +39,10 @@ execute 'highlight Win cterm=none ctermfg=' . $fg . ' ctermbg=default'
 execute 'highlight TabLine cterm=none ctermfg=' . $tfg . ' ctermbg=' . $slbg
 execute 'highlight TabLineSel cterm=none ctermfg=' . $slfg . ' ctermbg=' . $slbg
 execute 'highlight Selected cterm=none ctermfg=' . $sfg . ' ctermbg=default'
-execute 'highlight Directory cterm=bold ctermfg=' . $dfg . ' ctermbg=default'
+execute 'highlight Directory cterm=none ctermfg=' . $dfg . ' ctermbg=default'
 execute 'highlight StatusLine cterm=none ctermfg=' . $slfg . ' ctermbg=' . $slbg
-execute 'highlight ErrorMsg cterm=bold ctermfg=' . $sfg . ' ctermbg=default'
+execute 'highlight ErrorMsg cterm=none ctermfg=' . $sfg . ' ctermbg=default'
 execute 'highlight WildMenu cterm=none ctermfg=' . $sfg . ' ctermbg=default'
-execute 'highlight Executable cterm=bold ctermfg=' . $efg . ' ctermbg=default'
+execute 'highlight Executable cterm=none ctermfg=' . $efg . ' ctermbg=default'
 
 highlight WildMenu cterm=reverse ctermfg=default ctermbg=default

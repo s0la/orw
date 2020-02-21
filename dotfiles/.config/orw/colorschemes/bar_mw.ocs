@@ -1,12 +1,12 @@
 #bar
-bg #161b1f
-fc #161b1f
-bfc #161b1f
-bbg #161b1f
+bg #1c1d21
+fc #1c1d21
+bfc #1c1d21
+bbg #1c1d21
 bsbg #3a3a3a
 bsfg #303030
-pbg #161b1f
+pbg #1c1d21
 pfg #98a0ab
-sbg #161b1f
-sfg #23282c
-pbefg #605a6b
+sbg #1c1d21
+sfg #242529
+pbefg #666660

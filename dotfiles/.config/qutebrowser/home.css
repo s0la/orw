@@ -1,9 +1,9 @@
 :root {
-	--bg: #1e2327;
-	--fg: #44494d;
-	--sbg: #161b1f;
-	--sfg: #828a95;
-	--mfg: #817b8c;
+	--bg: #1c1d21;
+	--fg: #3a3b3f;
+	--sbg: #1a1b1f;
+	--sfg: #ada9a8;
+	--mfg: #666660;
 }
 
 @font-face {
@@ -17,39 +17,37 @@ body {
 }
 
 #content {
-	width: 30%;
-	padding: 50px;
 	position: absolute;
-	top: 50%;
+	top: 40%;
 	left: 50%;
 	-ms-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
-	color: var(--fg);
-}
-
-#links {
 	display: inline-block;
-	text-align: center;
-	margin: 0 auto;
-	padding: 10px;
-	width: 100%;
+	white-space: nowrap;
+	color: var(--fg);
 }
 
-#links a {
+a {
 	color: var(--fg);
-	padding: 10px;
-	font-size: 20px;
+	font-size: 15px;
 	text-decoration: none;
+}
+
+#separator {
+	font-size: 10px;
+	padding: 0 20px;
+	color: var(--sbg);
+	filter: brightness(95%);
 }
 
 #input {
 	background-color: var(--sbg);
-	margin: auto;
 	border: none;
 	border-bottom: 3px solid var(--mfg);
-	width: 100%;
-	padding: 10px 10px;
-	font-size: 15px;
+	width: 90%;
+	margin: 10px 0;
+	padding: 2% 5%;
+	font-size: 12px;
 	color: var(--sfg);
 }
 

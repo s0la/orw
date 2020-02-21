@@ -35,7 +35,7 @@ left="~/.orw/scripts/widgets.sh cover"
 middle="~/.orw/scripts/widgets.sh cover -k"
 
 #input
-icon="%{F#23282c}%{I+7}%{I-}"
+icon="%{F#242527}%{I+7}%{I-}"
 name="input"
 left="~/.orw/scripts/widgets.sh toggle_input"
 

@@ -24,7 +24,7 @@
 #inputbar {
 	border:           0 0 2px;
 	margin:           0 0 10px;
-	padding:          2px 5px;
+	padding:          3px 5px;
 	children:         [ prompt, entry ];
 	background-color: @ibg;
 	border-color:     @ibc;
@@ -50,7 +50,7 @@
 
 #element {
 	border:         0;
-	padding:        2px 5px;
+	padding:        3px 5px;
 }
 
 sidebar {
