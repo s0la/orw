@@ -21,13 +21,13 @@ toggle_input() {
 	color=$(awk '{
 			if(/^L'$state'fg/) l = $2
 			else if(/^'$state'fg/) p = $2
-		} END { print l ? l : p }' .config/orw/colorschemes/dock.ocs)
+		} END { print l ? l : p }' ~/.config/orw/colorschemes/dock.ocs)
 
 	awk -i inplace '\
 		/^#input/ { nr = NR + 1 }
 		nr && nr == NR {
 		$0 = gensub("([^#]*)(#\\w*)(}[^}]*})([^%]*)", "\\1'$color'\\3'$icon'", 1)
-	} { print }' .orw/scripts/bar/launchers
+	} { print }' ~/.orw/scripts/bar/launchers
 	sed -i "/^input/ s/\w*$/${1:-$new_state}/" $0
 }
 
@@ -93,7 +93,7 @@ cover() {
 	}
 
 	previous_geometry='65x65+785+916'
-	previous_bg='#161b1f'
+	previous_bg='#1c1d21'
 
 	check_cover
 
