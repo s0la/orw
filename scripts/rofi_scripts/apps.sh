@@ -28,7 +28,7 @@ else
 
     case "$@" in
         *dropdown*) ~/.orw/scripts/dropdown.sh ${@#*dropdown};;
-		*tile*) ~/.orw/scripts/tile_terminal.sh ${@#tile};;
+		*tile*) ~/.orw/scripts/tile_terminal.sh ${@#*tile};;
         *termite*) termite -t termite ${@#*termite};;
         *vifm*) ~/.orw/scripts/vifm.sh ${@#*vifm};;
         *qutebrowser*)
