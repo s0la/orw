@@ -420,7 +420,7 @@ function rofi() {
 			~/.orw/scripts/borderctl.sh rln $ln
 			~/.orw/scripts/borderctl.sh rim $margin
 			~/.orw/scripts/borderctl.sh rwp $padding
-			~/.orw/scripts/borderctl.sh rip ${item_padding-4}
+			~/.orw/scripts/borderctl.sh rip ${item_padding-3 5}
 		fi
 	fi
 }
@@ -841,7 +841,10 @@ function inherit() {
 }
 
 if [[ ! $color && ! $backup ]]; then
-	[[ $new_color ]] && unset transparency_{level,offset}
+	if [[ $new_color ]]; then
+		unset transparency_{level,offset}
+		[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
+	fi
 
 	inherit
 
