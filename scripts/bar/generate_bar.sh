@@ -13,17 +13,17 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#2D2E30"
+bg="#002D2E30"
 fc="#877f69"
-bfc="#363E48"
+bfc="#666660"
 bbg="#2e2e2e"
-bsbg="%{B#003a3a3a}"
+bsbg="%{B#002D2E30}"
 bsfg="%{F#313131}"
 
 pbg="%{B#2D2E30}"
 pfg="%{F#979392}"
 sbg="%{B#2D2E30}"
-sfg="%{F#4e4f51}"
+sfg="%{F#434446}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -221,20 +221,22 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			fi;;
 		c)
 			check_arg colorscheme ${!OPTIND} && shift
-			
+
 			if [[ $colorscheme ]]; then
 				[[ $@ =~ -M ]] || base=9
-				
+
 				eval $(awk '\
 					/#bar/ { 
 						nr = NR
 						b = '${base:-0}'
 					} nr && NR > nr {
-						if($1 ~ "^[^b].*g$") {
+						if($1 ~ "^(bg|.*c)$") c = $2
+						else {
 							l = length($1)
 							p = substr($1, l - 1, 1)
 							c = "%{" toupper(p) $2 "}"
-						} else { c = $2 }
+						}
+
 						if($1) print $1 "=\"" c "\""
 					} nr && (/^$/ || (b && NR > nr + b)) { exit }' ~/.config/orw/colorschemes/$colorscheme.ocs)
 
@@ -288,12 +290,15 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				[[ $OPTARG =~ [0-9] ]] && separator_offset=$OPTARG || separator_sign=$OPTARG
 			fi
 
-			[[ ${sign:-$separator_sign} ]] && separator="%{O$separator_offset}${separator_sign:-${sign// /}}%{O$separator_offset}" ||
+			[[ ${sign:-$separator_sign} ]] &&
+				separator="%{O$separator_offset}${separator_sign:-${sign// /}}%{O$separator_offset}" ||
 				separator="%{O$separator_offset}"
 
 			#separator_sign="$bsfg${separator_sign// /}"
 			#separator="$bsbg%{O$separator_offset}$separator_sign%{O$separator_offset}"
 			separator="$bsbg$bsfg$separator"
+
+			#.orw/scripts/notify.sh "$separator"
 
 			if [[ $sign ]]; then
 				separator_sign=$sign
@@ -580,7 +585,6 @@ while read -r module; do
 		PROGRESSBAR*) progressbar=$(eval "echo -e ${module:12}");;
 		CONTROLS*) controls=$(eval "echo -e \"${module:9}\"");;
 		MPD_VOLUME*) mpd_volume=$(eval "echo -e \"${module:11}\"");;
-		#MPD*) mpd=$(eval "sed 's/\([^}]*}\)\([^}]*}\)/\2\1/' <<< \"${module:4}\"");;
 		MPD*) mpd=$(eval "sed 's/\(\(%[^}]*}\)*\)\(%{B[^}]*}\)/\3\1/' <<< \"${module:4}\"");;
 		APPS*) apps=$(eval "echo -e \"${module:5}\"");;
 		TORRENTS*) torrents=$(eval "echo -e \"${module:9}\"");;
@@ -611,9 +615,12 @@ while read -r module; do
 	[[ $all_modules ]] && last_offset="%${all_modules##*%}"
 	[[ "$separator" =~ "$last_offset"$ ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}$last_offset"
 
+	#echo -e "$all_modules\n\n" > log
+
 	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
 	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
+	#sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame" >> log
 	sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
