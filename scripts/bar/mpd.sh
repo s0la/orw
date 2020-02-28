@@ -6,8 +6,17 @@ bg='${msbg:-${mpbg:-$sbg}}'
 current_mode=controls
 [[ $current_mode == song_info ]] && mode=controls || mode=song_info
 
-toggle="\$inner\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
-info='${mpfg:-$pfg}${inner}${song_info-not playing}${inner}'
+#toggle="\$inner\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
+toggle="$bg\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
+
+commands='%{A:mpc -q toggle:}'
+commands+='%{A3:~/.orw/scripts/song_notification.sh:}'
+commands+='%{A4:mpc -q prev:}'
+commands+='%{A5:mpc -q next:}'
+commands_end='%{A}%{A}%{A}%{A}'
+
+info="\${mpfg:-\$pfg}\${inner}$commands\${song_info-not playing}$commands_end\${inner}"
+#info='${mpfg:-$pfg}${inner}${song_info-not playing}${inner}'
 
 status=$(mpc | sed -n 's/^\[\(.*\)\].*/\1/p')
 
@@ -20,13 +29,6 @@ get_song_info() {
 	scrollable_area=${scrollable_area-25}
 	delay=${delay-3}
 
-	commands='%{A:mpc -q toggle:}'
-	commands+='%{A3:~/.orw/scripts/song_notification.sh:}'
-	commands+='%{A4:mpc -q prev:}'
-	commands+='%{A5:mpc -q next:}'
-	commands_end='%{A}%{A}%{A}%{A}'
-
-	#if [[ $scroll ]] && (( ${#song_info} - ${#time} - 3 > $scrollable_area )); then
 	if [[ $scroll ]] && ((${#song_info} - time_length - 3 > $scrollable_area)); then
 		final_index=$((${#song_info} - scrollable_area))
 		(( $minutes == 0 && ${seconds#0} < 5 )) && song_info_index=0 ||
@@ -58,13 +60,15 @@ if [[ $status == playing ]]; then
 		}
 
 		read elapsed_percentage remaining_percentage <<< $(mpc | awk -F '[(%]' 'NR == 2 {
-			ps = '$progression_step'; t = 100 / ps; e = sprintf("%.0f", $(NF - 1) / ps)
+			ps = '$progression_step'
+			t = sprintf("%.0f", 100 / ps)
+			e = sprintf("%.0f", $(NF - 1) / ps)
 			print e, t - e }')
 
 		draw elapsed
 		draw remaining
 
-		echo -e "$bg$offset\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner"
+		echo -e "$bg$of\$inner\${pbefg:-\$pfg}${elapsed}\${pbfg:-\${msfg:-\$sfg}}${remaining}\$inner$oe"
 	}
 
 	get_volume() {
@@ -72,9 +76,9 @@ if [[ $status == playing ]]; then
 		eval args=( $(${0%/*}/volume.sh mpd $1) )
 
 		if [[ $current_mpd_volume_mode == duo ]]; then
-			echo -e "$bg$offset\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner"
+			echo -e "$bg$of\$inner\${msfg:-\$sfg}${args[0]}\$inner\${mpfg:-\$pfg}${args[1]}\$inner$oe"
 		else
-			echo -e "$bg$offset\$inner${args[*]}\$inner"
+			echo -e "$bg$of\$inner${args[*]}\$inner$oe"
 		fi
 	}
 fi
@@ -94,12 +98,12 @@ get_controls() {
 	controls+="\$inner%{A:mpc -q toggle:}%{I+n}$toggle_icon%{I-}%{A}\$inner"
 	controls+="\$inner%{A:mpc -q next:}%{I+n}%{I-}%{A}%{T-}\$inner"
 
-	echo -e "$bg$offset\$inner\${msfg:-\$sfg}$controls\${inner}"
+	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
 }
 
 for module in ${2//,/ }; do
 	case $module in
-		t) modules+="$bg$toggle";;
+		t) modules+="$toggle";;
 		p*)
 			modules+='$progressbar'
 			((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
@@ -112,7 +116,7 @@ for module in ${2//,/ }; do
 			[[ $current_mode == controls ]] &&
 				echo -e "CONTROLS $(get_controls)" > $fifo;;
 		i)
-			modules+="$bg$offset$info"
+			modules+="$bg$of$info$oe"
 
 			[[ $status == playing ]] &&
 				echo -e "SONG_INFO $(get_song_info)" > $fifo;;
@@ -127,20 +131,24 @@ for module in ${2//,/ }; do
 		s*)
 			scroll=true
 			[[ ${#module} -gt 1 ]] && scrollable_area=${module#s};;
-		o*)
-			offset=${module:2}
-			position=${module:1:1}
+		o*) eval ${module:0:2}=%{O${module:2}};;
+			#~/.orw/scripts/notify.sh "$module $of $oe";;
+			#offset=${module:2}
+			#position=${module:1:1}
 
-			if [[ $position == f ]]; then
-				offset="%{O$offset}"
-			else
-				modules+="%{O$offset}"
-				unset offset
-			fi;;
+			#if [[ $position == f ]]; then
+			#	offset="%{O$offset}"
+			#else
+			#	modules+="%{O$offset}"
+			#	unset offset
+			#fi;;
 	esac
 
-	[[ $offset && ! $module =~ ^o ]] && unset offset
+	#[[ $offset && ! $module =~ ^o ]] && unset offset
+	[[ ($of || $oe) && ! $module =~ ^o ]] && unset o{e,f}
 done
 
-[[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$info"
+#~/.orw/scripts/notify.sh "$toggle"
+
+[[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$bg$info"
 echo -e "\${padding}${toggled_modules:-$modules}\$padding \$separator"
