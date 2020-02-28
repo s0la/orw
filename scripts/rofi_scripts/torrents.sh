@@ -1,8 +1,8 @@
 #!/bin/bash
 
 function set() {
-	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\2/g" <<< "${2:-${!1}}")'
-	sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
+	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	sed -i "s|\(^$1=\).*|\1\"${!1//&/\\&}\"|" $0
 }
 
 function un_set() {
@@ -30,10 +30,10 @@ list_torrents() {
 }
 
 get_current_torrent_id() {
-	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)*?", "\\1", 1, $1) }')
+	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current="  Yuri Gagarin - Collection"
+current=""
 selection=""
 multiple_torrents=""
 
