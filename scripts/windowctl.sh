@@ -440,7 +440,7 @@ add_offset() {
 			if(!e) o = o "\n'$1=${!1}'"
 			print o | "xargs"
 			print substr(o, 2)
-		}' $offsets_file | sponge | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
+		}' $offsets_file | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
 }
 
 get_optarg() {
