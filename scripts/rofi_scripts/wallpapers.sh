@@ -8,7 +8,7 @@ get_directory() {
 }
 
 if [[ -z $@ ]]; then
-	echo -e 'next\nprev\nrand\nindex\nrestore\nselect\ninterval\nautochange'
+	echo -e 'next\nprev\nrand\nindex\nselect\nrestore\nview_all\ninterval\nautochange'
 else
 	wallctl=~/.orw/scripts/wallctl.sh
 
@@ -32,6 +32,7 @@ else
 			*index*) $wallctl -i ${@##* };;
 			*restore*) $wallctl -r;;
 			*auto*) $wallctl -A;;
+			*view*) $wallctl -v;;
 			*.*)
 				wall="$@"
 				get_directory

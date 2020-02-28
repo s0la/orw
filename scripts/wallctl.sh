@@ -258,7 +258,7 @@ read orientation display_count <<< $(awk -F '[_ ]' '\
 
 [[ "$@" =~ -U ]] && unsplash=true
 
-while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:UW flag; do
+while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 	case $flag in
 		i) index=$((OPTARG - 1));;
 		n)
@@ -709,6 +709,9 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:UW flag; do
 			do
 				continue
 			done;;
+		v)
+			eval sxiv -t "$directory" &
+			exit;;
 		U)
 			base_url='https://api.unsplash.com'
 			client_id='?client_id=33e9e4c0f8d42b5542446f1c8c291480cb91231dbadc5ce285f285bf76975752'

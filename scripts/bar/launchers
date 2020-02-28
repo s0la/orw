@@ -61,6 +61,7 @@ left="~/.orw/scripts/widgets.sh toggle_input"
 icon="%{I+2}%{I-}"
 name="change_wall"
 left="/home/sola/.orw/scripts/wallctl.sh"
+middle="/home/sola/.orw/scripts/wallctl.sh -v"
 up="/home/sola/.orw/scripts/wallctl.sh -o prev"
 down="/home/sola/.orw/scripts/wallctl.sh -o next"
 
