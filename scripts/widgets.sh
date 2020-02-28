@@ -14,20 +14,58 @@ check_cover() {
 	size=${geometry%x*}
 }
 
+#toggle_input() {
+#	[[ $input == true ]] && new_state=false || new_state=true
+#	[[ ${1:-$new_state} == true ]] && state=p icon= || state=s icon= 
+#
+#	color=$(awk '{
+#			if(/^L'$state'fg/) l = $2
+#			else if(/^'$state'fg/) p = $2
+#		} END { print l ? l : p }' ~/.config/orw/colorschemes/dock.ocs)
+#
+#	awk -i inplace '\
+#		/^#input/ { nr = NR + 1 }
+#		nr && nr == NR {
+#		$0 = gensub("([^#]*)(#\\w*)(}[^}]*})([^%]*)", "\\1'$color'\\3'$icon'", 1)
+#	} { print }' ~/.orw/scripts/bar/launchers
+#	sed -i "/^input/ s/\w*$/${1:-$new_state}/" $0
+#}
+
 toggle_input() {
+	#[[ $input == true ]] && new_state=false || new_state=true
+	#[[ ${1:-$new_state} == true ]] && state=p || state=s
+
+	#awk '/L[ps]fg/ {
+	#	cs = gensub(".*L([ps])fg.*", "\\1", 1)
+	#	ns = (cs == "s") ? "p" : "s"
+	#	gsub(cs, ns)
+	#	print }' ~/.orw/scripts/bar/launchers
+
+	#awk '/L[ps]fg/ {
+	#	if(/Lpfg/) {
+	#		cs = "p"
+	#		ns = "s"
+	#	} else {
+	#		cs = "s"
+	#		ns = "p"
+	#	}
+	#	gsub(cs, ns)
+	#	print }' ~/.orw/scripts/bar/launchers
+
+	#awk '/L[ps]fg/ {
+	#	cs = gensub(".*L([ps])fg.*", "\\1", 1)
+	#	ns = (cs == "s") ? "p" : "s"
+	#	gsub(cs, ns)
+	#	print }' ~/.orw/scripts/bar/launchers
+
 	[[ $input == true ]] && new_state=false || new_state=true
-	[[ ${1:-$new_state} == true ]] && state=p icon= || state=s icon= 
+	[[ ${1:-$new_state} == true ]] && state=p || state=s
 
-	color=$(awk '{
-			if(/^L'$state'fg/) l = $2
-			else if(/^'$state'fg/) p = $2
-		} END { print l ? l : p }' ~/.config/orw/colorschemes/dock.ocs)
-
-	awk -i inplace '\
-		/^#input/ { nr = NR + 1 }
-		nr && nr == NR {
-		$0 = gensub("([^#]*)(#\\w*)(}[^}]*})([^%]*)", "\\1'$color'\\3'$icon'", 1)
+	awk -i inplace '/L[ps]fg/ {
+		cs = (/Lpfg/) ? "p" : "s"
+		gsub(cs, "'$state'")
 	} { print }' ~/.orw/scripts/bar/launchers
+
 	sed -i "/^input/ s/\w*$/${1:-$new_state}/" $0
 }
 
@@ -92,7 +130,7 @@ cover() {
 		openbox --reconfigure
 	}
 
-	previous_geometry='65x65+785+916'
+	previous_geometry='150x150+785+836'
 	previous_bg='#1c1d21'
 
 	check_cover

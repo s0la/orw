@@ -71,11 +71,18 @@ toggle_launchers() {
 resize_launchers() {
 	[[ $current ]] && single="${current%% *}"
 
-	awk -i inplace -F 'I|}' '\
+	#awk -i inplace -F 'I|}' '\
+	#	/^#?icon.*'"$single"'/ {
+	#		v = $2 '$sign' '${value:-1}'
+	#		if(v >= 0) s = "+"
+	#		sub("[+-][^}]*", s v)
+	#	} { print }' $launchers
+
+	awk -i inplace -F 'I|}[^%]' '\
 		/^#?icon.*'"$single"'/ {
-		v = $2 '$sign' '${value:-1}'
-		if(v >= 0) s = "+"
-		sub("[+-][^}]*", s v)
+			v = $2 '$sign' '${value:-1}'
+			if(v >= 0) s = "+"
+			sub("[+-][0-9]+", s v)
 		} { print }' $launchers
 }
 
