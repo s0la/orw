@@ -55,7 +55,7 @@ function create_archive() {
 	un_set regex
 
 	pid=$((COPROC_PID + 1))
-	coproc (notify_on_finish &)
+	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
 	echo -e  
 
@@ -114,7 +114,7 @@ function extract_archive() {
 	un_set regex
 
 	pid=$((COPROC_PID + 1))
-	coproc (notify_on_finish &)
+	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
 	echo -e  
 
@@ -151,10 +151,10 @@ function notify() {
 	~/.orw/scripts/notify.sh -p "$1"
 }
 
-notify_on_finish() {
+execute_on_finish() {
 	while kill -0 $pid 2> /dev/null; do
 		sleep 1
-	done && notify "Operation finished"
+	done && eval "$@"
 }
 
 [[ ${@%% *} == *[![:ascii:]]* && ${@#${@%% *}} ]] && file="${@#* }" || read option arg <<< "$@"
@@ -387,7 +387,7 @@ if [[ ${option% *} ]]; then
 					coproc (eval $command "${files:-${regex:-'$file'}}" "$destination" &)
 					un_set regex
 					pid=$((COPROC_PID + 1))
-					coproc (notify_on_finish &)
+					coproc (execute_on_finish "notify 'Operation finished.'" &)
 
 					echo -e  ;;
 				add_to_bookmarks) echo "${arg:-${current##*/}} $current" >> $bookmarks;;
@@ -422,25 +422,31 @@ if [[ ${option% *} ]]; then
 						unset back
 					fi;;
 				*torrent*)
-						[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
-						[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
+					[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
+					[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
 
-						if [[ ! $option =~ destination ]]; then
-							pidof transmission-daemon > /dev/null || transmission-daemon
-							eval transmission-remote -a "${regex:-'$torrent'}" -w "${torrent_directory-~/Downloads/}" $torrent_state &> /dev/null
+					if [[ ! $option =~ destination ]]; then
+						#pidof transmission-daemon &> /dev/null || (transmission-daemon && sleep 0.5)
+						#eval transmission-remote -a "${regex:-'$torrent'}" -w "${torrent_directory-~/Downloads/}" $torrent_state &> /dev/null
+						pidof transmission-daemon &> /dev/null || coproc (transmission-daemon &)
 
-							notify "Adding torrent\n${torrent:-$current}"
+						command="transmission-remote -a ${regex:-'$torrent'} "
+						command+="-w ${torrent_directory-~/Downloads/} $torrent_state &> /dev/null"
+						coproc (execute_on_finish "$command" &)
 
-							un_set regex torrent
-						fi
+						notify "Adding torrent\n${torrent:-$current}"
 
-						if [[ $option == select_torrent_content ]]; then
-							killall rofi
+						un_set regex torrent
+					fi
 
-							~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id
-							~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content
-							exit
-						fi;;
+					if [[ $option == select_torrent_content ]]; then
+						killall rofi
+
+						command="~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id"
+						command+="&& ~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content"
+						coproc (execute_on_finish "$command" &)
+						exit
+					fi;;
 				extract_archive) [[ -d "$current" && $archive ]] && $option || set archive "$current";;
 				*to_archive)
 					if [[ -d "$current" && $archive ]]; then
@@ -574,7 +580,8 @@ if [[ -d "$current" && ! $options ]]; then
 					if [[ -d "$current/$file" ]]; then
 						icon=
 					else
-						icon=
+						#icon=
+						icon=
 					fi
 				fi
 
