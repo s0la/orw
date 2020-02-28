@@ -73,7 +73,7 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			edit_config=$(eval echo $configs/${bar:-{${all_bars// /,}\}})
 
 			awk -i inplace '\
-				function get_new_values(flag) {
+				function get_new_value(flag) {
 					return gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
 				}
 
@@ -84,14 +84,15 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 				BEGIN {
 					e_f = "'$edit_flag'"
 					e_a = "'"$edit_args"'"
-					i_f = "'$inherit_flag'"
+					i_c = "'"$inherit_config"'"
+					if(i_c) i_f = "'${inherit_flag:-$edit_flag}'"
 
 					split(e_a, aa)
 					split(e_f, fa, ",")
 				} {
 					if(e_a ~ /[+-][0-9]?/) {
-						if(i_f && NR == FNR) {
-							for(ai in aa) naa[ai] = get_new_values(i_f)
+						if(i_c && NR == FNR) {
+							for(ai in aa) naa[ai] = get_new_value(i_f)
 							print
 							nextfile
 						}
@@ -103,17 +104,17 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 								a = aa[ai]
 								as = substr(a, 1, 1)
 								av = int(substr(a, 2))
-								cv = get_new_values(f)
+								cv = get_new_value(f)
 
 								fo = (length(naa[1])) ? naa[ai] : cv
-								so = (av) ? av : cv
+								so = (length(av)) ? av : cv
 								nv = (as == "+") ? fo + so : fo - so
 
 								replace_value()
 							}
 						}
 					} else {
-						if(i_f && ! p) {
+						if(i_c && ! p) {
 							p = gensub(".*-" i_f " ([^-]*).*", "\\1", 1)
 							print
 							nextfile
@@ -121,7 +122,7 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 
 						for(fi in fa) {
 							f = fa[fi]
-							if(i_f) sub("-" f "[^-]*", "-" f " " p)
+							if(i_c) sub("-" f "[^-]*", "-" f " " p)
 							else sub("-" f "[^-]*", ("'$flag'" == "r") ? "" : "-" f " " e_a " ")
 						}
 					}
