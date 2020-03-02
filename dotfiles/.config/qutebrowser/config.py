@@ -20,16 +20,13 @@ c.fonts.contextmenu = f'{font_size}pt Roboto'
 c.fonts.completion.entry = f'{font_size + 1}pt Roboto'
 c.fonts.completion.category = f'{font_size + 2}pt Roboto'
 
-# c.scrolling.bar = 'never'
 c.completion.height = '35%'
 c.completion.scrollbar.width = 0
+c.completion.open_categories = ['history']
 
 c.session.lazy_restore = True
-#c.url.start_pages = ['/home/sola/Desktop/home.html']
-#c.url.start_pages = ['https://start.duckduckgo.com']
 c.url.default_page = '~/.orw/dotfiles/.config/qutebrowser/home.html'
 
-#c.tabs.show = 'multiple'
 c.tabs.background = True
 c.tabs.indicator.width = 0
 c.tabs.last_close = 'close'
