@@ -2,7 +2,7 @@ let $fg = 23
 let $dfg = 0
 let $efg = 66
 let $sfg = 3
-let $tfg = 8
+let $tfg = 0
 let $slbg = 89
 let $slfg = 76
 
