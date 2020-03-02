@@ -26,13 +26,36 @@ monitor_memory_consumption() {
 	((memory_usage_delta >= ${memory_tolerance:-10})) && $0
 }
 
-start_bar_on_boot() {
-	[[ $1 ]] || bar_names="${bars[*]}"
-	sed -i "/bar/ s/[^ ]*$/${1:-${bar_expr:-${bar_names// /,}}}/" ~/.config/openbox/autostart.sh
-}
+#set_bars() {
+#	read last_running bars_array <<< $(ls $configs | awk -F '/' '\
+#		BEGIN { o = "'$option'" }
+#		$NF ~ /^'${pattern//\*/\.\*}'/ {
+#			b = $NF
+#			if(o == "add" && b ~ "^('${bars//,/|}')$") next
+#			ub = ub "," b
+#		} END {
+#			if(o == "add") {
+#				if(ub && ! "'$bars'") sub("^,", "", ub)
+#				ab = "'$bars'" ub
+#			} else {
+#				ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", "'$bars'")
+#				if(ab ~ /^,/) sub("^,", "", ab)
+#			}
+#
+#			gsub(",", " ", ub)
+#			print ab, ub
+#		}')
+#
+#	all_bars=( $bars_array )
+#
+#	echo $last_running
+#	echo ${#all_bars[*]} ${all_bars[*]}
+#}
 
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
+
+last_running=lp,si,mp
 
 while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 	case $flag in
@@ -42,20 +65,49 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			kill_bar
 			~/.orw/scripts/bar/generate_bar.sh ${@:2}
 
-			awk -i inplace '\
-				/bar/ && $(NF - 1) !~ /\<'$bar'\>/ {
-						sub("$", ",'$bar'", $(NF - 1))
-				} { print }' ~/.config/openbox/autostart.sh
+			#awk -i inplace '\
+			#	/bar/ && $(NF - 1) !~ /\<'$bar'\>/ {
+			#			sub("$", ",'$bar'", $(NF - 1))
+			#	} { print }' ~/.config/openbox/autostart.sh
 
+			sed -n "/^last_running/ { /\<$bar\>/! s/$/,$bar/p }" $0
 			exit;;
 		c) check_interval=$OPTARG;;
 		b)
 			bar_expr=$OPTARG
 
-			[[ ${bar_expr//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] && pattern="^(${bar_expr//,/|})$" || pattern="${bar_expr//,/|}"
-			read -a bars <<< $(ls $configs | awk -F '/' '$NF ~ /^'${pattern//\*/\.\*}'/ { print $NF }' | xargs)
+			[[ ${bar_expr//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] &&
+				pattern="^(${bar_expr//,/|})$" || pattern="${bar_expr//,/|}"
+			#read -a bars <<< $(ls $configs | awk -F '/' '$NF ~ /^'${pattern//\*/\.\*}'/ { print $NF }' | xargs)
 
-			bar_count=${#bars[*]};;
+			[[ $@ =~ -k ]] && remove=true
+
+			read last_running bar_array <<< $(ls $configs | awk -F '/' '\
+				BEGIN {
+					r = "'$remove'"
+					lr = "'$last_running'"
+				}
+
+				$NF ~ /^'${pattern//\*/\.\*}'/ {
+					b = $NF
+					if(! r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
+					ub = ub "," b
+				} END {
+					if(r) {
+						ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", lr)
+						if(ab ~ /^,/) sub("^,", "", ab)
+					} else {
+						if(nb && ! lr) sub("^,", "", nb)
+						ab = lr nb
+					}
+
+					print ab, gensub(",", " ", "g", (nb) ? nb : ub)
+				}')
+
+			bars=( $bar_array )
+			bar_count=${#bars[*]}
+
+			sed -i "/^last_running/ s/[^=]*$/$last_running/" $0;;
 		m) memory_tolerance=$OPTARG;;
 		E)
 			inherit_config=$configs/$OPTARG
@@ -107,7 +159,7 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 								cv = get_new_value(f)
 
 								fo = (length(naa[1])) ? naa[ai] : cv
-								so = (length(av)) ? av : cv
+								so = (av) ? av : cv
 								nv = (as == "+") ? fo + so : fo - so
 
 								replace_value()
@@ -174,6 +226,8 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 	esac
 done
 
+[[ -z $@ ]] && bars=( ${last_running//,/ } )
+
 if [[ ! $no_reload ]]; then
 	current_pid=$$
 	ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
@@ -189,6 +243,4 @@ if [[ ! $no_reload ]]; then
 		kill_bar
 		bash $configs/$bar &
 	done
-
-	start_bar_on_boot
 fi
