@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current=""
+current="/home/sola/Music/post"
 torrent=""
 selection=""
 multiple_files=""
@@ -432,7 +432,7 @@ if [[ ${option% *} ]]; then
 
 						command="transmission-remote -a ${regex:-'$torrent'} "
 						command+="-w ${torrent_directory-~/Downloads/} $torrent_state &> /dev/null"
-						coproc (execute_on_finish "$command" &)
+						coproc (execute_on_finish "sleep 0.5 && $command" &)
 
 						notify "Adding torrent\n${torrent:-$current}"
 
@@ -444,7 +444,7 @@ if [[ ${option% *} ]]; then
 
 						command="~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id"
 						command+="&& ~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content"
-						coproc (execute_on_finish "$command" &)
+						coproc (execute_on_finish "sleep 0.5 && $command" &)
 						exit
 					fi;;
 				extract_archive) [[ -d "$current" && $archive ]] && $option || set archive "$current";;
