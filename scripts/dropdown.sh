@@ -51,7 +51,7 @@ set_position() {
 		~/.orw/scripts/set_class_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 
-x_position=r
+x_position=c
 	
 current_desktop=$(xdotool get_desktop)
 focused_window=$(xdotool getwindowfocus getwindowname)
