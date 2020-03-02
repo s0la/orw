@@ -632,8 +632,9 @@ function get_qb() {
 }
 
 function get_wall() {
-	awk -F '['\'']' '/desktop_'$current_desktop'/ \
-		{ wall = $(NF - 1); if(wall ~ /^#/) print "wall", wall }' ~/.config/orw/config
+	awk -F '"' '/desktop_'$current_desktop'/ {
+		wall = $(NF - 1); if(wall ~ /^#/) print "bg", wall
+		}' ~/.config/orw/config
 }
 
 function get_lock() {
