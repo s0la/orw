@@ -252,9 +252,7 @@ current_desktop=$(xdotool get_desktop)
 read depth directory <<< $(awk '\
 	/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
 read orientation display_count <<< $(awk -F '[_ ]' '\
-	/^orientation/ { o = $NF }
-	/^display_[0-9] / { dc = $2 }
-	END { print o, dc }' $config)
+	/^orientation/ { o = $NF } /^display_[0-9]/ { dc++ } END { print o, dc / 2 }' $config)
 
 [[ "$@" =~ -U ]] && unsplash=true
 
