@@ -15,15 +15,16 @@ mount() {
 }
 
 if ! $(mount); then
-	mount_point=$(find /mnt -maxdepth 1 -type d | $rofi)
+	mount_point=$(find /mnt -maxdepth 1 -type d | $rofi | sed "s|^\~|$HOME|")
+	#mount_point=${mount_point//\~/$HOME}
 
 	if [[ ! -d $mount_point ]]; then
 		confirmation=$(echo -e 'yes\nno' |\
-			rofi -dmenu -p "Mount point doesn't exist, would you like to create it?")
+			$rofi -p "Mount point doesn't exist, would you like to create it?")
 
 		if [[ $confirmation == yes ]]; then
-			[[ $mount_point =~ ^/home ]] || sudo=sudo
-			mkdir $sudo $mount_point
+			[[ $mount_point =~ ^(/home|~/) ]] || sudo=sudo
+			eval mkdir $sudo $mount_point
 		else
 			exit
 		fi
