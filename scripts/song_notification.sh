@@ -6,4 +6,11 @@ album=$(mpc current -f %album%)
 
 cover=~/Music/covers/${album// /_}.jpg
 
-[[ $artist && $title ]] && ~/.orw/scripts/notify.sh -i ${cover//[()]/} -r 101 -f 8 -p "$artist  -  $title"
+info="$artist    <b>$title</b>"
+
+#info="<b>artist:</b>  $artist\n"
+#info+="<b>title:</b>   $title\n"
+#info+="<b>album:</b>   $album"
+
+[[ -f $cover ]] && icon="-i ${cover//[()]/}"
+[[ $artist && $title ]] && ~/.orw/scripts/notify.sh $icon -r 101 -F 'Iosevka Orw' -f 8 -p "$info"
