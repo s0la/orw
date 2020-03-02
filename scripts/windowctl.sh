@@ -498,14 +498,14 @@ property_log=~/.config/orw/windows_properties
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
 
-read x_offset y_offset <<< $(awk '/offset/ {print $NF}' $config | xargs)
+#read x_offset y_offset <<< $(awk '/offset/ {print $NF}' $config | xargs)
 
-display_count=$(awk '/^display_[0-9]/ { dc++ } END { print dc / 2 }' $config)
-display_orientation=$(awk '/^orientation/ { print substr($NF, 1, 1) }' $config)
+#display_count=$(awk '/^display_[0-9]/ { dc++ } END { print dc / 2 }' $config)
+#display_orientation=$(awk '/^orientation/ { print substr($NF, 1, 1) }' $config)
 
-#read display_count {x,y}_offset orientation <<< $(awk '\
-#	/^display_[0-9]/ { dc++ } /offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
-#	END { print dc / 2, offsets, o }' $config)
+read display_count {x,y}_offset orientation <<< $(awk '\
+	/^display_[0-9]/ { dc++ } /offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
+	END { print dc / 2, offsets, o }' $config)
 
 [[ ! $arguments =~ -[in] ]] && set_window_id $(printf "0x%.8x" $(xdotool getactivewindow))
 
@@ -710,7 +710,7 @@ while ((argument_index <= $#)); do
 
 						[[ $argument =~ [br] ]] && direction=+ || direction=-
 
-						((property $direction value < start + offset)) && 
+						((property $direction value < start + offset && display_count > 1)) && 
 							properties[index + index_offset]=$((start - offset - dimension - border)) ||
 							(( properties[index + index_offset] $direction= value ))
 
