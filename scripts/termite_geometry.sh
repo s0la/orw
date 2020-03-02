@@ -3,7 +3,8 @@
 openbox_rc=~/.config/openbox/rc.xml
 
 set_value() {
-	sed -i "/\(class\|name\)=.*${class-input}/,/^$/ { /$1/ s/[0-9]\+/$2/ }" $openbox_rc
+	#sed -i "/\(class\|name\)=.*${class-input}/,/^$/ { /$1/ s/[0-9]\+/$2/ }" $openbox_rc
+	sed -i "/\(class\|name\|title\)=.*${class-input}/,/^$/ { /$1/ s/[0-9]\+/$2/ }" $openbox_rc
 }
 
 while getopts :c:x:y:w:h: flag; do
