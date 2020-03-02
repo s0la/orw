@@ -120,19 +120,52 @@ set_orientation_properties() {
 
 get_display_properties() {
 	read display display_x display_y width height original_min_point original_max_point bar_min bar_max x y <<< \
-		$(awk -F '[_ ]' '{ if(/^orientation/) { cd = 1; bmin = 0; \
-		d = '${display:-0}'; i = '$1'; mi = i + 2; \
-		wx = '${properties[1]}'; wy = '${properties[2]}'; \
-		if($NF ~ /^h/) { i = 3; p = wx } else { i = 4; p = wy } }; \
-			{ if($1 == "display") \
-				if($3 == "xy") { cd = $2; if((d && d == cd) || !d) \
-					{ dx = $4; dy = $5; minp = $(mi + 1) } } \
-					else { if((d && d == cd) || !d) \
-						{ dw = $3; dh = $4; maxp = minp + $mi }; max += $i; \
-							if((d && p < max && (cd >= d)) || (!d && p < max)) \
-								{ print (d) ? d : cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy; exit } \
-								else { if(d && cd < d || !d) bmin += $3; \
-									if(p > max) if(i == 3) wx -= $i; else wy -= $i } } } }' ~/.config/orw/config)
+		$(awk -F '[_ ]' '{ if(/^orientation/) {
+			cd = 1
+			bmin = 0
+			d = '${display:-0}'
+			i = '$1'; mi = i + 2
+			wx = '${properties[1]}'
+			wy = '${properties[2]}'
+
+			if($NF ~ /^h/) {
+				i = 3
+				p = wx
+			} else {
+				i = 4
+				p = wy
+			}
+		} {
+			if($1 == "display") {
+				if($3 == "xy") {
+					cd = $2
+
+					if((d && d == cd) || !d) {
+						dx = $4
+						dy = $5
+						minp = $(mi + 1)
+					}
+				} else {
+					if((d && d == cd) || !d) {
+						dw = $3
+						dh = $4
+						maxp = minp + $mi
+					}
+
+					max += $i
+
+					if((d && p < max && (cd >= d)) || (!d && p < max)) {
+						print (d) ? d : cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
+						exit
+					} else {
+						if(d && cd < d || !d) bmin += $3
+						if(p > max) if(i == 3) wx -= $i
+						else wy -= $i
+					}
+				}
+			}
+		}
+	}' ~/.config/orw/config)
 }
 
 get_bar_properties() {
@@ -274,20 +307,26 @@ tile() {
 						max_point=$w_min && break
 					fi
 				else
-					((window_count)) && max_point=$w_min || 
+					#((window_count)) && max_point=$w_min || 
+					#	min_point=$((w_max + distance))
+					if ((!window_count)); then
 						min_point=$((w_max + distance))
+					else
+						max_point=$w_min
+						break
+					fi
 				fi
 			else
-					if ((w_min > min_point)); then
-						if [[ ! $wid =~ ^0x && ! $window_count ]]; then
-							min_point=$((w_max + distance))
-						else 
-							max_point=$w_min
-							break
-						fi
-					else
-						((w_max + distance > min_point)) && min_point=$((w_max + distance))
+				if ((w_min > min_point)); then
+					if [[ ! $wid =~ ^0x && ! $window_count ]]; then
+						min_point=$((w_max + distance))
+					else 
+						max_point=$w_min
+						break
 					fi
+				else
+					((w_max + distance > min_point)) && min_point=$((w_max + distance))
+				fi
 			fi
 		else
 			((window_count++))
@@ -461,8 +500,12 @@ property_log=~/.config/orw/windows_properties
 
 read x_offset y_offset <<< $(awk '/offset/ {print $NF}' $config | xargs)
 
+display_count=$(awk '/^display_[0-9]/ { dc++ } END { print dc / 2 }' $config)
 display_orientation=$(awk '/^orientation/ { print substr($NF, 1, 1) }' $config)
-display_count=$(awk -F '[_ ]' '/^display/ { dc = $2 }; END { print dc }' $config)
+
+#read display_count {x,y}_offset orientation <<< $(awk '\
+#	/^display_[0-9]/ { dc++ } /offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
+#	END { print dc / 2, offsets, o }' $config)
 
 [[ ! $arguments =~ -[in] ]] && set_window_id $(printf "0x%.8x" $(xdotool getactivewindow))
 
