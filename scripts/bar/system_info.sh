@@ -1,5 +1,6 @@
 #!/bin/bash
 
+all="$@"
 path=~/.orw/bar
 
 [[ $1 == Weather ]] &&
@@ -9,6 +10,10 @@ pbg="${module}pbg:-\$pbg"
 pfg="${module}pfg:-\$pfg"
 sbg="${module}sbg:-\${${module}pbg:-\$sbg}"
 sfg="${module}sfg:-\${${module}pfg:-\$sfg}"
+
+function set_icon() {
+	[[ "$all" =~ icon ]] && icon="$(sed -n "s/${1}_icon=//p" ${0%/*}/icons)"
+}
 
 function set_line() {
 	fc="\${${module}fc:-\$fc}"
@@ -51,11 +56,12 @@ function format() {
 
 case $1 in
 	email*)
-		icon= 
+		#icon= 
+		set_icon $1
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=12
+		old_mail_count=9
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -110,14 +116,16 @@ case $1 in
 			if [[ $id ]]; then
 				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg='${pfg}' || fg='${sfg}'
 
-				icon=%{I+3}%{I-}
+				#icon=%{I+3}%{I-}
+				set_icon dropdown
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
 			fi
 		}
 
 	recorder() {
 		state=rec
-		[[ $state == stop ]] && icon= fg=\${$pfg} || icon= fg=\${$sfg}
+		#[[ $state == stop ]] && icon= fg=\${$pfg} || icon=%{I+n}%{I-} fg=\${$sfg}
+		[[ $state == stop ]] && icon= fg=\${$pfg} || (set_icon rec && fg=\${$sfg})
 
 		pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
 
@@ -138,7 +146,8 @@ case $1 in
 
 	[[ $term || $rec ]] && format fading "$hidden";;
 	network)
-		icon=
+		#icon=
+		set_icon $1
 
 		ssid=$(nmcli dev wifi | awk ' \
 			NR == 1 {
@@ -160,15 +169,15 @@ case $1 in
 			{ w = ""; s = (NR == 5) ? " " : ""; for(f = NF - (NR - 3); f <= NF; f++) w = w s $f; print w }' | xargs)
 
 		case $w in
-			*[Cc]lear|[Ss]un*) icon=;;
-			*[Pp]artly*) icon=;;
-			*[Cc]loud*) icon=;;
-			*[Ss]now*) icon=;;
-			*[Rr]ain*) icon=;;
-			*) icon=;;
+			*[Cc]lear|[Ss]un*) icon=sun;;
+			*[Pp]artly*) icon=partly;;
+			*[Cc]loud*) icon=cloud;;
+			*[Ss]now*) icon=snow;;
+			*[Rr]ain*) icon=rain;;
 		esac
 
-		icon="%{I-4}$icon%{I-}"
+		#icon="%{I-4}$icon%{I-}"
+		set_icon $icon
 
 		[[ $info == s ]] && s="${s#* }"
 
@@ -192,14 +201,16 @@ case $1 in
 
 		[[ $w ]] && format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
 	Cpu)
-		icon=
+		#icon=
+		set_icon $1
 		usage=$(top -bn 2 | awk '/%Cpu/ {print $2}' | tail -1)
 
 		[[ $@ =~ trim ]] && style=trim
 
 		format "%{A1:~/.orw/scripts/show_top_usage.sh cpu:}${!2-CPU}%{A}" ${usage%.*}%;;
 	Ram*)
-		icon=%{I-b}%{I-}
+		#icon=%{I-b}%{I-}
+		set_icon $1
 
 		ram=$(free | awk '/^Mem:/ { print int(100 / ($2 / ($3 + $5))) }')
 
@@ -207,7 +218,8 @@ case $1 in
 
 		format "%{A1:~/.orw/scripts/show_top_usage.sh mem:}${!2-RAM}%{A}" ${ram}%;;
 	Disk*)
-		icon=%{I-n}%{I-}
+		#icon=%{I-n}%{I-}
+		set_icon $1
 
 		[[ $@ =~ trim ]] && style=trim
 
@@ -222,12 +234,14 @@ case $1 in
 		current_usage_mode=extended
 
 		if [[ $current_usage_mode == hidden ]]; then
-			icon=%{I-n}%{I-}
+			#icon=%{I-n}%{I-}
+			set_icon hidden
 			index=2
 			usage_mode=extended
 			button="\${$pbg}\$padding\${$pfg}${!4-SHOW}\$padding"
 		else
-			icon=%{I-n}%{I-}
+			#icon=%{I-n}%{I-}
+			set_icon shown
 			usage_mode=hidden
 			usage="\${$sbg}\$inner"
 
@@ -258,24 +272,43 @@ case $1 in
 
 		read s $info <<< $(acpi | awk -F '[:, ]' '{'"$sub"' print toupper(substr($4, 1, 3)) '"$fields"'};1')
 
+		#case $s in
+		#	#CHA) icon=%{I-}%{I-};;
+		#	CHA) icon=%{I-b}%{I-};;
+		#	FUL) s=FULL icon=%{I-8}%{I-} out=100%;;
+		#	*)
+		#		case ${#p} in
+		#			2) icon=;;
+		#			4) icon=;;
+		#			*)
+		#				case $p in
+		#					[1-3]*) icon=;;
+		#					[4-6]*) icon=;;
+		#					*) icon=;;
+		#				esac
+		#		esac
+
+		#		label=BAT
+		#		icon=%{I-8}%{T5}$icon%{T-}%{I-};;
+		#esac
+
 		case $s in
-			#CHA) icon=%{I-}%{I-};;
-			CHA) icon=%{I-b}%{I-};;
-			FUL) s=FULL icon=%{I-8}%{I-} out=100%;;
+			CHA) icon=charging;;
+			FUL) s=FULL icon=charging_full out=100%;;
 			*)
 				case ${#p} in
-					2) icon=;;
-					4) icon=;;
+					2) icon=empty;;
+					4) icon=full;;
 					*)
 						case $p in
-							[1-3]*) icon=;;
-							[4-6]*) icon=;;
-							*) icon=;;
+							[1-3]*) icon=13;;
+							[4-6]*) icon=46;;
+							*) icon=79;;
 						esac
 				esac
 
 				label=BAT
-				icon=%{I-8}%{T5}$icon%{T-}%{I-};;
+				set_icon $icon
 		esac
 
 		[[ $s != FULL ]] && for i in $info; do
@@ -287,7 +320,9 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 		#icon=%{I+n}%{I-}
-		icon=%{I+n}%{I-}
+		#icon=%{I+n}%{I-}
+		set_icon $1
+
 		step=${3//[^0-9]/}
 
 		(($(pidof transmission-daemon))) && read ids s c p b <<< $(transmission-remote -l | awk '\
@@ -325,7 +360,8 @@ case $1 in
 	updates)
 		separator="$2"
 		lines=${@: -1}
-		icon=%{I-4}%{I-}
+		#icon=%{I-4}%{I-}
+		set_icon $1
 
 		if which pacman &> /dev/null; then
 			sudo pacman -Syy &> /dev/null
@@ -339,15 +375,17 @@ case $1 in
 		temp=$(awk '{printf("%d°C", $NF / 1000)}' /sys/class/thermal/thermal_zone*/temp)
 
 		case $heat in
-			9*) icon="";;
-			[8,7]*) icon="";;
-			[6,5]*) icon="";;
-			[4,3]*) icon="";;
-			*) icon="";;
+			9*) icon=9;;
+			[8,7]*) icon=87;;
+			[6,5]*) icon=65;;
+			[4,3]*) icon=43;;
+			*) icon=21;;
 		esac
 
+		set_icon $icon
 		format "${!2-TEMP}" "$temp";;
 	Power)
 		style=mono
-		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}%{A}";;
+		set_icon $1
+		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}$icon%{A}";;
 esac

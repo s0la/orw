@@ -274,6 +274,11 @@
         <command>~/.orw/scripts/rofi_scripts/mpd_songs_group.sh library</command>
       </action>
     </keybind>
+	<keybind key="A-i">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/rofi_script.sh bar_icons</command>
+      </action>
+    </keybind>
     <keybind key="A-p">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/mpd_songs_group.sh play</command>
@@ -946,58 +951,59 @@
         <y>center</y>
       </position>
     </application>
-    <application title="Open Location">
-      <layer>below</layer>
-      <focus>yes</focus>
-      <decor>yes</decor>
-    </application>
+
     <application class="input">
       <decor>no</decor>
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>655</x>
-        <y>535</y>
+        <x>930</x>
+        <y>635</y>
       </position>
       <size>
         <width>60</width>
         <height>60</height>
       </size>
     </application>
+
     <application class="custom_size">
       <focus>yes</focus>
       <position force="yes">
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>60</height>
-        <width>60</width>
+        <height>500</height>
+        <width>400</width>
       </size>
     </application>
+
     <application class="custom_position">
       <focus>yes</focus>
       <position force="yes">
-        <x>655</x>
-        <y>535</y>
+        <x>1372</x>
+        <y>220</y>
       </position>
       <size>
-        <width>60</width>
-        <height>60</height>
+        <width>450</width>
+        <height>600</height>
       </size>
     </application>
+
     <application title="image_preview">
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>655</x>
-        <y>535</y>
+        <x>439</x>
+        <y>323</y>
       </position>
     </application>
+
     <application title="cover_art_widget">
       <decor>no</decor>
       <layer>below</layer>
       <focus>no</focus>
     </application>
+
     <application title="*_input">
       <focus>yes</focus>
       <decor>no</decor>
@@ -1006,17 +1012,18 @@
         <height>60</height>
       </size>
     </application>
+
     <application class="dropdown">
       <decor>no</decor>
       <focus>yes</focus>
       <desktop>all</desktop>
       <position force="yes">
-        <x>655</x>
-        <y>535</y>
+        <x>528</x>
+        <y>39</y>
       </position>
       <size>
-        <width>60</width>
-        <height>60</height>
+        <width>864</width>
+        <height>416</height>
       </size>
     </application>
     <!--

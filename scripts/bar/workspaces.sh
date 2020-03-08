@@ -24,19 +24,28 @@ for workspace_index in $(seq $workspace_count); do
 			{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')\${padding}";;
 		n) label="$offset$workspace_index$offset";;
 		*)
+			#case ${2: -1} in
+			#	e) p_icon="" s_icon="";;
+			#	h)
+			#		size=n
+			#		p_icon="" s_icon="";;
+			#	d)
+			#		size=1
+			#		p_icon="" s_icon="●";;
+			#	*) p_icon="" s_icon="";;
+			#esac
+
 			case ${2: -1} in
-				e) p_icon="" s_icon="";;
-				h)
-					size=n
-					p_icon="" s_icon="";;
-				d)
-					size=1
-					p_icon="" s_icon="●";;
-				*) p_icon="" s_icon="";;
+				d) icon_type=dot;;
+				h) icon_type=half;;
+				e) icon_type=empty;;
+				*) icon_type=default;;
 			esac
 
-			icon="${current}_icon"
-			label="$offset%{I+${size:-3}}${!icon}%{I-}$offset";;
+			icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
+			#~/.orw/scripts/notify.sh "Workspace_${icon_type}_${current}_icon"
+			#:icon="${current}_icon"
+			label="$offset$icon$offset";;
 	esac
 
 	bg="\${W${current}bg:-\${Wsbg:-\$${current}bg}}"

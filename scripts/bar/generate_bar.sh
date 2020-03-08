@@ -14,7 +14,7 @@ main_font_offset=0
 bar_name='main_bar'
 
 bg="#002D2E30"
-fc="#877f69"
+fc="#a68c79"
 bfc="#666660"
 bbg="#2e2e2e"
 bsbg="%{B#002D2E30}"
@@ -23,7 +23,7 @@ bsfg="%{F#313131}"
 pbg="%{B#2D2E30}"
 pfg="%{F#979392}"
 sbg="%{B#2D2E30}"
-sfg="%{F#434446}"
+sfg="%{F#525355}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -308,7 +308,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		P)
 			format Power
 			get_display_properties
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height)\"");;
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height icon)\"");;
 		L)
 			modules+='$launchers'
 

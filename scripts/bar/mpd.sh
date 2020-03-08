@@ -6,6 +6,13 @@ bg='${msbg:-${mpbg:-$sbg}}'
 current_mode=controls
 [[ $current_mode == song_info ]] && mode=controls || mode=song_info
 
+function set_icon() {
+	local icon="$(sed -n "s/mpd_${1}_icon=//p" ${0%/*}/icons)"
+	eval mpd_${1}_icon=$icon
+}
+
+set_icon toggle
+
 #toggle="\$inner\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
 toggle="$bg\${msfg:-\$sfg}%{A:sed -i '/^current_mode/ s/=.*/=$mode/' $0:}%{A}\$inner"
 
@@ -37,8 +44,11 @@ get_song_info() {
 		((song_info_index = song_info_index > delay ? song_info_index - delay : 0))
 		[[ $song_info_index -gt $final_index ]] && song_info_index=$final_index
 
-		left_limiter='${mlfg:-${msfg:-$sfg}}%{I-S}%{I-}${mpfg:-$pfg}'
-		right_limiter='${mlfg:-${msfg:-$sfg}}%{I-S}%{I-}${mpfg:-$pfg}'
+		set_icon left_limiter
+		set_icon right_limiter
+
+		left_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_left_limiter_icon\${mpfg:-\$pfg}"
+		right_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_right_limiter_icon\${mpfg:-\$pfg}"
 
 		song_info="$left_limiter ${song_info:$song_info_index:$scrollable_area} $right_limiter"
 	elif [[ $show_time ]]; then
@@ -84,19 +94,24 @@ if [[ $status == playing ]]; then
 fi
 
 get_controls() {
-	[[ $status == playing ]] && toggle_icon= || toggle_icon=
+	set_icon prev
+	set_icon next
+	set_icon play
+	set_icon pause
 
-	stop="%{A:mpc -q stop; echo 'PROGRESSBAR' > $fifo;"
-	stop+="echo 'SONG_INFO not playing' > $fifo;"
-	stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
+	[[ $status == playing ]] && toggle_icon=$mpd_pause_icon || toggle_icon=$mpd_play_icon
+
+	#stop="%{A:mpc -q stop; echo 'PROGRESSBAR' > $fifo;"
+	#stop+="echo 'SONG_INFO not playing' > $fifo;"
+	#stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
 
 	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
 	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
 	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 
-	controls="%{T3}%{A:mpc -q prev:}%{I+n}%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q toggle:}%{I+n}$toggle_icon%{I-}%{A}\$inner"
-	controls+="\$inner%{A:mpc -q next:}%{I+n}%{I-}%{A}%{T-}\$inner"
+	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
+	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
+	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
 
 	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
 }
