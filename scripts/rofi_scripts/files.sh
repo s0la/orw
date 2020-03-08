@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola/Music/post"
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
@@ -283,11 +283,24 @@ if [[ ${option% *} ]]; then
 		slide_images)
 			killall rofi
 			feh "$current";;
+		mount)
+			lsblk -lpo +model | awk '{
+				if($1 ~ /sd.$/ && $7) {
+					m=""
+					for(f = 7; f <= NF; f++) m = m $f " "
+					}
+				if($6 == "part" && $4 ~ /[0-9]G/ && $7 !~ /^\//) printf("%-45s %-20s %s\n", m, $4, $1)}'
+
+			exit;;
 		edit_text)
 			killall rofi
 			set_multiple_files "$current/"
 			termite -e "bash -c \"nvim -p ${files:-${regex:-'$current'}}\"" &
 			un_set regex;;
+		open_in_terminal)
+			killall rofi
+			termite -e "bash -c \"cd '$current'\";bash"
+			exit;;
 		 ) set options options;;
 		 );;
 		 );;
@@ -431,7 +444,7 @@ if [[ ${option% *} ]]; then
 						pidof transmission-daemon &> /dev/null || coproc (transmission-daemon &)
 
 						command="transmission-remote -a ${regex:-'$torrent'} "
-						command+="-w ${torrent_directory-~/Downloads/} $torrent_state &> /dev/null"
+						command+="-w '${torrent_directory-$HOME/Downloads/}' $torrent_state &> /dev/null"
 						coproc (execute_on_finish "sleep 0.5 && $command" &)
 
 						notify "Adding torrent\n${torrent:-$current}"
@@ -485,7 +498,9 @@ if [[ ${option% *} ]]; then
 						un_set options
 						set current
 					else
-						if [[ $archive ]]; then
+						if [[ "${@##* }" =~ ^/dev/sd.[0-9] ]]; then
+							~/.orw/scripts/mount.sh "${@##* }" "${@%% *}" "$current"
+						elif [[ $archive ]]; then
 							[[ $(list_archive | grep "^$@$") ]] &&
 								set archive_single "$@" || set regex "--wildcards $@"
 							un_set list
@@ -510,16 +525,15 @@ if [[ $options == options ]]; then
 
 	[[ $move || $copy ]] && options+=( 'paste' )
 
-	options+=( 'remove' 'selection' 'add_to_bookmarks' 'add_content_to_archive' 'add_directory_to_archive' )
+	options+=( 'remove' 'mount' 'selection' 'add_to_bookmarks' 'add_content_to_archive' 'add_directory_to_archive' )
 
 	[[ "$archive" || "$archive_multiple" ]] && options+=( 'extract_archive' )
 	[[ "$torrent" ]] && options+=( 'add_torrent' 'start_torrent' 'select_torrent_content' )
 
 	[[ $multiple_files ]] && options+=( 'set_as_wallpaper' 'edit_text' )
-	#[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\"/\1/p' ~/.mpd/mpd.conf)"
 	[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.mpd/mpd.conf)"
 	[[ "$current" =~ "$music_directory" ]] && options+=( 'add_to_playlist' )
-	options+=( 'set_as_wallpaper_directory' 'add_wallpaper_directory' 'remove_wallpaper_directory' 'view_all_images' )
+	options+=( 'set_as_wallpaper_directory' 'add_wallpaper_directory' 'remove_wallpaper_directory' 'view_all_images' 'open_in_terminal' )
 
 	options+=( 'create_directory' )
 
