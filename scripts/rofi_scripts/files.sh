@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola"
+current="/home/sola/Downloads"
 torrent=""
 selection=""
 multiple_files=""
@@ -327,7 +327,8 @@ if [[ ${option% *} ]]; then
 						((tab++))
 					done
 				else
-					thunar "$current"
+					#thunar "$current"
+					~/.orw/scripts/vifm.sh "$current"
 				fi
 			fi;;
 		xdg-open)

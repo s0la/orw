@@ -7,9 +7,10 @@ while getopts :w:h: flag; do
 	esac
 done
 
-~/.orw/scripts/set_class_geometry.sh -c size -w ${width:-450} -h ${height:-600}
+all="$@"
+[[ ! ${all##* } =~ ^[0-9]+$ ]] && args="${all##*[0-9] }"
 
-#tmux="tmux -S /tmp/vifm -f ~/.tmux_hidden.conf new -s vifm ~/.config/vifm/scripts/run_with_image_preview $@"
+~/.orw/scripts/set_class_geometry.sh -c size -w ${width:-400} -h ${height:-500}
 
 termite -t ${title-vifm} --class=custom_size -e \
-	"bash -c 'sleep 0.1 && $tmux ~/.config/vifm/scripts/run_with_image_preview'" &> /dev/null &
+	"bash -c 'sleep 0.1 && $tmux ~/.config/vifm/scripts/run_with_image_preview $args'" &> /dev/null &
