@@ -126,11 +126,13 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 
 			awk -i inplace '\
 				function get_new_value(flag) {
-					return gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
+					#return gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
+					return gensub("((([^-]*-[^" flag "])*[^" flag "]*" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
 				}
 
 				function replace_value() {
-					$0 = gensub("(.*-" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\2" nv "\\6", 1)
+					#$0 = gensub("(.*-" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\2" nv "\\6", 1)
+					$0 = gensub("(([^-]*-[^" f "])*[^" f "]*" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\3" nv "\\7", 1)
 				}
 
 				BEGIN {
@@ -159,8 +161,9 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 								cv = get_new_value(f)
 
 								fo = (length(naa[1])) ? naa[ai] : cv
-								so = (av) ? av : cv
+								so = (length(a) > 1) ? av : cv
 								nv = (as == "+") ? fo + so : fo - so
+								system("~/.orw/scripts/notify.sh " nv)
 
 								replace_value()
 							}
