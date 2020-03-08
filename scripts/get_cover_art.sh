@@ -13,7 +13,8 @@ if [[ ! -f "${cover//[()]/}" ]]; then
 	[[ ${root: -1} == '/' ]] && root=${root%*/}
 
 	if ! eval "ffmpeg -loglevel quiet -i \"$root/$file\" $cover"; then
-		[[ ! $(grep "$album" ~/Music/missing_cover_arts.txt) ]] && echo "$artist - $album" >> ~/Music/missing_cover_arts.txt
+		[[ ! $(grep "$album" ~/Music/covers/missing_cover_arts.txt) ]] &&
+			echo "$artist - $album" >> ~/Music/covers/missing_cover_arts.txt
 	fi
 fi
 
