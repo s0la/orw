@@ -38,7 +38,7 @@ get_rgb() {
 }
 
 get_hex() {
-	for color in $rgb; do
+	for color in ${rgb_values[*]}; do
 		hex+=$(printf "%.2x" $color)
 		full_rgb+="$((color ${sign:-+} offset))${separator-,}"
 
