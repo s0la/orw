@@ -619,8 +619,6 @@ while ((argument_index <= $#)); do
 							border=border_$direction
 							offset=${direction}_offset
 
-							echo ${properties[*]}
-
 							(( properties[index + 2] $op2= (ratio - 1) * (${!border} + ${!offset}) ))
 							(( properties[index + 2] $op1= ratio ))
 					esac
@@ -714,7 +712,7 @@ while ((argument_index <= $#)); do
 							properties[index + index_offset]=$((start - offset - dimension - border)) ||
 							(( properties[index + index_offset] $direction= value ))
 
-						((property $direction value > end - offset - dimension - border)) &&
+						((property $direction value > end - offset - dimension - border && display_count > 1)) &&
 							properties[index + index_offset]=$((end + offset))
 					else
 						resize $argument
@@ -830,7 +828,14 @@ while ((argument_index <= $#)); do
 					*)
 						[[ $optarg =~ ^0x ]] && mirror_window_id=$optarg ||
 							mirror_window_id=$((wmctrl -l && list_bars) |\
-							awk '/'$optarg'/ { print $1; exit }')
+							awk '{
+								wid = (/^0x/) ? $NF : $1
+								if(wid == "'$optarg'") {
+									print $1
+									exit
+								}
+							}')
+							#awk '/'$optarg'/ { print $1; exit }')
 
 						mirror_window_properties=( $(list_all_windows | \
 							awk '$1 == "'$mirror_window_id'" {
@@ -950,8 +955,6 @@ while ((argument_index <= $#)); do
 					[[ $properties ]] && echo ${properties[*]} ||
 						get_windows ${id:-name} | cut -d ' ' -f 2-
 				fi
-				#echo -n "$border_x $border_y "
-				#get_windows ${id:-name} | cut -d ' ' -f 2-
 				exit;;
 			o) overwrite=true;;
 			a) adjucent=true;;
