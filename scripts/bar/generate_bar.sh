@@ -14,16 +14,16 @@ main_font_offset=0
 bar_name='main_bar'
 
 bg="#002D2E30"
-fc="#a68c79"
+fc="#7a8d90"
 bfc="#666660"
 bbg="#2e2e2e"
 bsbg="%{B#002D2E30}"
 bsfg="%{F#313131}"
 
 pbg="%{B#2D2E30}"
-pfg="%{F#979392}"
+pfg="%{F#999999}"
 sbg="%{B#2D2E30}"
-sfg="%{F#525355}"
+sfg="%{F#5c5d5f}"
 
 get_mpd() {
     echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
@@ -90,7 +90,7 @@ get_email() {
 }
 
 get_volume() {
-	echo -e "VOLUME $($path/system_info.sh volume $label)"
+	echo -e "VOLUME $($path/system_info.sh volume $separator $label)"
 }
 
 get_weather() {
@@ -110,7 +110,7 @@ get_torrents() {
 }
 
 get_date() {
-	echo -e "DATE $($path/system_info.sh date $date_format)"
+	echo -e "DATE $($path/system_info.sh date $separator $date_format)"
 }
 
 get_updates() {
@@ -223,6 +223,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg colorscheme ${!OPTIND} && shift
 
 			if [[ $colorscheme ]]; then
+				use_colorscheme=true
 				[[ $@ =~ -M ]] || base=9
 
 				eval $(awk '\
@@ -242,6 +243,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 				[[ $@ =~ -b ]] && bg=$bbg
 				[[ $bar_frame ]] && bar_frame="-R$bfc -r $bar_frame_width"
+				[[ $separator =~ ^%\{O[0-9]+\} ]] || separator="$bsbg$bsfg${separator#*\}*\}}"
 
 				unset colorscheme
 			else
@@ -267,7 +269,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg frame_style ${!OPTIND} && shift;;
 		l)
 			[[ $lines ]] && unset lines all_lines single_line {start,end}_line {left,right}_frame || set_lines;;
-		M) [[ $colorscheme ]] || source $path/module_colors;;
+		M) [[ $use_colorscheme ]] || source $path/module_colors;;
         F)
 			bar_frame_width=$OPTARG
 			bar_frame="-R$bfc -r $bar_frame_width"
