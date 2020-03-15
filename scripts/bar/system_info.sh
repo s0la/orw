@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=9
+		old_mail_count=17
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -93,14 +93,16 @@ case $1 in
 
 		((mail_count)) && format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count;;
 	volume*)
+		separator="$2"
         current_system_volume_mode=duo
         style=$current_system_volume_mode
 
-        eval args=( $(${0%/*}/volume.sh system $2) )
+        eval args=( $(${0%/*}/volume.sh system $3) )
 
 		format "${args[@]}";;
 	date*)
-		date="$(date +"$(([[ $2 ]] && echo "${2//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
+		separator="$2"
+		date="$(date +"$(([[ $3 ]] && echo "${3//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
 
 		[[ $date =~ .*\ .*:.* ]] && time="${date##* }" date="${date% *}" || style=mono
 
@@ -125,7 +127,13 @@ case $1 in
 	recorder() {
 		state=rec
 		#[[ $state == stop ]] && icon= fg=\${$pfg} || icon=%{I+n}%{I-} fg=\${$sfg}
-		[[ $state == stop ]] && icon= fg=\${$pfg} || (set_icon rec && fg=\${$sfg})
+		if [[ $state == stop ]]; then
+			icon=
+			fg=\${$pfg}
+		else
+			set_icon rec
+			fg=\${$sfg}
+		fi
 
 		pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
 
@@ -387,5 +395,5 @@ case $1 in
 	Power)
 		style=mono
 		set_icon $1
-		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}$icon%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}\$inner$icon\$inner%{A}";;
 esac
