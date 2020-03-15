@@ -21,6 +21,7 @@ Battery_13_icon=%{I-8}%{I-}
 Battery_46_icon=%{I-8}%{I-}
 Battery_79_icon=%{I-8}%{I-}
 torrents_icon=%{I+5}%{I-}
+updates_icon=%{I-4}%{I-}
 Temp_icon=%{I-4}%{I-}
 Temp_9_icon=%{I-0}%{I-}
 Temp_78_icon=%{I-0}%{I-}
