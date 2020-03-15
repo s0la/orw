@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -w 1000 -y 13 -h 25 -a 8 -p 7  -c bar_solid -M -n solid -O 20 -W id,o3 -r -e -u -v -d -P -O 20
