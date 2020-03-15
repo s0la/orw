@@ -341,12 +341,23 @@ function bar() {
 		local hex_range=6
 	fi
 
-	if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
-		sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" $bar_conf $bar_modules
+	local default_bar_configs="$bar_conf $bar_modules"
+
+	#if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
+	if [[ $(grep "^${property}" "${edit_colorscheme:-$default_bar_configs}") ]]; then
+		sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" "${edit_colorscheme:-$default_bar_configs}"
+		#echo $property $color "${edit_colorscheme:-$default_bar_configs}"
 	else
-		color_type=${property: -2:1}
-		[[ $property =~ [bf]g$ ]] && local color_format="%{${color_type^}#${color: -$hex_range}}"
-		echo "$property=\"${color_format:-#${color: -$hex_range}}\"" >> $bar_modules
+		if [[ $edit_colorscheme ]]; then
+			echo "$property #${color: -$hex_range}" >> $edit_colorscheme
+		else
+			color_type=${property: -2:1}
+			[[ $property =~ [bf]g$ ]] && local color_format="%{${color_type^}#${color: -$hex_range}}"
+			echo "$property=\"${color_format:-#${color: -$hex_range}}\"" >> $bar_modules
+		fi
+
+		#echo "$property=\"${color_format:-#${color: -$hex_range}}\"" >> ${edit_colorscheme:-$bar_modules}
+		#echo $property $color ${edit_colorscheme:-$bar_modules}
 	fi
 }
 
@@ -558,7 +569,8 @@ function get_term() {
 }
 
 get_vim() {
-	sed -n '/let.*g:bg/,/^$/ s/.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
+	#sed -n '/let.*g:bg/,/^$/ s/.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
+	sed -n 's/^let.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
 }
 
 get_vifm() {
@@ -859,6 +871,23 @@ if [[ ! $color && ! $backup ]]; then
 	fi
 fi
 
+multiple_properties() {
+	local color=$color
+	property=${1:-$property}
+
+	if [[ $module == bar && ${property//[A-Za-z]/} =~ ^\|+$ && ! $colorscheme ]]; then
+		for property in ${property//|/ }; do
+			$module
+		done
+	else
+		while read -r property color; do
+			$module
+		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
+			awk -F '[= ]' 'BEGIN { c = "'$color'" }
+				/^('${property//\*/.*}')[= ]/ { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
+	fi
+}
+
 if [[ $edit_colorscheme ]]; then
 	colorscheme_name=${edit_colorscheme##*/}
 
@@ -881,13 +910,18 @@ if [[ $edit_colorscheme ]]; then
 		new_color=${new_color#\#}
 		edit_pattern=.*
 	else
-		[[ $color ]] || get_color $(parse_module)
+		#[[ $color ]] || get_color $(parse_module)
 
-		if [[ ! ${property//[A-Za-z_]/} ]]; then
-			grep -h "^$property" $edit_colorscheme &> /dev/null ||
-				(echo "$property $color" >> $edit_colorscheme
-				[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-				exit)
+		if [[ ${property//[A-Za-z_]/} ]]; then
+			multiple_properties
+			[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+			exit
+		else
+			[[ $color ]] || get_color $(parse_module)
+			#grep -h "^$property" $edit_colorscheme &> /dev/null ||
+			#	(echo "$property $color" >> $edit_colorscheme
+			#	[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
+			#	exit)
 		fi
 	fi
 
@@ -933,23 +967,6 @@ if [[ $backup ]]; then
 	echo "colorscheme ${final_filename%.*}.ocs changed on $(date +"%Y-%m-%d") at $(date +"%H:%M").." >> $colorschemes/.change_log
 fi
 
-multiple_properties() {
-	local color=$color
-	property=${1:-$property}
-
-	if [[ $module == bar && ${property//[A-Za-z]/} =~ ^\|+$ && ! $colorscheme ]]; then
-		for property in ${property//|/ }; do
-			$module
-		done
-	else
-		while read -r property color; do
-			$module
-		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
-			awk -F '[= ]' 'BEGIN { c = "'$color'" }
-				/^('${property//\*/.*}')[= ]/ { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
-	fi
-}
-
 if [[ ! $backup && ${replace_all_modules[*]:-${module:-${all_modules[*]}}} =~ ncmpcpp
 	&& (! $colorscheme || ($colorscheme && ($inherited_module || $inherited_property))) ]]; then
 
@@ -989,20 +1006,25 @@ if [[ $replace_color ]]; then
 		eval "reload_$replace_module=true"
 		config_file=${replace_module}_conf
 
-		if [[ $replace_module =~ fff|ncmpcpp ]]; then
-			if [[ $new_color_index ]]; then
-				if [[ $replace_module == fff ]]; then
-					pattern='/FFF_COL[1-4]/'
-				else
-					pattern='/delay\|columns\|interval\|change/!'
-					all_indexes=$(awk 'BEGIN { c = "'$color'" } \
-						$2 == c { ai = ai "\\\\|" NR } END { print substr(ai, 2) }' $all_colors)
+		if [[ $replace_module =~ vifm|ncmpcpp ]]; then
+			all_indexes=$(awk '\
+				BEGIN { c = "'$color'" }
+				$2 == c {
+					i = ("'$replace_module'" == "vifm") ? NR - 1 : NR
+					ai = ai "\\\\|" i
+				} END { print substr(ai, 4) }' $all_colors)
 
-					sed -i "/^foreground/ s/$color/$new_color/" $cava_conf
-				fi
+			if [[ $replace_module == vifm ]]; then
+				new_index=$((new_color_index - 1))
+				pattern='/^\s*let \$\w*[cg]/'
+			else
+				new_index=$new_color_index
+				pattern='/delay\|columns\|interval\|change/!'
 
-				sed -i "$pattern s/\<\($all_indexes\)\>/$new_color_index/g" ${!config_file}
+				sed -i "/^foreground/ s/${color: -6}/$new_color/" $cava_conf
 			fi
+
+			sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}
 		else
 			if [[ $replace_module != term ]]; then
 				if [[ $replace_module == bash ]]; then
