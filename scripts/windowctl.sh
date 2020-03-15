@@ -282,9 +282,19 @@ function calculate_size() {
 
 sort_windows() {
 	list_all_windows | awk \
-		'{ i = '$index' + 1; d = (i == 2); sc = $i; \
-		if($1 == "'$id'") { if("'$1'" ~ /[BRbr]/) sc += '${properties[index + 2]}' } \
-		else { if("'$1'" ~ /[LTlt]/) sc = $i + $(i + 2) }; print sc, $0 }' | sort $reverse -nk 1
+		'{
+			i = '$index' + 1
+			d = (i == 2)
+			sc = $i
+
+			if($1 == "'$id'") {
+				if("'$1'" ~ /[BRbr]/) sc += '${properties[index + 2]}'
+			} else {
+				if("'$1'" ~ /[LTlt]/) sc = $i + $(i + 2)
+			}
+
+			print sc, $0
+		}' | sort $reverse -nk 1
 }
 
 tile() {
@@ -338,7 +348,9 @@ tile() {
 				cwe = cws + '${properties[start_index + 2]}'
 			} {
 				ws = $si; we = ws + $(si + 2)
-				if ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) print $0
+				if ((ws >= cws && ws <= cwe) ||
+					(we >= cws && we <= cwe) ||
+					(ws <= cws && we >= cwe)) print $0
 			}' | sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)) | awk '
 				function assign(w_index) {
 					bb = ($1 ~ "0x") ? 0 : $NF
@@ -388,9 +400,7 @@ tile() {
 }
 
 tile_adjucent() {
-	if [[ ! $orientation ]]; then
-		((index == 1)) && orientation=h || orientation=v
-	fi
+	((index == 1)) && orientation=h || orientation=v
 
 	old_properties=( ${original_properties[*]} )
 
@@ -399,6 +409,8 @@ tile_adjucent() {
 		old_property=${old_properties[property_index]}
 		((new_property != old_property)) && break
 	done
+
+	((property_index > 2)) && ra=-r
 
 	option=tile
 	set_base_values $orientation
@@ -421,9 +433,7 @@ tile_adjucent() {
 				cwe = '${properties[start_index]}' + '${properties[start_index + 2]}'
 				
 				c = (r) ? cwep + o : cwsp - o
-			}
-
-				{
+			} {
 				if($2 ~ "0x" && $2 != "'$original_id'") {
 					if($2 == id) exit
 					else {
@@ -431,12 +441,16 @@ tile_adjucent() {
 						we = ws + $(si + 2)
 						cp = (r) ? $i : $i + $(i + 2)
 
-						if((cp == c) && ((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe))) print
+						#system("~/.orw/scripts/notify.sh " c)
+
+						if((cp == c) &&
+							((ws >= cws && ws <= cwe) ||
+							(we >= cws && we <= cwe) ||
+							(ws <= cws && we >= cwe))) print
 					}
 				}
 			}'
 	}
-
 
 	add_adjucent_window() {
 		properties=( $1 )
@@ -461,7 +475,6 @@ tile_adjucent() {
 		done <<< $(get_adjucent "$1" $2)
 	}
 
-
 	find_neighbour "${old_properties[*]}" $ra
 	for window in "${adjucent_windows[@]}"; do
 		generate_printable_properties "$window"
@@ -470,16 +483,18 @@ tile_adjucent() {
 }
 
 add_offset() {
-	 eval $(awk '/^'$1'=/ {
-		e = 1
-		cv = gensub("[^0-9]*", "", 1)
-		sub("[0-9]+", ("'${!1}'" ~ "[+-]") ? cv '${!1}' : '${!1}')
-	} { o = o "\n" $0 }
-		END {
-			if(!e) o = o "\n'$1=${!1}'"
-			print o | "xargs"
-			print substr(o, 2)
-		}' $offsets_file | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
+	if [[ "$arguments" =~ -o ]]; then
+		 eval $(awk '/^'$1'=/ {
+			e = 1
+			cv = gensub("[^0-9]*", "", 1)
+			sub("[0-9]+", ("'${!1}'" ~ "[+-]") ? cv '${!1}' : '${!1}')
+		} { o = o "\n" $0 }
+			END {
+				if(!e) o = o "\n'$1=${!1}'"
+				print o | "xargs"
+				print substr(o, 2)
+			}' $offsets_file | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
+	fi
 }
 
 get_optarg() {
@@ -594,21 +609,37 @@ while ((argument_index <= $#)); do
 					# so we can move/resize it toward that window.
 
 					max=$(sort_windows $argument | \
-						awk '{ if($2 == "'$id'") exit; else { i = '$index' + 2; si = '$start_index' + 2; \
-						cws = '${properties[start_index]}'; cwe = cws + '${properties[start_index + 2]}'; \
-						ws = $si; we = ws + $(si + 2); wm = $i; b = ($2 ~ /^0x/) ? '$border' : $7; \
-						if((ws >= cws && ws <= cwe) || (we >= cws && we <= cwe) || (ws <= cws && we >= cwe)) \
-						{ max = ("'$argument'" ~ /[BR]/) ? wm : wm + $(i + 2) + b; print max } } }' | tail -1)
+						awk '{
+								if($2 == "'$id'") exit
+								else {
+									i = '$index' + 2
+									si = '$start_index' + 2
+									cws = '${properties[start_index]}'
+									cwe = cws + '${properties[start_index + 2]}'
+									ws = $si; we = ws + $(si + 2)
+									wm = $i; b = ($2 ~ /^0x/) ? '$border' : $7
+
+									if((ws >= cws && ws <= cwe) ||
+										(we >= cws && we <= cwe) ||
+										(ws <= cws && we >= cwe)) {
+											max = ("'$argument'" ~ /[BR]/) ? wm : wm + $(i + 2) + b
+											print max
+										}
+									}
+								}' | tail -1)
+
+					[[ $argument =~ [LR] ]] && offset_orientation=x_offset || offset_orientation=y_offset
+					offset=${margin:-${!offset_orientation}}
 
 					case $argument in
-						L) [[ $option == resize ]] && resize_to_edge 1 $x_offset || 
-							properties[1]=$((${max:-$start} + x_offset));;
-						T) [[ $option == resize ]] && resize_to_edge 2 $y_offset || 
-							properties[2]=$((${max:-$start} + y_offset));;
-						R) [[ $option == resize ]] && resize_to_edge 1 $x_offset ||
-							properties[1]=$((${max:-$end} - x_offset - ${properties[3]} - border_x));;
-						B) [[ $option == resize ]] && resize_to_edge 2 $y_offset ||
-							properties[2]=$((${max:-$end} - y_offset - ${properties[4]} - border_y));;
+						L) [[ $option == resize ]] && resize_to_edge 1 $offset || 
+							properties[1]=$((${max:-$start} + offset));;
+						T) [[ $option == resize ]] && resize_to_edge 2 $offset || 
+							properties[2]=$((${max:-$start} + offset));;
+						R) [[ $option == resize ]] && resize_to_edge 1 $offset ||
+							properties[1]=$((${max:-$end} - offset - ${properties[3]} - border_x));;
+						B) [[ $option == resize ]] && resize_to_edge 2 $offset ||
+							properties[2]=$((${max:-$end} - offset - ${properties[4]} - border_y));;
 						*)
 							set_orientation_properties $optarg
 
