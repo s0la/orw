@@ -109,9 +109,13 @@ get_controls() {
 	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
 	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 
-	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
-	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
-	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
+	#controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
+	#controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
+	#controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
+
+	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}"
+	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}"
+	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}"
 
 	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
 }
