@@ -296,25 +296,30 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				local arg_directory="$(get_directory_path "${arg%/*}")/"
 
 				((depth)) && directory_depth=$((depth - 1))
-
-				read belong_to_path wallpaper_directory <<< "$(awk '{
-					dd = "'$directory_depth'"
-					d = "'"$directory"'"; dp = d
-					gsub("'\''", "'\''?", dp)
-					sub("\\{", "(", dp)
-					sub("\\}", ")", dp)
-					gsub(",", "|", dp)
-					btp = ($0 ~ dp "/([^/]*/){0," dd "}$")
-					print btp, btp ? gensub("/(\\{.*|\\w*$)", "", 1, d) : "'\''" $0 "'\''" 
-				}' <<< "$arg_directory")"
-
-				shopt -s extglob
-
 				wallpaper_index=$((${display_number:-1} + $1 - 1))
-				wallpaper="${arg_directory/${wallpaper_directory//\'/}?(\/)}${arg##*/}"
-				wallpaper_directories[wallpaper_index]="${wallpaper_directory%/}"
-				wallpapers[wallpaper_index]="$wallpaper"
 
+				if (($1 <= arg_count)); then
+					read belong_to_path wallpaper_directory <<< "$(awk '{
+						dd = "'$directory_depth'"
+						d = "'"$directory"'"; dp = d
+						gsub("'\''", "'\''?", dp)
+						sub("\\{", "(", dp)
+						sub("\\}", ")", dp)
+						gsub(",", "|", dp)
+						btp = ($0 ~ dp "/([^/]*/){0," dd "}$")
+						print btp, btp ? gensub("/(\\{.*|\\w*$)", "", 1, d) : "'\''" $0 "'\''" 
+					}' <<< "$arg_directory")"
+
+					shopt -s extglob
+
+					wallpaper="${arg_directory/${wallpaper_directory//\'/}?(\/)}${arg##*/}"
+					wallpapers[wallpaper_index]="$wallpaper"
+				fi
+
+				wallpaper_directories[wallpaper_index]="${wallpaper_directory%/}"
+
+				#echo "${wallpaper_directories[wallpaper_index]}"
+				#echo "${wallpapers[wallpaper_index]}"
 				((belong_to_path)) && write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
 			}
 
@@ -348,31 +353,29 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 			root="${directory%/*}"
 			tail="$(make_tail "$directory")"
-			#[[ $tail =~ , ]] && tail="{$tail}"
 			directory="'$root'/$tail"
 
 			#new_depth=$(eval find $directory -type d | awk '\
-			eval find $directory -type d | awk '\
-				function get_depth(dir) {
-					return gensub("[^/]*/?", "/", "g", dir ? dir : $0)
-				}
+			#	function get_depth(dir) {
+			#		return gensub("[^/]*/?", "/", "g", dir ? dir : $0)
+			#	}
 
-				BEGIN {
-					d = get_depth("'"$directory"'")
-					dd = length(d)
-				} {
-					cp = get_depth()
-					cd = length(cp) - dd
-					if(cd > md) md = cd
-				} END {
-					if("'"$tail"'" ~ "\\{.*\\}") md++
-					if(md) print ++md
-					#print dd, cp, cd
-				}'
+			#	BEGIN {
+			#		d = get_depth("'"$directory"'")
+			#		dd = length(d)
+			#	} {
+			#		cp = get_depth()
+			#		cd = length(cp) - dd
+			#		if(cd > md) md = cd
+			#	} END {
+			#		if("'"$tail"'" ~ "\\{.*\\}") md++
+			#		if(md) print ++md
+			#		#print dd, cp, cd
+			#	}'
 
 			#((new_depth)) && replace depth $new_depth
-			replace depth 0
-			replace directory;;
+			replace directory
+			replace depth 0;;
 		M)
 			modify=$OPTARG
 			modify_directories=$(get_directory_path "${!OPTIND}")
