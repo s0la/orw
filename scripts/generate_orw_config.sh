@@ -39,18 +39,18 @@ display() {
 		((primary_width > primary_height)) && orientation=horizontal || orientation=vertical
 	fi
 
-	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}\n\n"
+	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}\n"
 }
 
 wallpapers() {
 	display_count=$(xrandr -q | grep -w connected | wc -l)
-	displays=$(eval "echo \'{1..$display_count}\'")
+	displays=$(eval "echo \\\"{1..$display_count}\\\"")
 
 	for desktop in $(wmctrl -d | awk '{print $1}'); do
 		desktops+="desktop_$desktop $displays\n"
 	done
 
-	echo "#wallpapers\ndepth 1\ndirectory \n${desktops%\\n}"
+	echo "#wallpapers\ndepth 0\ndirectory \n${desktops%\\n}"
 }
 
 if [[ -f $conf ]]; then
@@ -58,7 +58,7 @@ if [[ -f $conf ]]; then
 		line_number=$(sed -n "/^#$arg/=" $conf)
 		sed -i "/^#$arg/,/^$/d" $conf
 
-		((line_number > $(wc -l < $conf))) && echo -e $($arg) >> $conf || sed -i "${line_number}i$($arg)\n" $conf
+		((line_number > $(wc -l < $conf))) && echo -e $($arg) >> $conf || sed -i "${line_number}i$($arg)" $conf
 	done
 else
 	echo -e "$(general)$(display)$(wallpapers)" > $conf
