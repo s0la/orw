@@ -49,18 +49,22 @@ function parse_directory() {
 }
 
 make_tail() {
-	local tails="${1##*/}"
+	#local tails="${1##*/}"
+	#local tails="${1##*/}"
+	local tails="${1#${1%/[[:alnum:]\{]*}/}"
 	local tail_directories tail
 
 	[[ $tails =~ ^\{.*\}$ ]] && tails="${tails:1: -1}"
 	IFS=, read -a tail_directories <<< "$tails"
 
 	for tail_directory in "${tail_directories[@]}"; do
+		tail_directory="${tail_directory%/}"
 		[[ $tail_directory =~ ^\' ]] || tail_directory="'$tail_directory'"
-		[[ $tail_directory =~ \'?${tail_directories[-1]}\'? ]] || tail_directory+=,
+		[[ $tail_directory =~ \'?${tail_directories[-1]%/}\'? ]] || tail_directory+=,
 		tail+="$tail_directory"
 	done
 
+	((${#tail_directories[*]} > 1)) && tail="{$tail}"
 	echo "$tail"
 }
 
@@ -69,14 +73,13 @@ function read_wallpapers() {
 }
 
 function write_wallpapers() {
-	eval [[ -f "${directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
+	#eval [[ -f "${directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
+	eval [[ -f "${wallpaper_directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
 		awk -i inplace 'BEGIN {
 				wi = '$2'
 				dc = '$display_count'
 				w = " \"'"$1"'\""
-			}
-
-			{
+			} {
 				if(/^desktop_'${all_desktops:-$current_desktop}'/) {
 					$0 = (wi > dc) ? $0 w : gensub(" [^\"]*(\"[^\"]*\")*", w, wi)
 				}
@@ -264,28 +267,55 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			display_number=$OPTARG;;
 		w) current_desktop=$OPTARG;;
 		s)
+			#add_wallpaper() {
+				#local arg="${arg//\\ / }"
+				#eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$depth
+
+				#for level in $(seq 1 $path_level); do
+				#	local wallpaper_section_expression+='/*'
+				#done
+
+				#wallpaper_index=$((${display_number:-1} + $1 - 1))
+
+				#if (($1 <= arg_count)); then
+				#	[[ $arg =~ / ]] && local directory_section="${arg%$wallpaper_section_expression}"
+				#	wallpaper_directory="'$(get_directory_path "$directory_section")'"
+				#	wallpaper="${arg#$directory_section/}"
+
+				#	wallpapers[wallpaper_index]="$wallpaper"
+				#fi
+
+				#directories[wallpaper_index]="$wallpaper_directory"
+
+				#[[ "$directory" =~ "${wallpaper_directory:-$directory}" || $wallpaper =~ ^# ]] &&
+				#	write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
+			#}
+
 			add_wallpaper() {
 				local arg="${arg//\\ / }"
-				eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$depth
+				local arg_directory="$(get_directory_path "${arg%/*}")/"
 
-				for level in $(seq 1 $path_level); do
-					local wallpaper_section_expression+='/*'
-				done
+				((depth)) && directory_depth=$((depth - 1))
+
+				read belong_to_path wallpaper_directory <<< "$(awk '{
+					dd = "'$directory_depth'"
+					d = "'"$directory"'"; dp = d
+					gsub("'\''", "'\''?", dp)
+					sub("\\{", "(", dp)
+					sub("\\}", ")", dp)
+					gsub(",", "|", dp)
+					btp = ($0 ~ dp "/([^/]*/){0," dd "}$")
+					print btp, btp ? gensub("/(\\{.*|\\w*$)", "", 1, d) : "'\''" $0 "'\''" 
+				}' <<< "$arg_directory")"
+
+				shopt -s extglob
 
 				wallpaper_index=$((${display_number:-1} + $1 - 1))
+				wallpaper="${arg_directory/${wallpaper_directory//\'/}?(\/)}${arg##*/}"
+				wallpaper_directories[wallpaper_index]="${wallpaper_directory%/}"
+				wallpapers[wallpaper_index]="$wallpaper"
 
-				if (($1 <= arg_count)); then
-					[[ $arg =~ / ]] && local directory_section="${arg%$wallpaper_section_expression}"
-					wallpaper_directory="'$(get_directory_path "$directory_section")'"
-					wallpaper="${arg#$directory_section/}"
-
-					wallpapers[wallpaper_index]="$wallpaper"
-				fi
-
-				directories[wallpaper_index]="$wallpaper_directory"
-
-				[[ "$directory" =~ "${wallpaper_directory:-$directory}" || $wallpaper =~ ^# ]] &&
-					write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
+				((belong_to_path)) && write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
 			}
 
 			initial_index=$OPTIND
@@ -297,7 +327,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 			((arg_count--))
 
-			if ((! display_number && ! arg_count)); then
+			if ((!display_number && !arg_count)); then
 				arg=${!initial_index}
 
 				for display in $(seq 0 $((display_count - 1))); do
@@ -318,10 +348,11 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 			root="${directory%/*}"
 			tail="$(make_tail "$directory")"
-			[[ $tail =~ , ]] && tail="{$tail}"
+			#[[ $tail =~ , ]] && tail="{$tail}"
 			directory="'$root'/$tail"
 
-			new_depth=$(eval find $directory -type d | awk '\
+			#new_depth=$(eval find $directory -type d | awk '\
+			eval find $directory -type d | awk '\
 				function get_depth(dir) {
 					return gensub("[^/]*/?", "/", "g", dir ? dir : $0)
 				}
@@ -336,13 +367,46 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				} END {
 					if("'"$tail"'" ~ "\\{.*\\}") md++
 					if(md) print ++md
-				}')
+					#print dd, cp, cd
+				}'
 
-			((new_depth)) && replace depth new_depth
+			#((new_depth)) && replace depth $new_depth
+			replace depth 0
 			replace directory;;
 		M)
 			modify=$OPTARG
-			tail=$(make_tail "${!OPTIND}") && shift
+			modify_directories=$(get_directory_path "${!OPTIND}")
+			modify_tail=$(make_tail "$modify_directories") && shift
+
+			common_root="${modify_directories%/*}"
+
+			until [[ "$directory" =~ $common_root ]]; do
+				common_root="${common_root%/*}"
+			done
+
+			shopt -s extglob
+			pattern="$common_root?(\')\/"
+			directory="${directory/$common_root/}"
+			modify_directories="${modify_directories/$common_root/}"
+			directories="'$common_root'/{$directory,'${modify_directories%/[[:alnum:]\{]*}'/$modify_tail}"
+			#directories="'$common_root'/{${directory/$common_root?(\')\//},${modify_directories/$common_root?(\')\//}}"
+
+			[[ $modify == remove ]] && remove='| uniq -u'
+
+			tile="$(eval ls -d "$directories" "$remove" | awk '{
+					cd = gensub("'"$common_root"'/+(.*)", "'\''\\1'\''", 1)
+					if(ad !~ cd) ad = (NR > 1) ? ad "," cd : cd
+				} END { 
+					if(ad ~ ",") { ps = "{"; pe = "}" }
+					print ps ad pe
+				}')"
+
+			#~/.orw/scripts/notify.sh "$directories"
+			#~/.orw/scripts/notify.sh "'$common_root'/$tile"
+			replace directory "'$common_root'/$tile"
+			#echo -e "'$common_root'/$tile\n"
+			#eval ls -d "'$common_root'/$tile"
+			exit
 
 			awk -i inplace '/^directory/ {
 				ct = gensub(".*/{?([^}]*).*", "\\1", 1)
@@ -708,8 +772,15 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				continue
 			done;;
 		v)
-			eval sxiv -t "$directory" &
-			exit;;
+			if((depth)); then
+				if ((depth > 1)); then
+					((depth)) && maxdepth="-maxdepth $depth"
+					directories="$(eval find "$directory" "$maxdepth" -type d | \
+						awk '{ ad = ad " " "'\''" $0 "'\''" } END { print ad }')"
+				fi
+			fi
+
+			eval sxiv -t "${directories:-$directory}" &;;
 		U)
 			base_url='https://api.unsplash.com'
 			client_id='?client_id=33e9e4c0f8d42b5542446f1c8c291480cb91231dbadc5ce285f285bf76975752'
@@ -1154,11 +1225,20 @@ if [[ ! $wallpapers ]]; then
 		/^primary/ { p = gensub("[^0-9]*", "", 1) } \
 		/^desktop_'${current_desktop}'/ { print $(p * 2) }' $config)"
 
+	root="${directory%\{*}"
+	((depth)) && maxdepth="-maxdepth $depth"
+
 	while read -r wallpaper; do
 		[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
 		all_wallpapers+=("$wallpaper")
-	done <<< $(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
-		'{ w = ""; r = '$((depth - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
+	done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+			awk '{ sub("'"${root//\'}"'", ""); print }' | sort)
+
+	#done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort)
+	#eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | awk '{ sub("'"${root//\'}"'", ""); print }'
+
+	#done <<< $(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
+	#	'{ w = ""; r = '$((depth - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
 
 	wallpaper_count=${#all_wallpapers[*]}
 
@@ -1182,7 +1262,7 @@ for wallpaper_index in "${!wallpapers[@]}"; do
 	if [[ ${wallpaper//\"/} =~ ^# ]]; then
 		((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
 	else
-		wallpaper_path="${directories[wallpaper_index]:-${directory%\{*}}/'$wallpaper'"
+		wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
 		set_aspect "$wallpaper_path"
 
 		wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
