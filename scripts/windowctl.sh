@@ -300,8 +300,8 @@ sort_windows() {
 tile() {
 	local window_count
 
-	min_point=$offset
 	max_point=$original_max_point
+	min_point=$((original_min_point + offset))
 
 	while read wid w_min w_max; do
 		if [[ $id != $wid ]]; then
