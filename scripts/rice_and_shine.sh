@@ -909,25 +909,18 @@ if [[ $edit_colorscheme ]]; then
 		current_color=${color#\#}
 		new_color=${new_color#\#}
 		edit_pattern=.*
-	else
-		#[[ $color ]] || get_color $(parse_module)
 
+		awk -i inplace '/^('${edit_pattern:-${property//\*/\.\*}}') / {
+			sub("'${current_color:-.*}'", "'${new_color:-$color}'", $NF)
+		} { print }' $edit_colorscheme
+	else
 		if [[ ${property//[A-Za-z_]/} ]]; then
 			multiple_properties
-			[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-			exit
 		else
 			[[ $color ]] || get_color $(parse_module)
-			#grep -h "^$property" $edit_colorscheme &> /dev/null ||
-			#	(echo "$property $color" >> $edit_colorscheme
-			#	[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-			#	exit)
+			bar
 		fi
 	fi
-
-	awk -i inplace '/^('${edit_pattern:-${property//\*/\.\*}}') / {
-		sub("'${current_color:-.*}'", "'${new_color:-$color}'", $NF)
-	} { print }' $edit_colorscheme
 
 	[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
 	exit
@@ -1026,7 +1019,40 @@ if [[ $replace_color ]]; then
 
 			sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}
 		else
-			if [[ $replace_module != term ]]; then
+			if [[ $replace_module == term ]]; then
+				[[ $term_transparency && ${#color} -lt 8 ]] && color="#$term_transparency${color#\#}"
+
+				awk --non-decimal-data -i inplace '
+					/^background/ {
+						r = "'${color: -6:2}'"
+						g = "'${color: -4:2}'"
+						b = "'${color: -2:2}'"
+
+						nr = "'${new_color: -6:2}'"
+						ng = "'${new_color: -4:2}'"
+						nb = "'${new_color: -2:2}'"
+
+						if("'$transparency'") {
+							t = "'${color:1:2}'"
+							a = sprintf("%.2f", sprintf("%.2d", "0x" t) / 255)
+
+							nt = "'${new_color:1:2}'"
+							na = sprintf("%.2f", sprintf("%.2d", "0x" nt) / 255)
+						}
+
+						rgb = sprintf("%.2d,%.2d,%.2d,", "0x" r, "0x" g, "0x" b)
+						nrgb = sprintf("%.2d,%.2d,%.2d,", "0x" nr, "0x" ng, "0x" nb)
+
+						#sub((t) ? "[0-9,.]+" : "[0-9,]+,", rgb a)
+						sub(rgb a, nrgb na)
+					}
+					/^foreground/ {
+						sub("'${color: -6}'", "'${new_color: -6}'")
+					} { print }' $term_conf
+			else
+				[[ $module == term && ${#color} -gt 7 ]] &&
+					color="#${color: -6}" term_transparency="${color:1:2}"
+
 				if [[ $replace_module == bash ]]; then
 					rgb_color=$($colorctl -c -s ';' -h $color)
 					new_rgb_color=$($colorctl -c -s ';' -h $new_color)
