@@ -220,13 +220,13 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="72;73;77;"
-	sc="60;65;69;"
+	fg="72;73;75;"
+	sc="67;68;70;"
 	ic="149;142;154;"
 	sec="129;98;92;"
 	gcc="162;141;159;"
-	gdc="204;173;143;"
-	vc="96;137;133;"
+	gdc="135;147;156;"
+	vc="135;147;156;"
 
 	((exit_code)) && sc=$sec || sc=$sc
 
@@ -296,7 +296,7 @@ PROMPT_COMMAND='PS1="$(generate_ps1)"'
 ras() {
 	~/.orw/scripts/rice_and_shine.sh $@
 
-	if [[ $@ =~ bash && ! $@ =~ "-r no" ]]; then
+	if [[ $@ =~ (bash|-R all) && ! $@ =~ "-r no" ]]; then
 		source ~/.bashrc
 	fi
 }

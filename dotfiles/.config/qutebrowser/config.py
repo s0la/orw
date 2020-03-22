@@ -1,9 +1,9 @@
-bg = '#1c1d21'
-fg = '#3a3b3f'
-sbg = '#1a1b1f'
-sfg = '#ada9a8'
-mfg = '#666660'
-sbbg = '#191a1e'
+bg = '#1d1e20'
+fg = '#2d3235'
+sbg = '#191a1c'
+sfg = '#999999'
+mfg = '#87939c'
+sbbg = '#1a1b1d'
 
 font_size = 8
 v_padding = 3
@@ -68,7 +68,7 @@ c.colors.downloads.bar.bg = sbbg
 c.colors.downloads.error.bg = 'red'
 c.colors.downloads.error.fg = fg
 c.colors.downloads.start.bg = bg
-c.colors.downloads.start.fg = sbg
+c.colors.downloads.start.fg = sfg
 c.colors.downloads.stop.bg = mfg
 c.colors.downloads.stop.fg = bg
 c.colors.downloads.system.bg = 'rgb'

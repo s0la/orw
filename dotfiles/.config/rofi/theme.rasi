@@ -1,25 +1,25 @@
 /* color definition */
 
 * {
-	bg: #1c1d21;
+	bg: #1d1e20;
 	fg: #37383c;
-	bc: #666660;
+	bc: #87939c;
 
-	ibg: #1c1d21;
-	ibc: #979392;
+	ibg: #1d1e20;
+	ibc: #212224;
 
-	abg: #88786b;
+	abg: #87939c;
 	afg: #d5d5d5;
 
 	sbg: #212226;
 	sfg: #979392;
 	sul: #373737;
 
-	lpc: #aaaaaa;
+	lpc: #979392;
 	dpc: #373737;
-	btc: #1c1d21;
-	sbtc: #1c1d21;
-	btbc: #1c1d21;
+	btc: #1d1e20;
+	sbtc: #1d1e20;
+	btbc: #1d1e20;
 
 	background-color: @bg;
 

@@ -4,7 +4,7 @@ let $efg = 94
 let $cbg = 76
 let $sfg = 3
 let $tfg = 0
-let $slbg = 94
+let $slbg = 105
 let $slfg = 76
 
 highlight clear

@@ -1,4 +1,5 @@
-Ppbg="%{B#bf9e95}"
-Ppfg="%{F#997b3b}"
 Wpfg="%{F#646567}"
-msbg="%{B#7f222325}"
+pbefg="%{F#9c7a74}"
+msbg="%{B#7a8d90}"
+msfg="%{F#38393b}"
+mlfg="%{F#7a8d90}"
