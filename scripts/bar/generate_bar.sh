@@ -14,7 +14,7 @@ main_font_offset=0
 bar_name='main_bar'
 
 bg="#002D2E30"
-fc="#7a8d90"
+fc="#87939c"
 bfc="#666660"
 bbg="#2e2e2e"
 bsbg="%{B#002D2E30}"
@@ -231,7 +231,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 						nr = NR
 						b = '${base:-0}'
 					} nr && NR > nr {
-						if($1 ~ "^(bg|.*c)$") c = $2
+						if($1 ~ "^(b?bg|.*c)$") c = $2
 						else {
 							l = length($1)
 							p = substr($1, l - 1, 1)
