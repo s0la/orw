@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>9</size>
+      <size>5</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -241,7 +241,7 @@
     </keybind>
     <keybind key="A-s">
       <action name="Execute">
-        <command>rofi -modi walls:~/.orw/scripts/rofi_scripts/wallpapers.sh -show walls -theme main</command>
+        <command>~/.orw/scripts/rofi_scripts/wallpaper_group.sh wallpapers</command>
       </action>
     </keybind>
     <keybind key="A-w">
@@ -945,7 +945,7 @@
   </menu>
   <applications>
     <application name="*">
-      <decor>no</decor>
+      <decor>yes</decor>
       <position force="yes">
         <x>center</x>
         <y>center</y>
@@ -957,8 +957,8 @@
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>930</x>
-        <y>635</y>
+        <x>1522</x>
+        <y>682</y>
       </position>
       <size>
         <width>60</width>
@@ -972,8 +972,8 @@
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>500</height>
-        <width>400</width>
+        <height>141</height>
+        <width>200</width>
       </size>
     </application>
 
@@ -993,8 +993,8 @@
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>439</x>
-        <y>323</y>
+        <x>744</x>
+        <y>64</y>
       </position>
     </application>
 
@@ -1019,11 +1019,11 @@
       <desktop>all</desktop>
       <position force="yes">
         <x>528</x>
-        <y>39</y>
+        <y>42</y>
       </position>
       <size>
         <width>864</width>
-        <height>416</height>
+        <height>467</height>
       </size>
     </application>
     <!--
