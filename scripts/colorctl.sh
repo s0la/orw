@@ -38,7 +38,7 @@ get_rgb() {
 }
 
 get_hex() {
-	for color in ${rgb_values[*]}; do
+	for color in $rgb; do
 		hex+=$(printf "%.2x" $color)
 		full_rgb+="$((color ${sign:-+} offset))${separator-,}"
 
@@ -65,6 +65,7 @@ while getopts :o:pdcs:S:r:h:P:Bb flag; do
 
 			[[ $balance ]] && balance_offset
 
+			rgb="${rgb_values[*]: -3}"
 			get_hex
 
 			[[ $brightness ]] && calculate_brightness_index
