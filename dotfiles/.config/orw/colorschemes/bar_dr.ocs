@@ -2,13 +2,13 @@
 bg #3d4245
 fc #87939c
 bfc #3d4245
-bbg #242527
-bsbg #242527
+bbg #272c2f
+bsbg #272c2f
 bsfg #313131
-pbg #242527
+pbg #272c2f
 pfg #999EA1
-sbg #242527
-sfg #4c4d4f
+sbg #272c2f
+sfg #3d4245
 Wpfg #646567
 pbefg #9c7a74
 msbg #87939c
@@ -18,3 +18,4 @@ Lsbg #353a3d
 Wsbg #3d4245
 Lsfg #43484b
 Lpfg #999EA1
+Wsfg #484d50
