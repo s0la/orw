@@ -165,7 +165,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola/Downloads"
+current=""
 torrent=""
 selection=""
 multiple_files=""
@@ -398,7 +398,7 @@ if [[ ${option% *} ]]; then
 						command='cp -r'
 					fi
 
-					coproc (eval $command "${files:-${regex:-'$file'}}" "$destination" &)
+					coproc (eval $command "${files:-${regex:-'$file'}}" "'$destination'" &)
 					un_set regex
 					pid=$((COPROC_PID + 1))
 					coproc (execute_on_finish "notify 'Operation finished.'" &)
