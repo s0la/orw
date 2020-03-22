@@ -55,7 +55,7 @@ monitor_memory_consumption() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=lp,si,mp
+last_running=si
 
 while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 	case $flag in
@@ -70,7 +70,9 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			#			sub("$", ",'$bar'", $(NF - 1))
 			#	} { print }' ~/.config/openbox/autostart.sh
 
-			sed -n "/^last_running/ { /\<$bar\>/! s/$/,$bar/p }" $0
+			[[ $last_running ]] && separator=,
+
+			sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
 			exit;;
 		c) check_interval=$OPTARG;;
 		b)
@@ -88,7 +90,7 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 					lr = "'$last_running'"
 				}
 
-				$NF ~ /^'${pattern//\*/\.\*}'/ {
+				$NF ~ /'${pattern//\*/\.\*}'/ {
 					b = $NF
 					if(! r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
 					ub = ub "," b
@@ -101,8 +103,10 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 						ab = lr nb
 					}
 
-					print ab, gensub(",", " ", "g", (nb) ? nb : ub)
+					print (ab) ? ab : "none", gensub(",", " ", "g", (nb) ? nb : ub)
 				}')
+
+			[[ $last_running == none ]] && unset last_running
 
 			bars=( $bar_array )
 			bar_count=${#bars[*]}
@@ -163,7 +167,6 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 								fo = (length(naa[1])) ? naa[ai] : cv
 								so = (length(a) > 1) ? av : cv
 								nv = (as == "+") ? fo + so : fo - so
-								system("~/.orw/scripts/notify.sh " nv)
 
 								replace_value()
 							}
