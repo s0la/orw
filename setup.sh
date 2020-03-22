@@ -77,12 +77,12 @@ function deps() {
 
 	echo 'installing dependencies..'
 
-	common_apps=( cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi )
+	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then
 		sudo apt update &> /dev/null
-		sudo apt install -y ${common_apps[*]} build-essential ninja-build automake autoconf pkg-config python3-pip xinit gettext \
+		sudo apt install -y ${common_deps[*]} build-essential ninja-build automake autoconf pkg-config python3-pip xinit gettext \
 			libnotify-dev libreadline-dev libcurl4-gnutls-dev libxft-dev libx11-xcb-dev libxcb-randr0-dev libxcb-xinerama0-dev \
 			libtool{,-bin} libfftw3-dev libasound2-dev libncursesw5-dev libpulse-dev \
 			libxml2-utils curl thunar gawk &> /dev/null ||
@@ -93,12 +93,7 @@ function deps() {
 
 		#dunst dependencies
 		sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
-		
-		##Thunar 1.6
-		#wget http://ftp.br.debian.org/debian/pool/main/t/thunar/thunar_1.6.11-1_amd64.deb -O ~/Downloads/thunar.deb
-		#sudo dpkg -i ~/Downloads/thunar.deb
-		#rm ~/Downloads/thunar.deb
-		
+
 		#cleaning
 		echo 'cleaning..'
 		sudo apt clean
@@ -122,18 +117,11 @@ function deps() {
 		sudo pacman --noconfirm -Syy archlinux-keyring &> /dev/null
 		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> /dev/null
 
-		confirm '' 'y' 'y' | sudo pacman -S ${common_apps[*]} base-devel llvm-libs ninja python-pip bash-completion \
+		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
 			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant &> /dev/null \
 			libconfig libev xcb-util-image libxml2 glibc icu ||
 			handle_failure "$failure_message"
-
-		##Thunar 1.6
-		#(wget https://aur.archlinux.org/cgit/aur.git/snapshot/thunar-gtk2.tar.gz -O ~/Downloads/thunar.tar.xz
-		#tar xfC ~/Downloads/thunar.tar.xz ~/Downloads
-		#cd ~/Downloads/thunar-gtk2
-		#makepkg --noconfirm -sci) &> /dev/null || handle_failure 'Failed to install Thunar.'
-		#rm -rf ~/Downloads/thunar-gtk2
 
 		echo 'cleaning..'
 		confirm 'y' 'y' | sudo pacman -Scc &> /dev/null || handle_failure 'Pacman error.'
