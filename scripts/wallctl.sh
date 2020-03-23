@@ -775,15 +775,16 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				continue
 			done;;
 		v)
-			if((depth)); then
-				if ((depth > 1)); then
+			#if((depth)); then
+				if ((depth != 1)); then
 					((depth)) && maxdepth="-maxdepth $depth"
 					directories="$(eval find "$directory" "$maxdepth" -type d | \
 						awk '{ ad = ad " " "'\''" $0 "'\''" } END { print ad }')"
 				fi
-			fi
+			#fi
 
-			eval sxiv -t "${directories:-$directory}" &;;
+			eval sxiv -t "${directories:-$directory}" &
+			exit;;
 		U)
 			base_url='https://api.unsplash.com'
 			client_id='?client_id=33e9e4c0f8d42b5542446f1c8c291480cb91231dbadc5ce285f285bf76975752'
