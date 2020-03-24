@@ -1,6 +1,6 @@
 #!/bin/bash
 
-root="/home/sola/Pictures/walls"
+root="/home/ablive/Pictures/wallpapers"
 selection=""
 category=""
 multi_categories=""
@@ -50,8 +50,10 @@ else
 					category=$multi_categories
 			fi
 
-			[[ $@ == set ]] && flag="-d" || flag="-M $@"
-			eval ~/.orw/scripts/wallctl.sh "$flag" "\"$root/${categories:-'$category'}\""
+			[[ $@ == set ]] && flag="-d" || flag="-M" modify="$@"
+			~/.orw/scripts/wallctl.sh $flag $modify "$root/${categories:-$category}"
+			#eval ~/.orw/scripts/wallctl.sh "$flag" "\"$root/${categories:-'$category'}\""
+			#eval echo ~/.orw/scripts/wallctl.sh "$flag" "\"$root/${categories:-'$category'}\"" > ~/log
 			unset category multi_categories selection
 			list_categories
 
