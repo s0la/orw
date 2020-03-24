@@ -5,12 +5,12 @@ while getopts :f:d: flag; do
 
 	case $flag in
 		f) fps=$OPTARG;;
-		d) display=$OPTARG;;
+		d) display=display_$OPTARG;;
 	esac
 done
 
 [[ ! -f ~/.config/orw/config ]] && ~/.orw/scripts/generate_orw_config.sh
-resolution=$(awk '/'${display-full}'/ {print $2 "x" $3}' ~/.config/orw/config)
+resolution=$(awk '/^'${display-full_resolution}' / { print $2 "x" $3 }' ~/.config/orw/config)
 
 shift $((arg_count * 2))
 [[ $@ ]] && filename="$@" || filename=$(date +"%Y-%m-%d-%H:%M")
