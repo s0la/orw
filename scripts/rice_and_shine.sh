@@ -344,8 +344,8 @@ function bar() {
 	local default_bar_configs="$bar_conf $bar_modules"
 
 	#if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
-	if [[ $(grep "^${property}" "${edit_colorscheme:-$default_bar_configs}") ]]; then
-		sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" "${edit_colorscheme:-$default_bar_configs}"
+	if [[ $(eval grep "^${property}" "${edit_colorscheme:-$default_bar_configs}") ]]; then
+		eval "sed -i '/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/' ${edit_colorscheme:-$default_bar_configs}"
 		#echo $property $color "${edit_colorscheme:-$default_bar_configs}"
 	else
 		if [[ $edit_colorscheme ]]; then
