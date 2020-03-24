@@ -262,12 +262,12 @@ nnoremap ad :adddirectory<cr>
 command! setwall wallctl set_wall %f:p &
 command! setwalldir wallctl set_wall_dir %f &
 command! addwalldir wallctl add_wall_dir %f &
-command! deletewalldir wallctl delete_wall_dir %f &
+command! removewalldir wallctl remove_wall_dir %f &
 
 nnoremap sw :setwall<cr>
 nnoremap swd :setwalldir<cr>
 nnoremap awd :addwalldir<cr>
-nnoremap dwd :deletewalldir<cr>
+nnoremap rwd :removewalldir<cr>
 
 " resizing
 nnoremap > :5wincmd><cr>
