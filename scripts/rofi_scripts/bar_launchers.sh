@@ -3,7 +3,7 @@
 move=''
 place=''
 toggle=''
-resize=''
+resize='on'
 current=''
 
 launchers=~/.orw/scripts/bar/launchers
@@ -108,6 +108,7 @@ else
 		elif [[ $@ =~ ( | ) ]]; then
 			if [[ $resize ]]; then
 				[[ $@ =~   ]] && sign=- || sign=+
+				value=${@#* }
 
 				resize_launchers
 
