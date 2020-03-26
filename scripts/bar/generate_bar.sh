@@ -94,7 +94,7 @@ get_volume() {
 }
 
 get_weather() {
-	echo -e "WEATHER $($path/system_info.sh Weather $separator ${weather_info-t,s} $label $city ${lines-false})"
+	echo -e "WEATHER $($path/system_info.sh Weather $separator ${weather_args-t,s} $label $location ${lines-false})"
 }
 
 get_hidden() {
@@ -374,8 +374,11 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			set_frame_color
 			modules+='$weather'
 
-            check_arg weather_info ${!OPTIND} && shift
-            check_arg city ${!OPTIND} && shift
+            check_arg weather_arg ${!OPTIND} && shift
+			[[ $weather_arg =~ ^[st,]+$ ]] && weather_args=$weather_arg || location=$weather_arg
+            [[ $weather_args ]] && check_arg location ${!OPTIND} && shift
+            #check_arg weather_info ${!OPTIND} && shift
+            #check_arg city ${!OPTIND} && shift
 
             run_function get_weather 1000;;
 		U)

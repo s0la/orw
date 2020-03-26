@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=23
+		old_mail_count=4
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -171,10 +171,18 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 		info="${3//,/ }"
-		(($# == 6)) && city=$5
+
+		if (($# > 4)); then
+			if [[ $4 == icon ]]; then
+				(($# > 5)) && location=$5
+			else
+				location=$4
+			fi
+		fi
+
 		[[ $info =~ s ]] && nr=6
 
-		read w $info <<< $(curl -s wttr.in/$city | awk 'NR > 2 && NR < '${nr-5}' \
+		read w $info <<< $(curl -s wttr.in/$location | awk 'NR > 2 && NR < '${nr-5}' \
 			{ w = ""; s = (NR == 5) ? " " : ""; for(f = NF - (NR - 3); f <= NF; f++) w = w s $f; print w }' | xargs)
 
 		case $w in
@@ -279,7 +287,7 @@ case $1 in
 			esac
 		done
 
-		read s $info <<< $(acpi | awk -F '[:, ]' '{'"$sub"' print toupper(substr($4, 1, 3)) '"$fields"'};1')
+		read s $info <<< $(acpi | awk -F '[:, ]' '{'"$sub"' print toupper(substr($4, 1, 3)) '"$fields"'}')
 
 		#case $s in
 		#	#CHA) icon=%{I-}%{I-};;
