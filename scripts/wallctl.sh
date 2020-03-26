@@ -265,7 +265,9 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 		n)
 			read_wallpapers
 			display_number=$OPTARG;;
-		w) current_desktop=$OPTARG;;
+		w)
+			desktop=true
+			current_desktop=$((OPTARG - 1));;
 		s)
 			#add_wallpaper() {
 				#local arg="${arg//\\ / }"
@@ -346,7 +348,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				done
 			fi
 
-			shift $arg_count;;
+			[[ $desktop ]] && exit ||
+				shift $arg_count;;
 		d)
 			directory="$(sed "s/\(^'\|\/\?['\/]$\|'\(\/\)\)/\2/g" <<< $OPTARG)"
 			directory="$(get_directory_path "${directory//\\ / }")"
