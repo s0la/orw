@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=4
+		old_mail_count=9
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -289,29 +289,9 @@ case $1 in
 
 		read s $info <<< $(acpi | awk -F '[:, ]' '{'"$sub"' print toupper(substr($4, 1, 3)) '"$fields"'}')
 
-		#case $s in
-		#	#CHA) icon=%{I-}%{I-};;
-		#	CHA) icon=%{I-b}%{I-};;
-		#	FUL) s=FULL icon=%{I-8}%{I-} out=100%;;
-		#	*)
-		#		case ${#p} in
-		#			2) icon=;;
-		#			4) icon=;;
-		#			*)
-		#				case $p in
-		#					[1-3]*) icon=;;
-		#					[4-6]*) icon=;;
-		#					*) icon=;;
-		#				esac
-		#		esac
-
-		#		label=BAT
-		#		icon=%{I-8}%{T5}$icon%{T-}%{I-};;
-		#esac
-
 		case $s in
 			CHA) icon=charging;;
-			FUL) s=FULL icon=charging_full out=100%;;
+			FUL) s=FULL label=BATT icon=charging_full out=100%;;
 			*)
 				case ${#p} in
 					2) icon=empty;;
@@ -325,8 +305,9 @@ case $1 in
 				esac
 
 				label=BAT
-				set_icon $icon
 		esac
+
+		set_icon Battery_$icon
 
 		[[ $s != FULL ]] && for i in $info; do
 			out+="${!i}\${padding}"
