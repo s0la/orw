@@ -1,16 +1,17 @@
 #!/bin/bash
 
-while getopts :b:d:l:f: flag; do
+colorctl=~/.orw/scripts/colorctl.sh
+all_colors=~/.config/orw/colorschemes/colors
+
+while getopts :b:d:l:f:c: flag; do
 	case $flag in
 		l) length=$OPTARG;;
 		f) filter=$OPTARG;;
 		d) hex_dark=$OPTARG;;
 		b) hex_bright=$OPTARG;;
+		c) colorscheme=${all_colors%/*}/$OPTARG.ocs;;
 	esac
 done
-
-colorctl=~/.orw/scripts/colorctl.sh
-all_colors=~/.config/orw/colorschemes/colors
 
 clean="$(tput sgr0)"
 dark=$($colorctl -cs ';' -h ${hex_dark-'#404040'})
@@ -36,6 +37,6 @@ colors="$(awk -Wposix '\
 		e = (cl % 2 > 0) ? " " : ""
 
 		printf "\033[48;2;%s38;2;%s2m%s %d %s %s %s%s\033[0m\n\n", \
-			rgb, (bi > 0.5) ? dr : br, p, NR, $1, $2, p, e }' $all_colors)"
+			rgb, (bi > 0.5) ? dr : br, p, NR, $1, $2, p, e }' ${colorscheme:-$all_colors})"
 
 echo -e "\n$colors\n"
