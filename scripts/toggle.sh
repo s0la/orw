@@ -135,8 +135,13 @@ tmux() {
 }
 
 titlebar() {
-    state=$(awk '/name=\"\*\"/ { nr = NR + 1 }; NR == nr { print (/no/) ? "yes" : "no" }' $openbox_conf)
-	sed -i "/name=\"\*\"/ { n; s/>\w\+</>${1:-$state}</ }" $openbox_conf
+	awk -i inplace '/name="\*"/ { nr = NR + 1 }
+		{
+			if(nr == NR) {
+				s = gensub(".*>(.*)<.*", "\\1", 1)
+				sub(s, s == "no" ? "yes" : "no")
+			}
+		} { print }' $openbox_conf
 }
 
 ncmpcpp() {
