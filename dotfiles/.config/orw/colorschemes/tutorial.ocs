@@ -45,12 +45,12 @@ fg #d0d0d0
 ifg #545557
 vfg #959595
 cfg #c0c0c0
-ffg #87939c
+ffg #81b6ba
 sfg #f3f3f3
 nbg #2d2e30
 nfg #48494b
 lbg #363739
-lfg #87939c
+lfg #C8935F
 syfg #c0c0c0
 cmfg #48494b
 slbg #3a3b3d
@@ -59,7 +59,7 @@ bcbg #b5bc6d
 bdbg #80666d
 nmbg #bcbcbc
 imbg #787872
-vmbg #a4745c
+vmbg #C8935F
 
 #vifm
 fg #b2adae
@@ -103,7 +103,7 @@ vc #87939c
 #tmux
 bg #323335
 fg #656c1d
-bc #1e1f21
+bc #393a3c
 mc #3a3a3a
 ibg #2a2b2f
 ifg #3d3e40
@@ -116,7 +116,7 @@ cfg #80666d
 #rofi
 bg #1d1e20
 fg #37383c
-bc #87939c
+bc #609599
 ibg #1d1e20
 ibc #212224
 abg #87939c
