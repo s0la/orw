@@ -269,30 +269,6 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			desktop=true
 			current_desktop=$((OPTARG - 1));;
 		s)
-			#add_wallpaper() {
-				#local arg="${arg//\\ / }"
-				#eval [[ '$(get_directory_path "${arg%/*}")' =~ $(parse_directory) ]] && local path_level=$depth
-
-				#for level in $(seq 1 $path_level); do
-				#	local wallpaper_section_expression+='/*'
-				#done
-
-				#wallpaper_index=$((${display_number:-1} + $1 - 1))
-
-				#if (($1 <= arg_count)); then
-				#	[[ $arg =~ / ]] && local directory_section="${arg%$wallpaper_section_expression}"
-				#	wallpaper_directory="'$(get_directory_path "$directory_section")'"
-				#	wallpaper="${arg#$directory_section/}"
-
-				#	wallpapers[wallpaper_index]="$wallpaper"
-				#fi
-
-				#directories[wallpaper_index]="$wallpaper_directory"
-
-				#[[ "$directory" =~ "${wallpaper_directory:-$directory}" || $wallpaper =~ ^# ]] &&
-				#	write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
-			#}
-
 			add_wallpaper() {
 				local arg="${arg//\\ / }"
 				local arg_directory="$(get_directory_path "${arg%/*}")/"
@@ -314,14 +290,13 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 					shopt -s extglob
 
-					wallpaper="${arg_directory/${wallpaper_directory//\'/}?(\/)}${arg##*/}"
+					[[ $arg =~ ^# ]] && wallpaper=$arg ||
+						wallpaper="${arg_directory/${wallpaper_directory//\'/}?(\/)}${arg##*/}"
 					wallpapers[wallpaper_index]="$wallpaper"
 				fi
 
 				wallpaper_directories[wallpaper_index]="${wallpaper_directory%/}"
 
-				#echo "${wallpaper_directories[wallpaper_index]}"
-				#echo "${wallpapers[wallpaper_index]}"
 				((belong_to_path)) && write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
 			}
 
