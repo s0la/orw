@@ -297,7 +297,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 				wallpaper_directories[wallpaper_index]="${wallpaper_directory%/}"
 
-				((belong_to_path)) && write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
+				[[ $belong_to_path > 0 || $wallpaper =~ ^# ]] &&
+					write_wallpapers "$wallpaper" $((${display_number:-1} + $1))
 			}
 
 			initial_index=$OPTIND
