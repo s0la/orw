@@ -35,9 +35,9 @@ left="~/.orw/scripts/vifm.sh"
 #middle="~/.orw/scripts/widgets.sh cover -k"
 
 #input
-icon="\\${Lsfg:-\\$sfg}%{I+5}%{I-}"
-name="input"
-left="~/.orw/scripts/widgets.sh toggle_input"
+#icon="\\${Lsfg:-\\$sfg}%{I+5}%{I-}"
+#name="input"
+#left="~/.orw/scripts/widgets.sh toggle_input"
 
 #ncmpcpp
 #icon="%{I+5}%{I-}"
@@ -57,15 +57,15 @@ left="~/.orw/scripts/widgets.sh toggle_input"
 #left="~/.orw/scripts/widgets.sh weather"
 #middle="~/.orw/scripts/widgets.sh weather -k"
 
-#change_wall
-icon="%{I+2}%{I-}"
-name="change_wall"
-left="/home/sola/.orw/scripts/wallctl.sh"
-middle="/home/sola/.orw/scripts/wallctl.sh -v"
-up="/home/sola/.orw/scripts/wallctl.sh -o prev"
-down="/home/sola/.orw/scripts/wallctl.sh -o next"
+#wallctl
+#icon="%{I+2}%{I-}"
+#name="wallctl"
+#left="~/.orw/scripts/wallctl.sh"
+#middle="~/.orw/scripts/wallctl.sh -v"
+#up="~/.orw/scripts/wallctl.sh -o prev"
+#down="~/.orw/scripts/wallctl.sh -o next"
 
 #lock_screen
 icon="%{I+3}%{I-}"
 name="lock_screen"
-left="/home/sola/.orw/scripts/lock_screen.sh"
+left="~/.orw/scripts/lock_screen.sh"
