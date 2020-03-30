@@ -520,7 +520,7 @@ calculate_width() {
 				offset=$center_offset ||
 				offset=$((center_offset + full_width)) offset_direction=-
 
-			bar_x=$(((display_width / 2) ${offset_direction-+} offset))
+			bar_x=$((x - real_x + ((display_width / 2) ${offset_direction-+} offset)))
 		else
 			[[ $align_center ]] &&
 				bar_x=$((x - real_x + (display_width - full_width) / 2))
