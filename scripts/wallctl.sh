@@ -362,7 +362,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 			common_root="${modify_directories%/*}"
 
-			until [[ "$directory" =~ $common_root ]]; do
+			until [[ "${directory//\'/}" =~ ${common_root//\'/} ]]; do
 				common_root="${common_root%/*}"
 			done
 
@@ -375,43 +375,23 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 
 			[[ $modify == remove ]] && remove='| uniq -u'
 
-			tile="$(eval ls -d "$directories" "$remove" | awk '{
+			read multi tile <<< "$(eval ls -d "$directories" "$remove" | awk '{
 					cd = gensub("'"$common_root"'/+(.*)", "'\''\\1'\''", 1)
 					if(ad !~ cd) ad = (NR > 1) ? ad "," cd : cd
 				} END { 
-					if(ad ~ ",") { ps = "{"; pe = "}" }
-					print ps ad pe
+					m = (ad ~ ",")
+					if(m) { ps = "{"; pe = "}" }
+					print m, ps ad pe
 				}')"
 
-			#~/.orw/scripts/notify.sh "$directories"
-			#~/.orw/scripts/notify.sh "'$common_root'/$tile"
-			replace directory "'$common_root'/$tile"
-			#echo -e "'$common_root'/$tile\n"
-			#eval ls -d "'$common_root'/$tile"
-			exit
+			if ((multi)); then
+				directory="'$common_root'/$tile"
+			else
+				directory="$common_root/${tile:1: -1}"
+				directory="'${directory%/*}'/'${directory##*/}'"
+			fi
 
-			awk -i inplace '/^directory/ {
-				ct = gensub(".*/{?([^}]*).*", "\\1", 1)
-
-				mt = "'"$tail"'"
-				a = ("'$modify'" == "add")
-				split(a ? mt : ct, ota, ",")
-				mp = gensub(",", "|", "g", a ? ct : mt)
-
-				for(ti in ota) {
-					t = ota[ti]
-					if(t !~ "^(" mp ")$") nt = nt "," t
-				}
-
-				if(a) {
-					at = "{" ct nt "}"
-				} else {
-					at = substr(nt, 2)
-					if(at && at ~ ",") at = "{" at "}"
-				}
-
-				$0 = gensub("{?" ct "}?", at, 1)
-			} { print }' $config
+			replace directory
 			exit;;
 		r)
 			read_wallpapers
