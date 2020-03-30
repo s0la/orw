@@ -5,7 +5,7 @@ notify=~/.orw/scripts/notify.sh
 services=~/.orw/dotfiles/services
 all_colors=~/.config/orw/colorschemes/colors
 
-function replace() {
+function set() {
 	sed -i "s#^$1.*#$1 ${2:-${!1}}#" $config
 
 	if [[ $1 == directory ]]; then
@@ -352,9 +352,9 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			#		#print dd, cp, cd
 			#	}'
 
-			#((new_depth)) && replace depth $new_depth
-			replace directory
-			replace depth 0;;
+			#((new_depth)) && set depth $new_depth
+			set directory
+			set depth 0;;
 		M)
 			modify=$OPTARG
 			modify_directories=$(get_directory_path "${!OPTIND}")
@@ -391,7 +391,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				directory="'${directory%/*}'/'${directory##*/}'"
 			fi
 
-			replace directory
+			set directory
 			exit;;
 		r)
 			read_wallpapers
@@ -403,7 +403,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			fi;;
 		D)
 			depth=$OPTARG
-			replace depth;;
+			set depth;;
 		a) all_desktops=*;;
 		A)
 			service=true
