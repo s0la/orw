@@ -7,9 +7,7 @@ else
 
 	case ${@%% *} in
 		run) simplescreenrecorder --start-hidden;;
-		start)
-			[[ $@ =~ " " ]] && filename="${@##* }" || filename="$(date +"%Y-%m-%d-%H:%M")"
-			~/.orw/scripts/record_screen.sh $filename;;
+		start) ~/.orw/scripts/record_screen.sh ${@#start};;
 		stop)
 			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
 			kill $pid;;
