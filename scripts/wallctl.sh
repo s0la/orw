@@ -73,7 +73,6 @@ function read_wallpapers() {
 }
 
 function write_wallpapers() {
-	#eval [[ -f "${directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
 	eval [[ -f "${wallpaper_directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
 		awk -i inplace 'BEGIN {
 				wi = '$2'
@@ -324,8 +323,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				done
 			fi
 
-			[[ $desktop ]] && exit ||
-				shift $arg_count;;
+			shift $arg_count;;
 		d)
 			directory="$(sed "s/\(^'\|\/\?['\/]$\|'\(\/\)\)/\2/g" <<< $OPTARG)"
 			directory="$(get_directory_path "${directory//\\ / }")"
@@ -1191,14 +1189,14 @@ if [[ ! $wallpapers || $display_number ]]; then
 		}
 		/^desktop_'${current_desktop}'/ { print $(d * 2) }' $config)"
 
-	root="${directory%\{*}"
+	root="${directory%/\{*}"
 	((depth)) && maxdepth="-maxdepth $depth"
 
 	while read -r wallpaper; do
 		[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
 		all_wallpapers+=("$wallpaper")
 	done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
-			awk '{ sub("'"${root//\'}"'", ""); print }' | sort)
+			awk '{ sub("'"${root//\'}"'/?", ""); print }' | sort)
 
 	wallpaper_count=${#all_wallpapers[*]}
 
@@ -1219,35 +1217,35 @@ if [[ ! $wallpapers || $display_number ]]; then
 			write_wallpapers "$wallpaper" $display
 			wallpapers+=( "$wallpaper" )
 		fi
-
-		#write_wallpapers "$wallpaper" ${display_number:-$display}
-
-		#wallpapers+=( "$wallpaper" )
 	done
 fi
 
-for wallpaper_index in "${!wallpapers[@]}"; do
-	wallpaper="${wallpapers[wallpaper_index]}"
+if [[ $desktop ]]; then
+	exit
+else
+	for wallpaper_index in "${!wallpapers[@]}"; do
+		wallpaper="${wallpapers[wallpaper_index]}"
 
-	if [[ ${wallpaper//\"/} =~ ^# ]]; then
-		((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
-	else
-		wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
-		set_aspect "$wallpaper_path"
+		if [[ ${wallpaper//\"/} =~ ^# ]]; then
+			((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
+		else
+			wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
+			set_aspect "$wallpaper_path"
 
-		wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
+			wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
+		fi
+	done
+
+	if [[ $colors ]]; then
+		primary_display=$(awk -F '_' '/^primary / {print $NF - 1}' $config)
+
+		wallpaper="${wallpapers[primary_display]//\"/}"
+		wallpaper_name="${wallpaper##*/}"
+		wallpaper_name="${wallpaper_name%\.*}"
+		colorscheme="wall_${wallpaper_name// /_}"
+
+		[[ -f "${config%/*}/colorschemes/$colorscheme.ocs" ]] && ~/.orw/scripts/rice_and_shine.sh -C $colorscheme &
 	fi
-done
 
-if [[ $colors ]]; then
-	primary_display=$(awk -F '_' '/^primary / {print $NF - 1}' $config)
-
-	wallpaper="${wallpapers[primary_display]//\"/}"
-	wallpaper_name="${wallpaper##*/}"
-	wallpaper_name="${wallpaper_name%\.*}"
-	colorscheme="wall_${wallpaper_name// /_}"
-
-	[[ -f "${config%/*}/colorschemes/$colorscheme.ocs" ]] && ~/.orw/scripts/rice_and_shine.sh -C $colorscheme &
+	eval "feh $wallpapers_to_set"
 fi
-
-eval "feh $wallpapers_to_set"
