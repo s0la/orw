@@ -5,6 +5,7 @@ config=~/.config/orw/config
 get_directory() {
 	read depth directory <<< $(awk '\
 		/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
+	root="${directory%\{*}"
 }
 
 if [[ -z $@ ]]; then
@@ -21,9 +22,12 @@ else
 		current_desktop=$(xdotool get_desktop)
 		current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
 
-		eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" |\
+		((depth)) && maxdepth="-maxdepth $depth"
+
+		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" |\
 			awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
-				print i, gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
+				sub("'"${root//\'}"'", ""); print i, $0 }'
+				#print i, gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
 	else
 		killall rofi
 
@@ -36,8 +40,7 @@ else
 			*.*)
 				wall="$@"
 				get_directory
-				[[ $directory =~ \{.*\} ]] && directory="${directory%/*}"
-				eval $wallctl -s "$directory/${wall:2}";;
+				eval $wallctl -s "${root%/}/${wall:2}";;
 			*) $wallctl -o $@;;
 		esac
 	fi
