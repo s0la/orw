@@ -1,9 +1,9 @@
 #!/bin/bash
 
-#directory=$(sed -n 's/^directory //p' ~/.config/orw/config)
 config=~/.config/orw/config
 read depth directory <<< $(awk '\
 		/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
+root="${directory%/\{*}"
 
 empty='   '
 indicator='●'
@@ -12,25 +12,20 @@ indicator=''
 current_desktop=$(xdotool get_desktop)
 current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
 
+((depth)) && maxdepth="-maxdepth $depth"
+
 while read -r wall; do
 	name="${wall%:*}"
 	path="${wall#*:}"
 
-	#echo "^$wall$"
-	#echo "${name// /_}:\"$path\""
-	#[[ $i == '#' ]] && start="$indicator " || start='  '
 	walls+=( "${name// /_}:$path" )
-done <<< "$(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" | awk '\
-				BEGIN {
-					d = ("'"$directory"'" ~ "\\{.*\\}") ? "'"${directory%/*}"'" : "'"$directory"'"
+done <<< "$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+				awk 'BEGIN {
+					r = "'"${root//\'}"'"
 				} {
 					i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : "___"
-					w = gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1)
-					print i "_" w ":" d "/" w
+					w = gensub("'"${root//\'}"'/?", "", 1)
+					print i "_" w ":" r "/" w
 				}')"
-
-#done <<< "$(find "$directory" -type f -printf "%f:%p\n")"
-#done <<< "$(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'"  -printf "%f:%p\n" |\
-			#awk '{ print gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
 
 ~/.config/openbox/pipe_menu/generate_menu.sh -c '~/.orw/scripts/wallctl.sh -s' -i "${walls[@]}"

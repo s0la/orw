@@ -5,7 +5,7 @@ config=~/.config/orw/config
 get_directory() {
 	read depth directory <<< $(awk '\
 		/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
-	root="${directory%\{*}"
+	root="${directory%/\{*}"
 }
 
 if [[ -z $@ ]]; then
@@ -26,7 +26,7 @@ else
 
 		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" |\
 			awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
-				sub("'"${root//\'}"'", ""); print i, $0 }'
+				sub("'"${root//\'}"'/?", ""); print i, $0 }'
 				#print i, gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
 	else
 		killall rofi
@@ -40,7 +40,7 @@ else
 			*.*)
 				wall="$@"
 				get_directory
-				eval $wallctl -s "${root%/}/${wall:2}";;
+				eval $wallctl -s "$root/${wall:2}";;
 			*) $wallctl -o $@;;
 		esac
 	fi
