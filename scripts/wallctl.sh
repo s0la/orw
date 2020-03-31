@@ -1155,7 +1155,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 	esac
 done
 
-if [[ ! $wallpapers ]]; then
+if [[ ! $wallpapers || $display_number ]]; then
 	if [[ $service ]]; then
 		function set_notification_icon() {
 			icon="<span font='Roboto Mono 15'>$notification_icon    </span>"
@@ -1185,8 +1185,11 @@ if [[ ! $wallpapers ]]; then
 	[[ ! ${directory} ]] && echo 'Please set default directory by providing it to -d flag.' && exit
 
 	current_wallpaper="$(awk -F '"' '\
-		/^primary/ { p = gensub("[^0-9]*", "", 1) } \
-		/^desktop_'${current_desktop}'/ { print $(p * 2) }' $config)"
+		/^primary/ {
+			dn = "'$display_number'"
+			d = (length(dn)) ? dn : gensub("[^0-9]*", "", 1)
+		}
+		/^desktop_'${current_desktop}'/ { print $(d * 2) }' $config)"
 
 	root="${directory%\{*}"
 	((depth)) && maxdepth="-maxdepth $depth"
@@ -1196,12 +1199,6 @@ if [[ ! $wallpapers ]]; then
 		all_wallpapers+=("$wallpaper")
 	done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
 			awk '{ sub("'"${root//\'}"'", ""); print }' | sort)
-
-	#done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort)
-	#eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | awk '{ sub("'"${root//\'}"'", ""); print }'
-
-	#done <<< $(eval find $directory/ -maxdepth $depth -type f -iregex "'.*\(jpe?g\|png\)'" | awk -F '/' \
-	#	'{ w = ""; r = '$((depth - 1))'; for(f = NF - r; f <= NF; f++) w = w "/" $f; print substr(w, 2) }' | sort)
 
 	wallpaper_count=${#all_wallpapers[*]}
 
@@ -1213,9 +1210,19 @@ if [[ ! $wallpapers ]]; then
 		wallpaper_index="$((${index:-$wall_index} % wallpaper_count))"
 		wallpaper="${all_wallpapers[$wallpaper_index]}"
 
-		write_wallpapers "$wallpaper" ${display_number:-$display}
+		if ((display_number)); then
+			if ((display_number == display)); then
+				write_wallpapers "$wallpaper" $display_number
+				wallpapers[display_number - 1]="$wallpaper"
+			fi
+		else
+			write_wallpapers "$wallpaper" $display
+			wallpapers+=( "$wallpaper" )
+		fi
 
-		wallpapers+=( "$wallpaper" )
+		#write_wallpapers "$wallpaper" ${display_number:-$display}
+
+		#wallpapers+=( "$wallpaper" )
 	done
 fi
 
