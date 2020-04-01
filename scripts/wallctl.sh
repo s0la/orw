@@ -1153,7 +1153,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 	esac
 done
 
-if [[ ! $wallpapers || $display_number ]]; then
+if [[ ! $wallpapers || ($order && $display_number) ]]; then
 	if [[ $service ]]; then
 		function set_notification_icon() {
 			icon="<span font='Roboto Mono 15'>$notification_icon    </span>"
