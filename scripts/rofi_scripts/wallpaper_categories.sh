@@ -52,8 +52,7 @@ else
 
 			[[ $@ == set ]] && flag="-d" || flag="-M" modify="$@"
 			~/.orw/scripts/wallctl.sh $flag $modify "$root/${categories:-$category}"
-			#eval ~/.orw/scripts/wallctl.sh "$flag" "\"$root/${categories:-'$category'}\""
-			#eval echo ~/.orw/scripts/wallctl.sh "$flag" "\"$root/${categories:-'$category'}\"" > ~/log
+
 			unset category multi_categories selection
 			list_categories
 
