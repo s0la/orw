@@ -3,7 +3,7 @@
 move=''
 place=''
 toggle=''
-resize='on'
+resize=''
 current=''
 
 launchers=~/.orw/scripts/bar/launchers
