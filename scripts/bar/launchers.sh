@@ -1,15 +1,21 @@
 #!/bin/bash
 
-separator="$1"
+separator="$2"
 lines=${@: -1}
 offset='${padding}'
 
-if (($# > 2)); then
-	for argument in ${2//,/ }; do
+launchers_directory=~/.config/orw/bar/launchers
+launchers_file=$launchers_directory/$1
+
+[[ ! -d $launchers_directory ]] && mkdir $launchers_directory
+[[ ! -f $launchers_file ]] && cp ~/.orw/scripts/bar/launchers $launchers_file
+
+if (($# > 3)); then
+	for argument in ${3//,/ }; do
 		value=${argument:1}
 		property=${argument:0:1}
 
-		[[ $3 == true ]] && separator_color='${Lfc:-$fc}'
+		[[ $4 == true ]] && separator_color='${Lfc:-$fc}'
 
 		if [[ $property == s ]]; then
 			launcher_separator="%{B${separator_color:-\$bg}}%{O$value}"
@@ -109,7 +115,7 @@ while read launcher_properties; do
 done <<< $(awk '{ if(/^$/) {
 						if(l) al[++i] = l; l = ""
 					} else { if(!/^#/) l = l " " $0 }
-					} END { for(li in al) print al[li]; print l }' ~/.orw/scripts/bar/launchers)
+					} END { for(li in al) print al[li]; print l }' $launchers_file)
 
 [[ $launcher_separator ]] && launchers=${launchers%\%*}
 [[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"

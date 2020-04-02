@@ -1,12 +1,15 @@
 #!/bin/bash
 
+bar=''
 move=''
 place=''
 toggle=''
 resize=''
 current=''
 
-launchers=~/.orw/scripts/bar/launchers
+launchers_directory=~/.config/orw/bar/launchers
+[[ -f $launchers_directory/$bar ]] && launchers_file=$launchers_directory/$bar
+launchers=${launchers_file:-~/.orw/scripts/bar/launchers}
 
 set() {
 	sed -i "/^$1/ s/'.*'/'${!1//\//\\\/}'/" $0
@@ -22,6 +25,7 @@ list_launchers() {
 			if("'$move_state'") print "'$move_state' move"
 			print "'$toggle_state' toggle"
 			print "'$resize_state' resize"
+			print "select_bar"
 			print "━━━━━━━━━━"
 
 			if("'$toggle'") {
@@ -71,13 +75,6 @@ toggle_launchers() {
 resize_launchers() {
 	[[ $current ]] && single="${current%% *}"
 
-	#awk -i inplace -F 'I|}' '\
-	#	/^#?icon.*'"$single"'/ {
-	#		v = $2 '$sign' '${value:-1}'
-	#		if(v >= 0) s = "+"
-	#		sub("[+-][^}]*", s v)
-	#	} { print }' $launchers
-
 	awk -i inplace -F 'I|}[^%]' '\
 		/^#?icon.*'"$single"'/ {
 			v = $2 '$sign' '${value:-1}'
@@ -92,7 +89,15 @@ if [[ -z $@ ]]; then
 	unset current
 	set current
 else
-	if [[ $@ =~ ^(( | )[an]|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
+	if [[ $@ == select_bar ]]; then
+		ps aux | awk '!/awk/ && /generate_bar.*-L/ {
+			n = gensub(".*-n (\\w*).*", "\\1", 1)
+			if(an !~ "\\<" n "\\>") {
+				an = an "," n
+				print n
+			}
+		}'
+	elif [[ $@ =~ ^(( | )[an]|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
 		if [[ $@ =~   ]]; then
 			continue
 		elif [[ $@ =~ ( | ) ]]; then
@@ -149,18 +154,24 @@ else
 
 			list_launchers
 		else
-			current="$@"
-			set current
-
-			if [[ $resize || $move ]]; then
-				echo -e ' \n '
-
-				[[ $resize ]] && echo -e ' '
-			else
-				move="${current#* }"
-				set move
-
+			if [[ $@ =~ ^[[:alpha:]] ]]; then
+				bar=$@
+				set bar
 				list_launchers
+			else
+				current="$@"
+				set current
+
+				if [[ $resize || $move ]]; then
+					echo -e ' \n '
+
+					[[ $resize ]] && echo -e ' '
+				else
+					move="${current#* }"
+					set move
+
+					list_launchers
+				fi
 			fi
 		fi
 	fi

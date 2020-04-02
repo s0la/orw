@@ -36,7 +36,7 @@ get_apps() {
 
 get_launchers() {
 	[[ $single_line ]] && launchers_lines=single
-	echo -e "LAUNCHERS $($path/launchers.sh $separator $launchers_args ${launchers_lines:-${lines-false}})"
+	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $separator $launchers_args ${launchers_lines:-${lines-false}})"
 }
 
 get_workspaces() {
