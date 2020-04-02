@@ -24,10 +24,9 @@ else
 
 		((depth)) && maxdepth="-maxdepth $depth"
 
-		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" |\
+		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
 			awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
 				sub("'"${root//\'}"'/?", ""); print i, $0 }'
-				#print i, gensub(".*/(.*(/.*){" '$depth' - 1 "})$", "\\1", 1) }'
 	else
 		killall rofi
 

@@ -19,7 +19,7 @@ while read -r wall; do
 	path="${wall#*:}"
 
 	walls+=( "${name// /_}:$path" )
-done <<< "$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+done <<< "$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
 				awk 'BEGIN {
 					r = "'"${root//\'}"'"
 				} {
