@@ -11,6 +11,8 @@ while getopts :d:x:y:m:o flag; do
 	if [[ $flag == o ]]; then
 		offsets_file=~/.config/orw/offsets
 		[[ -f $offsets_file ]] && eval "$(cat $offsets_file | xargs)"
+		[[ -f $offsets_file ]] &&
+			eval "$(awk -F '=' '{ print $1 "=" ++$2 }' ~/.config/orw/offsets | xargs)"
 	else
 		eval "$flag=$OPTARG"
 	fi

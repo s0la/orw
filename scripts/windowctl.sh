@@ -6,11 +6,7 @@ set_window_id() {
 	id=$1
 
 	read border_x border_y <<< $([[ $id =~ ^0x ]] && xwininfo -id $id | awk '\
-		/Relative/ { if(!x) x = $NF; else y = $NF + x } END { print 2 * x, y }')
-	#if [[ $id =~ ^0x ]]; then
-	#	border_x=$(xwininfo -id $id | awk '/Relative.*X/ { print $NF * 2 }')
-	#	border_y=$(xwininfo -id $id | awk '/Relative.*Y/ { print $NF + ('$border_x' / 2) }')
-	#fi
+		/Relative/ { if(/X/) x = $NF; else y = $NF + x } END { print 2 * x, y }')
 }
 
 function get_windows() {
