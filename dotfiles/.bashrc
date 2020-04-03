@@ -133,7 +133,10 @@ format_module() {
 			f)
 				[[ $OPTARG == default ]] && local fg=$fg || local fg=$OPTARG
 				mfg="$(color_module 3 $fg)";;
-			c) local content="$OPTARG";;
+			c)
+				(( content_length += ${#OPTARG} ))
+				local content="$OPTARG"
+				#(( content_length += ${#content} ));;
 		esac
 	done
 
@@ -207,37 +210,54 @@ color_modules() {
 			v) get_virtual_env;;
 			i*) get_basic_info "$info_module";;
 			g*) get_branch_info "$git_module";;
+			r)
+				if [[ $mode == rice ]]; then
+					right_align=true
+					left_part_length=${#all_modules}
+					left_content_length=$content_length
+				fi;;
 			w)
 				format_module -b $bg -f $fg -c "$working_directory"
 				[[ $mode == rice ]] && format_module -f $bg;;
+			s*)
+				((${#module} > 1)) && separator_length="$(printf '%*.s' ${module:1} ' ')"
+				all_modules+="$default${separator_length:- }"
 		esac
 	done
 
 	all_modules+="$default"
+
+	if [[ $right_align ]]; then
+		left=${all_modules:0:left_part_length}
+		right=${all_modules:left_part_length}
+		separator_length="$(printf "%*s" $((COLUMNS - content_length)) ' ')"
+		all_modules="$left$default$separator_length$right"
+	fi
 }
 
 generate_ps1() {
 	local exit_code=$?
 
-	bg="default"
-	fg="72;73;75;"
-	sc="67;68;70;"
+	bg="61;62;64;"
+	fg="101;102;104;"
+	sc="101;102;104;"
 	ic="149;142;154;"
 	sec="129;98;92;"
-	gcc="162;141;159;"
-	gdc="135;147;156;"
+	gcc="135;147;148;"
+	gdc="128;102;109;"
 	vc="135;147;156;"
 
-	((exit_code)) && sc=$sec || sc=$sc
-
 	clean="\[$(tput sgr0)\]"
+	separator="$clean $clean"
+
+	((exit_code)) && sc=$sec || sc=$sc
 
 	pid=$$
 
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=simple
+		mode=rice
 		edge_mode=flat
 
 		[[ $edge_mode != flat ]] && case $edge_mode in
@@ -251,7 +271,7 @@ generate_ps1() {
 		git_module="s,m,a,d,u"
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
-		modules="w,v,g"
+		modules="w,v,r,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
@@ -263,7 +283,6 @@ generate_ps1() {
 			color_modules
 			format_module -f $sc -c ' '
 		else
-
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
 				symbol_end='╰────'
@@ -277,6 +296,7 @@ generate_ps1() {
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 
 			format_module -f $sc -c "$symbol_start"
 			format_module -f $bg
@@ -369,4 +389,4 @@ alias toggle_tmux="$scripts/toggle.sh tmux"
 #source bashrc
 alias sb="source ~/.bashrc"
 
-source /home/sola/.config/broot/launcher/bash/br
+#source /home/sola/.config/broot/launcher/bash/br
