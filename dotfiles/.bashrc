@@ -134,8 +134,8 @@ format_module() {
 				[[ $OPTARG == default ]] && local fg=$fg || local fg=$OPTARG
 				mfg="$(color_module 3 $fg)";;
 			c)
-				(( content_length += ${#OPTARG} ))
 				local content="$OPTARG"
+				(( content_length += ${#content} ))
 				#(( content_length += ${#content} ));;
 		esac
 	done
@@ -192,7 +192,12 @@ get_virtual_env() {
 
 get_basic_info() {
 	for info in ${1//,/ }; do
-		((${#info} == 1)) && infos+="\\$info" || info="${info:1: -1}" infos+="${info//_/ }"
+		#((${#info} == 1)) && infos+="\\$info" || info="${info:1: -1}" infos+="${info//_/ }"
+		case $info in
+			u) infos+="$(whoami)";;
+			h) infos+="$(hostname)";;
+			*) infos+="${info//_/ }";;
+		esac
 	done
 
 	if [[ $mode == simple ]]; then
@@ -220,8 +225,11 @@ color_modules() {
 				format_module -b $bg -f $fg -c "$working_directory"
 				[[ $mode == rice ]] && format_module -f $bg;;
 			s*)
-				((${#module} > 1)) && separator_length="$(printf '%*.s' ${module:1} ' ')"
-				all_modules+="$default${separator_length:- }"
+				if [[ $mode == rice ]]; then
+					((${#module} > 1)) && separator_length="$(printf '%*.s' ${module:1} ' ')"
+					all_modules+="$default${separator_length:- }"
+					(( content_length += ${separator_length-1} ))
+				fi
 		esac
 	done
 
@@ -238,10 +246,10 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="61;62;64;"
-	fg="101;102;104;"
-	sc="101;102;104;"
-	ic="149;142;154;"
+	bg="45;46;48;"
+	fg="86;87;89;"
+	sc="86;87;89;"
+	ic="200;147;95;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
 	gdc="128;102;109;"
@@ -267,11 +275,11 @@ generate_ps1() {
 		esac
 
 		#modules
-		info_module="u"
+		info_module="h"
 		git_module="s,m,a,d,u"
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
-		modules="w,v,r,g"
+		modules="i,s,w,v,r,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
