@@ -40,25 +40,25 @@ get_launchers() {
 }
 
 get_workspaces() {
-	for arg in ${workspaces_args//,/ }; do
-		if [[ $arg =~ ^o ]]; then
-			value=${arg:1}
+	#for arg in ${workspaces_args//,/ }; do
+	#	if [[ $arg =~ ^o ]]; then
+	#		value=${arg:1}
 
-			if [[ $value =~ [0-9] ]]; then
-				offset="%{O$value}"
-			else
-				[[ $value == p ]] && offset=$padding || offset=$inner
-			fi
-		else
-			workspaces_label=$arg
-		fi
-	done
+	#		if [[ $value =~ [0-9] ]]; then
+	#			offset="%{O$value}"
+	#		else
+	#			[[ $value == p ]] && offset=$padding || offset=$inner
+	#		fi
+	#	else
+	#		workspaces_label=$arg
+	#	fi
+	#done
 
 	if [[ ! $offset ]]; then
 		[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
 	fi
 
-	echo -e "WORKSPACES $($path/workspaces.sh $separator ${workspaces_label-i} $offset ${single_line-false})"
+	echo -e "WORKSPACES $($path/workspaces.sh $separator ${workspaces_args:-i} $offset ${single_line-false})"
 }
 
 get_full_usage() {
