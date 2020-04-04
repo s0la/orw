@@ -8,5 +8,6 @@ dotfiles/.config/orw/config
 dotfiles/.config/orw/offsets
 dotfiles/.config/orw/bar/*
 !dotfiles/.config/orw/bar/configs
+!dotfiles/.config/orw/bar/launchers
 dotfiles/.config/orw/windows_properties
 dotfiles/.config/nvim/**/deoplete*
