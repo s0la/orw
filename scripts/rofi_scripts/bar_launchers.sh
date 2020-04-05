@@ -1,11 +1,20 @@
 #!/bin/bash
 
-bar=''
+bar='lp'
 move=''
 place=''
 toggle=''
 resize=''
 current=''
+
+read -a bars <<< $(ps aux | awk '!/awk/ && /generate_bar.*-L/ {
+	n = gensub(".*-n (\\w*).*", "\\1", 1)
+	if(ab !~ "\\<" n "\\>") {
+		ab = ab " " n
+	}
+} END { print ab }')
+
+((${#bars[*]} == 1)) && bar=$bars
 
 launchers_directory=~/.config/orw/bar/launchers
 [[ -f $launchers_directory/$bar ]] && launchers_file=$launchers_directory/$bar
@@ -90,13 +99,9 @@ if [[ -z $@ ]]; then
 	set current
 else
 	if [[ $@ == select_bar ]]; then
-		ps aux | awk '!/awk/ && /generate_bar.*-L/ {
-			n = gensub(".*-n (\\w*).*", "\\1", 1)
-			if(an !~ "\\<" n "\\>") {
-				an = an "," n
-				print n
-			}
-		}'
+		for bar in ${bars[*]}; do
+			echo $bar
+		done
 	elif [[ $@ =~ ^(( | )[an]|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
 		if [[ $@ =~   ]]; then
 			continue
