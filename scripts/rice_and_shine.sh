@@ -93,7 +93,9 @@ function offset_color() {
 function get_color() {
 	color=${1:-$color}
 
-	if [[ $color != default ]]; then
+	if [[ $color =~ ^(default|none)$ ]]; then
+		 [[ ${2:-$offset} && ${inherited_module:-$module} =~ ^(tmux|vim)$ ]] && color=$(parse_module bg term)
+	else
 		get_color_properties
 
 		property_to_check=${inherited_property:-$property}
@@ -101,7 +103,7 @@ function get_color() {
 		[[ $property_to_check && ${base_colors[${property_to_check#br_}]} && $colorscheme ]] &&
 			color=$(awk '/^colors/ { print $('$color_index' + 1) }' $colorscheme)
 
-		[[ ! $color =~ ^# ]] && echo "Color doesn't exist, exiting.." && exit
+		[[ ! $color =~ ^# ]] && echo "$color color doesn't exist, exiting.." && exit
 	fi
 
 	if [[ ${2:-$offset} ]]; then
@@ -137,7 +139,7 @@ function get_color() {
 
 function parse_module() {
 	([[ $colorscheme && ! $@ ]] && sed -n "/${inherited_module:-${module}}/,/^$/p" $colorscheme ||
-		get_${inherited_module:-$module}) | sed -n "s/^${1:-${inherited_property:-$property}} //p"
+		get_${2:-${inherited_module:-$module}}) | sed -n "s/^${1:-${inherited_property:-$property}} //p"
 }
 
 function ob() {
@@ -315,7 +317,8 @@ function term() {
 
 function vim() {
 	reload_vim=true
-	sed -i "/[gs]:$property / s/#\w*/#${color: -6}/" $vim_conf
+	[[ $color =~ ^\# ]] && local color="#${color: -6}"
+	sed -i "/^let [gs]:$property / s/'.*'/'$color'/" $vim_conf
 }
 
 function vifm() {
@@ -408,12 +411,15 @@ function ncmpcpp() {
 
 function tmux() {
 	reload_tmux=true
+
 	if [[ $property =~ ^(bg|mc) ]]; then
 		reload_tmux_hidden=true
 		local hidden=$tmux_hidden_conf
 	fi
 
-	sed -i "/^$property=/ s/#\w*/#${color: -6}/" $tmux_conf $hidden
+	[[ $color =~ ^\# ]] && local color="#${color: -6}"
+	
+	sed -i "/^$property=/ s/'.*'/'$color'/" $tmux_conf $hidden
 }
 
 function rofi() {
@@ -570,7 +576,7 @@ function get_term() {
 
 get_vim() {
 	#sed -n '/let.*g:bg/,/^$/ s/.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
-	sed -n 's/^let.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
+	sed -n "s/^let.*g:\([^ ]*\).*'\(.*\)'.*/\1 \2/p" $vim_conf
 }
 
 get_vifm() {
@@ -601,10 +607,6 @@ function get_ncmpcpp() {
 
 function repeat_pattern() {
 	printf "%0.s$1" $(seq 1 ${2-1})
-}
-
-function get_tmux_color() {
-	awk -F '[=,"\\]]' '/'$1'/ {print "'$2'", $'$3'}' $tmux_conf
 }
 
 function get_tmux() {
