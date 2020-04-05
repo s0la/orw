@@ -1,5 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhistcnt =1
+let g:netrw_dirhistcnt =2
+let g:netrw_dirhist_2='/home/ablive/.orw/scripts'
 let g:netrw_dirhist_1='/home/sola/.orw/scripts/rofi_scripts'
 let g:netrw_dirhist_0='/home/sola/.orw/scripts/bar'
 let g:netrw_dirhist_9='/home/sola/Desktop'
@@ -9,4 +10,3 @@ let g:netrw_dirhist_6='/home/sola/.orw/scripts'
 let g:netrw_dirhist_5='/usr/bin'
 let g:netrw_dirhist_4='/home/sola/.orw/dotfiles/.config/orw/bar/configs'
 let g:netrw_dirhist_3='/home/sola/.orw/.fonts'
-let g:netrw_dirhist_2='/home/sola/.orw'

@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>5</size>
+      <size>7</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -957,8 +957,8 @@
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>1522</x>
-        <y>682</y>
+        <x>930</x>
+        <y>517</y>
       </position>
       <size>
         <width>60</width>
@@ -972,8 +972,8 @@
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>141</height>
-        <width>200</width>
+        <height>248</height>
+        <width>301</width>
       </size>
     </application>
 
@@ -989,12 +989,25 @@
       </size>
     </application>
 
+    <application class="tile">
+      <focus>yes</focus>
+      <monitor>2</monitor>
+      <position force="yes">
+        <x>1300</x>
+        <y>20</y>
+      </position>
+      <size>
+        <width>250</width>
+        <height>200</height>
+      </size>
+    </application>
+
     <application title="image_preview">
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>744</x>
-        <y>64</y>
+        <x>539</x>
+        <y>331</y>
       </position>
     </application>
 
