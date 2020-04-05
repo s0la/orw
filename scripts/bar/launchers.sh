@@ -15,10 +15,10 @@ if (($# > 3)); then
 		value=${argument:1}
 		property=${argument:0:1}
 
-		[[ $4 == true ]] && separator_color='${Lfc:-$fc}'
+		[[ $4 == true ]] && separator_color='%{B${Lfc:-$fc}}'
 
 		if [[ $property == s ]]; then
-			launcher_separator="%{B${separator_color:-\$bg}}%{O$value}"
+			launcher_separator="${separator_color:-\$bsbg}%{O$value}"
 		else
 			if [[ $value =~ [0-9] ]]; then
 				offset="%{O$value}"
