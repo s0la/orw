@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w 1200 -y 15 -h 32 -a 8 -f 2 -n tuto -c bar_tuto -M -l -m c,P,s,22,of5,i,of20,v -l -r -s 40 -W -s 10 -H -e -B -v -d a,_b_d_I:M 
+~/.orw/scripts/bar/generate_bar.sh -x c -w 1200 -y 15 -h 32 -a 8 -f 2 -n tuto -M -l -m c,P,s,22,of5,i,of20,v -l -r -s 40 -W -s 10 -H -e -B -v -d a,_b_d_I:M 
