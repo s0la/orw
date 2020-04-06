@@ -479,6 +479,8 @@ tile_adjucent() {
 }
 
 add_offset() {
+	[[ ! -f $offsets_file ]] && touch $offsets_file
+
 	if [[ "$arguments" =~ -o ]]; then
 		 eval $(awk '/^'$1'=/ {
 			e = 1
@@ -625,7 +627,8 @@ while ((argument_index <= $#)); do
 								}' | tail -1)
 
 					[[ $argument =~ [LR] ]] && offset_orientation=x_offset || offset_orientation=y_offset
-					offset=${margin:-${!offset_orientation}}
+					((!max)) && offset=${!offset_orientation} ||
+						offset=${margin:-${!offset_orientation}}
 
 					case $argument in
 						L) [[ $option == resize ]] && resize_to_edge 1 $offset || 
