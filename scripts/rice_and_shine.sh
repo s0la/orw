@@ -882,6 +882,8 @@ multiple_properties() {
 			$module
 		done
 	else
+		[[ $inherited_module ]] && unset colorscheme
+
 		while read -r property color; do
 			$module
 		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
