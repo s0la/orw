@@ -4,26 +4,30 @@ exe 'hi None guibg=none guifg=none'
 exe 'hi StatusLight guibg=' . g:lbg . ' guifg=' . g:lfg
 exe 'hi Statusline guibg=' . g:slbg . ' guifg=' . g:slfg . ' cterm=none'
 
-let s:settings = 'NMC.nmbg.;'
+let s:settings = ''
+let s:settings .= 'NMC.nmbg.;'
 let s:settings .= 'IMC.imbg.;'
 let s:settings .= 'VMC.vmbg.;'
 let s:settings .= 'BC.bcbg.;'
 let s:settings .= 'BU.bdbg.;'
 let s:settings .= 'b.b.;'
 let s:settings .= 'r.. RO ;'
-let s:settings .= 'm.mo.;'
+let s:settings .= 'm.m.;'
 let s:settings .= 'f.s. %F ;'
-"let s:settings .= 'cpi.imbg.● ;'
-let s:settings .= 'cpi.lfg.● ;'
+let s:settings .= 'cpi.imbg.● ;'
+" let s:settings .= 'c.imbg. ●.f;'
 let s:settings .= 'e.n.;'
-let s:settings .= 'ln.fr.  %l:%c  .fr;'
-let s:settings .= 't.. %Y '
+let s:settings .= 'ln.m.  %l:%c  .fr;'
+" let s:settings .= 'ln.m.  line %l, column %c  .fr;'
+let s:settings .= 't.f. %Y .fr;'
 
 let s:swap_colors = 0
 
 let s:separator = "%#None#"
 
-let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
+" let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
+" let s:active_buffer_modules = 'm.s.b.s.f.c.e.ln'
+let s:active_buffer_modules = 'b.f.c.e.t.ln'
 let s:inactive_buffer_modules = 'f.c.e.ln'
 
 func! MapModule(module)
@@ -36,7 +40,7 @@ func! MapModule(module)
 	elseif a:module ==? 'f'
 		let l:var = 'File'
 	elseif a:module ==? 't'
-		let l:var = 'Type'
+		let l:var = 'File_Type'
 	elseif a:module ==? 'b'
 		let l:var = 'Branch'
 	elseif a:module ==? 'e'
@@ -54,7 +58,7 @@ func! MapModule(module)
 	elseif a:module ==? 'l'
 		let l:var = 'StatusLight'
 	elseif a:module == 'NMC'
-		retur s:normal_mode_color
+		return s:normal_mode_color
 	elseif a:module == 'IMC'
 		return s:insert_mode_color
 	elseif a:module == 'VMC'
@@ -346,6 +350,7 @@ func! GenerateStatusline(modules, bufnr)
 						let l:mode_color_value = {'g:' . l:mode_color_var}
 					else
 						let l:mode_color_value = GetHiGroupColors(MapModule(toupper(l:mode_color_var)))[1]
+						" let l:mode_color_value = GetHiGroup(l:args[0], MapModule(toupper(l:mode_color_var)))[1]
 					endif
 
 					if l:mode == 'N'
