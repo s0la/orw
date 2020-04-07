@@ -8,11 +8,17 @@ cover="$HOME/Music/covers/${album// /_}.jpg"
 
 if [[ ! -f "${cover//[()]/}" ]]; then
 	file=$(mpc current -f %file%)
-	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\".*/\1/p" ~/.mpd/mpd.conf)
+	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.mpd/mpd.conf)
+	full_path="$root/$file"
 
-	[[ ${root: -1} == '/' ]] && root=${root%*/}
+	#echo "$file"
+	#echo "$root/$file"
+	#echo "$cover"
+	#exit
 
-	if ! eval "ffmpeg -loglevel quiet -i \"$root/$file\" $cover"; then
+	#[[ ${root: -1} == '/' ]] && root=${root%*/}
+
+	if ! eval ffmpeg -loglevel quiet -i \"$full_path\" \"$cover\"; then
 		[[ ! $(grep "$album" ~/Music/covers/missing_cover_arts.txt) ]] &&
 			echo "$artist - $album" >> ~/Music/covers/missing_cover_arts.txt
 	fi
