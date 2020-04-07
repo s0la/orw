@@ -293,7 +293,7 @@ color_modules() {
 		left=${all_modules:0:left_part_length}
 		right=${all_modules:left_part_length}
 		#[[ $edge_mode != flat ]] && edge_length=${modules//+([sr,])}
-		separator_length="$(printf "%*s" $((COLUMNS - (content_length + ${#edge_length}))) ' ')"
+		separator_length="$(printf "%*s" $((COLUMNS - content_length - 1)) ' ')"
 		all_modules="$left$default$separator_length$right"
 	fi
 }
@@ -301,13 +301,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="82;79;76;"
-	fg="115;112;109;"
-	sc="115;112;109;"
-	ic="181;188;109;"
+	bg="61;62;64;"
+	fg="87;88;90;"
+	sc="87;88;90;"
+	ic="149;142;154;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="200;147;95;"
+	gdc="128;102;109;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
