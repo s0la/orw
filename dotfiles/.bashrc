@@ -126,8 +126,30 @@ format_module() {
 	while getopts :b:f:c: flag; do
 		case $flag in
 			b)
-				[[ $mode == rice && $edge_mode != flat && $last_bg && $last_bg != default ]] &&
-					local edge="$(color_module 3 $last_bg)$edge_symbol"
+				#if [[ $reverse ]]; then
+				#	[[ $mode == rice && $edge_mode != flat && $last_bg && $last_bg != default ]] &&
+				#		local edge="$(color_module 3 $last_bg)$edge_symbol"
+				#fi
+
+
+
+
+				if [[ $mode == rice && $edge_mode != flat ]]; then
+					if [[ $reverse ]]; then
+						[[ ! $last_module ]] && local edge="$(color_module 3 $OPTARG)$edge_symbol"
+					else
+						[[ $last_bg && $last_bg != default ]] &&
+							local edge="$(color_module 3 $last_bg)$edge_symbol"
+					fi
+				fi
+
+				#[[ ! ($reverse && $last_bg == default) ]] && local
+				#[[ $mode == rice && $edge_mode != flat && $last_bg && $last_bg != default ]] &&
+				#	local edge="$(color_module 3 $last_bg)$edge_symbol"
+
+
+
+				#[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_module 4 $OPTARG)"
 				[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_module 4 $OPTARG)"
 				last_bg=$OPTARG;;
 			f)
@@ -136,11 +158,13 @@ format_module() {
 			c)
 				local content="$OPTARG"
 				(( content_length += ${#content} ))
+				[[ $content =~ [[:alnum:]] && $edge_mode != flat ]] && (( content_length++ ))
 				#(( content_length += ${#content} ));;
 		esac
 	done
 
-	all_modules+="$mbg$edge$mfg$content"
+	[[ $reverse ]] && all_modules+="$edge$mbg$mfg$content" || all_modules+="$mbg$edge$mfg$content"
+	#all_modules+="$mbg$edge$mfg$content"
 }
 
 get_branch_info() {
@@ -207,6 +231,14 @@ get_basic_info() {
 	fi
 }
 
+set_edge() {
+	[[ $edge_mode != flat ]] && case $edge_mode in
+		fade) [[ $reverse ]] && edge_symbol='' || edge_symbol='';;
+		sharp) [[ $reverse ]] && edge_symbol='' || edge_symbol='';;
+		round) [[ $reverse ]] && edge_symbol='' || edge_symbol='';;
+	esac
+}
+
 color_modules() {
 	default='\[\033[0m\]'
 
@@ -217,20 +249,42 @@ color_modules() {
 			g*) get_branch_info "$git_module";;
 			r)
 				if [[ $mode == rice ]]; then
+					format_module -b default -c ""
+
+					reverse=true
 					right_align=true
 					left_part_length=${#all_modules}
 					left_content_length=$content_length
+
+					set_edge
 				fi;;
 			w)
 				format_module -b $bg -f $fg -c "$working_directory"
 				[[ $mode == rice ]] && format_module -f $bg;;
 			s*)
 				if [[ $mode == rice ]]; then
-					((${#module} > 1)) && separator_length="$(printf '%*.s' ${module:1} ' ')"
-					all_modules+="$default${separator_length:- }"
+					#((${#module} > 1)) && separator="$(printf '%*.s' ${module:1} ' ')"
+					((${#module} > 1)) && separator_length=${module:1}
+					separator="$(printf '%*.s' ${separator_length-1} ' ')"
+					format_module -b default -c "${separator- }"
+
 					(( content_length += ${separator_length-1} ))
+					#for reverse edge on next module
+					reverse=true
+					set_edge
+
+					#format_module -b default -c "${separator- }"
+					#all_modules+="$default${separator_length:- }"
+					#(( content_length += ${separator_length-1} ))
 				fi
 		esac
+
+		[[ $module == ${modules##*,} ]] && last_module=true
+
+		if [[ $edge_mode != flat && ${modules%,$module*} =~ ,s$ ]]; then
+			unset reverse
+			set_edge
+		fi
 	done
 
 	all_modules+="$default"
@@ -238,7 +292,8 @@ color_modules() {
 	if [[ $right_align ]]; then
 		left=${all_modules:0:left_part_length}
 		right=${all_modules:left_part_length}
-		separator_length="$(printf "%*s" $((COLUMNS - content_length)) ' ')"
+		#[[ $edge_mode != flat ]] && edge_length=${modules//+([sr,])}
+		separator_length="$(printf "%*s" $((COLUMNS - (content_length + ${#edge_length}))) ' ')"
 		all_modules="$left$default$separator_length$right"
 	fi
 }
@@ -246,17 +301,17 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="45;46;48;"
-	fg="86;87;89;"
-	sc="86;87;89;"
-	ic="200;147;95;"
+	bg="82;79;76;"
+	fg="115;112;109;"
+	sc="115;112;109;"
+	ic="181;188;109;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="128;102;109;"
+	gdc="200;147;95;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
-	separator="$clean $clean"
+	#separator="$clean $clean"
 
 	((exit_code)) && sc=$sec || sc=$sc
 
@@ -266,20 +321,17 @@ generate_ps1() {
 		echo ''
 	else
 		mode=rice
-		edge_mode=flat
+		edge_mode=sharp
 
-		[[ $edge_mode != flat ]] && case $edge_mode in
-			fade) edge_symbol='';;
-			sharp) edge_symbol='';;
-			round) edge_symbol='';;
-		esac
+		set_edge
 
 		#modules
 		info_module="h"
 		git_module="s,m,a,d,u"
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
-		modules="i,s,w,v,r,g"
+		#modules="i,w,v,r,g"
+		modules="i,w,r,v,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
