@@ -3,7 +3,7 @@
 set_current() {
 	current="$1"
 	current_replacement=$(sed 's/[/&]/\\&/g' <<< "$1")
-	sed -i "s/\(^current[^']*'\)[^']*/\1$current_replacement/" $0
+	sed -i "s/\(^current[^\"]*\"\)[^\"]*/\1$current_replacement/" $0
 }
 
 back() {
@@ -17,7 +17,7 @@ notify_on_finish() {
 	done && ~/.orw/scripts/notify.sh "Music library updated."
 }
 
-current=''
+current=""
 
 if [[ -z $@ ]]; then
 	set_current ''
