@@ -29,6 +29,7 @@ for workspace_index in $(seq $workspace_count); do
 				else
 					[[ $value == p ]] && offset='$padding' || offset='$inner'
 				fi;;
+			[cr]) [[ ! $flags =~ $arg ]] && flags+=$arg;;
 			s*) workspace_separator="\$bsbg%{O${arg:1}}";;
 			l) label="\${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
 				{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')\${padding}";;
@@ -54,8 +55,10 @@ for workspace_index in $(seq $workspace_count); do
 
 	[[ $fbg ]] || fbg=$bg
 
-	command="%{A:wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k:}"
-	workspace="$command$bg$fg$label%{A}"
+	command="wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k \&"
+	[[ $flags ]] && command+=" ~/.orw/scripts/wallctl.sh -$flags \&"
+	#~/.orw/scripts/notify.sh "$command"
+	workspace="%{A:$command:}$bg$fg$label%{A}"
 
 	if [[ $single_line == true && $current == p ]]; then
 		set_line
