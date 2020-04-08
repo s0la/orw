@@ -13,15 +13,15 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#002D2E30"
-fc="#87939c"
-bfc="#666660"
+bg="#8c2D2E30"
+fc="#609599"
+bfc="#8c2D2E30"
 bbg="#2e2e2e"
-bsbg="%{B#002D2E30}"
+bsbg="%{B#2D2E30}"
 bsfg="%{F#313131}"
 
 pbg="%{B#2D2E30}"
-pfg="%{F#999999}"
+pfg="%{F#C8935F}"
 sbg="%{B#2D2E30}"
 sfg="%{F#5c5d5f}"
 
@@ -223,29 +223,37 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			check_arg colorscheme ${!OPTIND} && shift
 
 			if [[ $colorscheme ]]; then
-				use_colorscheme=true
-				[[ $@ =~ -M ]] || base=9
+				check_arg clone_colorscheme ${!OPTIND} && shift
+				colorscheme_path=~/.config/orw/colorschemes/$colorscheme.ocs
 
-				eval $(awk '\
-					/#bar/ { 
-						nr = NR
-						b = '${base:-0}'
-					} nr && NR > nr {
-						if($1 ~ "^(b?bg|.*c)$") c = $2
-						else {
-							l = length($1)
-							p = substr($1, l - 1, 1)
-							c = "%{" toupper(p) $2 "}"
-						}
+				if [[ -f $colorscheme_path ]]; then
+					use_colorscheme=true
+					[[ $@ =~ -M ]] || base=9
 
-						if($1) print $1 "=\"" c "\""
-					} nr && (/^$/ || (b && NR > nr + b)) { exit }' ~/.config/orw/colorschemes/$colorscheme.ocs)
+					eval $(awk '\
+						/#bar/ { 
+							nr = NR
+							b = '${base:-0}'
+						} nr && NR > nr {
+							if($1 ~ "^(b?bg|.*c)$") c = $2
+							else {
+								l = length($1)
+								p = substr($1, l - 1, 1)
+								c = "%{" toupper(p) $2 "}"
+							}
 
-				[[ $@ =~ -b ]] && bg=$bbg
-				[[ $bar_frame ]] && bar_frame="-R$bfc -r $bar_frame_width"
-				[[ $separator =~ ^%\{O[0-9]+\} ]] || separator="$bsbg$bsfg${separator#*\}*\}}"
+							if($1) print $1 "=\"" c "\""
+						} nr && (/^$/ || (b && NR > nr + b)) { exit }' $colorscheme_path)
 
-				unset colorscheme
+					[[ $@ =~ -b ]] && bg=$bbg
+					[[ $bar_frame ]] && bar_frame="-R$bfc -r $bar_frame_width"
+					[[ $separator =~ ^%\{O[0-9]+\} ]] || separator="$bsbg$bsfg${separator#*\}*\}}"
+
+					unset colorscheme
+				else
+					[[ $clone_colorscheme ]] && cp ${colorscheme_path%/*}/$clone_colorscheme.ocs $colorscheme_path ||
+						~/.orw/scripts/rice_and_shine.sh -m bar -b $colorscheme
+				fi
 			else
 				modules+='%{c}'
 			fi;;
