@@ -87,14 +87,12 @@ Wpfg #C8935F
 pbefg #609599
 msfg #47484a
 mlfg #7a8d90
-Lsbg #353a3d
 Wsbg #8c2D2E30
-Lsfg #43484b
-Lpfg #999EA1
 Wsfg #3e3f41
 pbfg #494643
 mpfg #999999
 mfc #609599
+Lpbg #38393b
 
 #ncmpcpp
 npp #b2adae
@@ -119,7 +117,7 @@ sfg #2a2b2f
 wbg #2a2b2f
 wfg #3d3e40
 cbg #3d3e40
-cfg #80666d
+cfg #609599
 
 #rofi
 bg #1d1e20
@@ -142,7 +140,7 @@ btbc #1d1e20
 bg #3d3e40
 fg #57585a
 sc #57585a
-ic #958e9a
+ic #6ba0a4
 sec #81625c
 gcc #879394
 gdc #80666d

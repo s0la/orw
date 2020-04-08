@@ -30,7 +30,7 @@ osdh #bbbbbb
 osdu #888888
 
 #dunst
-bg #2D2E30
+bg #3c3936
 fg #cccccc
 fc #B4938A
 pbfg #979392
@@ -73,26 +73,27 @@ slbg #b5bc6d
 slfg #2e2f31
 
 #bar
-bg #524f4c
+bg #8c524f4c
 fc #b5bc6d
-bfc #524f4c
+bfc #8c524f4c
 bbg #3c3936
 bsbg #3c3936
 bsfg #313131
 pbg #3c3936
 pfg #999999
 sbg #3c3936
-sfg #5d5a57
+sfg #53504d
 Wpfg #686562
 pbefg #C8935F
 msfg #38393b
 mlfg #87939c
-Lsbg #353a3d
-Wsbg #524f4c
-Lsfg #43484b
-Lpfg #999EA1
+Wsbg #8c524f4c
 Wsfg #494643
 pbfg #494643
+mpfg #999999
+mfc #609599
+Lsbg #3c3936
+Lfc #3c3936
 
 #ncmpcpp
 npp #b2adae
@@ -122,7 +123,7 @@ cfg #b5bc6d
 #rofi
 bg #393633
 fg #4b4845
-bc #393633
+bc #3e3b38
 ibg #393633
 ibc #b5bc6d
 abg #87939c
