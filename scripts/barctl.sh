@@ -26,38 +26,17 @@ monitor_memory_consumption() {
 	((memory_usage_delta >= ${memory_tolerance:-10})) && $0
 }
 
-#set_bars() {
-#	read last_running bars_array <<< $(ls $configs | awk -F '/' '\
-#		BEGIN { o = "'$option'" }
-#		$NF ~ /^'${pattern//\*/\.\*}'/ {
-#			b = $NF
-#			if(o == "add" && b ~ "^('${bars//,/|}')$") next
-#			ub = ub "," b
-#		} END {
-#			if(o == "add") {
-#				if(ub && ! "'$bars'") sub("^,", "", ub)
-#				ab = "'$bars'" ub
-#			} else {
-#				ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", "'$bars'")
-#				if(ab ~ /^,/) sub("^,", "", ab)
-#			}
-#
-#			gsub(",", " ", ub)
-#			print ab, ub
-#		}')
-#
-#	all_bars=( $bars_array )
-#
-#	echo $last_running
-#	echo ${#all_bars[*]} ${all_bars[*]}
-#}
+add_bar() {
+	[[ $last_running ]] && separator=,
+	sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
+}
 
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=si
+last_running=fl,dock_test
 
-while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
+while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
@@ -65,22 +44,14 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			kill_bar
 			~/.orw/scripts/bar/generate_bar.sh ${@:2}
 
-			#awk -i inplace '\
-			#	/bar/ && $(NF - 1) !~ /\<'$bar'\>/ {
-			#			sub("$", ",'$bar'", $(NF - 1))
-			#	} { print }' ~/.config/openbox/autostart.sh
-
-			[[ $last_running ]] && separator=,
-
-			sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
+			add_bar
 			exit;;
-		c) check_interval=$OPTARG;;
+		i) check_interval=$OPTARG;;
 		b)
 			bar_expr=$OPTARG
 
 			[[ ${bar_expr//[[:alnum:]_-]/} =~ ^(,+?|)$ ]] &&
 				pattern="^(${bar_expr//,/|})$" || pattern="${bar_expr//,/|}"
-			#read -a bars <<< $(ls $configs | awk -F '/' '$NF ~ /^'${pattern//\*/\.\*}'/ { print $NF }' | xargs)
 
 			[[ $@ =~ -k ]] && remove=true
 
@@ -130,12 +101,11 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 
 			awk -i inplace '\
 				function get_new_value(flag) {
-					#return gensub(".*(-" flag "([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\3", 1)
-					return gensub("((([^-]*-[^" flag "])*[^" flag "]*" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
+					#return gensub("((([^-]*-[^" flag "])*[^" flag "]*" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
+					return gensub("((([^-]*-[^" flag "])*[^-]*-" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
 				}
 
 				function replace_value() {
-					#$0 = gensub("(.*-" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\2" nv "\\6", 1)
 					$0 = gensub("(([^-]*-[^" f "])*[^" f "]*" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\3" nv "\\7", 1)
 				}
 
@@ -229,6 +199,25 @@ while getopts :ds:c:gb:m:E:e:r:R:klan flag; do
 			~/.orw/scripts/add_bar_launcher.sh ${@:2}
 			exit;;
 		n) no_reload=true;;
+		c)
+			config=$OPTARG
+			clone_config=${!OPTIND}
+			config_path=~/.config/orw/bar/configs
+
+			shift
+
+			#cp $config_path/$config $config_path/$clone_config
+			#sed -n "s/\(.*c\).*/\\1/1p" $config_path/$config
+			#sed -n "s/\(\([^-]*-[^c]\)*[^-]*-c\)/\\1 bar_$clone_config/p" $config_path/$config
+			awk '{
+				$0 = gensub("(([^-]*-[^c])*[^-]*-c)", "\\1 bar_'$clone_config'", 1)
+				$0 = gensub("(.*-n)( [^ ]*)", "\\1 '$clone_config'", 1, $0)
+				print
+			}' $config_path/$config > $config_path/$clone_config
+
+			bar=$clone_config
+			bars=( $bar )
+			add_bar
 	esac
 done
 
