@@ -73,9 +73,9 @@ slbg #b5bc6d
 slfg #2e2f31
 
 #bar
-bg #8c524f4c
+bg #fe524f4c
 fc #b5bc6d
-bfc #8c524f4c
+bfc #fe524f4c
 bbg #3c3936
 bsbg #3c3936
 bsfg #313131
@@ -87,13 +87,14 @@ Wpfg #686562
 pbefg #C8935F
 msfg #38393b
 mlfg #87939c
-Wsbg #8c524f4c
+Wsbg #fe524f4c
 Wsfg #494643
 pbfg #494643
 mpfg #999999
 mfc #609599
 Lsbg #3c3936
 Lfc #3c3936
+Lpbg #3c3936
 
 #ncmpcpp
 npp #b2adae
