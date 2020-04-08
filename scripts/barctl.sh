@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=fl,dock_test
+last_running=fl
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -136,7 +136,7 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 
 								fo = (length(naa[1])) ? naa[ai] : cv
 								so = (length(a) > 1) ? av : cv
-								nv = (as == "+") ? fo + so : fo - so
+								nv = (as == "+") ? so + fo : so - fo
 
 								replace_value()
 							}
