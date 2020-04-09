@@ -269,6 +269,8 @@ color_modules() {
 					format_module -b default -c "${separator- }"
 
 					(( content_length += ${separator_length-1} ))
+					before_separator_content_length=$content_length
+
 					#for reverse edge on next module
 					reverse=true
 					set_edge
@@ -281,8 +283,9 @@ color_modules() {
 
 		[[ $module == ${modules##*,} ]] && last_module=true
 
-		if [[ $edge_mode != flat && ${modules%,$module*} =~ ,s$ ]]; then
-			unset reverse
+		#if [[ $edge_mode != flat && ${modules%,$module*} =~ ,s$ ]]; then
+		if [[ $edge_mode != flat && $before_separator_content_length && $content_length -gt $before_separator_content_length ]]; then
+			unset reverse before_separator_content_length
 			set_edge
 		fi
 	done
@@ -301,13 +304,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="61;62;64;"
-	fg="87;88;90;"
-	sc="87;88;90;"
-	ic="149;142;154;"
+	bg="82;79;76;"
+	fg="115;112;109;"
+	sc="115;112;109;"
+	ic="181;188;109;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="128;102;109;"
+	gdc="200;147;95;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -331,7 +334,7 @@ generate_ps1() {
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
 		#modules="i,w,v,r,g"
-		modules="i,w,r,v,g"
+		modules="i,w,s,v,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
