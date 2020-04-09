@@ -120,8 +120,10 @@ function get_color() {
 				} END {
 					tl = '$transparency_level'
 
-					if(tl == 100) exit
-					else if(!tl) {
+					#uncomment for removing transparency level when it is 100
+					#if(tl == 100) exit
+					#else if(!tl) {
+					if(!tl) {
 						if(length(tl)) tl = 0
 						else {
 							tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
@@ -295,8 +297,16 @@ function term() {
 
 	case $property in
 		bg)
+			if [[ $transparency ]]; then
+				read term_transparency term_pattern <<< $(awk -Wposix '{
+						tl = sprintf("%d", "0x" $0)
+						printf("%.2f [0-9.]\\\\+", tl / 255)
+					}' <<< ${color:1:2})
+			fi
+
 			rgb=$($colorctl -c -h "#${color: -6}")
-			sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf;;
+			sed -i "/^background/ s/\([0-9,]\+\),$term_pattern/$rgb$term_transparency/" $term_conf;;
+			#sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf;;
 		fg) sed -i "/^foreground/ s/#.*/#${color: -6}/" $term_conf;;
 		colors)
 			awk -i inplace 'NR == FNR { a[ci++] = $1; next } \
