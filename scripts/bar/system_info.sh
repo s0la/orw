@@ -12,7 +12,7 @@ sbg="${module}sbg:-\${${module}pbg:-\$sbg}"
 sfg="${module}sfg:-\${${module}pfg:-\$sfg}"
 
 function set_icon() {
-	[[ "$all" =~ icon ]] && icon="$(sed -n "s/${1}_icon=//p" ${0%/*}/icons)"
+	[[ "$all" =~ icon|only ]] && icon="$(sed -n "s/${1}_icon=//p" ${0%/*}/icons)"
 }
 
 function set_line() {
@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=9
+		old_mail_count=18
 
 		email_auth=~/.orw/scripts/auth/email
 
