@@ -263,11 +263,13 @@ command! setwall wallctl set_wall %f:p &
 command! setwalldir wallctl set_wall_dir %f &
 command! addwalldir wallctl add_wall_dir %f &
 command! removewalldir wallctl remove_wall_dir %f &
+command! setwallcolor wallctl set_wall_color %f:p &
 
 nnoremap sw :setwall<cr>
 nnoremap swd :setwalldir<cr>
 nnoremap awd :addwalldir<cr>
 nnoremap rwd :removewalldir<cr>
+nnoremap swc :setwallcolor<cr>
 
 " resizing
 nnoremap > :5wincmd><cr>

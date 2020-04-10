@@ -11,6 +11,7 @@ case $1 in
 			flag=M modify=${1%%_*}
 
 		~/.orw/scripts/wallctl.sh -${flag-d} $modify "$tails";;
-	*wall)
-		~/.orw/scripts/wallctl.sh -s "${@:2}"
+	*wall|*color)
+		[[ $1 =~ color ]] && flag=c
+		~/.orw/scripts/wallctl.sh -${flag}s "${@:2}"
 esac
