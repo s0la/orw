@@ -16,7 +16,7 @@ bar_name='main_bar'
 bg="#8c2D2E30"
 fc="#609599"
 bfc="#8c2D2E30"
-bbg="#2e2e2e"
+bbg="#2D2E30"
 bsbg="%{B#2D2E30}"
 bsfg="%{F#313131}"
 
@@ -226,6 +226,9 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				check_arg clone_colorscheme ${!OPTIND} && shift
 				colorscheme_path=~/.config/orw/colorschemes/$colorscheme.ocs
 
+				[[ $clone_colorscheme ]] &&
+					cp ${colorscheme_path%/*}/$clone_colorscheme.ocs $colorscheme_path
+
 				if [[ -f $colorscheme_path ]]; then
 					use_colorscheme=true
 					[[ $@ =~ -M ]] || base=9
@@ -248,12 +251,11 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 					[[ $@ =~ -b ]] && bg=$bbg
 					[[ $bar_frame ]] && bar_frame="-R$bfc -r $bar_frame_width"
 					[[ $separator =~ ^%\{O[0-9]+\} ]] || separator="$bsbg$bsfg${separator#*\}*\}}"
-
-					unset colorscheme
 				else
-					[[ $clone_colorscheme ]] && cp ${colorscheme_path%/*}/$clone_colorscheme.ocs $colorscheme_path ||
-						~/.orw/scripts/rice_and_shine.sh -m bar -b $colorscheme
+					~/.orw/scripts/rice_and_shine.sh -m bar -b $colorscheme
 				fi
+
+				unset colorscheme
 			else
 				modules+='%{c}'
 			fi;;
