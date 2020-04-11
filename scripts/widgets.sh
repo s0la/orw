@@ -14,50 +14,7 @@ check_cover() {
 	size=${geometry%x*}
 }
 
-#toggle_input() {
-#	[[ $input == true ]] && new_state=false || new_state=true
-#	[[ ${1:-$new_state} == true ]] && state=p icon= || state=s icon= 
-#
-#	color=$(awk '{
-#			if(/^L'$state'fg/) l = $2
-#			else if(/^'$state'fg/) p = $2
-#		} END { print l ? l : p }' ~/.config/orw/colorschemes/dock.ocs)
-#
-#	awk -i inplace '\
-#		/^#input/ { nr = NR + 1 }
-#		nr && nr == NR {
-#		$0 = gensub("([^#]*)(#\\w*)(}[^}]*})([^%]*)", "\\1'$color'\\3'$icon'", 1)
-#	} { print }' ~/.orw/scripts/bar/launchers
-#	sed -i "/^input/ s/\w*$/${1:-$new_state}/" $0
-#}
-
 toggle_input() {
-	#[[ $input == true ]] && new_state=false || new_state=true
-	#[[ ${1:-$new_state} == true ]] && state=p || state=s
-
-	#awk '/L[ps]fg/ {
-	#	cs = gensub(".*L([ps])fg.*", "\\1", 1)
-	#	ns = (cs == "s") ? "p" : "s"
-	#	gsub(cs, ns)
-	#	print }' ~/.orw/scripts/bar/launchers
-
-	#awk '/L[ps]fg/ {
-	#	if(/Lpfg/) {
-	#		cs = "p"
-	#		ns = "s"
-	#	} else {
-	#		cs = "s"
-	#		ns = "p"
-	#	}
-	#	gsub(cs, ns)
-	#	print }' ~/.orw/scripts/bar/launchers
-
-	#awk '/L[ps]fg/ {
-	#	cs = gensub(".*L([ps])fg.*", "\\1", 1)
-	#	ns = (cs == "s") ? "p" : "s"
-	#	gsub(cs, ns)
-	#	print }' ~/.orw/scripts/bar/launchers
-
 	[[ $input == true ]] && new_state=false || new_state=true
 	[[ ${1:-$new_state} == true ]] && state=p || state=s
 
@@ -130,7 +87,7 @@ cover() {
 		openbox --reconfigure
 	}
 
-	previous_geometry='150x150+785+836'
+	previous_geometry='63x63+785+984'
 	previous_bg='#1c1d21'
 
 	check_cover
@@ -177,6 +134,11 @@ cover() {
 	[[ $cover_pid ]] && kill $cover_pid
 }
 
+get_display() {
+	read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -n $1 -p)
+	display=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} | awk '{ print $1 }')
+}
+
 layout() {
 	if [[ $2 == -k ]]; then
 		tmux -S /tmp/tmux_hidden kill-session -t $1
@@ -189,8 +151,10 @@ layout() {
 		if ((cover_pid)); then
 			border=$(awk '/^border/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
 
+			get_display cover_art_widget
+
 			if [[ ! $controls_running && $1 == visualizer ]]; then
-				layout="-M cover_art_widget xe,y,h,w*3"
+				layout="-d $display -M cover_art_widget xe,y,h,w*3"
 			else
 				if [[ ! $controls_running ]]; then
 					local mirror=visualizer
@@ -203,13 +167,16 @@ layout() {
 					[[ $1 == playlist ]] && progressbar=no status=no
 				fi
 
-				layout="-M cover_art_widget x,w,h*$height,ys-10 -M $mirror w$delta+"
+				layout="-d $display -M cover_art_widget x,w,h*$height,ys-10 -M $mirror w$delta+"
 			fi
 		else
 			if [[ $controls_running ]]; then
-				layout="-M mwi x,h*10,ys-10,w"
+				get_display mwi
+				layout="-d $display -M mwi x,h*10,ys-10,w"
 			else
-				[[ $(wmctrl -l | awk '$NF == "ncmpcpp_playlist"') ]] && layout="-M playlist x,ye+10,w"
+				get_display ncmpcpp_playlist
+				[[ $(wmctrl -l | awk '$NF == "ncmpcpp_playlist"') ]] &&
+					layout="-d $display -M ncmpcpp_playlist x,ye+10,w"
 			fi
 		fi
 
