@@ -37,7 +37,7 @@ pbfg #979392
 
 #term
 fg #cccccc
-bg #ff323335
+bg #ed323335
 colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
 
 #vim
@@ -76,7 +76,7 @@ slfg #2e2f31
 bg #8c2D2E30
 fc #609599
 bfc #8c2D2E30
-bbg #2e2e2e
+bbg #2D2E30
 bsbg #2D2E30
 bsfg #313131
 pbg #2D2E30
@@ -92,7 +92,7 @@ Wsfg #3e3f41
 pbfg #494643
 mpfg #999999
 mfc #609599
-Lsbg #2e2e2e
+Lsbg #2D2E30
 Lfc #609599
 Lpbg #38393b
 
@@ -109,7 +109,7 @@ pec #87939c
 vc #87939c
 
 #tmux
-bg #323335
+bg default
 fg #656c1d
 bc #393a3c
 mc #3a3a3a

@@ -1,13 +1,13 @@
 #bar
-bg #d82e2e2e
-fc #d82e2e2e
+bg #2D2E30
+fc #2D2E30
 bfc #2e2e2e
 bbg #303030
 bsbg #3a3a3a
 bsfg #303030
-pbg #d82e2e2e
+pbg #2D2E30
 pfg #abaeb2
-sbg #d82e2e2e
+sbg #2D2E30
 sfg #797c80
 dpfg #4f4f4f
-Esfg #b8987e
+Esfg #C8935F
