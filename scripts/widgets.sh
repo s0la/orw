@@ -172,7 +172,7 @@ layout() {
 		else
 			if [[ $controls_running ]]; then
 				get_display mwi
-				layout="-d $display -M mwi x,h*10,ys-10,w"
+				layout="-d $display -M mwi x,h*15,ys-10,w"
 			else
 				get_display ncmpcpp_playlist
 				[[ $(wmctrl -l | awk '$NF == "ncmpcpp_playlist"') ]] &&
