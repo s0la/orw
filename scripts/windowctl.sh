@@ -166,7 +166,7 @@ get_display_properties() {
 
 get_bar_properties() {
 	if [[ ! $bars_checked ]]; then
-		while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame bar_display; do
+		while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
 			current_bar_height=$((bar_y + bar_height))
 			((position)) && (( current_bar_height += frame ))
 

@@ -33,6 +33,6 @@ ps aux | grep bar | sort -r | \
 	} {
 		if(nr && NR == nr + 1 && x >= '$bar_min' && x + w <= '$bar_max') {
 			aw = (/-w [a-z]/) ? 1 : 0
-			print bn, p, x, y, w, h, aw, fw, '$display'
+			print bn, p, x, y, w, h, aw, fw
 		}
 	}'
