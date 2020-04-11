@@ -704,15 +704,14 @@ while ((argument_index <= $#)); do
 			i) set_window_id $optarg;;
 			n)
 				name="$optarg"
-				#set_window_id $(printf "0x%.8x" $(xdotool search --name "$name"))
 				id=$(wmctrl -lG | awk '$NF ~ "'$name'" { print $1 }')
 
 				if [[ $id ]]; then
 					set_window_id $id
 					properties=( $(get_windows $id) )
 				else
-					set_windows_properties $display_orientation
-					id="$name"
+					#set_windows_properties $display_orientation
+					#id="$name"
 					get_bar_properties add
 					properties=( $(list_all_windows | grep "$name") )
 				fi;;
