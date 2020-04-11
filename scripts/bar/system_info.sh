@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=18
+		old_mail_count=20
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -173,7 +173,7 @@ case $1 in
 		info="${3//,/ }"
 
 		if (($# > 4)); then
-			if [[ $4 == icon ]]; then
+			if [[ $4 =~ ^(icon|only)$ ]]; then
 				(($# > 5)) && location=$5
 			else
 				location=$4
@@ -193,7 +193,6 @@ case $1 in
 			*[Rr]ain*) icon=rain;;
 		esac
 
-		#icon="%{I-4}$icon%{I-}"
 		set_icon $icon
 
 		[[ $info == s ]] && s="${s#* }"
