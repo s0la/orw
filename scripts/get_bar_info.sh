@@ -2,7 +2,7 @@
 
 display=${1-0}
 
-read bar_min bar_max <<< \
+read bar_min bar_max display <<< \
 	$(awk -F '[_ ]' '{
 		if(/primary/) {
 			bm = 0
@@ -13,7 +13,7 @@ read bar_min bar_max <<< \
 			if(NF == 4) {
 				if(d > $2) bm += $3
 				else {
-					print bm, bm + $3
+					print bm, bm + $3, d
 					exit
 				}
 			}
@@ -30,10 +30,9 @@ ps aux | grep bar | sort -r | \
 		ff = (p) ? 7 : 9
 		fw = ($(NF - ff) == "r") ? $(NF - (ff - 1)) * 2 : 0
 		bn = $NF
-	}
-	{
+	} {
 		if(nr && NR == nr + 1 && x >= '$bar_min' && x + w <= '$bar_max') {
 			aw = (/-w [a-z]/) ? 1 : 0
-			print bn, p, x, y, w, h, aw, fw
+			print bn, p, x, y, w, h, aw, fw, '$display'
 		}
 	}'

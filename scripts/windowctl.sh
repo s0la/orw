@@ -166,7 +166,7 @@ get_display_properties() {
 
 get_bar_properties() {
 	if [[ ! $bars_checked ]]; then
-		while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
+		while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame bar_display; do
 			current_bar_height=$((bar_y + bar_height))
 			((position)) && (( current_bar_height += frame ))
 
@@ -714,6 +714,7 @@ while ((argument_index <= $#)); do
 					#id="$name"
 					get_bar_properties add
 					properties=( $(list_all_windows | grep "$name") )
+					#set_windows_properties $display_orientation
 				fi;;
 			D) current_desktop=$optarg;;
 			d) display=$optarg;;
@@ -864,7 +865,6 @@ while ((argument_index <= $#)); do
 									exit
 								}
 							}')
-							#awk '/'$optarg'/ { print $1; exit }')
 
 						mirror_window_properties=( $(list_all_windows | \
 							awk '$1 == "'$mirror_window_id'" {
