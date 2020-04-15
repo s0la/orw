@@ -28,6 +28,7 @@ else
 			coproc (mpc -q update &)
 			pid=$((COPROC_PID + 1))
 			coproc (notify_on_finish &);;
+		refresh);;
 		add_all)
 			mpc add "$current"
 			back;;
@@ -42,6 +43,6 @@ else
 fi
 
 [[ $current ]] && echo -e 'back'
-echo -e 'update\nadd_all\n━━━━━━━'
+echo -e 'update\nrefresh\nadd_all\n━━━━━━━'
 
 mpc ls "$current" | awk -F '/' '! /m3u$/ { print $NF }'
