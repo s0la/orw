@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=fl
+last_running=lp,mid
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -101,7 +101,6 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 
 			awk -i inplace '\
 				function get_new_value(flag) {
-					#return gensub("((([^-]*-[^" flag "])*[^" flag "]*" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
 					return gensub("((([^-]*-[^" flag "])*[^-]*-" flag ")([^0-9]*([0-9]+)){" ai "}[^-]*).*", "\\5", 1)
 				}
 
@@ -136,7 +135,7 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 
 								fo = (length(naa[1])) ? naa[ai] : cv
 								so = (length(a) > 1) ? av : cv
-								nv = (as == "+") ? so + fo : so - fo
+								nv = (as == "+") ? so + fo : fo - so
 
 								replace_value()
 							}
