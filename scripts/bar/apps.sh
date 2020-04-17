@@ -1,13 +1,14 @@
 #!/bin/bash
 
+padding=$1
 separator="$2"
 lines=${@: -1}
 window_name_lenght=20
 
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
 
-if [[ $# -gt 2 ]]; then
-	for argument in ${2//,/ }; do
+if [[ $# -gt 3 ]]; then
+	for argument in ${3//,/ }; do
 		case $argument in
 			a) active=$current_window_id;;
 			c) current_desktop=$(xdotool get_desktop);;
@@ -15,7 +16,7 @@ if [[ $# -gt 2 ]]; then
 				value=${argument:1}
 				property=${argument:0:1}
 
-				[[ $3 == true ]] && separator_color='${Afc:-$fc}'
+				[[ $4 == true ]] && separator_color='${Afc:-$fc}'
 
 				case $property in
 					l) window_name_lenght=$value;;
@@ -24,7 +25,7 @@ if [[ $# -gt 2 ]]; then
 						if [[ $value =~ [0-9] ]]; then
 							offset="%{O$value}"
 						else
-							[[ $value == p ]] && offset='${padding}' || offset='${inner}'
+							[[ $value == p ]] && offset=$padding || offset='${inner}'
 						fi;;
 				esac
 		esac
@@ -56,13 +57,13 @@ while read -r window_id window_name; do
 		[[ $current == s ]] && window_name+='..'
 	fi
 
-	window_name="\${padding}${window_name}\${padding}"
+	window_name="${padding}${window_name}${padding}"
 
 	if [[ $window_id ]]; then
 		bg="\${A${current}bg:-\${Asbg:-\$${current}bg}}"
 		fg="\${A${current}fg:-\${Asfg:-\$${current}fg}}"
 
-		window="%{A:wmctrl -ia $window_id:}$bg$fg\${padding}${window_name//\"/\\\"}\${padding}%{A}"
+		window="%{A:wmctrl -ia $window_id:}$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}"
 
 		if [[ $current == p && $lines == single ]]; then
 			window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"

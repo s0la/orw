@@ -13,52 +13,35 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#8c2D2E30"
-fc="#609599"
-bfc="#8c2D2E30"
+bg="#2D2E30"
+fc="#608985"
+bfc="#608985"
 bbg="#2D2E30"
 bsbg="%{B#2D2E30}"
 bsfg="%{F#313131}"
 
 pbg="%{B#2D2E30}"
-pfg="%{F#C8935F}"
+pfg="%{F#999999}"
 sbg="%{B#2D2E30}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
-    echo -e "MPD $($path/mpd.sh $fifo ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
+    echo -e "MPD $($path/mpd.sh $fifo $padding ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
 }
 
 get_apps() {
 	[[ $single_line ]] && apps_lines=single
-	echo -e "APPS $($path/apps.sh $separator $apps_args ${apps_lines:-${lines-false}})"
+	echo -e "APPS $($path/apps.sh $padding $separator $apps_args ${apps_lines:-${lines-false}})"
 }
 
 get_launchers() {
 	[[ $single_line ]] && launchers_lines=single
-	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $separator $launchers_args ${launchers_lines:-${lines-false}})"
+	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding $separator $launchers_args ${launchers_lines:-${lines-false}})"
 }
 
 get_workspaces() {
-	#for arg in ${workspaces_args//,/ }; do
-	#	if [[ $arg =~ ^o ]]; then
-	#		value=${arg:1}
-
-	#		if [[ $value =~ [0-9] ]]; then
-	#			offset="%{O$value}"
-	#		else
-	#			[[ $value == p ]] && offset=$padding || offset=$inner
-	#		fi
-	#	else
-	#		workspaces_label=$arg
-	#	fi
-	#done
-
-	if [[ ! $offset ]]; then
-		[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
-	fi
-
-	echo -e "WORKSPACES $($path/workspaces.sh $separator ${workspaces_args:-i} $offset ${single_line-false})"
+	[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
+	echo -e "WORKSPACES $($path/workspaces.sh $padding $separator $offset ${workspaces_args:-i} ${single_line-false})"
 }
 
 get_full_usage() {

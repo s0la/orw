@@ -1,8 +1,9 @@
 #!/bin/bash
 
-separator="$2"
+padding=$2
+separator="$3"
 lines=${@: -1}
-offset='${padding}'
+offset=$padding
 
 launchers_directory=~/.config/orw/bar/launchers
 launchers_file=$launchers_directory/$1
@@ -10,12 +11,12 @@ launchers_file=$launchers_directory/$1
 [[ ! -d $launchers_directory ]] && mkdir $launchers_directory
 [[ ! -f $launchers_file ]] && cp ~/.orw/scripts/bar/launchers $launchers_file
 
-if (($# > 3)); then
-	for argument in ${3//,/ }; do
+if (($# > 4)); then
+	for argument in ${4//,/ }; do
 		value=${argument:1}
 		property=${argument:0:1}
 
-		[[ $4 == true ]] && separator_color='%{B${Lfc:-$fc}}'
+		[[ $5 == true ]] && separator_color='%{B${Lfc:-$fc}}'
 
 		if [[ $property == s ]]; then
 			launcher_separator="${separator_color:-\$bsbg}%{O$value}"
@@ -23,7 +24,7 @@ if (($# > 3)); then
 			if [[ $value =~ [0-9] ]]; then
 				offset="%{O$value}"
 			else
-				[[ $value == p ]] && offset='${padding}' || offset='${inner}'
+				[[ $value == p ]] && offset=$padding || offset='${inner}'
 			fi
 		fi
 	done

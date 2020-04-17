@@ -1,6 +1,7 @@
 #!/bin/bash
 
 fifo=$1
+padding=$2
 bg='${msbg:-${mpbg:-$sbg}}'
 
 current_mode=controls
@@ -120,7 +121,7 @@ get_controls() {
 	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
 }
 
-for module in ${2//,/ }; do
+for module in ${3//,/ }; do
 	case $module in
 		t) modules+="$toggle";;
 		p*)
@@ -143,7 +144,7 @@ for module in ${2//,/ }; do
 			modules+='$mpd_volume'
 
 			[[ $status == playing && $current_mode == controls ]] &&
-				echo -e "MPD_VOLUME $(get_volume $3)" > $fifo;;
+				echo -e "MPD_VOLUME $(get_volume $4)" > $fifo;;
 		P) bg='${mpbg:-$pbg}';;
 		T) show_time=true;;
 		d*) delay=${module#d};;
@@ -170,4 +171,4 @@ done
 #~/.orw/scripts/notify.sh "$toggle"
 
 [[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$bg$info"
-echo -e "\${padding}${toggled_modules:-$modules}\$padding \$separator"
+echo -e "${padding}${toggled_modules:-$modules}$padding \$separator"

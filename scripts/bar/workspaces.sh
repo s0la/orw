@@ -4,7 +4,8 @@ workspace_count=$(xdotool get_num_desktops)
 current_workspace=$(($(xdotool get_desktop) + 1))
 
 offset=$3
-separator="$1"
+padding=$1
+separator="$2"
 single_line=${@: -1}
 
 function set_line() {
@@ -19,7 +20,7 @@ function set_line() {
 for workspace_index in $(seq $workspace_count); do
 	[ $workspace_index -eq $current_workspace ] && current=p || current=s
 
-	for arg in ${2//,/ }; do
+	for arg in ${4//,/ }; do
 		case $arg in
 			o*)
 				value=${arg:1}
@@ -27,12 +28,12 @@ for workspace_index in $(seq $workspace_count); do
 				if [[ $value =~ [0-9] ]]; then
 					offset="%{O$value}"
 				else
-					[[ $value == p ]] && offset='$padding' || offset='$inner'
+					[[ $value == p ]] && offset=$padding || offset='$inner'
 				fi;;
 			[cr]) [[ ! $flags =~ $arg ]] && flags+=$arg;;
 			s*) workspace_separator="\$bsbg%{O${arg:1}}";;
-			l) label="\${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
-				{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')\${padding}";;
+			l) label="${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
+				{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')${padding}";;
 			n) label="$offset$workspace_index$offset";;
 			b*) ((${#arg} > 1)) && label=%{O${arg:1}} || label=$offset;;
 			*)
@@ -70,7 +71,7 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-[[ $2 =~ i ]] && workspaces="$fbg\${padding}${workspaces%\%*}\${padding}"
+[[ $4 =~ i ]] && workspaces="$fbg${padding}${workspaces%\%*}${padding}"
 
 echo -e "%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
