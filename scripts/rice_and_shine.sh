@@ -118,11 +118,8 @@ function get_color() {
 					l = length($NF)
 					exit
 				} END {
-					tl = '$transparency_level'
+					tl = "'$transparency_level'"
 
-					#uncomment for removing transparency level when it is 100
-					#if(tl == 100) exit
-					#else if(!tl) {
 					if(!tl) {
 						if(length(tl)) tl = 0
 						else {
@@ -1057,7 +1054,6 @@ if [[ $replace_color ]]; then
 						rgb = sprintf("%.2d,%.2d,%.2d,", "0x" r, "0x" g, "0x" b)
 						nrgb = sprintf("%.2d,%.2d,%.2d,", "0x" nr, "0x" ng, "0x" nb)
 
-						#sub((t) ? "[0-9,.]+" : "[0-9,]+,", rgb a)
 						sub(rgb a, nrgb na)
 					}
 					/^foreground/ {
@@ -1074,7 +1070,11 @@ if [[ $replace_color ]]; then
 				fi
 
 				if [[ $replace_module == lock ]]; then
-					sed -i "s/${color:3}${color:1:2}/${new_color:3}${new_color:1:2}/" ${!config_file}
+					((${#color} > 7)) && lock_color=${color:3}${color:1:2} new_lock_color=${new_color:3}${new_color:1:2} ||
+
+					#echo ${lock_color:-$color} ${new_lock_color:-$new_color}
+					sed -i "s/${lock_color:-${color:1}}/${new_lock_color:-$new_color}/" ${!config_file}
+					#sed -i "s/${color:3}${color:1:2}/${new_color:3}${new_color:1:2}/" ${!config_file}
 				else
 					if [[ $transparency ]]; then
 						((${#new_color} < 8)) && color=${color: -6}
