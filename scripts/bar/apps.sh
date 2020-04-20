@@ -3,6 +3,7 @@
 padding=$1
 separator="$2"
 lines=${@: -1}
+offset=$padding
 window_name_lenght=20
 
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
@@ -57,7 +58,8 @@ while read -r window_id window_name; do
 		[[ $current == s ]] && window_name+='..'
 	fi
 
-	window_name="${padding}${window_name}${padding}"
+	#window_name="${padding}${window_name}${padding}"
+	window_name="${offset}${window_name}${offset}"
 
 	if [[ $window_id ]]; then
 		bg="\${A${current}bg:-\${Asbg:-\$${current}bg}}"
@@ -76,5 +78,6 @@ done <<< $(wmctrl -l | awk '$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 
 
 [[ $app_separator ]] && windows=${windows%\%*}
 [[ $windows && $lines == true ]] && windows="%{U$fc}\${start_line:-$left_frame}$windows\${end_line:-$right_frame}"
+#~/.orw/scripts/notify.sh "W: $windows"
 
 [[ $windows ]] && echo -e "$windows%{B\$bg}\$separator"
