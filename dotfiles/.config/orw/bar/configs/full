@@ -1,1 +1,1 @@
-.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -s 50 -f 4 -n full -l -c -N -e -B p -v -d
+~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -f 2 u -a 7 -c bar_full -M -n full -l -A c -l -c -W ih -r -e -E t novi_sad -B -v -d 

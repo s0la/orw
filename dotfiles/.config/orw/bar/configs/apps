@@ -1,1 +1,1 @@
-.orw/scripts/bar/generate_bar.sh -x c -w a -b -F 2 -f 2 u -n apps -M -l -A
+~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 10 -b -h 26 -a 7 -f 2 -c bar_zen -M -n apps -l -A o30,c 
