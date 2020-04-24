@@ -61,7 +61,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=20
+		old_mail_count=35
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -201,7 +201,7 @@ case $1 in
 			weather+="${!i}\${padding}"
 		done
 
-		if [[ $4 =~ (no|only) ]]; then
+		if [[ $4 =~ ^(no|only)$ ]]; then
 			style=mono
 
 			if [[ $4 == no ]]; then
