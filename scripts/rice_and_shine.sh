@@ -113,25 +113,47 @@ function get_color() {
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
-		transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
-			awk -Wposix '/^('${property//\*/\.\*}') / {
-					l = length($NF)
-					exit
-				} END {
-					tl = "'$transparency_level'"
+		#transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
+		#	awk -Wposix '/^('${property//\*/\.\*}') / {
+		#			c = $NF
+		#			l = length(c)
+		#			exit
+		#		} END {
+		#			tl = "'$transparency_level'"
 
-					if(!tl) {
-						if(length(tl)) tl = 0
-						else {
-							tl = (l && l > 7) ? sprintf("%d", "0x" substr($NF, 2, 2)) : 255
-							ntl = int(tl '$transparency_offset' * 2.55)
-						}
+		#			if(!tl) {
+		#				if(length(tl)) tl = 0
+		#				else {
+		#					tl = (l && l > 7) ? sprintf("%d", "0x" substr(c, 2, 2)) : 255
+		#					ntl = int(tl '$transparency_offset' * 2.55)
+		#				}
+		#			}
+
+		#			t = ntl ? ntl : int(tl * 2.55)
+		#			printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
+		#		}')
+
+		#echo $color
+		transparency_hex=$(awk -Wposix '{
+				c = $0
+				l = length(c)
+				tl = "'$transparency_level'"
+
+				if(!tl) {
+					if(length(tl)) tl = 0
+					else {
+						tl = (l && l > 7) ? sprintf("%d", "0x" substr(c, 2, 2)) : 255
+						ntl = int(tl '$transparency_offset' * 2.55)
+						#system("~/.orw/scripts/notify.sh \"" pn "\"")
 					}
+				}
 
-					t = ntl ? ntl : int(tl * 2.55)
-					printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
-				}')
+				t = ntl ? ntl : int(tl * 2.55)
+				printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
+			}' <<< $color)
 
+		#echo $transparency_hex
+		#exit
 		color="#$transparency_hex${color: -6}"
 	fi
 }
@@ -588,9 +610,9 @@ get_vim() {
 
 get_vifm() {
 	while read vifm_property index; do
-		get_color_properties $((index + 1))
+		[[ $index != default ]] && get_color_properties $((index + 1))
 		echo $vifm_property $color
-	done <<< $(sed -n 's/^let \$\(\w*\) =/\1/p' $vifm_conf)
+	done <<< $(sed -n "s/^let \$\(\w*\) = '\?\([^']*\).*/\1 \2/p" $vifm_conf)
 }
 
 function get_bar() {
@@ -1025,7 +1047,7 @@ if [[ $replace_color ]]; then
 				new_index=$new_color_index
 				pattern='/delay\|columns\|interval\|change/!'
 
-				sed -i "/^foreground/ s/${color: -6}/$new_color/" $cava_conf
+				sed -i "/^foreground/ s/${color: -6}/${new_color: -6}/" $cava_conf
 			fi
 
 			sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}
