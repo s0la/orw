@@ -304,13 +304,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="61;62;64;"
+	bg="default"
 	fg="87;88;90;"
 	sc="87;88;90;"
 	ic="107;160;164;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="128;102;109;"
+	gdc="113;94;66;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -323,8 +323,8 @@ generate_ps1() {
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=rice
-		edge_mode=sharp
+		mode=simple
+		edge_mode=flat
 
 		set_edge
 
@@ -334,7 +334,7 @@ generate_ps1() {
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
 		#modules="i,w,v,r,g"
-		modules="i,w,s,v,g"
+		modules="w,v,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
@@ -448,6 +448,9 @@ alias ncmpcpp="$scripts/ncmpcpp.sh"
 alias toggle_rice="source $scripts/toggle.sh"
 alias toggle_bash="source $scripts/toggle.sh bash"
 alias toggle_tmux="$scripts/toggle.sh tmux"
+
+#tiling
+alias hat="$scripts/half_and_tile.sh"
 
 #source bashrc
 alias sb="source ~/.bashrc"

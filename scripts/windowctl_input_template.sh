@@ -49,13 +49,10 @@ evaluate() {
 			else
 				if [[ $mirror || $swap ]]; then
 					stop=true
-					[[ $mirror ]] &&
-						mirror+=" $input" ||
-						option="move -S $input"
+					[[ $mirror ]] && mirror+=" $input" || option="move -S $input"
 				else
-					[[ $input == r ]] &&
-						option=resize ||
-						bar=-b
+					[[ $input == r ]] && option=resize || bar=-b
+					[[ $input == t ]] && tile=true
 				fi
 			fi;;
 		[HD])
@@ -124,6 +121,7 @@ get_argument_count() {
 
 execute() {
 	~/.orw/scripts/windowctl.sh $x $y $margin $offsets $center $bar $state $grid $display $mirror $option $edge $multi $orientation $ratio $adjucent
+	[[ $tile ]] && ~/.orw/scripts/tile_terminal.sh
 }
 
 while getopts :o:O: flag; do
