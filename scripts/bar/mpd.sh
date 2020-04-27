@@ -94,31 +94,37 @@ if [[ $status == playing ]]; then
 	}
 fi
 
+#get_controls() {
+#	set_icon prev
+#	set_icon next
+#	set_icon play
+#	set_icon pause
+#
+#	[[ $status == playing ]] && toggle_icon=$mpd_pause_icon || toggle_icon=$mpd_play_icon
+#
+#	#stop="%{A:mpc -q stop; echo 'PROGRESSBAR' > $fifo;"
+#	#stop+="echo 'SONG_INFO not playing' > $fifo;"
+#	#stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
+#
+#	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
+#	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
+#	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
+#
+#	#controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
+#	#controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
+#	#controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
+#
+#	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}"
+#	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}"
+#	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}"
+#
+#	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
+#}
+
 get_controls() {
-	set_icon prev
-	set_icon next
-	set_icon play
-	set_icon pause
-
-	[[ $status == playing ]] && toggle_icon=$mpd_pause_icon || toggle_icon=$mpd_play_icon
-
-	#stop="%{A:mpc -q stop; echo 'PROGRESSBAR' > $fifo;"
-	#stop+="echo 'SONG_INFO not playing' > $fifo;"
-	#stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
-
-	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
-	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
-	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
-
-	#controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
-	#controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
-	#controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
-
-	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}"
-	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}"
-	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}"
-
-	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
+	local icon=mpd_${control}${circle}_icon
+	set_icon $control$circle
+	controls+="%{A:mpc -q $control:}${!icon}%{A}"
 }
 
 for module in ${3//,/ }; do
@@ -130,11 +136,39 @@ for module in ${3//,/ }; do
 
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "PROGRESSBAR $(get_progressbar)" > $fifo;;
-		c)
+		c*)
 			modules+='$controls'
 
-			[[ $current_mode == controls ]] &&
-				echo -e "CONTROLS $(get_controls)" > $fifo;;
+			if [[ $current_mode == controls ]]; then
+				((${#module} > 1)) && selected_controls="${module#*:}" || selected_controls="pstn"
+
+				for control_index in $(seq 1 ${#selected_controls}); do
+					current_control=${selected_controls:control_index - 1:1}
+
+					case $current_control in
+						p) control=prev;;
+						n) control=next;;
+						s) control=stop;;
+						t) [[ $status == playing ]] && control=pause || control=play;;
+						c) [[ $circle ]] && unset circle || circle=_circle;;
+					esac
+
+					if [[ $current_control != c ]]; then
+						#((control_index > 1)) && controls+='${inner}'
+						[[ $control_index -eq 1 || $control_index -eq 2 &&
+							${selected_controls:control_index - 2:1} == c ]] || controls+='${inner}'
+						get_controls $control
+					fi
+				done
+
+				echo -e "CONTROLS $bg\${msfg:-\$sfg}$of%{T3}${controls}%{T-}$oe" > $fifo
+			fi;;
+
+			#echo $controls
+			#exit
+
+			#[[ $current_mode == controls ]] &&
+			#	echo -e "CONTROLS $(get_controls)" > $fifo;;
 		i)
 			modules+="$bg$of$info$oe"
 
