@@ -55,7 +55,8 @@ while read -r window_id window_name; do
 
 	if [[ ${#window_name} -gt $window_name_lenght ]]; then
 		window_name="${window_name:0:$window_name_lenght}"
-		[[ $current == s ]] && window_name+='..'
+		#[[ $current == s ]] && window_name+='..'
+		window_name+='..'
 	fi
 
 	#window_name="${padding}${window_name}${padding}"
