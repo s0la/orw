@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -y 50 -x 450 -w 250 -h 15 -p 0 -s 0 -a 8 -f 15 o -c bar_n_mw -n n_mwi -l -m P,s22,of5,i 

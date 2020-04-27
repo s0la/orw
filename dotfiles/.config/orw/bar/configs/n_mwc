@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -y 50 -x 300 -w 150 -h 60 -a 13 -p 10 -n n_mwc -r -m c:pctcn 
