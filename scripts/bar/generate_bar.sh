@@ -13,16 +13,16 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#2D2E30"
-fc="#608985"
+bg="#101115"
+fc="#5aa4a6"
 bfc="#608985"
-bbg="#2D2E30"
-bsbg="%{B#2D2E30}"
+bbg="#101115"
+bsbg="%{B#101115}"
 bsfg="%{F#313131}"
 
-pbg="%{B#2D2E30}"
+pbg="%{B#101115}"
 pfg="%{F#999999}"
-sbg="%{B#2D2E30}"
+sbg="%{B#101115}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
@@ -470,7 +470,7 @@ if [[ $align_center ]]; then
 		center_offset=$x_offset
 		x_offset=0
 	else
-		((x_offset)) &&
+		[[ $x_offset ]] &&
 			((x_offset += (display_width / 2))) ||
 			x_offset=$(((display_width - bar_width) / 2))
 	fi
