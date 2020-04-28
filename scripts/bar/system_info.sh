@@ -37,8 +37,7 @@ function format() {
 				done
 
 				echo -e $hidden;;
-			mono)
-				echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 ${separator:-\$separator}";;
+			mono) echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 ${separator:-\$separator}";;
 			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 ${separator:-\$separator}";;
 			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} ${separator:-\$separator}";;
 		esac
@@ -61,7 +60,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=35
+		old_mail_count=15
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -92,7 +91,15 @@ case $1 in
 			command1="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
 		command2="~/.orw/scripts/show_mail_info.sh $username $password 5"
 
-		((mail_count)) && format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count;;
+		if ((mail_count)); then
+			if [[ $3 == only ]]; then
+				style=mono
+				mono_fg="\${$sfg}"
+				format fading "%{A:$command1:}%{A3:$command2:}$icon%{A}%{A}"
+			else
+				format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count
+			fi
+		fi;;
 	volume*)
 		separator="$2"
         current_system_volume_mode=duo
@@ -100,7 +107,14 @@ case $1 in
 
         eval args=( $(${0%/*}/volume.sh system $3) )
 
-		format "${args[@]}";;
+		#~/.orw/scripts/notify.sh "arg1 ${args[1]}"
+		if [[ $3 == only ]]; then
+			style=mono
+			mono_fg="\${$sfg}"
+			format "${args[0]}"
+		else
+			format "${args[@]}"
+		fi;;
 	date*)
 		separator="$2"
 		date="$(date +"$(([[ $3 ]] && echo "${3//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
@@ -166,7 +180,13 @@ case $1 in
 			/^*/ { nn = substr($0, si, mi - si)
 			print gensub(" {2,}", "", 1, nn) }')
 
-		[[ $ssid ]] && format ${!2-NET} $ssid;;
+		if [[ $2 == only ]]; then
+			style=mono
+			mono_fg="\${$sfg}"
+			format $icon
+		else
+			[[ $ssid ]] && format ${!2-NET} $ssid
+		fi;;
 	Weather*)
 		separator="$2"
 		lines=${@: -1}
@@ -293,7 +313,9 @@ case $1 in
 			FUL) s=FULL label=BATT icon=charging_full out=100%;;
 			*)
 				case ${#p} in
-					2) icon=empty;;
+					2)
+						icon=empty
+						sfg="Bafg:-\${afg:-\${$sfg}}";;
 					4) icon=full;;
 					*)
 						case $p in
@@ -312,7 +334,13 @@ case $1 in
 			out+="${!i}\${padding}"
 		done
 
-		format ${!3-${label:-$s}} "${out%\$*}";;
+		if [[ $3 == only ]]; then
+			style=mono
+			mono_fg="\${$sfg}"
+			format $icon
+		else
+			format ${!3-${label:-$s}} "${out%\$*}"
+		fi;;
 	torrents)
 		separator="$2"
 		lines=${@: -1}
@@ -353,7 +381,15 @@ case $1 in
 		left_command="transmission-remote -t $ids -$s &> /dev/null"
 		right_command="~/.orw/scripts/show_torrents_info.sh"
 
-		((c)) && format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TOR}%{A}%{A}" "${torrents%\$*}";;
+		if ((c)); then
+			if [[ $4 == only ]]; then
+				style=mono
+				mono_fg="\${$sfg}"
+				format fading $icon
+			else
+				format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TOR}%{A}%{A}" "${torrents%\$*}"
+			fi
+		fi;;
 	updates)
 		separator="$2"
 		lines=${@: -1}
@@ -367,20 +403,39 @@ case $1 in
 			updates_count=$(apt list --upgradable 2> /dev/null | wc -l)
 		fi
 		
-		((updates_count)) && format fading ${!3-UPD} $updates_count;;
+		if ((updates_count)); then
+			if [[ $3 == only ]]; then
+				style=mono
+				mono_fg="\${$sfg}"
+				format fading $icon
+			else
+				format fading ${!3-UPD} $updates_count
+			fi
+		fi;;
 	Temp)
-		temp=$(awk '{printf("%d°C", $NF / 1000)}' /sys/class/thermal/thermal_zone*/temp)
+		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
+		temp=$(awk '{ tt += $NF / 1000; tc++ } END { print $NF / 1000 "°C" }' /sys/class/thermal/thermal_zone*/temp)
 
-		case $heat in
-			9*) icon=9;;
-			[8,7]*) icon=87;;
+		case $temp in
+			9*)
+				icon=9
+				sfg="Tafg:-\${afg:-\${$sfg}}";;
+			[8,7]*) icon=87
+				sfg="Tafg:-\${afg:-\${$sfg}}";;
 			[6,5]*) icon=65;;
 			[4,3]*) icon=43;;
 			*) icon=21;;
 		esac
 
-		set_icon $icon
-		format "${!2-TEMP}" "$temp";;
+		set_icon Temp_$icon
+
+		if [[ $2 == only ]]; then
+			style=mono
+			mono_fg="\${$sfg}"
+			format $icon
+		else
+			format "${!2-TEMP}" "$temp"
+		fi;;
 	Power)
 		style=mono
 		set_icon $1
