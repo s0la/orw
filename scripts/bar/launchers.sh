@@ -118,6 +118,7 @@ done <<< $(awk '{ if(/^$/) {
 					} else { if(!/^#/) l = l " " $0 }
 					} END { for(li in al) print al[li]; print l }' $launchers_file)
 
+launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
 [[ $launcher_separator ]] && launchers=${launchers%\%*}
 [[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
 
