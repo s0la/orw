@@ -2,6 +2,7 @@
 
 fifo=$1
 padding=$2
+separator=$3
 bg='${msbg:-${mpbg:-$sbg}}'
 
 current_mode=controls
@@ -29,7 +30,7 @@ info="\${mpfg:-\$pfg}\${inner}$commands\${song_info-not playing}$commands_end\${
 status=$(mpc | sed -n 's/^\[\(.*\)\].*/\1/p')
 
 get_song_info() {
-	time=$(mpc | awk 'NR == 2 {print $3}') elapsed_time=${time%/*}
+	time=$(mpc | awk 'NR == 2 { print $3 }') elapsed_time=${time%/*}
 	[[ $show_time ]] && time_length=${#time}
 
 	minutes=${elapsed_time%:*} seconds=${elapsed_time#*:}
@@ -127,7 +128,7 @@ get_controls() {
 	controls+="%{A:mpc -q $control:}${!icon}%{A}"
 }
 
-for module in ${3//,/ }; do
+for module in ${4//,/ }; do
 	case $module in
 		t) modules+="$toggle";;
 		p*)
@@ -202,7 +203,7 @@ for module in ${3//,/ }; do
 	[[ ($of || $oe) && ! $module =~ ^o ]] && unset o{e,f}
 done
 
-#~/.orw/scripts/notify.sh "$toggle"
+#~/.orw/scripts/notify.sh "$separator"
 
 [[ $current_mode == song_info ]] && toggled_modules="$toggle\$inner$bg$info"
-echo -e "${padding}${toggled_modules:-$modules}$padding \$separator"
+echo -e "${padding}${toggled_modules:-$modules}$padding $separator"

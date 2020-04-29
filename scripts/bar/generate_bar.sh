@@ -26,7 +26,7 @@ sbg="%{B#101115}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
-    echo -e "MPD $($path/mpd.sh $fifo $padding ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
+    echo -e "MPD $($path/mpd.sh $fifo $padding $separator ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
 }
 
 get_apps() {
@@ -303,7 +303,9 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		P)
 			format Power
 			get_display_properties
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height icon)\"");;
+			#~/.orw/scripts/notify.sh "$padding $separator"
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height $label)\"");;
+			#Power=$(eval "echo -e \"$($path/system_info.sh Power $padding $separator ${display_width}x$display_height $icon)\"");;
 		L)
 			modules+='$launchers'
 
