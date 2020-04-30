@@ -103,7 +103,8 @@ make_launcher() {
 	launcher="$commands$bg$fg$offset$icon$offset$closing"
 
 	if [[ $current == p && $lines == single ]]; then
-		launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
+		[[ ! $separator =~ ^[s%] ]] && launcher="\$start_line$launcher\$end_line" ||
+			launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
 	fi
 
 	unset right middle up down
@@ -120,6 +121,19 @@ done <<< $(awk '{ if(/^$/) {
 
 launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
 [[ $launcher_separator ]] && launchers=${launchers%\%*}
-[[ $launchers && $lines == true ]] && launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
 
-[[ $launchers ]] && echo -e "$launchers%{B\$bg}$separator"
+if [[ $launchers && $lines == true ]]; then
+	#~/.orw/scripts/notify.sh "s: $separator"
+	case $separator in
+		[ej]*) launchers+="${separator:1}";;
+		s*) launchers="%{U$fc}\${start_line:-$left_frame}$launchers${separator:2}";;
+		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+		#e*) launchers+="${separator:1}";;
+		*) launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator";;
+	esac
+
+	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
+fi
+
+#[[ $launchers ]] && echo -e "$launchers%{B\$bg}$separator"
+echo -e "$launchers"
