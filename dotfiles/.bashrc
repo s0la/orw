@@ -410,6 +410,7 @@ export FFF_COL4=9
 export EDITOR='nvim'
 export TERM=xterm-256color
 export PATH="$PATH:/sbin:~/.orw/scripts"
+export XDG_CONFIG_HOME="$HOME/.config"
 
 #aliases
 alias srec="~/.orw/scripts/record_screen.sh -d display_1"
@@ -455,4 +456,5 @@ alias hat="$scripts/half_and_tile.sh"
 #source bashrc
 alias sb="source ~/.bashrc"
 
-#source /home/sola/.config/broot/launcher/bash/br
+#tmux
+alias tmux="tmux -f ~/.config/tmux/tmux.conf"

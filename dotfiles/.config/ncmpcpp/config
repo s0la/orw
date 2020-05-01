@@ -1,0 +1,56 @@
+song_status_format = "{%a - %t}"
+song_list_format = "{%a - %t} $R {%l}"
+song_window_title_format = "{%a - }{%t}|{%f}"
+
+ncmpcpp_directory = "/home/sola/.config/ncmpcpp"
+mpd_music_dir = "/home/sola/Music"
+external_editor = "vim"
+user_interface = "classic"
+playlist_display_mode = "classic"
+
+message_delay_time = "1"
+playlist_disable_highlight_delay = 1
+
+now_playing_prefix = "$(24)"
+now_playing_suffix = "$0"
+selected_item_prefix = "$(77)"
+current_item_prefix = "$(77)$r"
+browser_playlist_prefix = "$77»$77 "
+
+colors_enabled = "yes"
+cyclic_scrolling = "yes"
+use_console_editor = "yes"
+discard_colors_if_item_is_selected = "yes"
+
+header_visibility = "no"
+titles_visibility = "no"
+statusbar_visibility = "yes"
+display_remaining_time = "yes"
+
+volume_color = "77"
+statusbar_color = "77"
+header_window_color = "77"
+main_window_color = "77"
+empty_tag_color = "77"
+color2 = "4"
+
+color1 = "white"
+state_line_color = "white"
+state_flags_color = "white"
+window_border_color = "white"
+active_window_border = "cyan"
+alternative_ui_separator_color = "black"
+
+progressbar_color = "77"
+progressbar_look = "━━━"
+progressbar_elapsed_color = "116"
+
+visualizer_in_stereo = "no"
+visualizer_fifo_path = "/home/sola/.mpd/mpd.fifo"
+visualizer_output_name = "mpd_fifo"
+visualizer_sync_interval = "30"
+visualizer_look = "○▋"
+visualizer_type = "spectrum" (spectrum/wave)
+visualizer_color = 116,116,116,116,116,116,116,116,116,116,116
+
+#execute_on_song_change = "~/.orw/scripts/song_notification.sh"

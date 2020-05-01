@@ -2,7 +2,7 @@
 
 function show_status() {
 	[[ $1 =~ (true|yes) ]] && local status=yes
-	sed -i "/^statusbar_visibility/ s/\".*/\"${status:-no}\"/" ~/.orw/dotfiles/.ncmpcpp/config{,_cover_art}
+	sed -i "/^statusbar_visibility/ s/\".*/\"${status:-no}\"/" ~/.orw/dotfiles/.config/ncmpcpp/config{,_cover_art}
 }
 
 function show_progessbar() {
@@ -18,8 +18,8 @@ function show_progessbar() {
 		list_status="no"
 	fi
 
-	sed -i "/^progressbar_look/ s/\".*/\"$vis_bar\"/" ~/.ncmpcpp/config_visualizer
-	sed -i "/^progressbar_look/ s/\".*/\"$list_bar\"/" ~/.ncmpcpp/config{,_cover_art}
+	sed -i "/^progressbar_look/ s/\".*/\"$vis_bar\"/" ~/.config/ncmpcpp/config_visualizer
+	sed -i "/^progressbar_look/ s/\".*/\"$list_bar\"/" ~/.config/ncmpcpp/config{,_cover_art}
 	#sed -i "/^statusbar_visibility/ s/\".*/\"$vis_status\"/" ~/.ncmpcpp/config_visualizer
 	#sed -i "/^statusbar_visibility/ s/\".*/\"$list_status\"/" ~/.ncmpcpp/config{,_cover_art}
 }
@@ -33,7 +33,7 @@ function get_cover_properties() {
 		awk '$NF == "ncmpcpp_with_cover_art" { print $5 - ('$padding' * 2), $6 - ('$padding' * 2) }')
 	fi
 
-	sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.orw/dotfiles/.ncmpcpp/config_cover_art
+	sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art
 
 	read s x y r <<< $(awk 'BEGIN { \
 		r = 0.'$ratio'; w = '$width'; h = '$height'; \
@@ -50,7 +50,7 @@ function draw_cover_art() {
 	exit
 }
 
-base_command='TERM=xterm-256color tmux -S /tmp/tmux_hidden -f ~/.tmux_hidden.conf'
+base_command='TERM=xterm-256color tmux -S /tmp/tmux_hidden -f ~/.config/tmux/tmux_hidden.conf'
 
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 	case $flag in
@@ -115,7 +115,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			get_cover_properties
 			show_progessbar yes
 
-			command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.orw/dotfiles/.ncmpcpp/config_cover_art";;
+			command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
 		d)
 			~/.orw/scripts/ncmpcpp.sh $display $V -v -i
 			until [[ $(wmctrl -l | awk '$NF ~ "visualizer"') ]]; do continue; done
@@ -133,7 +133,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			pre="~/.orw/scripts/windowctl.sh -d $OPTARG move";;
 		V) V=-V;;
 		R)
-			ratio=$(sed -n 's/^execute.*[^0-9]\([0-9]\+\).*/\1/p' ~/.orw/dotfiles/.ncmpcpp/config_cover_art)
+			ratio=$(sed -n 's/^execute.*[^0-9]\([0-9]\+\).*/\1/p' ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art)
 			command="send -t ncmpcpp_with_cover_art:0.0 'clear && sleep 0.1 && $0 -r $ratio -C' Enter";;
 		r) ratio=$OPTARG;;
 		a)

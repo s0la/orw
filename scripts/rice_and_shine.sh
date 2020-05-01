@@ -11,21 +11,20 @@ all_colors=$colorschemes/colors
 root=~/.orw
 
 dotfiles=$root/dotfiles
-bash_conf=$dotfiles/.bashrc
-tmux_conf=$dotfiles/.tmux.conf
-tmux_hidden_conf=$dotfiles/.tmux_hidden.conf
-lock_conf=$dotfiles/.config/i3lockrc
-cava_conf=$dotfiles/.config/cava/config
-ncmpcpp_conf=$dotfiles/.ncmpcpp/config
-fff_conf=$bash_conf
-
 config=$dotfiles/.config
+
+bash_conf=$dotfiles/.bashrc
 dunst_conf=$config/dunst/*
+term_conf=$config/termite/config
 rofi_conf=$config/rofi/theme.rasi
+ncmpcpp_conf=$config/ncmpcpp/config
+lock_conf=$dotfiles/.config/i3lockrc
 vim_conf=$config/nvim/colors/orw.vim
 vifm_conf=$config/vifm/colors/orw.vifm
-term_conf=~/.config/termite/config
 qb_conf=$config/qutebrowser/config.py
+cava_conf=$dotfiles/.config/cava/config
+tmux_hidden_conf=$config/tmux_hidden.conf
+tmux_conf=$config/tmux.conf
 
 themes=$root/themes
 gtk_conf=$themes/theme/gtk-2.0/gtkrc
@@ -441,7 +440,8 @@ function ncmpcpp() {
 function tmux() {
 	reload_tmux=true
 
-	if [[ $property =~ ^(bg|mc) ]]; then
+	#if [[ $property =~ ^(bg|mc) ]]; then
+	if [[ $property =~ ^(b[cg]|mc) ]]; then
 		reload_tmux_hidden=true
 		local hidden=$tmux_hidden_conf
 	fi
@@ -906,7 +906,7 @@ multiple_properties() {
 	local color=$color
 	property=${1:-$property}
 
-	if [[ $module == bar && ${property//[A-Za-z]/} =~ ^\|+$ && ! $colorscheme ]]; then
+	if [[ $module == bar && ${property//[A-Za-z]/} =~ ^\|+$ && (! $colorscheme || $inherited_property) ]]; then
 		for property in ${property//|/ }; do
 			$module
 		done
@@ -917,7 +917,7 @@ multiple_properties() {
 			$module
 		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
 			awk -F '[= ]' 'BEGIN { c = "'$color'" }
-				/^('${property//\*/.*}')[= ]/ { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
+				$1 ~ "^('${property//\*/.*}')$" { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
 	fi
 }
 

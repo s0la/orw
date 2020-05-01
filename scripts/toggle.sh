@@ -145,10 +145,10 @@ titlebar() {
 }
 
 ncmpcpp() {
-	config=~/.orw/dotfiles/.ncmpcpp/config
+	config=~/.orw/dotfiles/.config/ncmpcpp/config
 	eval configs=$config*
 
-	mode=$(awk '/^song_list/ { print /[0-9]+/ ? "single" : "dual" }' ~/.ncmpcpp/config)
+	mode=$(awk '/^song_list/ { print /[0-9]+/ ? "single" : "dual" }' ~/.config/ncmpcpp/config)
 
 	if [[ ${1:-$mode} == single ]]; then
 		#sed -i '/suffix/ s/0[^"]*/0/' $configs
@@ -183,7 +183,7 @@ blur() {
 }
 
 bash_conf=~/.orw/dotfiles/.bashrc
-tmux_conf=~/.orw/dotfiles/.tmux.conf
+tmux_conf=~/.orw/dotfiles/.config/tmux/tmux.conf
 compton_conf=~/.orw/dotfiles/.config/compton.conf
 openbox_conf=~/.orw/dotfiles/.config/openbox/rc.xml
 
