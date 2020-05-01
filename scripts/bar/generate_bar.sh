@@ -110,11 +110,35 @@ read x_offset y_offset <<< $(awk -F '[_ ]' '/offset/ { if($1 == "x") xo = $NF; e
 get_display_properties() {
 	[[ ! $x && ! $y ]] &&
 		read x y display_width display_height real_x real_y <<< \
-		$(awk -F '[_ ]' '{ if(/^orientation/ && $NF ~ /^v/) v = 1; \
-		if($1 == "primary") { s = '${1-0}'; d = (s) ? s : $NF; x = 0 }; \
-			if($1 == "display" && NF == 4) if($2 < d) { x += $3; if(v) { rx += $3; ry += $4 } } \
-			else { print x, 0, $3, $4, rx, ry; exit } }' $config)
+				$(awk -F '[_ ]' '{
+					if(/^orientation/ && $NF ~ /^v/) v = 1
+					if($1 == "primary") {
+						s = '${1-0}'
+						d = (s) ? s : $NF
+						x = 0
+					}
+					if($1 == "display" && NF == 4) {
+						if($2 < d) {
+							x += $3
+
+							if(v) {
+								rx += $3
+								ry += $4
+							}
+						} else {
+							print x, 0, $3, $4, rx, ry
+							exit
+						}
+					}
+				}' $config)
 }
+
+#		read x y display_width display_height real_x real_y <<< \
+#		$(awk -F '[_ ]' '{ if(/^orientation/ && $NF ~ /^v/) v = 1; \
+#		if($1 == "primary") { s = '${1-0}'; d = (s) ? s : $NF; x = 0 }; \
+#			if($1 == "display" && NF == 4) if($2 < d) { x += $3; if(v) { rx += $3; ry += $4 } } \
+#			else { print x, 0, $3, $4, rx, ry; exit } }' $config)
+#}
 
 check_arg() {
     [[ $2 && ! $2 == -[[:alpha:]] ]] && eval $1=$2
@@ -353,14 +377,23 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				fi
 
 				eval joiner="j$joined_arg$joiner"
-				~/.orw/scripts/notify.sh "j: $joiner"
+				#~/.orw/scripts/notify.sh "j: $joiner"
 			fi;;
-		S) get_display_properties $OPTARG;;
+		S)
+			display=$OPTARG
+			get_display_properties $display;;
 		P)
 			format Power
 			get_display_properties
+
+			#check_arg icons ${!OPTIND} && shift
+			#check_arg ratio ${!OPTIND} && shift
+
+			check_arg power_args ${!OPTIND} && shift
+
 			#~/.orw/scripts/notify.sh "$padding $separator"
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height $label)\"");;
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_args-25x18,i,Llro} $label)\"");;
+			#Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height ${ratio-20} ${icons-i} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power $padding $separator ${display_width}x$display_height $icon)\"");;
 		L)
 			modules+='$launchers'
