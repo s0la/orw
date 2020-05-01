@@ -47,6 +47,8 @@ for workspace_index in $(seq $workspace_count); do
 				icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
 				#~/.orw/scripts/notify.sh "Workspace_${icon_type}_${current}_icon"
 				#:icon="${current}_icon"
+				#~/.orw/scripts/notify.sh "$workspace_index: $offset"
+				#~/.orw/scripts/notify.sh "$workspace_index: $offset"
 				label="$offset$icon$offset";;
 		esac
 	done
@@ -63,7 +65,9 @@ for workspace_index in $(seq $workspace_count); do
 
 	if [[ $single_line == true && $current == p ]]; then
 		set_line
-		workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
+
+		[[ ! $separator =~ ^[s%] ]] && workspace="\$start_line$workspace\$end_line" ||
+			workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
 	fi
 
 	((workspace_index < workspace_count)) && workspace+="$workspace_separator"
@@ -72,6 +76,11 @@ for workspace_index in $(seq $workspace_count); do
 done
 
 [[ $4 =~ i ]] && workspaces="$fbg${padding}${workspaces%\%*}${padding}"
+
+case $separator in
+	s*) separator="${separator:2}";;
+	[ej]*) separator="${separator:1}";;
+esac
 
 echo -e "%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\

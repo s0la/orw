@@ -54,7 +54,7 @@ get_song_info() {
 
 		song_info="$left_limiter ${song_info:$song_info_index:$scrollable_area} $right_limiter"
 	elif [[ $show_time ]]; then
-		song_info+="  $time"
+		song_info+="  $tof$time$toe"
 	fi
 
 	echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
@@ -181,7 +181,10 @@ for module in ${4//,/ }; do
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "MPD_VOLUME $(get_volume $4)" > $fifo;;
 		P) bg='${mpbg:-$pbg}';;
-		T) show_time=true;;
+		T)
+			show_time=true
+			[[ $of ]] && tof=$of
+			[[ $oe ]] && toe=$oe;;
 		d*) delay=${module#d};;
 		s*)
 			scroll=true

@@ -19,6 +19,8 @@ function set_line() {
 	fc="\${${module}fc:-\$fc}"
 	frame_width="%{O\${${module}fw:-\${frame_width-0}}\}"
 
+	#~/.orw/scripts/notify.sh "s: $separator"
+
 	frame="%{B$fc\}$frame_width"
 	left_frame="%{+u\}%{+o\}$frame"
 	right_frame="$frame%{-o\}%{-u\}"
@@ -48,7 +50,17 @@ function format() {
 			echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
 		else
 			set_line
-			echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
+
+			#~/.orw/scripts/notify.sh "s: $module $separator"
+			case $separator in
+				#e*) echo -e "${separator:1}";;
+				[ej]*) echo -e "${formated% *}${separator:1}";;
+				s*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}${separator:2}";;
+				#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+				*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
+			esac
+
+			#echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
 		fi
 	fi
 }
@@ -60,7 +72,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=15
+		old_mail_count=31
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -93,6 +105,7 @@ case $1 in
 
 		if ((mail_count)); then
 			if [[ $3 == only ]]; then
+				#~/.orw/scripts/notify.sh "i: $icon"
 				style=mono
 				mono_fg="\${$sfg}"
 				format fading "%{A:$command1:}%{A3:$command2:}$icon%{A}%{A}"
@@ -438,6 +451,11 @@ case $1 in
 		fi;;
 	Power)
 		style=mono
-		set_icon $1
-		format "%{A:~/.orw/scripts/bar/power.sh $2 &:}\$inner$icon\$inner%{A}";;
+		#padding="$2"
+		#separator="$3"
+		#[[ $5 == icon ]] && set_icon Power
+		set_icon Power
+		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"
+
+		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 &:}\$inner${!4:-LOG}\$inner%{A}";;
 esac

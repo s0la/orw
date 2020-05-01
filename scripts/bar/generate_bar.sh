@@ -26,22 +26,24 @@ sbg="%{B#101115}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
-    echo -e "MPD $($path/mpd.sh $fifo $padding $separator ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
+    echo -e "MPD $($path/mpd.sh $fifo $padding $tweener ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
 }
 
 get_apps() {
 	[[ $single_line ]] && apps_lines=single
-	echo -e "APPS $($path/apps.sh $padding $separator $apps_args ${apps_lines:-${lines-false}})"
+	echo -e "APPS $($path/apps.sh $padding $tweener $apps_args ${apps_lines:-${lines-false}})"
 }
 
 get_launchers() {
 	[[ $single_line ]] && launchers_lines=single
-	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding $separator $launchers_args ${launchers_lines:-${lines-false}})"
+	#echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding ${joiner_start:-$joiner_end}${joiner:-$separator} $launchers_args ${launchers_lines:-${lines-false}})"
+	#~/.orw/scripts/notify.sh "j: ${joiner_start:-${joiner_end:-$joiner}}"
+	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding $tweener $launchers_args ${launchers_lines:-${lines-false}})"
 }
 
 get_workspaces() {
 	[[ "${Wsbg:-$sbg}" =~ "${Wpbg:-${Wsbg:-$pbg}}" ]] && offset=$inner || offset=$padding
-	echo -e "WORKSPACES $($path/workspaces.sh $padding $separator $offset ${workspaces_args:-i} ${single_line-false})"
+	echo -e "WORKSPACES $($path/workspaces.sh $padding $tweener $offset ${workspaces_args:-i} ${single_line-false})"
 }
 
 get_full_usage() {
@@ -69,19 +71,19 @@ get_network() {
 }
 
 get_email() {
-	echo -e "EMAIL $($path/system_info.sh email $separator $label ${lines-false})"
+	echo -e "EMAIL $($path/system_info.sh email $tweener $label ${lines-false})"
 }
 
 get_volume() {
-	echo -e "VOLUME $($path/system_info.sh volume $separator $label)"
+	echo -e "VOLUME $($path/system_info.sh volume $tweener $label)"
 }
 
 get_weather() {
-	echo -e "WEATHER $($path/system_info.sh Weather $separator ${weather_args-t,s} $label $location ${lines-false})"
+	echo -e "WEATHER $($path/system_info.sh Weather $tweener ${weather_args-t,s} $label $location ${lines-false})"
 }
 
 get_hidden() {
-	echo -e "HIDDEN $($path/system_info.sh Hidden $separator ${apps-all} $label ${lines-false})"
+	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-all} $label ${lines-false})"
 }
 
 get_battery() {
@@ -89,15 +91,15 @@ get_battery() {
 }
 
 get_torrents() {
-	echo -e "TORRENTS $($path/system_info.sh torrents $separator ${torrents_info-c,p} $label ${lines-false})"
+	echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} $label ${lines-false})"
 }
 
 get_date() {
-	echo -e "DATE $($path/system_info.sh date $separator $date_format)"
+	echo -e "DATE $($path/system_info.sh date $tweener $date_format)"
 }
 
 get_updates() {
-	echo -e "UPDATES $($path/system_info.sh updates $separator $label ${lines-false})"
+	echo -e "UPDATES $($path/system_info.sh updates $tweener $label ${lines-false})"
 }
 
 config=~/.config/orw/config
@@ -108,11 +110,35 @@ read x_offset y_offset <<< $(awk -F '[_ ]' '/offset/ { if($1 == "x") xo = $NF; e
 get_display_properties() {
 	[[ ! $x && ! $y ]] &&
 		read x y display_width display_height real_x real_y <<< \
-		$(awk -F '[_ ]' '{ if(/^orientation/ && $NF ~ /^v/) v = 1; \
-		if($1 == "primary") { s = '${1-0}'; d = (s) ? s : $NF; x = 0 }; \
-			if($1 == "display" && NF == 4) if($2 < d) { x += $3; if(v) { rx += $3; ry += $4 } } \
-			else { print x, 0, $3, $4, rx, ry; exit } }' $config)
+				$(awk -F '[_ ]' '{
+					if(/^orientation/ && $NF ~ /^v/) v = 1
+					if($1 == "primary") {
+						s = '${1-0}'
+						d = (s) ? s : $NF
+						x = 0
+					}
+					if($1 == "display" && NF == 4) {
+						if($2 < d) {
+							x += $3
+
+							if(v) {
+								rx += $3
+								ry += $4
+							}
+						} else {
+							print x, 0, $3, $4, rx, ry
+							exit
+						}
+					}
+				}' $config)
 }
+
+#		read x y display_width display_height real_x real_y <<< \
+#		$(awk -F '[_ ]' '{ if(/^orientation/ && $NF ~ /^v/) v = 1; \
+#		if($1 == "primary") { s = '${1-0}'; d = (s) ? s : $NF; x = 0 }; \
+#			if($1 == "display" && NF == 4) if($2 < d) { x += $3; if(v) { rx += $3; ry += $4 } } \
+#			else { print x, 0, $3, $4, rx, ry; exit } }' $config)
+#}
 
 check_arg() {
     [[ $2 && ! $2 == -[[:alpha:]] ]] && eval $1=$2
@@ -138,9 +164,30 @@ set_frame_color() {
 format() {
 	set_frame_color
 
-	left_line=$(eval echo -e "${start_line:-$left_frame}")
-	right_line=$(eval echo -e "${end_line:-$right_frame}")
-    modules+="%{U$frame_color}$left_line\${$1% *}$right_line%{B$bg}\${$1##* }"
+	local left_line=$(eval echo -e "${start_line:-$left_frame}")
+	local right_line=$(eval echo -e "${end_line:-$right_frame}")
+
+	if [[ ${joiner_end:-$joiner} ]]; then
+		if [[ $joiner_start ]]; then
+			#local left_line=$(eval echo -e "${start_line:-$left_frame}")
+			modules+="%{U$frame_color}$left_line\${$1% *}${joiner:1}"
+			#eval joiner_end_frame="$bar_side_frame%{-o}%{-u}"
+			eval joiner_right_frame="$bar_side_frame%{-o}%{-u}"
+			#~/.orw/scripts/notify.sh "start: $joiner_end_frame"
+		elif [[ $joiner_end ]]; then
+			#~/.orw/scripts/notify.sh "end: $1"
+			#local right_line=$(eval echo -e "${end_line:-$right_frame}")
+			#~/.orw/scripts/notify.sh "rl: $right_line"
+			#modules+="\${$1% *}$joiner_end_frame\${$1##* }"
+			modules+="\${$1% *}$joiner_end_frame\${$1##* }"
+		else
+			modules+="\${$1% *}${joiner:1}"
+		fi
+	else
+		#local left_line=$(eval echo -e "${start_line:-$left_frame}")
+		#local right_line=$(eval echo -e "${end_line:-$right_frame}")
+		modules+="%{U$frame_color}$left_line\${$1% *}$right_line%{B$bg}\${$1##* }"
+	fi
 }
 
 set_lines() {
@@ -188,7 +235,9 @@ run_function() {
 
 all_arguments="$@"
 
-while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
+while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
+	tweener="${joiner_start:-$joiner_end}$joiner_end_frame${joiner:-$separator}"
+
 	case $flag in
 		b)
 			bg=$bbg
@@ -299,12 +348,52 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				separator_sign=$sign
 				unset sign
 			fi;;
-		S) get_display_properties $OPTARG;;
+		j)
+			if [[ $joiner ]]; then
+				unset joiner
+				joiner_end=e
+				joiner_end_frame="$joiner_right_frame%{B$bg}"
+			else
+				joiner_start=s
+
+				check_arg join_distance "${!OPTIND}" && shift
+				check_arg join_symbol "${!OPTIND}" && shift
+
+				shopt -s extglob
+
+				#next_arg=${!OPTIND}
+				#joined_arg=$(sed "s/-[ijOp][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\1/" <<< $all_arguments)
+				joined_arg=$(sed "s/-[ijOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
+				#modules_args="${all_arguments//-[ijOp]*-/-}"
+				#second_next="${modules_args#*$next_arg*-}"
+				#~/.orw/scripts/notify.sh "ma: $modules_args"
+				#~/.orw/scripts/notify.sh "na: $next_arg sn $second_next"
+				#~/.orw/scripts/notify.sh "ja: $joined_arg"
+				if [[ ! $join_symbol ]]; then
+					joiner="%{O$join_distance}"
+				else
+					half_distance="%{O$((join_distance / 2))}"
+					joiner="$half_distance$bsfg$join_symbol$half_distance"
+				fi
+
+				eval joiner="j$joined_arg$joiner"
+				#~/.orw/scripts/notify.sh "j: $joiner"
+			fi;;
+		S)
+			display=$OPTARG
+			get_display_properties $display;;
 		P)
 			format Power
 			get_display_properties
+
+			#check_arg icons ${!OPTIND} && shift
+			#check_arg ratio ${!OPTIND} && shift
+
+			check_arg power_args ${!OPTIND} && shift
+
 			#~/.orw/scripts/notify.sh "$padding $separator"
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height $label)\"");;
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_args-25x18,i,Llro} $label)\"");;
+			#Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height ${ratio-20} ${icons-i} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power $padding $separator ${display_width}x$display_height $icon)\"");;
 		L)
 			modules+='$launchers'
@@ -414,6 +503,8 @@ while getopts :bcrx:y:w:h:p:f:lIis:S:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			flags="${path/$HOME/\~}/generate_bar.sh ${all_arguments%-o*}${all_arguments#*-o}";;
 		a) font_size=$OPTARG;;
 	esac
+
+	[[ $flag != j && ${joiner_start:-$joiner_end} ]] && unset joiner_{start,end{,_frame}}
 done
 
 [[ ! -f $config_path/configs/$bar_name || $overwrite ]] && echo "${flags:-$path/generate_bar.sh $all_arguments}" > $config_path/configs/$bar_name
