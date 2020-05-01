@@ -1,13 +1,13 @@
 #bar
-bg #b818191d
-fc #576662
+bg #101115
+fc #5aa4a6
 bfc #608985
-bbg #b818191d
-bsbg #b818191d
-bsfg #5c5d5f
-pbg #b818191d
+bbg #101115
+bsbg #101115
+bsfg #313131
+pbg #101115
 pfg #999999
-sbg #b818191d
+sbg #101115
 sfg #5c5d5f
 pbefg #608985
 msfg #47484a
@@ -15,5 +15,4 @@ mlfg #7a8d90
 pbfg #494643
 mpfg #999999
 mfc #608985
-Apbg #bf1f2024
 Tafg #785A5A
