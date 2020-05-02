@@ -42,10 +42,6 @@ function set_line() {
 	right_frame="$frame%{-o\}%{-u\}"
 }
 
-function add_line() {
-	eval "$1=%{U$fc}\${start_line:-$left_frame}${!1}\${end_line:-$right_frame}"
-}
-
 [[ $lines != false ]] && set_line
 
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
@@ -68,17 +64,52 @@ while read -r window_id window_name; do
 
 		window="%{A:wmctrl -ia $window_id:}$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}"
 
-		if [[ $current == p && $lines == single ]]; then
-			window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+		if [[ $lines == single ]]; then
+			if [[ $current == p ]]; then
+				[[ ! $separator =~ ^[s%] ]] && window="\$start_line$window\$end_line" ||
+					window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+			else
+				window="%{-o}%{-u}$window"
+			fi
+
+			#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
 		fi
 
-		windows+="$window$app_separator"
+		apps+="$window$app_separator"
 	fi
 done <<< $(wmctrl -l | awk '$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
 		print $1, (NF > 3) ? substr($0, index($0, $4)) : "no name" }')
 
-[[ $app_separator ]] && windows=${windows%\%*}
-[[ $windows && $lines == true ]] && windows="%{U$fc}\${start_line:-$left_frame}$windows\${end_line:-$right_frame}"
+#~/.orw/scripts/notify.sh "s: $separator"
+
+[[ $app_separator ]] && apps=${apps%\%*}
+
+if [[ $lines != false ]]; then
+	#~/.orw/scripts/notify.sh "s: $separator"
+	case $separator in
+		[ej]*)
+			[[ $separator =~ j ]] &&
+				apps+='$start_line'
+			apps+="${separator:1}";;
+		s*) apps="%{U$fc}\${start_line:-$left_frame}$apps\$start_line${separator:2}";;
+		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+		#e*) launchers+="${separator:1}";;
+		*) apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
+	esac
+
+	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
+else
+	apps+="%{B\$bg}$separator"
+fi
+
+#case $separator in
+#	s*) separator="${separator:2}";;
+#	[ej]*) separator="${separator:1}";;
+#esac
+
+#[[ $app_separator ]] && windows=${windows%\%*}
+#[[ $windows && $lines == true ]] && windows="%{U$fc}\${start_line:-$left_frame}$windows\${end_line:-$right_frame}"
 #~/.orw/scripts/notify.sh "W: $windows"
 
-[[ $windows ]] && echo -e "$windows%{B\$bg}\$separator"
+#[[ $windows ]] && echo -e "$windows%{B\$bg}\$separator"
+echo -e "$apps"

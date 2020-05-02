@@ -63,11 +63,15 @@ for workspace_index in $(seq $workspace_count); do
 	#~/.orw/scripts/notify.sh "$command"
 	workspace="%{A:$command:}$bg$fg$label%{A}"
 
-	if [[ $single_line == true && $current == p ]]; then
-		set_line
+	if [[ $single_line == true ]]; then
+		if [[ $current == p ]]; then
+			set_line
 
-		[[ ! $separator =~ ^[s%] ]] && workspace="\$start_line$workspace\$end_line" ||
-			workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
+			[[ ! $separator =~ ^[s%] ]] && workspace="\$start_line$workspace\$end_line" ||
+				workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
+		else
+			workspace="%{-o}%{-u}$workspace"
+		fi
 	fi
 
 	((workspace_index < workspace_count)) && workspace+="$workspace_separator"
@@ -77,12 +81,37 @@ done
 
 [[ $4 =~ i ]] && workspaces="$fbg${padding}${workspaces%\%*}${padding}"
 
-case $separator in
-	s*) separator="${separator:2}";;
-	[ej]*) separator="${separator:1}";;
-esac
-
-echo -e "%{A2:~/.orw/scripts/barctl.sh -b wss:}\
+workspaces="%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
 %{A5:wmctrl -s $((current_workspace % workspace_count)):}\
-$workspaces%{A}%{A}%{A}%{B\$bg}$format_delimiter$separator"
+$workspaces%{A}%{A}%{A}"
+
+if [[ $single_line == true ]]; then
+	#~/.orw/scripts/notify.sh "s: $separator"
+	case $separator in
+		[ej]*)
+			[[ $separator =~ j ]] &&
+				workspaces+='$start_line'
+			workspaces+="${separator:1}";;
+		s*) workspaces="%{U$fc}\${start_line:-$left_frame}$workspaces\$start_line${separator:2}";;
+		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+		#e*) launchers+="${separator:1}";;
+		*) workspaces="%{U$fc}\${start_line:-$left_frame}$workspaces\${end_line:-$right_frame}%{B\$bg}$separator";;
+	esac
+
+	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
+else
+	workspaces+="%{B\$bg}$format_delimiter$separator"
+fi
+
+echo -e "$workspaces"
+
+#case $separator in
+#	s*) separator="${separator:2}";;
+#	[ej]*) separator="${separator:1}";;
+#esac
+
+#echo -e "%{A2:~/.orw/scripts/barctl.sh -b wss:}\
+#%{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
+#%{A5:wmctrl -s $((current_workspace % workspace_count)):}\
+#$workspaces%{A}%{A}%{A}%{B\$bg}$format_delimiter$separator"
