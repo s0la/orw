@@ -26,7 +26,7 @@ sbg="%{B#101115}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
-    echo -e "MPD $($path/mpd.sh $fifo $padding $tweener ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
+    echo -e "MPD $($path/mpd.sh $fifo $padding $separator ${mpd_modules-c,p,S,i,s20,T,d3,v} $label)"
 }
 
 get_apps() {
@@ -173,7 +173,7 @@ format() {
 			modules+="%{U$frame_color}$left_line\${$1% *}${joiner:1}"
 			#eval joiner_end_frame="$bar_side_frame%{-o}%{-u}"
 			eval joiner_right_frame="$bar_side_frame%{-o}%{-u}"
-			#~/.orw/scripts/notify.sh "start: $joiner_end_frame"
+			#~/.orw/scripts/notify.sh "start: $1 $frame_color $left_line"
 		elif [[ $joiner_end ]]; then
 			#~/.orw/scripts/notify.sh "end: $1"
 			#local right_line=$(eval echo -e "${end_line:-$right_frame}")
@@ -363,7 +363,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 				#next_arg=${!OPTIND}
 				#joined_arg=$(sed "s/-[ijOp][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\1/" <<< $all_arguments)
-				joined_arg=$(sed "s/-[ijOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
+				joined_arg=$(sed "s/-[ijlOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
 				#modules_args="${all_arguments//-[ijOp]*-/-}"
 				#second_next="${modules_args#*$next_arg*-}"
 				#~/.orw/scripts/notify.sh "ma: $modules_args"
