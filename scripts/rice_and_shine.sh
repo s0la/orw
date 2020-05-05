@@ -1180,9 +1180,10 @@ add_notification
 if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_ob ]]; then $(which openbox) --reconfigure & fi
 	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh -d &> /dev/null & fi
-	if [[ $reload_ncmpcpp ]]; then xrdb -load $sxiv_conf & fi
-	if [[ $reload_term ]]; then killall -USR1 termite & fi
 	if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
+	if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
+	if [[ $reload_term ]]; then killall -USR1 termite & fi
+	if [[ $reload_sxiv ]]; then xrdb -load $sxiv_conf & fi
 	if [[ $reload_vifm ]]; then
 		vifm=$(which vifm)
 		[[ $($vifm --server-list) ]] && $vifm --remote -c "colorscheme orw" &
