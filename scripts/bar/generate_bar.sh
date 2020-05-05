@@ -391,8 +391,13 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			check_arg power_args ${!OPTIND} && shift
 
+			if [[ $power_args =~ ^[0-9]+(x[0-9]+)? ]]; then
+				power_geometry=$power_args
+				check_arg power_args ${!OPTIND} && shift
+			fi
+
 			#~/.orw/scripts/notify.sh "$padding $separator"
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_args-25x18,i,Llro} $label)\"");;
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_geometry-25x18} ${power_args-i,Llro} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height ${ratio-20} ${icons-i} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power $padding $separator ${display_width}x$display_height $icon)\"");;
 		L)

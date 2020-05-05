@@ -72,7 +72,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=50
+		old_mail_count=51
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -471,8 +471,8 @@ case $1 in
 		#[[ $5 == icon ]] && set_icon Power
 		set_icon Power
 		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"
-		~/.orw/scripts/notify.sh "$4 ${!4:-LOG}"
-		~/.orw/scripts/notify.sh "all: $all"
+		#~/.orw/scripts/notify.sh "$4 ${!4:-LOG}"
+		#~/.orw/scripts/notify.sh "all: $all"
 
-		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 &:}\${inner}${!4:-POW}\$inner%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 $4 &:}\${inner}${!5:-POW}\$inner%{A}";;
 esac
