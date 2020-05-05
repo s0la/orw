@@ -740,7 +740,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				fi
 			#fi
 
-			eval sxiv -t "${directories:-$directory}" &
+			~/.orw/scripts/sxiv_wrapper.sh "${directories:-$directory}" &
 			exit;;
 		U)
 			base_url='https://api.unsplash.com'

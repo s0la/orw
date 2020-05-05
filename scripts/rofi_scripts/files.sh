@@ -342,7 +342,7 @@ if [[ ${option% *} ]]; then
 
 			set_multiple_files "$current/"
 
-			eval sxiv -t "${files:-${regex:-'$current'/*}}" &
+			~/.orw/scripts/sxiv_wrapper.sh "${files:-${regex:-'$current'/*}}"
 
 			un_set options regex
 			exit;;
