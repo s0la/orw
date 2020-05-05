@@ -40,7 +40,7 @@ function format() {
 
 				echo -e $hidden;;
 			mono) echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 ${separator:-\$separator}";;
-			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 ${separator:-\$separator}";;
+			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 \$separator";;
 			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} ${separator:-\$separator}";;
 		esac
 	else
@@ -72,7 +72,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=31
+		old_mail_count=50
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -178,9 +178,10 @@ case $1 in
 	fi
 
 	#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
-	hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
+	#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-	[[ $term || $rec ]] && format fading "$hidden";;
+	[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
+	format fading "$hidden";;
 	network)
 		#icon=
 		set_icon $1
@@ -279,18 +280,19 @@ case $1 in
 
 		echo -e "${disk%\*}";;
 	Usage*)
-		separator="$2"
-		current_usage_mode=extended
+		padding=$2
+		current_usage_mode=hidden
 
 		if [[ $current_usage_mode == hidden ]]; then
 			#icon=%{I-n}%{I-}
-			set_icon hidden
+			set_icon hide
 			index=2
 			usage_mode=extended
-			button="\${$pbg}\$padding\${$pfg}${!4-SHOW}\$padding"
+			separator=' $separator'
+			button="\${$pbg}$padding\${$pfg}${!4-SHOW}$padding"
 		else
 			#icon=%{I-n}%{I-}
-			set_icon shown
+			set_icon show
 			usage_mode=hidden
 			usage="\${$sbg}\$inner"
 
@@ -302,10 +304,23 @@ case $1 in
 				esac
 			done
 
-			button="\${$sbg}\$padding\${$sfg}${!4-HIDE}\$padding"
+			button="\${$sbg}$padding\${$sfg}${!4-HIDE}$padding"
 		fi
 
-		echo -e "%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-} ${separator:-\$separator}";;
+		#~/.orw/scripts/notify.sh "$all"
+
+		full_usage="%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-}$separator"
+
+		#case $separator in
+		#	#e*) echo -e "${separator:1}";;
+		#	[ej]*) echo -e "${full_usage% *}${separator:1}";;
+		#	s*) echo -e "%{U$fc}\${start_line:-$left_frame}${full_usage% *}${separator:2}";;
+		#	#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+		#	*) echo -e "%{U$fc}\${start_line:-$left_frame}${full_usage% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
+		#esac;;
+
+		#echo -e "%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-} ${separator:-\$separator}";;
+		echo -e "%{A:sed -i '/current_usage_mode=[a-z]/ s/=.*/=$usage_mode/' $0:}$button%{A}$usage%{B-}$separator";;
 	Battery)
 		icon=
 		icon=%{I-b}%{I-}
@@ -456,6 +471,8 @@ case $1 in
 		#[[ $5 == icon ]] && set_icon Power
 		set_icon Power
 		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"
+		~/.orw/scripts/notify.sh "$4 ${!4:-LOG}"
+		~/.orw/scripts/notify.sh "all: $all"
 
-		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 &:}\$inner${!4:-LOG}\$inner%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 &:}\${inner}${!4:-POW}\$inner%{A}";;
 esac

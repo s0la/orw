@@ -47,7 +47,7 @@ get_workspaces() {
 }
 
 get_full_usage() {
-	echo -e "USAGE $($path/system_info.sh Usage $order $label)"
+	echo -e "USAGE $($path/system_info.sh Usage $padding $usage_args $label)"
 }
 
 get_temp() {
@@ -467,13 +467,13 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
             run_function get_weather 1000;;
 		U)
 			format usage
-			check_arg order ${!OPTIND} && shift
+			check_arg usage_args ${!OPTIND} && shift
 
-			order=${order-c,r,d}
+			usage_args=${usage_args:-c,r,d}
 
 			run_function get_full_usage 1
 
-			for item in ${order//,/ }; do
+			for item in ${usage_args//,/ }; do
 				case $item in
 					c) run_function get_cpu_usage trim 10;;
 					r) run_function get_ram_usage trim 10;;
