@@ -72,7 +72,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=51
+		old_mail_count=
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -112,6 +112,8 @@ case $1 in
 			else
 				format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count
 			fi
+		else
+			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		fi;;
 	volume*)
 		separator="$2"
@@ -180,8 +182,12 @@ case $1 in
 	#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
 	#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-	[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
-	format fading "$hidden";;
+	if [[ $term || $rec ]]; then
+		hidden="\${$sbg}\${inner}$term$rec\$inner"
+		format fading "$hidden"
+	else
+		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+	fi;;
 	network)
 		#icon=
 		set_icon $1
@@ -249,7 +255,11 @@ case $1 in
 			label=${!4:-${w^^}}
 		fi
 
-		[[ $w ]] && format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g';;
+		if [[ $w ]]; then
+			format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g'
+		else
+			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+		fi;;
 	Cpu)
 		#icon=
 		set_icon $1
@@ -417,6 +427,8 @@ case $1 in
 			else
 				format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TOR}%{A}%{A}" "${torrents%\$*}"
 			fi
+		else
+			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		fi;;
 	updates)
 		separator="$2"
@@ -439,6 +451,8 @@ case $1 in
 			else
 				format fading ${!3-UPD} $updates_count
 			fi
+		else
+			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		fi;;
 	Temp)
 		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
