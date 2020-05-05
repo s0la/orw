@@ -14,15 +14,16 @@ dotfiles=$root/dotfiles
 config=$dotfiles/.config
 
 bash_conf=$dotfiles/.bashrc
-dunst_conf=$config/dunst/*
+lock_conf=$config/i3lockrc
+cava_conf=$config/cava/config
+dunst_conf=$config/dunst/dunstrc
+sxiv_conf=$config/X11/xresources
 term_conf=$config/termite/config
 rofi_conf=$config/rofi/theme.rasi
 ncmpcpp_conf=$config/ncmpcpp/config
-lock_conf=$dotfiles/.config/i3lockrc
 vim_conf=$config/nvim/colors/orw.vim
 vifm_conf=$config/vifm/colors/orw.vifm
 qb_conf=$config/qutebrowser/config.py
-cava_conf=$dotfiles/.config/cava/config
 tmux_hidden_conf=$config/tmux_hidden.conf
 tmux_conf=$config/tmux.conf
 
@@ -514,6 +515,11 @@ function wall() {
 	~/.orw/scripts/wallctl.sh -s "$color"
 }
 
+function sxiv() {
+	reload_sxiv=true
+	sed -i "/Sxiv.${property:0:1}/ s/#\w*/#${color: -6}/" $sxiv_conf
+}
+
 function lock() {
 	if ((${#color} > 7)); then
 		color="${color: -6}${color:1:2}"
@@ -680,6 +686,10 @@ function get_wall() {
 		}' ~/.config/orw/config
 }
 
+function get_sxiv() {
+	sed -n 's/Sxiv.\(.\)[^ ]*/\1g/p' $sxiv_conf
+}
+
 function get_lock() {
 	awk -F '=' '/^\w*c=/ { print gensub("(.*)=(.{6})(.*)", "\\1 #\\3\\2", 1) }' $lock_conf
 }
@@ -694,7 +704,7 @@ add_notification() {
 
 #all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash lock firefox $wall )
 #all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
-all_modules=( ob dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
+all_modules=( ob dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall sxiv )
 
 while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 	case $flag in
@@ -1170,7 +1180,7 @@ add_notification
 if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_ob ]]; then $(which openbox) --reconfigure & fi
 	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh -d &> /dev/null & fi
-	if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
+	if [[ $reload_ncmpcpp ]]; then xrdb -load $sxiv_conf & fi
 	if [[ $reload_term ]]; then killall -USR1 termite & fi
 	if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
 	if [[ $reload_vifm ]]; then

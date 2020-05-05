@@ -11,3 +11,5 @@ path=~/.orw/scripts
 $path/wallctl.sh -r &
 $path/mpd_notifier.sh &
 $path/barctl.sh
+
+xrdb -load ~/.config/X11/xresources
