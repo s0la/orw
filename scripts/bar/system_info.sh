@@ -65,6 +65,30 @@ function format() {
 	fi
 }
 
+format_fading() {
+	local count=$1
+	local label=$3
+	local icon_type=$2
+	local content="$4"
+
+	[[ $left_command ]] && local left_command="%{A:$left_command:}" left_command_end="%{A}"
+	[[ $right_command ]] && local right_command="%{A:$right_command:}" right_command_end="%{A}"
+
+	if ((count)); then
+		if [[ $icon_type == only ]]; then
+			style=mono
+			mono_fg="\${$sfg}"
+			#format fading "%{A:$left_command:}%{A3:$right_command:}$icon%{A}%{A}"
+			format fading "$left_command$right_command$icon$left_command_end$right_command_end"
+		else
+			#format fading "%{A:$left_command:}%{A3:$right_command:}${!icon_type-$label}%{A}%{A}" "$content"
+			format fading "$left_command$right_command${!icon_type-$label}$left_command_end$right_command_end" "${content:-$count}"
+		fi
+	else
+		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+	fi
+}
+
 case $1 in
 	email*)
 		#icon= 
@@ -72,7 +96,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=
+		old_mail_count=2
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -100,21 +124,23 @@ case $1 in
 		fi
 
 		[[ $(which mutt 2> /dev/null) ]] && command1='termite -e mutt' ||
-			command1="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
-		command2="~/.orw/scripts/show_mail_info.sh $username $password 5"
+			left_command="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
+		right_command="~/.orw/scripts/show_mail_info.sh $username $password 5"
 
-		if ((mail_count)); then
-			if [[ $3 == only ]]; then
-				#~/.orw/scripts/notify.sh "i: $icon"
-				style=mono
-				mono_fg="\${$sfg}"
-				format fading "%{A:$command1:}%{A3:$command2:}$icon%{A}%{A}"
-			else
-				format fading "%{A:$command1:}%{A3:$command2:}${!3-MAIL}%{A}%{A}" $mail_count
-			fi
-		else
-			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
-		fi;;
+		#if ((mail_count)); then
+		#	if [[ $3 == only ]]; then
+		#		#~/.orw/scripts/notify.sh "i: $icon"
+		#		style=mono
+		#		mono_fg="\${$sfg}"
+		#		format fading "%{A:$left_command:}%{A3:$right_command:}$icon%{A}%{A}"
+		#	else
+		#		format fading "%{A:$left_command:}%{A3:$right_command:}${!3-MAIL}%{A}%{A}" $mail_count
+		#	fi
+		#else
+		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+		#fi;;
+
+		format_fading $mail_count $3 MAIL;;
 	volume*)
 		separator="$2"
         current_system_volume_mode=duo
@@ -419,17 +445,19 @@ case $1 in
 		left_command="transmission-remote -t $ids -$s &> /dev/null"
 		right_command="~/.orw/scripts/show_torrents_info.sh"
 
-		if ((c)); then
-			if [[ $4 == only ]]; then
-				style=mono
-				mono_fg="\${$sfg}"
-				format fading $icon
-			else
-				format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TOR}%{A}%{A}" "${torrents%\$*}"
-			fi
-		else
-			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
-		fi;;
+		#if ((c)); then
+		#	if [[ $4 == only ]]; then
+		#		style=mono
+		#		mono_fg="\${$sfg}"
+		#		format fading "%{A:$left_command:}%{A3:$right_command:}$icon%{A}%{A}"
+		#	else
+		#		format fading "%{A:$left_command:}%{A3:$right_command:}${!4-TORR}%{A}%{A}" "${torrents%\$*}"
+		#	fi
+		#else
+		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+		#fi;;
+
+		format_fading $c $4 TORR "${torrents%\$*}";;
 	updates)
 		separator="$2"
 		lines=${@: -1}
@@ -442,18 +470,20 @@ case $1 in
 		else
 			updates_count=$(apt list --upgradable 2> /dev/null | wc -l)
 		fi
-		
-		if ((updates_count)); then
-			if [[ $3 == only ]]; then
-				style=mono
-				mono_fg="\${$sfg}"
-				format fading $icon
-			else
-				format fading ${!3-UPD} $updates_count
-			fi
-		else
-			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
-		fi;;
+
+		#if ((updates_count)); then
+		#	if [[ $3 == only ]]; then
+		#		style=mono
+		#		mono_fg="\${$sfg}"
+		#		format fading $icon
+		#	else
+		#		format fading ${!3-UPD} $updates_count
+		#	fi
+		#else
+		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+		#fi;;
+
+		format_fading $updates_count $3 UPD;;
 	Temp)
 		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
 		temp=$(awk '{ tt += $NF / 1000; tc++ } END { print $NF / 1000 "°C" }' /sys/class/thermal/thermal_zone*/temp)
