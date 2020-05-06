@@ -349,36 +349,39 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				unset sign
 			fi;;
 		j)
-			if [[ $joiner ]]; then
-				unset joiner
-				joiner_end=e
-				joiner_end_frame="$joiner_right_frame%{B$bg}"
-			else
-				joiner_start=s
+			check_arg joiner_distance "${!OPTIND}" && shift
+			check_arg joiner_symbol "${!OPTIND}" && shift
 
-				check_arg join_distance "${!OPTIND}" && shift
-				check_arg join_symbol "${!OPTIND}" && shift
-
-				shopt -s extglob
+			if [[ $joiner_distance ]]; then
+				#unset joiner{,_{bg,distance,symbol}}
+				[[ $joiner ]] || joiner_start=s
 
 				#next_arg=${!OPTIND}
 				#joined_arg=$(sed "s/-[ijOp][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\1/" <<< $all_arguments)
-				joined_arg=$(sed "s/-[ijlOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
+				joiner_bg=$(sed "s/-[ijlOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
 				#modules_args="${all_arguments//-[ijOp]*-/-}"
 				#second_next="${modules_args#*$next_arg*-}"
 				#~/.orw/scripts/notify.sh "ma: $modules_args"
 				#~/.orw/scripts/notify.sh "na: $next_arg sn $second_next"
 				#~/.orw/scripts/notify.sh "ja: $joined_arg"
-				if [[ ! $join_symbol ]]; then
-					joiner="%{O$join_distance}"
+				if [[ ! $joiner_symbol ]]; then
+					joiner="%{O$joiner_distance}"
 				else
-					half_distance="%{O$((join_distance / 2))}"
-					joiner="$half_distance$bsfg$join_symbol$half_distance"
+					half_distance="%{O$((joiner_distance / 2))}"
+					joiner="$half_distance$bsfg$joiner_symbol$half_distance"
 				fi
 
-				eval joiner="j$joined_arg$joiner"
+				eval joiner="j$joiner_bg$joiner"
 				#~/.orw/scripts/notify.sh "j: $joiner"
-			fi;;
+			else
+				if [[ $joiner ]]; then
+					unset joiner
+					joiner_end=e
+					joiner_end_frame="$joiner_right_frame%{B$bg}"
+				fi
+			fi
+
+			unset joiner_{bg,distance,symbol};;
 		S)
 			display=$OPTARG
 			get_display_properties $display;;
