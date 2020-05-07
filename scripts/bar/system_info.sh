@@ -44,10 +44,14 @@ function format() {
 			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} ${separator:-\$separator}";;
 		esac
 	else
+		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
 		[[ $style == hidden ]] && formated="${@:2}" || formated="$(format "${@:2}")"
 
 		if [[ $lines != true ]]; then
-			echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+			#~/.orw/scripts/notify.sh "s $separator i $icon"
+			#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+			#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+			echo -e "$formated"
 		else
 			set_line
 
@@ -66,15 +70,18 @@ function format() {
 }
 
 format_fading() {
-	local count=$1
-	local label=$3
-	local icon_type=$2
+	local label=$1
+	local count=$2
+	local icon_type=${3-none}
 	local content="$4"
+
+	#~/.orw/scripts/notify.sh "c: $3 ${content:-$count}"
 
 	[[ $left_command ]] && local left_command="%{A:$left_command:}" left_command_end="%{A}"
 	[[ $right_command ]] && local right_command="%{A:$right_command:}" right_command_end="%{A}"
 
-	if ((count)); then
+	#if ((count)); then
+	if [[ ${count:-$content} ]]; then
 		if [[ $icon_type == only ]]; then
 			style=mono
 			mono_fg="\${$sfg}"
@@ -82,9 +89,16 @@ format_fading() {
 			format fading "$left_command$right_command$icon$left_command_end$right_command_end"
 		else
 			#format fading "%{A:$left_command:}%{A3:$right_command:}${!icon_type-$label}%{A}%{A}" "$content"
-			format fading "$left_command$right_command${!icon_type-$label}$left_command_end$right_command_end" "${content:-$count}"
+			[[ ! $label ]] &&
+				format fading "$content" ||
+				format fading "$left_command$right_command${!icon_type-$label}$left_command_end$right_command_end" "${content:-$count}"
 		fi
 	else
+		if [[ $separator =~ ^s ]]; then
+			set_line
+			echo -e "%{U$fc}\${start_line:-$left_frame}"
+		fi
+		
 		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 	fi
 }
@@ -96,7 +110,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=2
+		old_mail_count=
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -140,7 +154,7 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading $mail_count $3 MAIL;;
+		format_fading MAIL "$mail_count" "${3-none}";;
 	volume*)
 		separator="$2"
         current_system_volume_mode=duo
@@ -200,20 +214,30 @@ case $1 in
 		fi
 	}
 
+	[[ $4 ]] && label=icon
+
 	if [[ $3 == all ]]; then
-		dropdown $4
-		recorder $4
+		dropdown $label
+		recorder $label
 	fi
 
 	#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
 	#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-	if [[ $term || $rec ]]; then
-		hidden="\${$sbg}\${inner}$term$rec\$inner"
-		format fading "$hidden"
-	else
-		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
-	fi;;
+	[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
+	format_fading "" "" "none" "$hidden";;
+
+#	if [[ $term || $rec ]]; then
+#		hidden="\${$sbg}\${inner}$term$rec\$inner"
+#		format fading "$hidden"
+#	else
+#		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
+#
+#		if [[ $separator =~ ^s ]]; then
+#			set_line
+#			echo -e "%{U$fc}\${start_line:-$left_frame}"
+#		fi
+#	fi;;
 	network)
 		#icon=
 		set_icon $1
@@ -226,13 +250,16 @@ case $1 in
 			/^*/ { nn = substr($0, si, mi - si)
 			print gensub(" {2,}", "", 1, nn) }')
 
-		if [[ $2 == only ]]; then
-			style=mono
-			mono_fg="\${$sfg}"
-			format $icon
-		else
-			[[ $ssid ]] && format ${!2-NET} $ssid
-		fi;;
+		#if [[ $2 == only ]]; then
+		#	style=mono
+		#	mono_fg="\${$sfg}"
+		#	~/.orw/scripts/notify.sh "i: $icon"
+		#	format fading $icon
+		#else
+		#	[[ $ssid ]] && format ${!2-NET} $ssid
+		#fi;;
+
+		format_fading NET "" "${2-none}" "$ssid";;
 	Weather*)
 		separator="$2"
 		lines=${@: -1}
@@ -281,9 +308,15 @@ case $1 in
 			label=${!4:-${w^^}}
 		fi
 
+		#format_fading "${w^^}" "" "${4-none}" "$(sed 's/[^[:print:]]\([^m]*\)m*//g' <<< "${weather%\$}")";;
 		if [[ $w ]]; then
 			format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g'
 		else
+			if [[ $separator =~ ^s ]]; then
+				set_line
+				echo -e "%{U$fc}\${start_line:-$left_frame}"
+			fi
+
 			[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		fi;;
 	Cpu)
@@ -438,9 +471,10 @@ case $1 in
 					ap "%", "${tbefg:-${pbfg:-${'$pfg'}}}" make_progressbar(pd) "${tbfg:-${'$sfg'}}" make_progressbar(pr)
 			}' 2> /dev/null)
 
-		for torrent_info in ${3//[0-9,]/ }; do
-			torrents+="${!torrent_info}\${padding}"
-		done
+		((c)) &&
+			for torrent_info in ${3//[0-9,]/ }; do
+				torrents+="${!torrent_info}\${padding}"
+			done
 
 		left_command="transmission-remote -t $ids -$s &> /dev/null"
 		right_command="~/.orw/scripts/show_torrents_info.sh"
@@ -457,7 +491,7 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading $c $4 TORR "${torrents%\$*}";;
+		format_fading TORR "$c" "${4-none}" "${torrents%\$*}";;
 	updates)
 		separator="$2"
 		lines=${@: -1}
@@ -483,7 +517,7 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading $updates_count $3 UPD;;
+		format_fading UPD "$updates_count" "${3-none}";;
 	Temp)
 		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
 		temp=$(awk '{ tt += $NF / 1000; tc++ } END { print $NF / 1000 "°C" }' /sys/class/thermal/thermal_zone*/temp)
