@@ -178,8 +178,10 @@ format() {
 			#~/.orw/scripts/notify.sh "end: $1"
 			#local right_line=$(eval echo -e "${end_line:-$right_frame}")
 			#~/.orw/scripts/notify.sh "rl: $right_line"
+			#~/.orw/scripts/notify.sh "je: $joiner_end_frame"
 			#modules+="\${$1% *}$joiner_end_frame\${$1##* }"
-			modules+="\${$1% *}$joiner_end_frame\${$1##* }"
+			#modules+="\${$1% *}$joiner_end_frame\${$1##* }"
+			modules+="\${$1% *}$joiner_end_frame\$separator"
 		else
 			modules+="\${$1% *}${joiner:1}"
 		fi
