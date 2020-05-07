@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -w 1300 -y 20 -b -h 22 -F 2 -f 2 -a 7 -n join_bot -c bar_join_bot -M -W o3,id -r -l -j 30 -U c,d -N -e -B p -v -j -d 
