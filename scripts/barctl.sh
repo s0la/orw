@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=lp,mid
+last_running=4pt,full,join_und,left
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -116,6 +116,7 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 
 					split(e_a, aa)
 					split(e_f, fa, ",")
+					#split(i_f, fa, ",")
 				} {
 					if(e_a ~ /[+-][0-9]?/) {
 						if(i_c && NR == FNR) {
@@ -141,16 +142,31 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 							}
 						}
 					} else {
-						if(i_c && ! p) {
-							p = gensub(".*-" i_f " ([^-]*).*", "\\1", 1)
+						if(i_c && NR == FNR) {
+							if(i_f) split(i_f, ia, ","); else ia = fa
+
+							for(iai in ia) naa[iai] = gensub(".*-" ia[iai] " ([^-]*).*", "\\1", 1)
+
 							print
 							nextfile
 						}
 
 						for(fi in fa) {
 							f = fa[fi]
-							if(i_c) sub("-" f "[^-]*", "-" f " " p)
-							else sub("-" f "[^-]*", ("'$flag'" == "r") ? "" : "-" f " " e_a " ")
+
+							#p = (length(naa[1])) ? naa[fi] : fa[fi]
+							#if(i_c) sub("-" f "[^-]*", "-" f " " p)
+							#else sub("-" f "[^-]*", ("'$flag'" == "r") ? "" : "-" f " " e_a " ")
+
+							if(length(naa)) {
+								if(length(naa[fi])) p = naa[fi]
+							} else p = e_a
+
+							if(i_c) {
+								sub("-" f "[^-]*", "-" f " " p)
+							} else {
+								sub("-" f "[^-]*", ("'$flag'" == "r") ? "" : "-" f " " e_a " ")
+							}
 						}
 					}
 
