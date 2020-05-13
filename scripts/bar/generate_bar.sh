@@ -181,7 +181,8 @@ format() {
 			#~/.orw/scripts/notify.sh "je: $joiner_end_frame"
 			#modules+="\${$1% *}$joiner_end_frame\${$1##* }"
 			#modules+="\${$1% *}$joiner_end_frame\${$1##* }"
-			modules+="\${$1% *}$joiner_end_frame\$separator"
+			#modules+="\${$1% *}$joiner_end_frame\$separator"
+			modules+="\${$1% *}${tweener:1}"
 		else
 			modules+="\${$1% *}${joiner:1}"
 		fi
