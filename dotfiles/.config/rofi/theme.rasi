@@ -1,12 +1,12 @@
 /* color definition */
 
 * {
-	bg: #1d1e20;
+	bg: #18191d;
 	fg: #37383c;
-	bc: #609599;
+	bc: #576662;
 
-	ibg: #1d1e20;
-	ibc: #212224;
+	ibg: #576662;
+	ibc: #576662;
 
 	abg: #87939c;
 	afg: #d5d5d5;
@@ -17,9 +17,9 @@
 
 	lpc: #979392;
 	dpc: #373737;
-	btc: #1d1e20;
-	sbtc: #1d1e20;
-	btbc: #1d1e20;
+	btc: #18191d;
+	sbtc: #18191d;
+	btbc: #18191d;
 
 	background-color: @bg;
 
@@ -27,7 +27,7 @@
 }
 
 #window {
-	border: 2px;
+	border: 3px;
 	border-color: @bc;
 }
 

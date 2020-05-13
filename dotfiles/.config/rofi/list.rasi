@@ -8,7 +8,7 @@
 
 #window {
 	width:          30%;
-	padding:        20px;
+	padding:        0px;
 	spacing:        0px;
 }
 
@@ -23,8 +23,8 @@
 
 #inputbar {
 	border:           0 0 2px;
-	margin:           0 0 10px;
-	padding:          3px 5px;
+	margin:           0 0 0px;
+	padding:          10px 10px;
 	children:         [ prompt, entry ];
 	background-color: @ibg;
 	border-color:     @ibc;
@@ -50,7 +50,7 @@
 
 #element {
 	border:         0;
-	padding:        3px 5px;
+	padding:        10px 10px;
 }
 
 sidebar {
