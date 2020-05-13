@@ -34,15 +34,16 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=4pt,full,join_und,left
+last_running=
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
-
 			kill_bar
-			~/.orw/scripts/bar/generate_bar.sh ${@:2}
+
+			[[ -f $configs/$bar ]] && overwrite=-o
+			~/.orw/scripts/bar/generate_bar.sh ${@:2} $overwrite
 
 			add_bar
 			exit;;
@@ -153,10 +154,6 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 
 						for(fi in fa) {
 							f = fa[fi]
-
-							#p = (length(naa[1])) ? naa[fi] : fa[fi]
-							#if(i_c) sub("-" f "[^-]*", "-" f " " p)
-							#else sub("-" f "[^-]*", ("'$flag'" == "r") ? "" : "-" f " " e_a " ")
 
 							if(length(naa)) {
 								if(length(naa[fi])) p = naa[fi]
