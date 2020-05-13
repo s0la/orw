@@ -5,7 +5,8 @@ check_visualizer() {
 }
 
 check_controls() {
-	controls_running=$(ps aux | awk '/lemonbar/ && $NF == "mwc" { print "true" }')
+	#controls_running=$(ps aux | awk '/lemonbar/ && $NF == "mwc" { print "true" }')
+	controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^(n_)?mwc$" { print "true" }')
 }
 
 check_cover() {
@@ -87,7 +88,7 @@ cover() {
 		openbox --reconfigure
 	}
 
-	previous_geometry='63x63+785+984'
+	previous_geometry='52x52+300+50'
 	previous_bg='#1c1d21'
 
 	check_cover
@@ -110,9 +111,9 @@ cover() {
 						s += gensub("([^-]*([^Ffh]*[^0-9]*)([0-9]*)){" fi "}.*", "\\3", 1)
 					} END { print s - '$border' }' ~/.config/orw/bar/configs/mw*)
 
-				read x y <<< $(~/.orw/scripts/windowctl.sh -n mwi -p |\
-					awk '{ print ($4 >= 300) ? $2 : $2 - '$(($size / 3 * 2))', $3 }')
-
+				#read x y <<< $(~/.orw/scripts/windowctl.sh -n mwi -p |\
+				#	awk '{ print ($4 >= 300) ? $2 : $2 - '$(($size / 3 * 2))', $3 }')
+				read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2 - $5, $3, $5 - '$border' }')
 				geometry="${size}x${size}+${x}+${y}"
 			else
 				[[ $input == true ]] && get_geometry_input cover
