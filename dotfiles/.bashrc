@@ -305,8 +305,8 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="87;88;90;"
-	sc="87;88;90;"
+	fg="65;66;68;"
+	sc="65;66;68;"
 	ic="107;160;164;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
@@ -427,6 +427,11 @@ alias ll='ls -lh'
 #script aliases
 scripts=~/.orw/scripts
 
+#ctls
+alias barctl="$scripts/barctl.sh"
+alias borderctl="$scripts/borderctl.sh"
+alias windowctl="$scripts/windowctl.sh"
+
 #colors
 alias rbar="$scripts/rice_and_shine.sh -m bar"
 alias rbash="$scripts/rice_and_shine.sh -m bash"
@@ -436,12 +441,11 @@ alias rterm="$scripts/rice_and_shine.sh -m term"
 alias rdunst="$scripts/rice_and_shine.sh -m dunst"
 alias rncmpcpp="$scripts/rice_and_shine.sh -m ncmpcpp"
 
-#decoration
+#borders
 alias bw="$scripts/borderctl.sh bw"
 alias jt="$scripts/borderctl.sh jt"
 alias tb="$scripts/borderctl.sh tb"
 alias tbh="$scripts/borderctl.sh tbh"
-alias borderctl="$scripts/borderctl.sh"
 
 #ncmpcpp
 alias ncmpcpp="$scripts/ncmpcpp.sh"
