@@ -24,8 +24,8 @@ ncmpcpp_conf=$config/ncmpcpp/config
 vim_conf=$config/nvim/colors/orw.vim
 vifm_conf=$config/vifm/colors/orw.vifm
 qb_conf=$config/qutebrowser/config.py
-tmux_hidden_conf=$config/tmux_hidden.conf
-tmux_conf=$config/tmux.conf
+tmux_hidden_conf=$config/tmux/tmux_hidden.conf
+tmux_conf=$config/tmux/tmux.conf
 
 themes=$root/themes
 gtk_conf=$themes/theme/gtk-2.0/gtkrc
