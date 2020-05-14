@@ -14,15 +14,15 @@ main_font_offset=0
 bar_name='main_bar'
 
 bg="#101115"
-fc="#5aa4a6"
+fc="#101115"
 bfc="#608985"
 bbg="#101115"
 bsbg="%{B#101115}"
-bsfg="%{F#313131}"
+bsfg="%{F#5c5d5f}"
 
-pbg="%{B#101115}"
+pbg="%{B#18191d}"
 pfg="%{F#999999}"
-sbg="%{B#101115}"
+sbg="%{B#18191d}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
@@ -261,8 +261,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				check_arg clone_colorscheme ${!OPTIND} && shift
 				colorscheme_path=~/.config/orw/colorschemes/$colorscheme.ocs
 
-				[[ $clone_colorscheme ]] &&
+				if [[ $clone_colorscheme && ! -f $colorscheme_path ]]; then
 					cp ${colorscheme_path%/*}/$clone_colorscheme.ocs $colorscheme_path
+					all_arguments="${all_arguments/ $clone_colorscheme/}"
+				fi
 
 				if [[ -f $colorscheme_path ]]; then
 					use_colorscheme=true
@@ -511,7 +513,8 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		n) bar_name="$OPTARG";;
 		o)
 			overwrite=true
-			flags="${path/$HOME/\~}/generate_bar.sh ${all_arguments%-o*}${all_arguments#*-o}";;
+			#flags="${path/$HOME/\~}/generate_bar.sh ${all_arguments%-o*}${all_arguments#*-o}";;
+			flags="${path/$HOME/\~}/generate_bar.sh ${all_arguments// -o/}";;
 		a) font_size=$OPTARG;;
 	esac
 

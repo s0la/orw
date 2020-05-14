@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=
+last_running=4pt,tutorial
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -221,10 +221,16 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 			#cp $config_path/$config $config_path/$clone_config
 			#sed -n "s/\(.*c\).*/\\1/1p" $config_path/$config
 			#sed -n "s/\(\([^-]*-[^c]\)*[^-]*-c\)/\\1 bar_$clone_config/p" $config_path/$config
+
+			#awk '{
+			#	$0 = gensub("(([^-]*-[^c])*[^-]*-c)", "\\1 bar_'$clone_config'", 1)
+			#	$0 = gensub("(.*-n)( [^ ]*)", "\\1 '$clone_config'", 1, $0)
+			#	print
+			#}' $config_path/$config > $config_path/$clone_config
+
 			awk '{
-				$0 = gensub("(([^-]*-[^c])*[^-]*-c)", "\\1 bar_'$clone_config'", 1)
-				$0 = gensub("(.*-n)( [^ ]*)", "\\1 '$clone_config'", 1, $0)
-				print
+				$0 = gensub(/(-c).(\w*)[^-]*/, "\\1 bar_'$clone_config' \\2 ", 1)
+				print gensub(/-n [^ ]*/, "-n '$clone_config'", 1)
 			}' $config_path/$config > $config_path/$clone_config
 
 			bar=$clone_config
