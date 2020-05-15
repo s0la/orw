@@ -79,7 +79,7 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-[[ $4 =~ i ]] && workspaces="$fbg${padding}${workspaces%\%*}${padding}"
+[[ $4 =~ i ]] && workspaces="$fbg${padding}$workspaces${padding}"
 
 workspaces="%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
