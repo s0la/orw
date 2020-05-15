@@ -66,6 +66,9 @@ case $1 in
 			case $1 in
 				rf) pattern=font;;
 				rw) pattern=width;;
+				rr)
+					set=2
+					pattern=radius;;
 				rim)
 					px=px
 					pattern=margin
@@ -75,8 +78,8 @@ case $1 in
 				 	pattern=padding;;
 				rbw)
 					px=px
-					pattern=border
-					[[ ! $rofi_mode =~ dmenu ]] && rofi_conf=theme.rasi;;
+					pattern=border:
+					[[ ! $rofi_mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
 				rln)
 					pattern=lines
 					rofi_conf=config.rasi;;
@@ -84,15 +87,28 @@ case $1 in
 			esac
 
 			awk -i inplace '\
-				{ if(/'"$pattern"'/ && ! set) {
-					px = "'$px'"
-					nv = '$new_value'
-					cv = gensub(".* ([0-9]*)" px ".*", "\\1", 1)
-					sub(cv px, ("'$sign'") ? cv '$sign' nv px : nv px)
-					set = 1
-				}
+				BEGIN { set = '${set:-1}' }
+				{
+					if(/'"$pattern"'/ && set) {
+						px = "'$px'"
+						nv = '$new_value'
+						cv = gensub(".* ([0-9]*)" px ".*", "\\1", 1)
+						sub(cv px, ("'$sign'") ? cv '$sign' nv px : nv px)
+						set--
+					}
 				print
 			}' $rofi_path/${rofi_conf:-$rofi_mode}
+
+			#awk -i inplace '\
+			#	{ if(/'"$pattern"'/ && ! set) {
+			#		px = "'$px'"
+			#		nv = '$new_value'
+			#		cv = gensub(".* ([0-9]*)" px ".*", "\\1", 1)
+			#		sub(cv px, ("'$sign'") ? cv '$sign' nv px : nv px)
+			#		set = '${set-1}'
+			#	}
+			#	print
+			#}' $rofi_path/${rofi_conf:-$rofi_mode}
 		fi;;
 	tp)
 		awk -i inplace '\
