@@ -94,8 +94,10 @@ rofi() {
 				sed -i "/font/ s/[0-9]\+/$((font $sign 4))/" $path/theme.rasi
 			fi
 
-			[[ $new_mode == list ]] && width=2 || width=0
-			[[ $new_mode == dmenu ]] && property=bc || property=sbg
+			border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
+
+			[[ $new_mode =~ list ]] && width=$border_width || width=0
+			[[ $new_mode =~ dmenu ]] && property=bc || property=sbg
 
 			sed -i "/import/ s/ .*/ \"$new_mode\"/" ~/.config/rofi/main.rasi
 
