@@ -3,7 +3,6 @@
 @import "list"
 
 * {
-	font:   "RobotoMono Nerd Font 9";
 	font:   "Iosevka Orw 9";
 }
 
@@ -26,9 +25,28 @@
 	margin:         0 0 5px;
 	padding:        2px 5px;
 	children:       [ prompt, entry ];
+	background:     @bg;
 }
 
 #element {
 	border:         0;
 	padding:        2px 5px;
+}
+
+#inputbar {
+	background-color: @bg;
+	border-color:     @sbg;
+}
+
+#entry {
+	background-color: @bg;
+	border-color:     @fg;
+}
+
+#prompt {
+	background-color: @bg;
+}
+
+#textbox-prompt-colon {
+	background-color: @bg;
 }
