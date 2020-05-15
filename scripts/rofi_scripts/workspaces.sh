@@ -1,29 +1,36 @@
 #!/bin/bash
 
-workspaces=( $(wmctrl -d | awk '\
-	{
-		wn = $NF
+theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
-		if(wn ~ /^[0-9]+$/) {
-			if(wn > 1) tc = wn - 1
-			wn = "tmp" tc
-		}
+if [[ $theme != icons ]]; then
+	workspaces=( $(wmctrl -d | awk '\
+		{
+			wn = $NF
 
-		print wn
-	}') )
+			if(wn ~ /^[0-9]+$/) {
+				if(wn > 1) tc = wn - 1
+				wn = "tmp" tc
+			}
+
+			print wn
+		}') )
+
+	[[ $@ =~ move ]] && move=true
+
+	current_workspace=$(xdotool get_desktop)
+	indicator=''
+	indicator=''
+	empty=' '
+else
+	workspaces=( '' '' '' )
+fi
 
 workspace_count=${#workspaces[*]}
 
-current_workspace=$(xdotool get_desktop)
-indicator=''
-indicator=''
-
-[[ $@ =~ move ]] && move=true
-
 if [[ -z $@ || $@ =~ (move|wall)$ ]]; then
 	for workspace_index in ${!workspaces[*]}; do
-		((workspace_index == current_workspace)) && echo -n "$indicator" || echo -n " "
-		echo " ${workspaces[workspace_index]}"
+		((workspace_index == current_workspace)) && echo -n "$indicator" || echo -n "$empty"
+		echo "$empty${workspaces[workspace_index]}"
 	done
 
 	#[[ $move ]] && echo  
@@ -33,17 +40,20 @@ else
 
 	window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 
-
 	#if [[ "$@" =~   ]]; then
-	if [[ "$@" =~ \+tmp  ]]; then
+	if [[ "$@" =~ \+tmp ]]; then
 		new_workspace_name='tmp'
 		new_workspace_index=$workspace_count
 
 		wmctrl -n $workspace_count
 		((workspace_count++))
 	else
-		new_workspace_name="${desktop:-${@: -1}}"
-		new_workspace_name="${new_workspace_name:2}"
+		if [[ $theme == icons ]]; then
+			new_workspace_name="$@"
+		else
+			new_workspace_name="${desktop:-${@: -1}}"
+			new_workspace_name="${new_workspace_name:2}"
+		fi
 
 		for new_workspace_index in ${!workspaces[*]}; do
 			#~/.orw/scripts/notify.sh "^${workspaces[new_workspace_index]}$\n^$new_workspace_name$"

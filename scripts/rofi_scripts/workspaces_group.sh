@@ -1,6 +1,7 @@
 #!/bin/bash
 
 path=~/.orw/scripts/rofi_scripts
+${path%/*}/set_rofi_width.sh workspaces
 ${path%/*}/set_rofi_margins.sh
 
 modis+="wall:$path/workspaces.sh wall,"

@@ -1,0 +1,42 @@
+/* list config */
+
+@import "theme"
+
+* {
+	font: "icomoon_fa 16";
+}
+
+#window {
+	width:      488px;
+	padding:     15px;
+	children:   [ horibox ];
+	border-color: @bg;
+	border-radius:       5px;
+}
+
+#horibox {
+	orientation: horizontal;
+	children:    [ listview ];
+}
+
+#listview {
+	layout:      horizontal;
+	spacing:     3;
+	lines:       100;
+}
+
+#element {
+	border:         0;
+	padding:        26px 26px;
+	border-radius:       5px;
+}
+
+#element.alternate.normal {
+	text-color:       @fg;
+	background-color: @ebg;
+}
+
+#element.normal.normal {
+	text-color:       @fg;
+	background-color: @ebg;
+}

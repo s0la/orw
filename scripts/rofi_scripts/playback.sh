@@ -1,29 +1,48 @@
 #!/bin/bash
 
+theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+
 current_song="$(mpc current -f "%artist% - %title%")"
 [[ $current_song ]] && empty='  '
 
+[[ $theme != icons ]] &&
+	play=play stop=stop next=next prev=prev rand=random up=volume_up down=volume_down controls=controls pl=playlist sep=' '
+
 if [[ -z $@ ]]; then
-	echo -e '  play\n  stop\n  next\n  prev\n  random\n  volume up\n  volume down\n  toggle controls\n  playlist'
+	cat <<- EOF
+		$sep$play
+		$sep$stop
+		$sep$prev
+		$sep$next
+		$sep$rand
+		$sep$up
+		$sep$down
+		$sep$controls
+		$sep$playlist
+	EOF
 else
 	case "$@" in
-		*play) mpc -q toggle;;
-		*volume*)
+		*) mpc -q toggle;;
+		*|*)
 			volume="$@"
 			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
-			[[ ${volume##* } == up ]] && direction=+ || direction=-
+			[[ ${volume%% *} ==   ]] && direction=+ || direction=-
 
 			mpc -q volume $direction$((${multiplier:-1} * 5));;
-		*playlist)
+		*)
 			indicator=''
 			mpc playlist | awk '{ p = ($0 == "'"$current_song"'") ? "'$indicator' " : "'"$empty"'"; print p $0 }';;
-		*controls*)
+		*)
 			mpd=~/.orw/scripts/bar/mpd.sh
 			mode=$(awk -F '=' '/^current_mode/ { if ($2 == "controls") print "song_info"; else print "controls"}' $mpd)
 			sed -i "/^current_mode/ s/=.*/=$mode/" $mpd;;
 		*-*)
 			song="$@"
 			~/.orw/scripts/play_song_from_playlist.sh "${song:${#empty}}";;
+		*) mpc -q stop;;
+		*) mpc -q next;;
+		*) mpc -q prev;;
+		*) mpc -q random;;
 		*)
 			mpc -q ${@#* }
 

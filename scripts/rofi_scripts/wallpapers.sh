@@ -1,6 +1,7 @@
 #!/bin/bash
 
 config=~/.config/orw/config
+theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
 get_directory() {
 	read depth directory <<< $(awk '\
@@ -8,8 +9,25 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
+#[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
+[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
+	next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
+
 if [[ -z $@ ]]; then
-	echo -e 'next\nprev\nrand\nindex\nselect\nrestore\nview_all\ninterval\nautochange'
+	#echo -e 'next\nprev\nrand\nindex\nselect\nrestore\nview_all\ninterval\nautochange'
+
+	#cat <<- EOF
+	#	$next
+	#	$prev
+	#	$rand
+	#	$view
+	#	$index
+	#	$restore
+	#	$interval
+	#	$auto
+	#EOF
+
+	echo -e "$next\n$prev\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
 else
 	wallctl=~/.orw/scripts/wallctl.sh
 
@@ -31,11 +49,14 @@ else
 		killall rofi
 
 		case "$@" in
-			*interval*) $wallctl -I ${@#* };;
-			*index*) $wallctl -i ${@##* };;
-			*restore*) $wallctl -r;;
-			*auto*) $wallctl -A;;
-			*view*) $wallctl -v;;
+			$next*) $wallctl -o next ${@#*$next };;
+			$prev*) $wallctl -o prev ${@#*$prev };;
+			$rand*) $wallctl -o rand ${@#*$rand };;
+			$restore*) $wallctl -r;;
+			$auto*) $wallctl -A;;
+			$view*) $wallctl -v;;
+			$interval*) $wallctl -I ${@#* };;
+			$index*) $wallctl -i ${@##* };;
 			*.*)
 				wall="$@"
 				get_directory

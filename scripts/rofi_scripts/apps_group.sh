@@ -1,6 +1,7 @@
 #!/bin/bash
 
 path=~/.orw/scripts/rofi_scripts
+${path%/*}/set_rofi_width.sh $1
 ${path%/*}/set_rofi_margins.sh
 
 modis+="apps:$path/apps.sh,"
