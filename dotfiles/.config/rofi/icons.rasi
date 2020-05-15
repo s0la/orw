@@ -7,10 +7,9 @@
 }
 
 #window {
-	width:      488px;
+	width:       488px;
 	padding:     15px;
-	children:   [ horibox ];
-	border-color: @bg;
+	children:    [ horibox ];
 	border-radius:       5px;
 }
 
@@ -26,17 +25,17 @@
 }
 
 #element {
-	border:         0;
 	padding:        26px 26px;
 	border-radius:       5px;
 }
 
-#element.alternate.normal {
+#element.normal.normal, element.alternate.normal {
 	text-color:       @fg;
 	background-color: @ebg;
 }
 
-#element.normal.normal {
-	text-color:       @fg;
-	background-color: @ebg;
+#element.selected.normal {
+	text-color:       @efg;
+	background-color: @sbg;
+	border:           0 0 3px;
 }
