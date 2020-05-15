@@ -4,17 +4,16 @@
 
 #mainbox {
 	spacing: 0;
+	font:    "Iosevka Orw 8";
 }
 
 #window {
 	width:          30%;
 	padding:        0px;
-	spacing:        0px;
 }
 
 #listview {
 	padding:        0px 0px;
-	spacing:        2px;
 	scrollbar:      false;
 	border:         0px 0px 0px;
 	border-color:   @bg;
