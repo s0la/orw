@@ -11,12 +11,13 @@
 	abg: #87939c;
 	afg: #d5d5d5;
 
+	ebg: #18191d;
 	sbg: #212226;
-	sfg: #979392;
-	sul: #373737;
+	sfg: #C8935F;
+	sul: #212226;
 
 	lpc: #979392;
-	dpc: #373737;
+	dpc: #212226;
 	btc: #18191d;
 	sbtc: #18191d;
 	btbc: #18191d;
@@ -27,7 +28,7 @@
 }
 
 #window {
-	border: 3px;
+	border: 0px;
 	border-color: @bc;
 }
 
