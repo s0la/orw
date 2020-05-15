@@ -58,13 +58,13 @@ case $1 in
 							("'$rofi_mode'" ~ "dmenu") ? v[2] : v1
 					}
 
-					#$0 = gensub("([^0-9]*)[0-9]+(.* )[0-9]+(.*)", "\\1" v1 "\\2" v2 "\\3", 1)
 					gsub("[0-9]+px [0-9]+", v1 "px " v2)
 				}
 				print
 			}' $rofi_path/$rofi_mode
 		else
 			case $1 in
+				rf) pattern=font;;
 				rw) pattern=width;;
 				rim)
 					px=px
@@ -80,6 +80,7 @@ case $1 in
 				rln)
 					pattern=lines
 					rofi_conf=config.rasi;;
+				rsp) pattern=spacing;;
 			esac
 
 			awk -i inplace '\
