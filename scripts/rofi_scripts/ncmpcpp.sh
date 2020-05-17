@@ -55,7 +55,12 @@ else
 		*vertical*) flags+=' -w 450 -h 600 -i';;
 	esac
 
-	read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
+	#read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
+	read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
+			if(/mode/) m = $NF
+			else if(/part/ && $NF) p = $NF
+			else if(/ratio/) r = p "/" $NF
+		} END { print m, r }' ~/.config/orw/config | xargs)
 
 	if [[ $mode == tiling ]]; then
 		class="-C tiling"

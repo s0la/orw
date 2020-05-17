@@ -25,13 +25,28 @@ if [[ $2 =~ [0-9]+ ]]; then
 fi
 
 case $1 in
-	[xy]*)
+	#[xy]*)
+	#	awk -i inplace '{
+	#		if(/^'${1:0:1}'_offset/) {
+	#			nv = '$new_value'
+	#			cv = gensub(".* ", "", 1)
+	#			sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
+	#		}
+	#		print
+	#	}' ~/.config/orw/config;;
+
+	w*)
+		#[[ ${1:1:1} == [xy] ]] && pattern=${1:0:1}_offset || pattern=ratio
+		#[[ ${1: -1} == [xy] ]] && pattern=${1: -1}_offset || pattern=ratio
+
 		awk -i inplace '{
-			if(/^'${1:0:1}'_offset/) {
+			if(/^'${1: -1}'/ && ! set) {
+				set = 1
 				nv = '$new_value'
 				cv = gensub(".* ", "", 1)
 				sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
 			}
+
 			print
 		}' ~/.config/orw/config;;
 	r*)

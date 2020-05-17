@@ -36,7 +36,12 @@ else
 	count_windows() {
 		window_count=$(wmctrl -l | awk '/'$1'[0-9]+?/ { wc++ } END { if(wc) print wc }')
 
-		read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
+		#read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
+		read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
+				if(/mode/) m = $NF
+				else if(/part/ && $NF) p = $NF
+				else if(/ratio/) r = p "/" $NF
+			} END { print m, r }' ~/.config/orw/config | xargs)
 
 		if [[ $mode == tiling && $window_count -gt 0 ]]; then
 			read x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
@@ -71,7 +76,7 @@ else
 		*$vifm*)
 			count_windows vifm
 			[[ $mode == tiling ]] && class="-c tiling"
-			~/.orw/scripts/vifm.sh -t $title "$class" ${@#*$vifm} &;;
+			~/.orw/scripts/vifm.sh -t $title $class ${@#*$vifm} &;;
 			#~/.orw/scripts/vifm.sh -t "vifm$window_count" -c "$command" ${@#*$vifm} &;;
 			#coproc(~/.orw/scripts/vifm.sh -t "vifm$window_count" ${@#*$vifm} &);;
         *$qb*)
