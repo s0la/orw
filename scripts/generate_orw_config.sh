@@ -2,11 +2,12 @@
 
 conf=~/.config/orw/config
 
-general() {
+wm() {
 	x_offset=20
 	y_offset=10
 
-	echo "#general\nx_offset $x_offset\ny_offset $y_offset\n\n"
+	#echo "#general\nx_offset $x_offset\ny_offset $y_offset\n\n"
+	echo "#wm\nmode floating\nratio 2\nx_offset $x_offset\ny_offset $y_offset\n"
 }
 
 display() {
@@ -61,5 +62,5 @@ if [[ -f $conf ]]; then
 		((line_number > $(wc -l < $conf))) && echo -e $($arg) >> $conf || sed -i "${line_number}i$($arg)" $conf
 	done
 else
-	echo -e "$(general)$(display)$(wallpapers)" > $conf
+	echo -e "$(wm)\n$(display)\n$(wallpapers)" > $conf
 fi
