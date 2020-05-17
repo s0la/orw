@@ -36,7 +36,8 @@ function set_line() {
 
 	frame="%{B$fc\}$frame_width"
 	left_frame="%{+u\}%{+o\}$frame"
-	right_frame="$frame%{-o\}%{-u\}"
+	remove_frame="%{-o\}%{-u\}"
+	right_frame="$frame$remove_frame"
 }
 
 function add_line() {
@@ -53,7 +54,7 @@ make_launcher() {
 
 	read count position ids <<< $(wmctrl -l | awk '\
 		BEGIN { c = 0 }
-		$NF != "input" && /'"$name"'/ {
+		$NF != "input" && /'"$name"'[0-9]+?/ {
 			if($1 == "'$current_id'") p = c
 			ids = ids " " $1
 			c++
@@ -125,6 +126,8 @@ done <<< $(awk '{ if(/^$/) {
 
 [[ $launcher_separator ]] && launchers=${launchers%\%*}
 launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
+[[ $separator =~ ^% ]] && launchers="$remove_frame$launchers"
+	#~/.orw/scripts/notify.sh "s: $separator"
 
 #if [[ $launchers && $lines == true ]]; then
 if [[ $lines != false ]]; then

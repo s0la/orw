@@ -12,7 +12,8 @@ function set_line() {
 	fc="\${Wfc:-\$fc}"
 	frame="%{B$fc\}$frame_width"
 	left_frame="%{+u\}%{+o\}$frame"
-	right_frame="$frame%{-o\}%{-u\}"
+	remove_frame="%{-o\}%{-u\}"
+	right_frame="$frame$remove_frame"
 }
 
 [[ $single_line == false ]] && format_delimiter=' '
@@ -63,6 +64,11 @@ for workspace_index in $(seq $workspace_count); do
 	#~/.orw/scripts/notify.sh "$command"
 	workspace="%{A:$command:}$bg$fg$label%{A}"
 
+	#if [[ $single_line == true && $current == p ]]; then
+	#	set_line
+	#	workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
+	#fi
+
 	if [[ $single_line == true ]]; then
 		if [[ $current == p ]]; then
 			set_line
@@ -80,6 +86,7 @@ for workspace_index in $(seq $workspace_count); do
 done
 
 [[ $4 =~ i ]] && workspaces="$fbg${padding}$workspaces${padding}"
+[[ $separator =~ ^% ]] && workspaces="$remove_frame$workspaces"
 
 workspaces="%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
