@@ -648,27 +648,61 @@ while ((argument_index <= $#)); do
 
 							set_orientation_properties $optarg
 
-							[[ ${!argument_index} =~ ^[2-9]$ ]] && ratio=${!argument_index} && shift || ratio=2
+							#[[ ${!argument_index} =~ ^[2-9/]+$ ]] && ratio=${!argument_index} && shift || ratio=2
+
+							#if [[ ${!argument_index} =~ ^[2-9] ]]; then
+							#	ratio=${!argument_index}
+							#	shift
+							#else
+							#	ratio=2
+							#fi
+
+							[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift || ratio=2
+							[[ $ratio =~ / ]] && multiplier=${ratio%/*} ratio=${ratio#*/}
+
 							[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
 							[[ $optarg == h ]] && direction=x || direction=y
 
 							border=border_$direction
 							offset=${direction}_offset
+							separator=$(((${!border} + ${!offset})))
 							original_property=${properties[index + 2]}
 							#total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
 
-							(( properties[index + 2] $op2= (ratio - 1) * (${!border} + ${!offset}) ))
-							(( properties[index + 2] $op1= ratio ))
+							#(( properties[index + 2] $op2= (ratio - 1) * separator ))
+							#(( properties[index + 2] $op1= ratio ))
+
+							#[[ $argument == H ]] && (( properties[index + 2] -= (ratio - 1) * separator ))
+							#(( properties[index + 2] $op1= ratio ))
+							#[[ $argument == D ]] && (( properties[index + 2] += (ratio - 1) * separator ))
+
+							if [[ $argument == H || $multiplier ]]; then
+								(( properties[index + 2] -= (ratio - 1) * separator ))
+								(( properties[index + 2] /= ratio ))
+
+								if [[ $multiplier ]]; then
+									(( properties[index + 2] *= multiplier ))
+									(( properties[index + 2] += (multiplier - 1) * separator ))
+
+									[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+								fi
+							else
+								(( properties[index + 2] *= ratio ))
+								(( properties[index + 2] += (ratio - 1) * separator ))
+							fi
 
 							if [[ $auto_tile ]]; then
 								#awk '{ $('$index' + 1) += $('$index' + 3) + '$total_separation'; print }' <<< "${properties[*]}"
 									#$('$index' + 1) += $('$index' + 3) + '$total_separation'
 									#$('$index' + 1) = '$original_propertiy' + ($('$index' + 3) + '${!border}' + '${!offset}')
+									#print "'$0' move -h " $2 " -v " $3 " resize -h " $4 " -v " $5 }' <<< "${properties[*]}"
 								awk '{
 									p = $('$index' + 3) + '${!border}' + '${!offset}'
 									$('$index' + 3) = '$original_property' - p
 									$('$index' + 1) += p
-									print "'$0' move -h " $2 " -v " $3 " resize -h " $4 " -v " $5 }' <<< "${properties[*]}"
+									sub(/[^ ]* /, "")
+									print
+								}' <<< "${properties[*]}"
 							fi
 					esac
 
