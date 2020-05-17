@@ -121,7 +121,15 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			until [[ $(wmctrl -l | awk '$NF ~ "visualizer"') ]]; do continue; done
 			~/.orw/scripts/ncmpcpp.sh $display $V -p -i
 			exit;;
-		C) get_cover_properties && draw_cover_art;;
+		C)
+			arg=${!OPTIND}
+
+			if [[ ! $arg =~ ^- ]]; then
+				class=$arg
+				shift
+			else
+				get_cover_properties && draw_cover_art
+			fi;;
 		[PS])
 			[[ $flag == S ]] && show_status $OPTARG || show_progessbar $OPTARG
 			(($# + 1 == OPTIND)) && exit 0;;
@@ -151,14 +159,24 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		h) height=$OPTARG;;
 		i)
 			if ! xdotool search --name "'${title-ncmpcpp}'"; then
-				width=${width:-900}
-				height=${height:-500}
+				#width=${width:-900}
+				#height=${height:-500}
+
+				#[[ $title ]] || show_status yes
+
+				#[[ $class ]] || ~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
+
+				if [[ $class ]]; then
+					unset pre
+				else
+					width=${width:-900}
+					height=${height:-500}
+					~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
+				fi
 
 				[[ $title ]] || show_status yes
 
-				~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
-
-				termite -t ${title-ncmpcpp} --class=custom_size \
+				termite -t ${title-ncmpcpp} --class=${class-custom_size} \
 					-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
 					\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s ncmpcpp ncmpcpp}\"'" &> /dev/null &
 				exit

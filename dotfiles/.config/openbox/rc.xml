@@ -945,7 +945,7 @@
   </menu>
   <applications>
     <application name="*">
-      <decor>yes</decor>
+      <decor>no</decor>
       <position force="yes">
         <x>center</x>
         <y>center</y>
@@ -957,8 +957,8 @@
       <layer>below</layer>
       <focus>yes</focus>
       <position force="yes">
-        <x>930</x>
-        <y>517</y>
+        <x>1642</x>
+        <y>231</y>
       </position>
       <size>
         <width>60</width>
@@ -972,8 +972,8 @@
         <monitor>Active</monitor>
       </position>
       <size>
-        <height>248</height>
-        <width>301</width>
+        <height>169</height>
+        <width>100</width>
       </size>
     </application>
 
@@ -989,16 +989,16 @@
       </size>
     </application>
 
-    <application class="tile">
+    <application class="tiling">
       <focus>yes</focus>
       <monitor>2</monitor>
       <position force="yes">
-        <x>1300</x>
-        <y>20</y>
+        <x>1445</x>
+        <y>454</y>
       </position>
       <size>
-        <width>250</width>
-        <height>200</height>
+        <width>447</width>
+        <height>107</height>
       </size>
     </application>
 
@@ -1032,7 +1032,7 @@
       <desktop>all</desktop>
       <position force="yes">
         <x>528</x>
-        <y>42</y>
+        <y>70</y>
       </position>
       <size>
         <width>864</width>
