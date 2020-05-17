@@ -640,6 +640,12 @@ while ((argument_index <= $#)); do
 						B) [[ $option == resize ]] && resize_to_edge 2 $offset ||
 							properties[2]=$((${max:-$end} - offset - ${properties[4]} - border_y));;
 						*)
+							if [[ $optarg == a ]]; then
+								((${properties[3]} > ${properties[4]})) && optarg=h || optarg=v
+								auto_tile=true
+								argument=H
+							fi
+
 							set_orientation_properties $optarg
 
 							[[ ${!argument_index} =~ ^[2-9]$ ]] && ratio=${!argument_index} && shift || ratio=2
@@ -648,9 +654,22 @@ while ((argument_index <= $#)); do
 
 							border=border_$direction
 							offset=${direction}_offset
+							original_property=${properties[index + 2]}
+							#total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
 
 							(( properties[index + 2] $op2= (ratio - 1) * (${!border} + ${!offset}) ))
 							(( properties[index + 2] $op1= ratio ))
+
+							if [[ $auto_tile ]]; then
+								#awk '{ $('$index' + 1) += $('$index' + 3) + '$total_separation'; print }' <<< "${properties[*]}"
+									#$('$index' + 1) += $('$index' + 3) + '$total_separation'
+									#$('$index' + 1) = '$original_propertiy' + ($('$index' + 3) + '${!border}' + '${!offset}')
+								awk '{
+									p = $('$index' + 3) + '${!border}' + '${!offset}'
+									$('$index' + 3) = '$original_property' - p
+									$('$index' + 1) += p
+									print "'$0' move -h " $2 " -v " $3 " resize -h " $4 " -v " $5 }' <<< "${properties[*]}"
+							fi
 					esac
 
 					update_properties
