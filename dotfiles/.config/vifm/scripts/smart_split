@@ -1,9 +1,12 @@
 #!/bin/bash
 
-only=$(vifm --remote-expr "layoutis('only')")
+id=$(printf "0x%.8x" $(xdotool getactivewindow))
+server=$(wmctrl -l | awk '$1 == "'$id'" { print $NF }')
+only=$(vifm --server-name $server --remote-expr "layoutis('only')")
 
 if((only)); then
-	read width height <<< "$(wmctrl -lG | awk '$NF == "vifm" { print $5, $6 }')"
+	read width height <<< "$(wmctrl -lG | awk '$1 == "'$id'" { print $5, $6 }')"
+	#read width height <<< "$(wmctrl -lG | awk '$NF ~ "^vifm[0-9]+?$" { print $5, $6 }')"
 
 	((height > width)) && command=sp || command=vs
 	[[ $1 =~ ^OPEN_DIRECTORY ]] && command+=" ${@#* }"
@@ -15,4 +18,4 @@ fi
 
 command+=" | colorscheme orw"
 
-vifm --remote -c "$command"
+vifm --server-name $server --remote -c "$command"

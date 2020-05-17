@@ -12,4 +12,4 @@ trap close_preview EXIT
 
 tail -f $fifo | ueberzug layer --silent --parser bash &
 
-vifm $@
+vifm --server-name vifm $@
