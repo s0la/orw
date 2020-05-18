@@ -3,9 +3,18 @@
 script=~/.orw/scripts/rofi_scripts/$1.sh
 theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
+count_items() {
+	awk '/^\s*'"$1"'/ { wc = gensub(/[\0-\177]/, "", "g"); print length(wc) }' $script
+}
+
 if [[ $theme == icons ]]; then
-	#if [[ $1 =~ apps|playback|power|wallpapers|window_action|workspaces ]]; then
-	item_count=$($script | wc -l)
+	#item_count=$($script | wc -l)
+
+	case $1 in
+		wallpapers) item_count=$(count_items icons);;
+		workspaces) item_count=$(count_items 'workspaces=\(.*\)');;
+		*) item_count=$(awk '/<<-/ { start = 1; nr = NR + 1 } /^\s*EOF/ && start { print NR - nr; exit }' $script)
+	esac
 
 	width=$(awk '
 		BEGIN { ic = '$item_count' }
