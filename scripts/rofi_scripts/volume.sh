@@ -1,15 +1,25 @@
 #!/bin/bash
 
+mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+
+if [[ $mode != tiling ]]; then
+	mute=mute up='volume up' down='volume down' sep=' '
+fi
+
 if [[ -z $@ ]]; then
-	echo -e '  mute\n  volume up\n  volume down'
+	cat <<- EOF
+		$sep$mute
+		$sep$up
+		$sep$down
+	EOF
 else
 	case $@ in
-		*volume*)
+		*$*) amixer -q -D pulse set Master toggle;;
+		*)
 			volume="$@"
 			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
-			[[ ${volume##* } == up ]] && direction=+ || direction=-
+			[[ ${volume%% *} ==  ]] && direction=+ || direction=-
 			amixer -q -D pulse set Master $((${multiplier:-1} * 10))%$direction;;
-		*mute*) amixer -q -D pulse set Master toggle;;
 	esac
 
 	~/.orw/scripts/volume_notification.sh
