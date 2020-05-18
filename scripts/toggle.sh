@@ -95,9 +95,19 @@ rofi() {
 			fi
 
 			border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
+			dmenu_color=$(awk -F '[ ;]' '\
+				/^\s*(b[cg]|ibc)/ {
+							if(!bg) bg = $(NF - 1)
+							else if(!bc) bc = $(NF - 1)
+							else ibc = $(NF - 1)
+						} END {
+							print (bg == bc) ? "ibc" : "bc"
+						}' $path/theme.rasi)
 
-			[[ $new_mode =~ list ]] && width=$border_width || width=0
-			[[ $new_mode =~ dmenu ]] && property=bc || property=sbg
+			#[[ $new_mode =~ list ]] && width=$border_width || width=0
+			#[[ $new_mode =~ dmenu ]] && property=bc || property=sbg
+
+			[[ $new_mode == dmenu ]] && width=0 property=$dmenu_color || width=$border_width property=sbg
 
 			sed -i "/import/ s/ .*/ \"$new_mode\"/" ~/.config/rofi/main.rasi
 

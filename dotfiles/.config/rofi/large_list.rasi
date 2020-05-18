@@ -16,8 +16,6 @@
 	padding:        0px 0px;
 	spacing:        0px;
 	scrollbar:      false;
-	border:         2px 0px 0px;
-	border-color:   @bg;
 	vertical-align: 0.5;
 }
 
@@ -29,13 +27,11 @@
 }
 
 #element {
-	border:         0;
 	padding:        2px 5px;
 }
 
 #inputbar {
 	background-color: @bg;
-	border-color:     @sbg;
 }
 
 #entry {

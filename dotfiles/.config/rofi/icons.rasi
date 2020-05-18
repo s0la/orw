@@ -7,7 +7,8 @@
 }
 
 #window {
-	width:       488px;
+	width:       257px;
+	border:      0;
 	padding:     15px;
 	children:    [ horibox ];
 	border-radius:       5px;

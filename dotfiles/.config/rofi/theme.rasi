@@ -3,9 +3,9 @@
 * {
 	bg: #18191d;
 	fg: #37383c;
-	bc: #609599;
+	bc: #18191d;
 
-	ibg: #576662;
+	ibg: #18191d;
 	ibc: #576662;
 
 	abg: #87939c;
@@ -29,7 +29,7 @@
 }
 
 #window {
-	border: 0px;
+	border: 4px;
 	border-color: @bc;
 }
 
@@ -77,8 +77,10 @@
 	background-color: @abg;
 }
 
-#listview {
-	border-color: @bg;
+#inputbar {
+	border:           0 0 2px;
+	border-color:     @ibc;
+	background-color: @ibg;
 }
 
 #entry {

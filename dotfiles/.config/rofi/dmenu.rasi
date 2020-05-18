@@ -3,7 +3,7 @@
 @import "theme"
 
 #window {
-	margin:     31px 10px;
+	margin:     71px 200px;
 	anchor:     north;
 	location:   north;
 	width:      100%;
@@ -32,8 +32,9 @@
 }
 
 #inputbar {
-	padding: 3px 3px;
-	children: [ textbox-prompt-colon, entry ];
+	border:           0;
+	padding:          3px 3px;
+	children:         [ textbox-prompt-colon, entry ];
 	background-color: @ibg;
 }
 

@@ -2,7 +2,7 @@
 
 configuration {
 	m:                "-4";
-	lines:            8;
+	lines:            12;
 	show-match:       false;
 	sidebar-mode:     false;
 

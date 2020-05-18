@@ -91,10 +91,14 @@ case $1 in
 				rwp)
 					px=px
 				 	pattern=padding;;
-				rbw)
+				r*bw)
 					px=px
-					pattern=border:
-					[[ ! $rofi_mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
+					pattern="border:.*px"
+
+					[[ $1 == ribw ]] && pattern="${pattern/\./.*0.}" rofi_conf=theme.rasi
+
+					[[ $rofi_mode =~ list ]] && rofi_conf=theme.rasi;;
+					#[[ ! $rofi_mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
 				rln)
 					pattern=lines
 					rofi_conf=config.rasi;;
