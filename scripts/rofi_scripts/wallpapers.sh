@@ -9,24 +9,10 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
-#[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
 [[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
 	next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
 
 if [[ -z $@ ]]; then
-	#echo -e 'next\nprev\nrand\nindex\nselect\nrestore\nview_all\ninterval\nautochange'
-
-	#cat <<- EOF
-	#	$next
-	#	$prev
-	#	$rand
-	#	$view
-	#	$index
-	#	$restore
-	#	$interval
-	#	$auto
-	#EOF
-
 	echo -e "$next\n$prev\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
 else
 	wallctl=~/.orw/scripts/wallctl.sh
