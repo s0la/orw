@@ -33,23 +33,27 @@ if [[ -z $@ ]]; then
 else
 	killall rofi 2> /dev/null
 
-	count_windows() {
-		window_count=$(wmctrl -l | awk '/'$1'[0-9]+?/ { wc++ } END { if(wc) print wc }')
+	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-		#read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
-		read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
-				if(/mode/) m = $NF
-				else if(/part/ && $NF) p = $NF
-				else if(/ratio/) r = p "/" $NF
-			} END { print m, r }' ~/.config/orw/config | xargs)
+	#count_windows() {
+	#	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+	#	window_count=$(wmctrl -l | awk '/'$1'[0-9]+?/ { wc++ } END { if(wc) print wc }')
 
-		if [[ $mode == tiling && $window_count -gt 0 ]]; then
-			read x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
-			~/.orw/scripts/set_class_geometry.sh -c tiling -x $x -y $y -w $width -h $height
-		fi
+	#	#if ((window_count)); then
+	#	#	read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
+	#	#			if(/mode/) m = $NF
+	#	#			else if(/part/ && $NF) p = $NF
+	#	#			else if(/ratio/) r = p "/" $NF
+	#	#		} END { print m, r }' ~/.config/orw/config | xargs)
 
-		title="$1$window_count"
-	}
+	#	#	if [[ $mode == tiling && $window_count -gt 0 ]]; then
+	#	#		read monitor x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
+	#	#		~/.orw/scripts/set_class_geometry.sh -c tiling -m $monitor -x $x -y $y -w $width -h $height
+	#	#	fi
+	#	#fi
+
+	#	#title="$1$window_count"
+	#}
 
 	#mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
@@ -62,21 +66,24 @@ else
 		*$tile*) ~/.orw/scripts/tile_terminal.sh ${@#*$tile};;
 		#*$term*) coproc(termite -t termite ${@#*$term} &);;
 		*$term*)
-			count_windows termite
-			#termite -t "termite$window_count" ${@#*$term} &;;
-			#termite -t "termite$window_count" ${@#*$term} -e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh termite$window_count'" &;;
+			#count_windows termite
 
-			#~/.orw/scripts/set_class_geometry.sh -c size -w 100 -h 100
-
-			[[ $mode == tiling ]] && class="--class=tiling"
-			termite -t $title $class ${@#*$term} &;;
+			[[ $mode != tiling ]] &&
+				termite -t termite$window_count ${@#*$term} ||
+				~/.orw/scripts/tiling_terminal.sh ${@#*$term};;
 			#termite -t "termite$window_count" --class=custom_size -e \
 			#	"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh termite$window_count \"$command\";bash'";;
 		#*$vifm*) coproc(~/.orw/scripts/vifm.sh ${@#*$vifm} &);;
 		*$vifm*)
-			count_windows vifm
-			[[ $mode == tiling ]] && class="-c tiling"
-			~/.orw/scripts/vifm.sh -t $title $class ${@#*$vifm} &;;
+			#count_windows termite
+			title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { wc++ } END { print "vifm" wc }')
+			
+			[[ $mode != tiling ]] && 
+				~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
+				~/.orw/scripts/tiling_terminal.sh -t $title -e "'bash -c \"~/.orw/scripts/vifm.sh ${@#*$vifm}\"'";;
+				#~/.orw/scripts/vifm_window.sh -t vifm$window_count ${@#*$vifm} ||
+				#~/.orw/scripts/tiling_terminal.sh $window_count -e "'bash -c \"~/.orw/scripts/vifm.sh ${@#*$vifm}\"'";;
+
 			#~/.orw/scripts/vifm.sh -t "vifm$window_count" -c "$command" ${@#*$vifm} &;;
 			#coproc(~/.orw/scripts/vifm.sh -t "vifm$window_count" ${@#*$vifm} &);;
         *$qb*)

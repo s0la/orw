@@ -46,30 +46,40 @@ else
 
 	case "$layout" in
 		*default*) flags+=' -i';;
-		*split*) flags+=' -s -i';;
+		*split*)
+			flags+=' -s -i'
+			title=ncmpcpp_split;;
 		*set*) flags+=' -R';;
-		*cover*) flags+=' -c -i';;
-		*visualizer*) flags+=' -v -i';;
+		*cover*)
+			flags+=' -c -i'
+			title=ncmpcpp_with_cover_art;;
+		*visualizer*)
+			flags+=' -v -i'
+			title=visualizer;;
 		*dual*h*) flags+=' -S yes -d';;
 		*dual*v*) flags+=' -S yes -Vd';;
 		*vertical*) flags+=' -w 450 -h 600 -i';;
 	esac
 
 	#read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
-	read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
-			if(/mode/) m = $NF
-			else if(/part/ && $NF) p = $NF
-			else if(/ratio/) r = p "/" $NF
-		} END { print m, r }' ~/.config/orw/config | xargs)
+	#tiling=$(awk '/^mode/ { if($NF == "tiling") print "-t" }' ~/.config/orw/config)
+	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-	if [[ $mode == tiling ]]; then
-		class="-C tiling"
-		read x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
-		~/.orw/scripts/set_class_geometry.sh -c tiling -x $x -y $y -w $width -h $height
-		#properties=$(~/.orw/scripts/windowctl.sh resize -H a 3)
-		#tile_layout="\"-L ${properties#* }\""
-	fi
+	#read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
+	#		if(/mode/) m = $NF
+	#		else if(/part/ && $NF) p = $NF
+	#		else if(/ratio/) r = p "/" $NF
+	#	} END { print m, r }' ~/.config/orw/config | xargs)
 
-	eval $ncmpcpp "$class" "$flags"
+	#if [[ $mode == tiling ]]; then
+	#	class="-C tiling"
+	#	read x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
+	#	~/.orw/scripts/set_class_geometry.sh -c tiling -x $x -y $y -w $width -h $height
+	#	#properties=$(~/.orw/scripts/windowctl.sh resize -H a 3)
+	#	#tile_layout="\"-L ${properties#* }\""
+	#fi
+
+	[[ $mode != tiling ]] && eval $ncmpcpp "$flags" ||
+		~/.orw/scripts/tiling_terminal.sh -t ${title-ncmpcpp} -e "'$ncmpcpp ${flags/ -i/}'"
 	#eval $ncmpcpp "$tile_layout" "$flags"
 fi
