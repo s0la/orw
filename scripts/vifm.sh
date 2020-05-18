@@ -1,21 +1,26 @@
 #!/bin/bash
 
-while getopts :t:c:w:h: flag; do
+while getopts :t:w:h:i flag; do
+	instance=true
+
+	(( arg_count += 2 ))
+
 	case $flag in
 		t) title=$OPTARG;;
-		c) class=$OPTARG;;
 		w) width=$OPTARG;;
 		h) height=$OPTARG;;
-		#c) command="$OPTARG &&";;
+		i) (( arg_count-- ))
 	esac
 done
 
-all="$@"
-[[ ! ${all##* } =~ ^[0-9]+$ ]] && args="${all##*[0-9] }"
+args="${@:arg_count + 1}"
+run_command=~/.config/vifm/scripts/run_with_image_preview
 
-[[ $class ]] || ~/.orw/scripts/set_class_geometry.sh -c size -w ${width:-400} -h ${height:-500}
+if [[ $instance ]]; then
+	~/.orw/scripts/set_class_geometry.sh -c size -w ${width:-400} -h ${height:-500}
 
-termite -t ${title-vifm} --class=${class-custom_size} -e \
-	"bash -c 'sleep 0.1 && $tmux ~/.config/vifm/scripts/run_with_image_preview $args'" &> /dev/null &
-#termite -t ${title-vifm} --class=custom_size -e \
-#	"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-vifm} \"$command $tmux ~/.config/vifm/scripts/run_with_image_preview $args\"'" &> /dev/null &
+	termite -t ${title-vifm} --class=${class-custom_size} -e \
+		"bash -c '$run_command $args'" &> /dev/null &
+else
+	~/.config/vifm/scripts/run_with_image_preview $args
+fi
