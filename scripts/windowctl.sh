@@ -692,16 +692,19 @@ while ((argument_index <= $#)); do
 							fi
 
 							if [[ $auto_tile ]]; then
-								#awk '{ $('$index' + 1) += $('$index' + 3) + '$total_separation'; print }' <<< "${properties[*]}"
-									#$('$index' + 1) += $('$index' + 3) + '$total_separation'
-									#$('$index' + 1) = '$original_propertiy' + ($('$index' + 3) + '${!border}' + '${!offset}')
-									#print "'$0' move -h " $2 " -v " $3 " resize -h " $4 " -v " $5 }' <<< "${properties[*]}"
 								awk '{
+									d = '$display'
+									x = '$display_x'
+									y = '$display_y'
+									o = "'$orientation'"
+
+									if(o == "h") $2 -= x; else $3 -= y
+
 									p = $('$index' + 3) + '${!border}' + '${!offset}'
 									$('$index' + 3) = '$original_property' - p
 									$('$index' + 1) += p
 									sub(/[^ ]* /, "")
-									print
+									print d, $0
 								}' <<< "${properties[*]}"
 							fi
 					esac
