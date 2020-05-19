@@ -500,6 +500,23 @@ get_optarg() {
 	optarg=${!argument_index}
 }
 
+get_neighbour_window_properties() {
+	local index reverse direction=$1
+
+	[[ $direction =~ [lr] ]] && index=1 || index=2
+	[[ $direction =~ [br] ]] && reverse=-r
+	[[ $tiling ]] && local first_field=2
+
+	start_index=$((index % 2 + 1))
+	sort_windows $direction | sort $reverse -nk 1,1 | awk \
+		'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+		if("'$direction'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
+			wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+			print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
+			{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
+			print gensub("([0-9.]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }'
+}
+
 arguments="$@"
 argument_index=1
 options='(resize|move|tile)'
@@ -510,11 +527,6 @@ property_log=~/.config/orw/windows_properties
 
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
-
-#read x_offset y_offset <<< $(awk '/offset/ {print $NF}' $config | xargs)
-
-#display_count=$(awk '/^display_[0-9]/ { dc++ } END { print dc / 2 }' $config)
-#display_orientation=$(awk '/^orientation/ { print substr($NF, 1, 1) }' $config)
 
 read display_count {x,y}_offset orientation <<< $(awk '\
 	/^display_[0-9]/ { dc++ } /offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
@@ -665,7 +677,8 @@ while ((argument_index <= $#)); do
 
 							border=border_$direction
 							offset=${direction}_offset
-							separator=$(((${!border} + ${!offset})))
+							separator=$(((${!border} + ${margin:-${!offset}})))
+
 							original_property=${properties[index + 2]}
 							#total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
 
@@ -700,7 +713,7 @@ while ((argument_index <= $#)); do
 
 									if(o == "h") $2 -= x; else $3 -= y
 
-									p = $('$index' + 3) + '${!border}' + '${!offset}'
+									p = $('$index' + 3) + '${!border}' + '${margin:-${!offset}}'
 									$('$index' + 3) = '$original_property' - p
 									$('$index' + 1) += p
 									sub(/[^ ]* /, "")
@@ -781,6 +794,14 @@ while ((argument_index <= $#)); do
 						r)
 							properties=( $id $(backtrace_properties) )
 							update_properties;;
+						t)
+							set_windows_properties $display_orientation
+							set_orientation_properties $display_orientation
+
+							tiling=true
+							props=( $(get_neighbour_window_properties $optarg) )
+							new_properties=( $($0 -i ${props[0]} resize -H a) )
+							properties=( $id ${new_properties[*]:1} )
 					esac
 				else
 					value=${optarg#*[-+]}
@@ -899,18 +920,18 @@ while ((argument_index <= $#)); do
 				get_bar_properties add
 
 				case $optarg in
-					[trbl])
-						[[ $optarg =~ [lr] ]] && index=1 || index=2
-						[[ $optarg =~ [br] ]] && reverse=-r
+					[trbl]) mirror_window_properties=( $(get_neighbour_window_properties $optarg) );;
+						#[[ $optarg =~ [lr] ]] && index=1 || index=2
+						#[[ $optarg =~ [br] ]] && reverse=-r
 
-						start_index=$((index % 2 + 1))
-						mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
-							'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
-							if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
-								wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
-								print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
-								{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
-								print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
+						#start_index=$((index % 2 + 1))
+						#mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
+						#	'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+						#	if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
+						#		wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+						#		print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
+						#		{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
+						#		print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
 					*)
 						[[ $optarg =~ ^0x ]] && mirror_window_id=$optarg ||
 							mirror_window_id=$((wmctrl -l && list_bars) |\
