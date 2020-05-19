@@ -21,8 +21,10 @@ function set_aspect() {
 		read aspect xinerama <<< $(file -b "$file" |\
 			awk -F '[x,]' '{
 				o = "'${orientation:0:1}'"
-				f = ("'${1##*.}'" == "png") ? 2 : NF - 2
-				ww = $f; wh = $(f + 1)
+				wd = gensub(/.* ([0-9]+) ?x ?([0-9]+).*/, "\\1,\\2", 1)
+				split(wd, wda)
+				ww = wda[1]
+				wh = wda[2]
 
 				if ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) {
 					print "--bg-scale --no-xinerama"
