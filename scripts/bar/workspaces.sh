@@ -69,16 +69,23 @@ for workspace_index in $(seq $workspace_count); do
 	#	workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
 	#fi
 
-	if [[ $single_line == true ]]; then
-		if [[ $current == p ]]; then
-			set_line
 
-			[[ ! $separator =~ ^[s%] ]] && workspace="\$start_line$workspace\$end_line" ||
-				workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
-		else
-			workspace="%{-o}%{-u}$workspace"
-		fi
+	if [[ $single_line == true && $separator =~ ^% && $current == p ]]; then
+		set_line
+		workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
 	fi
+
+
+	#if [[ $single_line == true ]]; then
+	#	if [[ $current == p ]]; then
+	#		set_line
+
+	#		[[ ! $separator =~ ^[s%] ]] && workspace="\$start_line$workspace\$end_line" ||
+	#			workspace="%{U$fc}\${start_line:-$left_frame}$workspace\${end_line:-$right_frame}"
+	#	else
+	#		workspace="%{-o}%{-u}$workspace"
+	#	fi
+	#fi
 
 	((workspace_index < workspace_count)) && workspace+="$workspace_separator"
 
@@ -86,7 +93,7 @@ for workspace_index in $(seq $workspace_count); do
 done
 
 [[ $4 =~ i ]] && workspaces="$fbg${padding}$workspaces${padding}"
-[[ $separator =~ ^% ]] && workspaces="$remove_frame$workspaces"
+#[[ $separator =~ ^% ]] && workspaces="$remove_frame$workspaces"
 
 workspaces="%{A2:~/.orw/scripts/barctl.sh -b wss:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
@@ -103,7 +110,8 @@ if [[ $single_line == true ]]; then
 		s*) workspaces="%{U$fc}\${start_line:-$left_frame}$workspaces\$start_line${separator:2}";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
-		*) workspaces="%{U$fc}\${start_line:-$left_frame}$workspaces\${end_line:-$right_frame}%{B\$bg}$separator";;
+		*) [[ $start_line == false ]] &&
+			workspaces="%{U$fc}\${start_line:-$left_frame}$workspaces\${end_line:-$right_frame}%{B\$bg}$separator";;
 	esac
 
 	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"

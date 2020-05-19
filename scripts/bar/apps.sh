@@ -64,16 +64,19 @@ while read -r window_id window_name; do
 
 		window="%{A:wmctrl -ia $window_id:}$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}"
 
-		if [[ $lines == single ]]; then
-			if [[ $current == p ]]; then
-				[[ ! $separator =~ ^[s%] ]] && window="\$start_line$window\$end_line" ||
-					window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
-			else
-				window="%{-o}%{-u}$window"
-			fi
+		#if [[ $lines == single ]]; then
+		#	if [[ $current == p ]]; then
+		#		[[ ! $separator =~ ^[s%] ]] && window="\$start_line$window\$end_line" ||
+		#			window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+		#	else
+		#		window="%{-o}%{-u}$window"
+		#	fi
 
-			#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
-		fi
+		#	#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+		#fi
+
+		[[ $lines == single && $separator =~ ^% && $current == p ]] &&
+				window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
 
 		apps+="$window$app_separator"
 	fi
@@ -94,7 +97,8 @@ if [[ $lines != false ]]; then
 		s*) apps="%{U$fc}\${start_line:-$left_frame}$apps\$start_line${separator:2}";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
-		*) apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
+		*) [[ $lines == true ]] &&
+			apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
 	esac
 
 	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"

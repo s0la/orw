@@ -40,10 +40,6 @@ function set_line() {
 	right_frame="$frame$remove_frame"
 }
 
-function add_line() {
-	eval "$1=%{U$fc}\${start_line:-$left_frame}${!1}\${end_line:-$right_frame}"
-}
-
 [[ $lines != false ]] && set_line
 
 current_desktop=$(xdotool get_desktop)
@@ -103,13 +99,18 @@ make_launcher() {
 
 	launcher="$commands$bg$fg$offset$icon$offset$closing"
 
+	#if [[ $lines == single ]]; then
+	#	if [[ $current == p ]]; then
+	#		[[ ! $separator =~ ^[s%] ]] && launcher="\$start_line$launcher\$end_line" ||
+	#			launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
+	#	else
+	#		launcher="%{-o}%{-u}$launcher"
+	#	fi
+	#fi
+
 	if [[ $lines == single ]]; then
-		if [[ $current == p ]]; then
-			[[ ! $separator =~ ^[s%] ]] && launcher="\$start_line$launcher\$end_line" ||
-				launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
-		else
-			launcher="%{-o}%{-u}$launcher"
-		fi
+		[[ $separator =~ ^% && $current == p ]] &&
+			launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
 	fi
 
 	unset right middle up down
@@ -126,7 +127,7 @@ done <<< $(awk '{ if(/^$/) {
 
 [[ $launcher_separator ]] && launchers=${launchers%\%*}
 launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
-[[ $separator =~ ^% ]] && launchers="$remove_frame$launchers"
+#[[ $separator =~ ^% ]] && launchers="$remove_frame$launchers"
 	#~/.orw/scripts/notify.sh "s: $separator"
 
 #if [[ $launchers && $lines == true ]]; then
@@ -140,7 +141,8 @@ if [[ $lines != false ]]; then
 		s*) launchers="%{U$fc}\${start_line:-$left_frame}$launchers\$start_line${separator:2}\$start_line";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
-		*) launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator";;
+		*) [[ $lines == true ]] &&
+			launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator";;
 	esac
 
 	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
