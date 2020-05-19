@@ -654,8 +654,11 @@ while ((argument_index <= $#)); do
 						*)
 							if [[ $optarg == a ]]; then
 								((${properties[3]} > ${properties[4]})) && optarg=h || optarg=v
+								ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
 								auto_tile=true
 								argument=H
+							else
+								[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift || ratio=2
 							fi
 
 							set_orientation_properties $optarg
@@ -669,7 +672,6 @@ while ((argument_index <= $#)); do
 							#	ratio=2
 							#fi
 
-							[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift || ratio=2
 							[[ $ratio =~ / ]] && multiplier=${ratio%/*} ratio=${ratio#*/}
 
 							[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
