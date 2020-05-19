@@ -39,12 +39,34 @@ case $1 in
 		#[[ ${1:1:1} == [xy] ]] && pattern=${1:0:1}_offset || pattern=ratio
 		#[[ ${1: -1} == [xy] ]] && pattern=${1: -1}_offset || pattern=ratio
 
+		read property value <<< $(awk '/^'${1: -1}'/ { print; exit }' $orw_conf)
+		[[ $property == part ]] && ratio=$(awk '/^ratio/ { print $NF }' $orw_conf)
+
+		[[ $sign ]] && check_value=$((value $sign $new_value)) || check_value=$new_value
+
+		if ((check_value > 0 && (ratio && check_value < ratio || !ratio))); then
+			sed -i "/$property/ s/$value/$check_value/" $orw_conf
+			message="<b>${property^}</b> has changed to <b>$check_value</b>"
+		else
+			#message="<b>${property^} cannot be changed further!"
+			message="<b>$check_value</b> is out of range <b>(1..$((ratio - 1)))</b>!"
+		fi
+
+		ratio=$(awk '/^(part|ratio)/ { if(!r) r = $NF; else { print r "/" $NF; exit } }' $orw_conf)
+		~/.orw/scripts/notify.sh -pr 1806 "$message\nCurrent ratio: <b>($ratio)</b>"
+		exit
+		#checking_value=$((value $sign $new_value))
+
 		awk -i inplace '{
 			if(/^'${1: -1}'/ && ! set) {
 				set = 1
 				nv = '$new_value'
 				cv = gensub(".* ", "", 1)
-				sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
+
+				if("'$sign'") nrv = cv '$sign' nv
+				if($1 == "part") max = '$ratio'
+
+				sub(cv, (nrv > 0) ? nrv : nv)
 			}
 
 			print
