@@ -16,3 +16,4 @@ else
 		suspend) systemctl suspend;;
 		*) systemctl poweroff ;;
 	esac
+fi
