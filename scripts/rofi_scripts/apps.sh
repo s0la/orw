@@ -33,7 +33,10 @@ if [[ -z $@ ]]; then
 else
 	killall rofi 2> /dev/null
 
-	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) }' ~/.config/orw/config)
+	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.config/openbox/rc.xml)
+	mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+	[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && unset mode && ~/.orw/scripts/tile_window.sh
 
 	#count_windows() {
 	#	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
@@ -48,7 +51,7 @@ else
 
 	#	#	if [[ $mode == tiling && $window_count -gt 0 ]]; then
 	#	#		read monitor x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
-	#	#		~/.orw/scripts/set_class_geometry.sh -c tiling -m $monitor -x $x -y $y -w $width -h $height
+	#	#		~/.orw/scripts/set_geometry.sh -c tiling -m $monitor -x $x -y $y -w $width -h $height
 	#	#	fi
 	#	#fi
 
@@ -63,7 +66,7 @@ else
 
     case "$@" in
         *$dropdown*) ~/.orw/scripts/dropdown.sh ${@#*$dropdown};;
-		*$tile*) ~/.orw/scripts/tile_terminal.sh ${@#*$tile};;
+		*$tile*) ~/.orw/scripts/tile_terminal.sh -b ${@#*$tile};;
 		#*$term*) coproc(termite -t termite ${@#*$term} &);;
 		*$term*)
 			#count_windows termite

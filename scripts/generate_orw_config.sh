@@ -3,11 +3,26 @@
 conf=~/.config/orw/config
 
 wm() {
+	part=1
+	ratio=2
 	x_offset=20
 	y_offset=10
+	offset=false
+	reverse=false
 
 	#echo "#general\nx_offset $x_offset\ny_offset $y_offset\n\n"
-	echo "#wm\nmode floating\nratio 2\nx_offset $x_offset\ny_offset $y_offset\n"
+
+	#cat <<- EOF
+	#	#wm
+	#	part $part
+	#	ratio $ratio
+	#	x_offset $x_offset
+	#	y_offset $y_offset
+	#	offset $offset
+	#	reverse $reverse
+	#EOF
+
+	echo "#wm\npart 1\nratio 2\nx_offset $x_offset\ny_offset $y_offset\noffset $offset\nreverse $reverse\n"
 }
 
 display() {

@@ -63,7 +63,7 @@ else
 
 	#read mode ratio <<< $(awk '/^(mode|ratio)/ { print $NF }' ~/.config/orw/config | xargs)
 	#tiling=$(awk '/^mode/ { if($NF == "tiling") print "-t" }' ~/.config/orw/config)
-	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+	#mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
 	#read mode ratio <<< $(awk '/^(mode|part|ratio)/ {
 	#		if(/mode/) m = $NF
@@ -74,12 +74,15 @@ else
 	#if [[ $mode == tiling ]]; then
 	#	class="-C tiling"
 	#	read x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
-	#	~/.orw/scripts/set_class_geometry.sh -c tiling -x $x -y $y -w $width -h $height
+	#	~/.orw/scripts/set_geometry.sh -c tiling -x $x -y $y -w $width -h $height
 	#	#properties=$(~/.orw/scripts/windowctl.sh resize -H a 3)
 	#	#tile_layout="\"-L ${properties#* }\""
 	#fi
 
-	[[ $mode != tiling ]] && eval $ncmpcpp "$flags" ||
-		~/.orw/scripts/tiling_terminal.sh -t ${title-ncmpcpp} -e "'$ncmpcpp ${flags/ -i/}'"
-	#eval $ncmpcpp "$tile_layout" "$flags"
+	mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+	[[ $mode == tiling ]] && unset mode && ~/.orw/scripts/tile_window.sh
+	#[[ $mode != tiling ]] && eval $ncmpcpp "$flags" ||
+	#	~/.orw/scripts/tiling_terminal.sh -t ${title-ncmpcpp} -e "'$ncmpcpp ${flags/ -i/}'"
+
+	eval $ncmpcpp "$flags"
 fi

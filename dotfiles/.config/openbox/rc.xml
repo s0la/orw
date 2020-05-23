@@ -249,6 +249,11 @@
         <command>~/.orw/scripts/rofi_scripts/windows_group.sh actions</command>
       </action>
     </keybind>
+	<keybind key="A-x">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/tiling_group.sh ratio</command>
+      </action>
+    </keybind>
     <keybind key="A-d">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/workspaces_group.sh workspaces</command>
@@ -256,7 +261,7 @@
     </keybind>
     <keybind key="A-q">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/shutdown.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/rofi_script.sh power</command>
       </action>
     </keybind>
     <keybind key="A-n">
@@ -291,102 +296,102 @@
     </keybind>
     <keybind key="W-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -l +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -l +50</command>
       </action>
     </keybind>
     <keybind key="W-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -r +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -r +50</command>
       </action>
     </keybind>
     <keybind key="W-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -t +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -t +50</command>
       </action>
     </keybind>
     <keybind key="W-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -b +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -b +50</command>
       </action>
     </keybind>
     <keybind key="W-C-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -L -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -L</command>
       </action>
     </keybind>
     <keybind key="W-C-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -R -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -R</command>
       </action>
     </keybind>
     <keybind key="W-C-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -T -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -T</command>
       </action>
     </keybind>
     <keybind key="W-C-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -B -o</command>
+        <command>~/.orw/scripts/windowctl.sh move -B</command>
       </action>
     </keybind>
     <keybind key="S-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r -50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh resize -r -50</command>
       </action>
     </keybind>
     <keybind key="A-C-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -l +50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -l +50</command>
       </action>
     </keybind>
     <keybind key="A-W-Left">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -l -50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -l -50</command>
       </action>
     </keybind>
     <keybind key="S-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh resize -r +50</command>
       </action>
     </keybind>
     <keybind key="A-C-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -r +50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -r +50</command>
       </action>
     </keybind>
     <keybind key="A-W-Right">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -r -50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -r -50</command>
       </action>
     </keybind>
     <keybind key="S-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b -50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh resize -b -50</command>
       </action>
     </keybind>
     <keybind key="A-C-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -t +50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -t +50</command>
       </action>
     </keybind>
     <keybind key="A-W-Up">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -t -50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -t -50</command>
       </action>
     </keybind>
     <keybind key="S-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b +50 -o</command>
+        <command>~/.orw/scripts/windowctl.sh resize -b +50</command>
       </action>
     </keybind>
     <keybind key="A-C-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -b +50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -b +50</command>
       </action>
     </keybind>
     <keybind key="A-W-Down">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh -o -b -a resize -b -50</command>
+        <command>~/.orw/scripts/windowctl.sh -b -a resize -b -50</command>
       </action>
     </keybind>
     <keybind key="W-w">
@@ -396,22 +401,22 @@
     </keybind>
     <keybind key="W-h">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl -o resize -O h</command>
+        <command>~/.orw/scripts/windowctl_by_input.sh windowctl resize -O h</command>
       </action>
     </keybind>
     <keybind key="W-v">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl -o resize -O v</command>
+        <command>~/.orw/scripts/windowctl_by_input.sh windowctl resize -O v</command>
       </action>
     </keybind>
     <keybind key="C-W-h">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl -o move -O -h</command>
+        <command>~/.orw/scripts/windowctl_by_input.sh windowctl move -O -h</command>
       </action>
     </keybind>
     <keybind key="C-W-v">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl -o move -O -v</command>
+        <command>~/.orw/scripts/windowctl_by_input.sh windowctl move -O -v</command>
       </action>
     </keybind>
     <!--
@@ -946,34 +951,23 @@
   <applications>
     <application name="*">
       <decor>no</decor>
+	  <focus>yes</focus>
       <position force="yes">
         <x>center</x>
         <y>center</y>
       </position>
     </application>
 
-    <application class="input">
-      <decor>no</decor>
-      <layer>below</layer>
-      <focus>yes</focus>
-      <position force="yes">
-        <x>1642</x>
-        <y>231</y>
-      </position>
-      <size>
-        <width>60</width>
-        <height>60</height>
-      </size>
-    </application>
-
     <application class="custom_size">
       <focus>yes</focus>
+	  <monitor>Active</monitor>
       <position force="yes">
-        <monitor>Active</monitor>
+		  <x>default</x>
+		  <y>default</y>
       </position>
       <size>
-        <height>169</height>
-        <width>100</width>
+        <height>133</height>
+        <width>201</width>
       </size>
     </application>
 
@@ -989,40 +983,18 @@
       </size>
     </application>
 
-    <application class="tiling">
-      <focus>yes</focus>
-      <monitor>2</monitor>
-      <position force="yes">
-        <x>1445</x>
-        <y>454</y>
-      </position>
-      <size>
-        <width>447</width>
-        <height>107</height>
-      </size>
-    </application>
-
-    <application title="image_preview">
-      <focus>no</focus>
-      <decor>no</decor>
-      <position force="yes">
-        <x>539</x>
-        <y>331</y>
-      </position>
-    </application>
-
     <application title="cover_art_widget">
       <decor>no</decor>
-      <layer>below</layer>
       <focus>no</focus>
+      <layer>below</layer>
     </application>
 
     <application title="*_input">
       <focus>yes</focus>
       <decor>no</decor>
       <size>
-        <width>60</width>
-        <height>60</height>
+        <width>361</width>
+        <height>112</height>
       </size>
     </application>
 
@@ -1032,13 +1004,53 @@
       <desktop>all</desktop>
       <position force="yes">
         <x>528</x>
-        <y>70</y>
+        <y>43</y>
       </position>
       <size>
         <width>864</width>
         <height>467</height>
       </size>
     </application>
+
+    <application class="tiling">
+      <monitor>1</monitor>
+      <position force="yes">
+        <x>1286</x>
+        <y>566</y>
+      </position>
+      <size>
+        <width>606</width>
+        <height>496</height>
+      </size>
+    </application>
+
+    <application class="input">
+      <decor>no</decor>
+      <focus>yes</focus>
+      <layer>below</layer>
+      <position force="yes">
+        <x>1180</x>
+        <y>510</y>
+      </position>
+      <size>
+        <width>70</width>
+        <height>70</height>
+      </size>
+    </application>
+
+    <application title="image_preview">
+      <focus>no</focus>
+      <decor>no</decor>
+      <position force="yes">
+        <x>1612</x>
+        <y>142</y>
+      </position>
+	  <size>
+		  <width>100</width>
+		  <height>100</height>
+	  </size>
+    </application>
+
     <!--
   # this is an example with comments through out. use these to make your
   # own rules, but without the comments of course.

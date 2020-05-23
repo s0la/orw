@@ -113,6 +113,18 @@ rofi() {
 
 			~/.orw/scripts/borderctl.sh -c list rbw $width
 			~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P $property
+		else
+			if [[ $current_mode == icons && $# -gt 1 ]]; then
+				#awk '/children.*listview/ { print gensub(/(\[).*(listview.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1) }' $path/icons.rasi
+				awk -i inplace '{
+					if(/ horibox /) {
+						$0 = gensub(/(\[).*(horibox.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1)
+					}
+
+					print
+					}' $path/icons.rasi
+				exit
+			fi
 		fi
 	fi
 }
@@ -194,7 +206,34 @@ blur() {
 	compton &> /dev/null &
 }
 
+wm() {
+	if [[ $1 =~ offset|reverse ]]; then
+		new_mode=$(awk '/^'$1'/ { print ("'$2'") ? "'$2'" : ($NF == "true") ? "false" : "true" }' $orw_conf)
+		[[ $new_mode == true ]] && state=ON || state=OFF
+
+		~/.orw/scripts/notify.sh "<b>${1^^}</b> is <b>$state</b>"
+
+		sed -i "/^$1/ s/\w*$/$new_mode/" $orw_conf
+	else
+		new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
+
+		[[ $2 ]] || ~/.orw/scripts/notify.sh "<b>WM</b> switched to <b>$new_mode</b> mode"
+
+		[[ $new_mode == tiling ]] && new_mode='\*' || new_mode=tiling
+		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$new_mode\"/" $openbox_conf
+	fi
+
+	#awk -i inplace '{\
+	#	if(/class.*(tiling|\*)/) {
+	#		nm = ("'$1'") ? "'$1'" : (/\*/) ? "tiling" : "*"
+	#		sub(/".*"/, "\"" nm "\"")
+	#	}
+	#	print
+	#}' $openbox_conf
+}
+
 bash_conf=~/.orw/dotfiles/.bashrc
+orw_conf=~/.orw/dotfiles/.config/orw/config
 tmux_conf=~/.orw/dotfiles/.config/tmux/tmux.conf
 compton_conf=~/.orw/dotfiles/.config/compton.conf
 openbox_conf=~/.orw/dotfiles/.config/openbox/rc.xml
