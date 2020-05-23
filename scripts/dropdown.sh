@@ -48,7 +48,7 @@ set_position() {
 			else wx = int(dw / 2 - ww / 2); \
 				print dx + wx, dy + yo, ww, wh }')
 
-		~/.orw/scripts/set_class_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
+		~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 
 x_position=c

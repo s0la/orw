@@ -6,7 +6,7 @@ preview=/tmp/color_preview.png
 colorctl=~/.orw/scripts/colorctl.sh
 
 read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
-~/.orw/scripts/set_class_geometry.sh -c image_preview -x $x -y $y
+~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 
 while
 	color=$(colorpicker -od)

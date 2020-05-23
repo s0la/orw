@@ -15,7 +15,7 @@ if ((window_count)); then
 		} END { print m, r }' ~/.config/orw/config | xargs)
 
 	read monitor x y width height <<< $(~/.orw/scripts/windowctl.sh resize H a $ratio)
-	~/.orw/scripts/set_class_geometry.sh -c tiling -m $monitor -x $x -y $y -w $width -h $height
+	~/.orw/scripts/set_geometry.sh -c tiling -m $monitor -x $x -y $y -w $width -h $height
 
 	eval termite --class=tiling -t ${title:-termite$window_count} "${arguments:-$@}" &> /dev/null &
 	#eval termite --class=tiling -t termite$window_count "${arguments#* }" &> /dev/null &

@@ -782,7 +782,7 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 					preview=/tmp/color_preview.png
 
 					read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
-					~/.orw/scripts/set_class_geometry.sh -c image_preview -x $x -y $y
+					~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 					display_color_preview
 
 					while

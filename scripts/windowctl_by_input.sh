@@ -34,7 +34,7 @@ read input_x input_y <<< $(awk '/^display/ { \
 	}
 }' ~/.config/orw/config)
 
-~/.orw/scripts/termite_geometry.sh -x $input_x -y $input_y -w 60 -h 60
+~/.orw/scripts/set_geometry.sh -c input -x $input_x -y $input_y -w 70 -h 70
 
 source ~/.orw/scripts/${1}_input_template.sh "${@:2}"
 

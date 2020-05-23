@@ -17,7 +17,7 @@ args="${@:arg_count + 1}"
 run_command=~/.config/vifm/scripts/run_with_image_preview
 
 if [[ $instance ]]; then
-	~/.orw/scripts/set_class_geometry.sh -c size -w ${width:-400} -h ${height:-500}
+	~/.orw/scripts/set_geometry.sh -c size -w ${width:-400} -h ${height:-500}
 
 	termite -t ${title-vifm} --class=${class-custom_size} -e \
 		"bash -c '$run_command $args'" &> /dev/null &
