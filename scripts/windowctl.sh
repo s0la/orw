@@ -492,6 +492,9 @@ add_offset() {
 				print o | "xargs"
 				print substr(o, 2)
 			}' $offsets_file | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
+
+		#~/.orw/scripts/notify.sh "${1%%_*}: <b>${!1}</b>"
+		~/.orw/scripts/notify.sh -pr 22 "<b>${1/_/ }</b> changed to <b>${!1}</b>"
 	fi
 }
 
@@ -514,7 +517,7 @@ get_neighbour_window_properties() {
 			wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
 			print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
 			{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
-			print gensub("([0-9.]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }'
+			print gensub("([^ ]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }'
 }
 
 arguments="$@"
@@ -529,9 +532,10 @@ property_log=~/.config/orw/windows_properties
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
 
 read display_count {x,y}_offset orientation <<< $(awk '\
-	/^display_[0-9]/ { dc++ } /offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
+	/^display_[0-9]/ { dc++ } /[xy]_offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
 	END { print dc / 2, offsets, o }' $config)
 
+[[ -f $offsets_file && $(awk '/^offset/ { print $NF }' $config) == true ]] && eval $(cat $offsets_file | xargs)
 [[ ! $arguments =~ -[in] ]] && set_window_id $(printf "0x%.8x" $(xdotool getactivewindow))
 
 while ((argument_index <= $#)); do
@@ -652,13 +656,17 @@ while ((argument_index <= $#)); do
 						B) [[ $option == resize ]] && resize_to_edge 2 $offset ||
 							properties[2]=$((${max:-$end} - offset - ${properties[4]} - border_y));;
 						*)
-							if [[ $optarg == a ]]; then
+							[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift
+							[[ $optarg =~ r$ ]] && optarg=${optarg:0:1} reverse=true ||
+								reverse=$(awk '/^reverse/ { print $NF }' $config)
+
+							if [[ ${optarg:0:1} == a ]]; then
 								((${properties[3]} > ${properties[4]})) && optarg=h || optarg=v
-								ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
+								((ratio)) ||
+									ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
+
 								auto_tile=true
 								argument=H
-							else
-								[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift || ratio=2
 							fi
 
 							set_orientation_properties $optarg
@@ -672,7 +680,7 @@ while ((argument_index <= $#)); do
 							#	ratio=2
 							#fi
 
-							[[ $ratio =~ / ]] && multiplier=${ratio%/*} ratio=${ratio#*/}
+							[[ ${ratio:=2} =~ / ]] && part=${ratio%/*} ratio=${ratio#*/}
 
 							[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
 							[[ $optarg == h ]] && direction=x || direction=y
@@ -681,6 +689,7 @@ while ((argument_index <= $#)); do
 							offset=${direction}_offset
 							separator=$(((${!border} + ${margin:-${!offset}})))
 
+							original_start=${properties[index]}
 							original_property=${properties[index + 2]}
 							#total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
 
@@ -691,36 +700,78 @@ while ((argument_index <= $#)); do
 							#(( properties[index + 2] $op1= ratio ))
 							#[[ $argument == D ]] && (( properties[index + 2] += (ratio - 1) * separator ))
 
-							if [[ $argument == H || $multiplier ]]; then
-								(( properties[index + 2] -= (ratio - 1) * separator ))
-								(( properties[index + 2] /= ratio ))
+							if [[ $argument == H || $part ]]; then
+								portion=$((original_property - (ratio - 1) * separator))
+								(( portion /= ratio ))
 
-								if [[ $multiplier ]]; then
-									(( properties[index + 2] *= multiplier ))
-									(( properties[index + 2] += (multiplier - 1) * separator ))
+								#(( properties[index + 2] -= (ratio - 1) * separator ))
+								#(( properties[index + 2] /= ratio ))
 
-									[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+								if [[ $part ]]; then
+									(( portion *= part ))
+									(( portion += (part - 1) * separator ))
 								fi
+
+								#[[ $argument == D ]] && size_direction=- && (( portion += separator ))
+
+								#properties[index + 2]=$portion
+								#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= original_property - (portion ) ))
+
+
+
+
+
+								if [[ $argument == H ]]; then
+									properties[index + 2]=$portion
+									[[ $reverse == true ]] && (( properties[index] += original_property - portion ))
+								else
+									#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+									(( properties[index + 2] += portion + separator ))
+									[[ $reverse == true ]] && (( properties[index] -= portion + separator ))
+								fi
+
+
+
+
+
+								#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= portion + separator ))
+
+								#if [[ $argument == H ]]; then
+								#	[[ $reverse ]] && (( properties[index] += portion + separator ))
+								#else
+								#	#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+								#	properties[index + 2]=$((portion + separator))
+								#	[[ $reverse ]] && (( properties[index] -= portion + separator ))
+								#fi
 							else
-								(( properties[index + 2] *= ratio ))
-								(( properties[index + 2] += (ratio - 1) * separator ))
+								#(( properties[index + 2] *= ratio ))
+								#(( properties[index + 2] += (ratio - 1) * separator ))
+								portion=$(((original_property + separator) * (ratio - 1)))
+								(( properties[index + 2] += portion ))
+								[[ $reverse == true ]] && (( properties[index] -= portion ))
 							fi
 
 							if [[ $auto_tile ]]; then
+								#read $reverse tiling_properties <<< $(awk '{
 								awk '{
-									d = '$display'
-									x = '$display_x'
-									y = '$display_y'
-									o = "'$orientation'"
+										d = '$display'
+										x = '$display_x'
+										y = '$display_y'
+										r = "'$reverse'"
+										s = '$separator'
+										o = "'$orientation'"
 
-									if(o == "h") $2 -= x; else $3 -= y
+										$('$index' + 1) -= (o == "h") ? x : y
 
-									p = $('$index' + 3) + '${!border}' + '${margin:-${!offset}}'
-									$('$index' + 3) = '$original_property' - p
-									$('$index' + 1) += p
-									sub(/[^ ]* /, "")
-									print d, $0
-								}' <<< "${properties[*]}"
+										p = $('$index' + 3) + s
+										$('$index' + 3) = '$original_property' - p
+										$('$index' + 1) = (r == "true") ? '$original_start' : $('$index' + 1) + p
+										sub(/[^ ]* /, "")
+										print rp, d, $0
+									}' <<< "${properties[*]}"
+
+								#((reverse_property)) && (( properties[index] += reverse_property ))
+								#echo ${tiling_properties[*]}
 							fi
 					esac
 
@@ -801,8 +852,8 @@ while ((argument_index <= $#)); do
 							set_orientation_properties $display_orientation
 
 							tiling=true
-							props=( $(get_neighbour_window_properties $optarg) )
-							new_properties=( $($0 -i ${props[0]} resize -H a) )
+							tiling_properties=( $(get_neighbour_window_properties $optarg) )
+							new_properties=( $($0 -i ${tiling_properties[0]} resize -H a) )
 							properties=( $id ${new_properties[*]:1} )
 					esac
 				else
@@ -922,7 +973,8 @@ while ((argument_index <= $#)); do
 				get_bar_properties add
 
 				case $optarg in
-					[trbl]) mirror_window_properties=( $(get_neighbour_window_properties $optarg) );;
+					[trbl])
+						mirror_window_properties=( $(get_neighbour_window_properties $optarg) );;
 						#[[ $optarg =~ [lr] ]] && index=1 || index=2
 						#[[ $optarg =~ [br] ]] && reverse=-r
 
