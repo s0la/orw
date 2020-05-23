@@ -50,6 +50,9 @@ function draw_cover_art() {
 	exit
 }
 
+#[[ $(awk '/class.*\*/' ~/.config/openbox/rc.xml) ]]
+(($(sed -n '/class.*\*/=' ~/.config/openbox/rc.xml))) && close=~/.orw/scripts/get_window_neighbours.sh
+	#close='nohup ~/.orw/scripts/close_window.sh &'
 base_command='TERM=xterm-256color tmux -S /tmp/tmux_hidden -f ~/.config/tmux/tmux_hidden.conf'
 
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
@@ -159,26 +162,20 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		h) height=$OPTARG;;
 		i)
 			if ! xdotool search --name "'${title-ncmpcpp}'"; then
-				#width=${width:-900}
-				#height=${height:-500}
-
-				#[[ $title ]] || show_status yes
-
-				#[[ $class ]] || ~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
-
-				if [[ $class ]]; then
-					unset pre
-				else
-					width=${width:-900}
-					height=${height:-500}
-					~/.orw/scripts/set_class_geometry.sh -c size -w $width -h $height
-				fi
+				width=${width:-900}
+				height=${height:-500}
 
 				[[ $title ]] || show_status yes
 
-				termite -t ${title-ncmpcpp} --class=${class-custom_size} \
+				mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+				[[ $mode == tiling ]] && unset pre ||
+					~/.orw/scripts/set_geometry.sh -c size -w $width -h $height
+
+				termite -t ${title:=ncmpcpp} --class=custom_size \
 					-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
-					\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s ncmpcpp ncmpcpp}\"'" &> /dev/null &
+					\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\";$close'" &> /dev/null &
+					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\"'" &> /dev/null &
+					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s ncmpcpp ncmpcpp}\";$close'" &> /dev/null &
 				exit
 			fi
 		esac
