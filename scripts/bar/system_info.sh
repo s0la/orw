@@ -110,12 +110,12 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=
+		old_mail_count=93
 
 		email_auth=~/.orw/scripts/auth/email
 
 		if [[ ! -f $email_auth ]]; then
-			~/.orw/scripts/set_class_geometry.sh -c input -w 300 -h 100
+			~/.orw/scripts/set_geometry.sh -c input -w 300 -h 100
 			waiting_for_auth=$(wmctrl -l | awk '{ waiting += $NF == "email_auth" } END { print waiting }')
 			((!waiting_for_auth)) && termite -t email_input -e ~/.orw/scripts/email_auth.sh &> /dev/null &&
 				~/.orw/scripts/barctl.sh
