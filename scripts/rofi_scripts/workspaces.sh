@@ -22,7 +22,7 @@ if [[ $theme != icons ]]; then
 	indicator=''
 	empty=' '
 else
-	workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
 fi
 
 workspace_count=${#workspaces[*]}
