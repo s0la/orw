@@ -3,11 +3,11 @@
 @import "theme"
 
 * {
-	font: "icomoon_fa 16";
+	font: "icomoon_fa 12";
 }
 
 #window {
-	width:       257px;
+	width:       332px;
 	border:      0;
 	padding:     15px;
 	children:    [ horibox ];
@@ -25,8 +25,22 @@
 	lines:       100;
 }
 
+#inputbar {
+	margin:       0 0 10px;
+	border-color: @bg;
+}
+
+#entry {
+	margin: 0 10px;
+}
+
+#textbox-prompt-colon {
+	str:          "";
+	color:        @efg;
+}
+
 #element {
-	padding:        26px 26px;
+	padding:        41px 41px;
 	border-radius:       5px;
 }
 
