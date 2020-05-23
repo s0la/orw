@@ -1,6 +1,8 @@
 #!/bin/bash
 
 fifo=/tmp/vifm_image_preview.fifo
+id=$(printf "0x%.8x" $(xdotool getactivewindow))
+server=$(wmctrl -l | awk '$1 == "'$id'" { print $NF }')
 
 close_preview() {
 	rm $fifo
@@ -12,4 +14,4 @@ trap close_preview EXIT
 
 tail -f $fifo | ueberzug layer --silent --parser bash &
 
-vifm --server-name vifm $@
+vifm --server-name $server $@
