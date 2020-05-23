@@ -142,6 +142,7 @@ function apps() {
 	get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
 
 	#neovim python3 installation
+	sudo ln -s /usr/lib/libffi.so.6 /usr/lib/libffi.so.7
 	sudo pip3 install neovim &> /dev/null || handle_failure "Failed to install neovim python3."
 
 	#ueberzug installation
@@ -175,7 +176,7 @@ function backup() {
 		existing=${dir##*/}
 
 		if [[ -e $existing ]]; then
-			tar uf .backup_by_orw.tar.gz $existing
+			tar uhf .backup_by_orw.tar.gz $existing
 			rm -rf $existing
 		fi
 
@@ -219,8 +220,8 @@ function orw() {
 		handle_failure 'Failed to install deoplete.'
 	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
-	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.mpd/mpd.conf)
-	sed -i "s/$ex_user/$(whoami)/" $destination/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.mpd/mpd.conf,.ncmpcpp/config*,services/change_wallpaper.service}}
+	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)
+	sed -i "s/$ex_user/$(whoami)/" $destination/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
 
 	[[ ! -f ~/.config/orw/config ]] && $destination/scripts/generate_orw_config.sh
 
