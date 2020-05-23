@@ -105,7 +105,7 @@ get_updates() {
 config=~/.config/orw/config
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 
-read x_offset y_offset <<< $(awk -F '[_ ]' '/offset/ { if($1 == "x") xo = $NF; else yo = $NF } END { print xo, yo }' $config)
+read x_offset y_offset <<< $(awk -F '[_ ]' '/^[xy]_offset/ { if($1 == "x") xo = $NF; else yo = $NF } END { print xo, yo }' $config)
 
 get_display_properties() {
 	[[ ! $x && ! $y ]] &&

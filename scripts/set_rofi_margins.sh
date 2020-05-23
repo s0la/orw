@@ -6,7 +6,7 @@ set_margins() {
 }
 
 if [[ $(sed -n '$s/.*"\(.*\)"/\1/p' ~/.config/rofi/main.rasi) == dmenu ]]; then
-	read x_offset y_offset <<< $(awk '/offset/ { print $NF }' ~/.config/orw/config | xargs)
+	read x_offset y_offset <<< $(awk '/^[xy]_offset/ { print $NF }' ~/.config/orw/config | xargs)
 
 	while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
 		if ((position)); then
