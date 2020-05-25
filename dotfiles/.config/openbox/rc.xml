@@ -966,8 +966,8 @@
 		  <y>default</y>
       </position>
       <size>
-        <height>133</height>
-        <width>201</width>
+        <height>500</height>
+        <width>400</width>
       </size>
     </application>
 
@@ -1015,12 +1015,12 @@
     <application class="tiling">
       <monitor>1</monitor>
       <position force="yes">
-        <x>1286</x>
-        <y>566</y>
+        <x>970</x>
+        <y>124</y>
       </position>
       <size>
-        <width>606</width>
-        <height>496</height>
+        <width>742</width>
+        <height>848</height>
       </size>
     </application>
 
@@ -1029,7 +1029,7 @@
       <focus>yes</focus>
       <layer>below</layer>
       <position force="yes">
-        <x>1180</x>
+        <x>855</x>
         <y>510</y>
       </position>
       <size>
@@ -1043,7 +1043,7 @@
       <decor>no</decor>
       <position force="yes">
         <x>1612</x>
-        <y>142</y>
+        <y>124</y>
       </position>
 	  <size>
 		  <width>100</width>
