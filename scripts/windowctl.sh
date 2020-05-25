@@ -643,7 +643,7 @@ while ((argument_index <= $#)); do
 								}' | tail -1)
 
 					[[ $argument =~ [LR] ]] && offset_orientation=x_offset || offset_orientation=y_offset
-					((!max)) && offset=${!offset_orientation} ||
+					((!max || (max == bar_top_offset || max == bar_bottom_offset))) && offset=${!offset_orientation} ||
 						offset=${margin:-${!offset_orientation}}
 
 					case $argument in
