@@ -23,15 +23,17 @@ if [[ $mode == tiling ]]; then
 					p = $'$index'
 					s = $('$start_index' + 2)
 					d = $('$start_index' + 4)
-						e = s + d
+					e = s + d
 
 					if(s >= '$start' && e <= '$end') {
+						#system("~/.orw/scripts/notify.sh \"" p "\"")
 						if(cp) {
 							if(cp == p) {
 								cd += d
 								cid = cid " " $1
 							} else {
-								if(cd > max) {
+								#system("~/.orw/scripts/notify.sh \"" max "\"")
+								if(cd >= max) {
 									max = cd
 									id = cid
 									set_current_window()
@@ -41,7 +43,7 @@ if [[ $mode == tiling ]]; then
 							set_current_window()
 						}
 					}
-				} END { print (cd > max) ? cd " " cid : max " " id }')
+				} END { print (cd >= max) ? cd " " cid : max " " id }')
 	}
 
 	get_ids h
