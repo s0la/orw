@@ -64,26 +64,48 @@ else
 	#	[[ ! $@ =~ $tile ]] && command=$(~/.orw/scripts/windowctl.sh resize H a 2)
 	#fi
 
+	desktop=$(xdotool get_desktop)
+	window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
+
+	get_title() {
+		title=$(wmctrl -l | awk '$NF ~ "^'$1'[0-9]+?" { wc++ } END { print "'$1'" wc }')
+	}
+
     case "$@" in
         *$dropdown*) ~/.orw/scripts/dropdown.sh ${@#*$dropdown};;
-		*$tile*) ~/.orw/scripts/tile_terminal.sh -b ${@#*$tile};;
+		*$tile*)
+			get_title termite
+			~/.orw/scripts/tile_terminal.sh -t $title -b ${@#*$tile};;
 		#*$term*) coproc(termite -t termite ${@#*$term} &);;
 		*$term*)
 			#count_windows termite
 
-			[[ $mode != tiling ]] &&
-				termite -t termite$window_count ${@#*$term} ||
-				~/.orw/scripts/tiling_terminal.sh ${@#*$term};;
+			get_title termite
+
+			((window_count)) &&
+				termite -t $title ${@#*$term} ||
+				~/.orw/scripts/tile_terminal.sh ${@#*$term};;
+
+			#[[ $mode != tiling ]] &&
+			#	termite -t termite$window_count ${@#*$term} ||
+			#	~/.orw/scripts/tiling_terminal.sh ${@#*$term};;
+
 			#termite -t "termite$window_count" --class=custom_size -e \
 			#	"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh termite$window_count \"$command\";bash'";;
 		#*$vifm*) coproc(~/.orw/scripts/vifm.sh ${@#*$vifm} &);;
 		*$vifm*)
 			#count_windows termite
-			title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { wc++ } END { print "vifm" wc }')
+			#title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { wc++ } END { print "vifm" wc }')
 			
-			[[ $mode != tiling ]] && 
+			get_title vifm
+
+			((window_count)) &&
 				~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
-				~/.orw/scripts/tiling_terminal.sh -t $title -e "'bash -c \"~/.orw/scripts/vifm.sh ${@#*$vifm}\"'";;
+				~/.orw/scripts/tile_terminal.sh ~/.orw/scripts/vifm.sh ${@#*$vifm};;
+
+			#[[ $mode != tiling ]] && 
+			#	~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
+			#	~/.orw/scripts/tiling_terminal.sh -t $title -e "'bash -c \"~/.orw/scripts/vifm.sh ${@#*$vifm}\"'";;
 				#~/.orw/scripts/vifm_window.sh -t vifm$window_count ${@#*$vifm} ||
 				#~/.orw/scripts/tiling_terminal.sh $window_count -e "'bash -c \"~/.orw/scripts/vifm.sh ${@#*$vifm}\"'";;
 

@@ -79,8 +79,20 @@ else
 	#	#tile_layout="\"-L ${properties#* }\""
 	#fi
 
+	desktop=$(xdotool get_desktop)
+	window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
+
 	mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
-	[[ $mode == tiling ]] && unset mode && ~/.orw/scripts/tile_window.sh
+
+	if [[ $mode == tiling ]]; then
+		if ((window_count)); then
+			~/.orw/scripts/tile_window.sh
+		else
+			~/.orw/scripts/tile_terminal.sh -t ${title:=ncmpcpp} "$ncmpcpp ${flags/ -i/}"
+			exit
+		fi
+	fi
+
 	#[[ $mode != tiling ]] && eval $ncmpcpp "$flags" ||
 	#	~/.orw/scripts/tiling_terminal.sh -t ${title-ncmpcpp} -e "'$ncmpcpp ${flags/ -i/}'"
 

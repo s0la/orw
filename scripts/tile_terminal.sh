@@ -12,7 +12,10 @@ set_offsets() {
 	[[ -f $offsets_file ]] && eval "$(awk -F '=' '{ print $1 "=" ++$2 }' ~/.config/orw/offsets | xargs)"
 }
 
-arguments="$@"
+all_arguments="$@"
+win_args="${all_arguments#*-t * }"
+#~/.orw/scripts/notify.sh "wa: $win_args"
+
 #current_mode=$(awk '/class.*tiling/ { cm = "tiling" } END { print (cm) ? cm : "\\\*" }' ~/.config/openbox/rc.xml)
 #current_mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.orw/dotfiles/.config/openbox/rc.xml)
 
@@ -20,9 +23,22 @@ offsets_file=~/.config/orw/offsets
 offset=$(awk '/^offset/ { print $NF }' ~/.config/orw/config)
 current_mode=$(awk '/class.*\*/ { print "tiling" }' ~/.orw/dotfiles/.config/openbox/rc.xml)
 
-while getopts :d:x:y:m:o flag; do
-	[[ $flag == o ]] && set_offsets || eval "$flag=$OPTARG"
+while getopts :t:d:x:y:m:o flag; do
+	[[ $flag == t ]] && title=$OPTARG || eval "$flag=$OPTARG"
+	#[[ $flag == t ]] && title=$OPTARG
+	#[[ $flag == o ]] && set_offsets || eval "$flag=$OPTARG"
 done
+
+#[[ $win_args =~ ^- ]] &&
+command="$(sed 's/^\(\(\(-. \w*\|-b\) \?\)*\)\(.*\)/\4/' <<< $win_args)"
+[[ $command ]] && win_args=${win_args%*$command}
+
+#~/.orw/scripts/notify.sh "wa: ^$win_args$"
+#~/.orw/scripts/notify.sh "c: $command"
+#exit
+
+#[[ $arguments =~ -[tdxym] ]] && command="${arguments##*-[tdxym] * }"
+#[[ $command ]] && command="&& $command"
 
 [[ $offset == true ]] && set_offsets
 
@@ -34,7 +50,8 @@ done <<< $(~/.orw/scripts/get_bar_info.sh)
 replace default floating
 
 ~/.orw/scripts/set_geometry.sh -c custom_size -w ${x:-${x_offset-100}} -h $((${y:-${y_offset-100}} + max_width))
-termite --class=custom_size -t termite -e "bash -c '~/.orw/scripts/windowctl.sh $arguments tile;bash'" &> /dev/null &
+termite --class=custom_size -t ${title:=termite} \
+	-e "bash -c '~/.orw/scripts/windowctl.sh $win_args tile;${command:-bash}'" &> /dev/null &
 
 sleep 1
 replace center "${current_mode:-floating}"
