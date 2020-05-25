@@ -36,7 +36,7 @@ else
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) }' ~/.config/orw/config)
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.config/openbox/rc.xml)
 	mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
-	[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && unset mode && ~/.orw/scripts/tile_window.sh
+	[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && ~/.orw/scripts/tile_window.sh
 
 	#count_windows() {
 	#	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
@@ -82,9 +82,13 @@ else
 
 			get_title termite
 
-			((window_count)) &&
-				termite -t $title ${@#*$term} ||
-				~/.orw/scripts/tile_terminal.sh ${@#*$term};;
+			if [[ $mode == tiling ]]; then
+				((window_count)) &&
+					termite -t $title ${@#*$term} ||
+					~/.orw/scripts/tile_terminal.sh ${@#*$term}
+			else
+				termite -t $title ${@#*$term}
+			fi;;
 
 			#[[ $mode != tiling ]] &&
 			#	termite -t termite$window_count ${@#*$term} ||
@@ -99,9 +103,13 @@ else
 			
 			get_title vifm
 
-			((window_count)) &&
-				~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
-				~/.orw/scripts/tile_terminal.sh ~/.orw/scripts/vifm.sh ${@#*$vifm};;
+			if [[ $mode == tiling ]]; then
+				((window_count)) &&
+					~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
+					~/.orw/scripts/tile_terminal.sh ~/.orw/scripts/vifm.sh ${@#*$vifm}
+			else
+				~/.orw/scripts/vifm.sh -t $title ${@#*$vifm}
+			fi;;
 
 			#[[ $mode != tiling ]] && 
 			#	~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
