@@ -461,15 +461,17 @@ function rofi() {
 		border_width=$(awk '/^\sborder/ { print gensub(/.* ([0-9]*).*/, "\\1", 1); exit }' $rofi_conf)
 		read rofi_bg rofi_bc <<< $(awk -F '[ ;]' '/^\s*b[cg]/ { print $(NF - 1) }' $rofi_conf | xargs)
 
-		[[ "#${color: -6}" == $rofi_bg ]] && input_border=$border_width padding=20 margin=10 ln=12
-		[[ "#${color: -6}" == $rofi_bc ]] && input_border=0 padding=0 item_padding=10 margin=0 ln=8
+		if [[ $rofi_bg != $rofi_bc ]]; then
+			[[ "#${color: -6}" == $rofi_bg ]] && input_border=$border_width padding=20 margin=10 ln=12
+			[[ "#${color: -6}" == $rofi_bc ]] && input_border=0 padding=0 item_padding=10 margin=0 ln=8
 
-		if [[ $padding && $margin ]]; then
-			~/.orw/scripts/borderctl.sh rln $ln
-			~/.orw/scripts/borderctl.sh rim $margin
-			~/.orw/scripts/borderctl.sh rwp $padding
-			~/.orw/scripts/borderctl.sh ribw $input_border
-			~/.orw/scripts/borderctl.sh rip ${item_padding-3 5}
+			if [[ $padding && $margin ]]; then
+				~/.orw/scripts/borderctl.sh -c list rln $ln
+				~/.orw/scripts/borderctl.sh -c list rim $margin
+				~/.orw/scripts/borderctl.sh -c list rwp $padding
+				~/.orw/scripts/borderctl.sh -c list ribw $input_border
+				~/.orw/scripts/borderctl.sh -c list rip ${item_padding-3 5}
+			fi
 		fi
 	fi
 }
