@@ -77,7 +77,7 @@ function deps() {
 
 	echo 'installing dependencies..'
 
-	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq )
+	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then

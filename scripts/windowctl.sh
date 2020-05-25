@@ -511,13 +511,15 @@ get_neighbour_window_properties() {
 	[[ $tiling ]] && local first_field=2
 
 	start_index=$((index % 2 + 1))
-	sort_windows $direction | sort $reverse -nk 1,1 | awk \
-		'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
-		if("'$direction'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
-			wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
-			print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
-			{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
-			print gensub("([^ ]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }'
+
+	read -a second_window_properties <<< $( \
+		sort_windows $direction | sort $reverse -nk 1,1 | awk \
+			'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+			if("'$direction'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
+				wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+				print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
+				{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
+				print gensub("([^ ]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }')
 }
 
 arguments="$@"
@@ -583,10 +585,28 @@ while ((argument_index <= $#)); do
 		fi
 	else
 		optarg=${!argument_index}
-		[[ $argument =~ ^[SRMTRBLHDtrblhvjxymoidsrcp]$ &&
+		[[ $argument =~ ^[SMCTRBLHDtrblhvjxymoidsrcp]$ &&
 			! $optarg =~ ^(-[A-Za-z]|$options)$ ]] && ((argument_index++))
 
 		case $argument in
+			C)
+				color=$(awk -Wposix -F '#' '/\.active.border/ { 
+					r = sprintf("%d", "0x" substr($NF, 1, 2)) / 255
+					g = sprintf("%d", "0x" substr($NF, 3, 2)) / 255
+					b = sprintf("%d", "0x" substr($NF, 5, 2)) / 255
+					print r "," g "," b }' ~/.orw/themes/theme/openbox-3/themerc)
+
+				read -a second_window_properties <<< $( \
+					slop -n 1 -b $((border_x / 2)) -c $color -f '%i %x %y %w %h' | awk '{
+						$1 = sprintf("0x%.8x", $1)
+						x = '$border_x'
+						y = '$border_y'
+						$2 -= (x / 2)
+						$3 -= (y / 2)
+						print
+					}');;
+				#echo ${second_window_properties[2]}
+				#exit;;
 			[TRBLHD])
 				if [[ ! $option ]]; then
 					if [[ $argument == R ]]; then
@@ -848,12 +868,16 @@ while ((argument_index <= $#)); do
 							properties=( $id $(backtrace_properties) )
 							update_properties;;
 						t)
+							tiling=true
+
 							set_windows_properties $display_orientation
 							set_orientation_properties $display_orientation
+							[[ $second_window_properties ]] || get_neighbour_window_properties $optarg
 
-							tiling=true
-							tiling_properties=( $(get_neighbour_window_properties $optarg) )
-							new_properties=( $($0 -i ${tiling_properties[0]} resize -H a) )
+							#tiling_properties=( $(get_neighbour_window_properties $optarg) )
+							#new_properties=( $($0 -i ${tiling_properties[0]} resize -H a) )
+
+							new_properties=( $($0 -i ${second_window_properties[0]} resize -H a$optarg) )
 							properties=( $id ${new_properties[*]:1} )
 					esac
 				else
@@ -972,57 +996,62 @@ while ((argument_index <= $#)); do
 
 				get_bar_properties add
 
-				case $optarg in
-					[trbl])
-						mirror_window_properties=( $(get_neighbour_window_properties $optarg) );;
-						#[[ $optarg =~ [lr] ]] && index=1 || index=2
-						#[[ $optarg =~ [br] ]] && reverse=-r
+				if [[ ! $second_window_properties ]]; then
+					case $optarg in
+						[trbl])
+							second_window_properties=( $(get_neighbour_window_properties $optarg) );;
+							#[[ $optarg =~ [lr] ]] && index=1 || index=2
+							#[[ $optarg =~ [br] ]] && reverse=-r
 
-						#start_index=$((index % 2 + 1))
-						#mirror_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
-						#	'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
-						#	if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
-						#		wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
-						#		print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
-						#		{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
-						#		print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
-					*)
-						[[ $optarg =~ ^0x ]] && mirror_window_id=$optarg ||
-							mirror_window_id=$((wmctrl -l && list_bars) |\
-							awk '{
-								wid = (/^0x/) ? $NF : $1
-								if(wid == "'$optarg'") {
-									print $1
-									exit
-								}
-							}')
+							#start_index=$((index % 2 + 1))
+							#second_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | awk \
+							#	'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
+							#	if("'$optarg'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
+							#		wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
+							#		print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
+							#		{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
+							#		print gensub("(.*" $3 "|" $8 "$)", "", "g") }') );;
+						*)
+							[[ $optarg =~ ^0x ]] && mirror_window_id=$optarg ||
+								mirror_window_id=$((wmctrl -l && list_bars) |\
+								awk '{
+									wid = (/^0x/) ? $NF : $1
+									if(wid == "'$optarg'") {
+										print $1
+										exit
+									}
+								}')
 
-						mirror_window_properties=( $(list_all_windows | \
-							awk '$1 == "'$mirror_window_id'" {
-								if(NF > 5) { $4 += ($NF - '${border_x:=0}'); $5 += ($NF - '${border_y:=0}') }
-									print gensub("(" $1 "|" $6 "$)", "", "g") }') )
-				esac
+							second_window_properties=( $(list_all_windows | \
+								awk '$1 == "'$mirror_window_id'" {
+									if(NF > 5) { $4 += ($NF - '${border_x:=0}'); $5 += ($NF - '${border_y:=0}') }
+										print gensub("(" $1 "|" $6 "$)", "", "g") }') )
+					esac
+				else
+					second_window_properties=( ${second_window_properties[*]:1} )
+					optind=$optarg
+				fi
 
 				if [[ $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
 					for specific_mirror_property in ${optind//,/ }; do 
 						unset operation operand additional_{operation,operand} mirror_value
 
 						case $specific_mirror_property in
-							x*) mirror_window_property_index=0;;
-							y*) mirror_window_property_index=1;;
-							w*) mirror_window_property_index=2;;
-							h*) mirror_window_property_index=3;;
+							x*) second_window_property_index=0;;
+							y*) second_window_property_index=1;;
+							w*) second_window_property_index=2;;
+							h*) second_window_property_index=3;;
 						esac
 
 						if [[ ${specific_mirror_property:1:1} =~ [se] ]]; then
 							mirror_border=border_${specific_mirror_property:0:1}
 
 							if [[ $specific_mirror_property =~ ee ]]; then
-								mirror_value=$((mirror_window_properties[mirror_window_property_index] + (${mirror_window_properties[mirror_window_property_index + 2]} - ${properties[mirror_window_property_index + 3]})))
+								mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} - ${properties[second_window_property_index + 3]})))
 							else
 								[[ ${specific_mirror_property:1:1} == s ]] &&
-									mirror_value=$((mirror_window_properties[mirror_window_property_index] - (${properties[mirror_window_property_index + 3]} + ${!mirror_border:-0}))) ||
-									mirror_value=$((mirror_window_properties[mirror_window_property_index] + (${mirror_window_properties[mirror_window_property_index + 2]} + ${!mirror_border:-0})))
+									mirror_value=$((second_window_properties[second_window_property_index] - (${properties[second_window_property_index + 3]} + ${!mirror_border:-0}))) ||
+									mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} + ${!mirror_border:-0})))
 							fi
 						fi
 
@@ -1030,27 +1059,27 @@ while ((argument_index <= $#)); do
 							read operation operand additional_operation additional_operand<<< \
 								$(sed 's/\w*\(.\)\([^+-]*\)\(.\)\?\(.*\)/\1 \2 \3 \4/' <<< $specific_mirror_property)
 							((operand)) &&
-								mirror_value=$((${mirror_value:-${mirror_window_properties[mirror_window_property_index]}} $operation operand))
+								mirror_value=$((${mirror_value:-${second_window_properties[second_window_property_index]}} $operation operand))
 							((additional_operand)) &&
-								mirror_value=$((${mirror_value:-${mirror_window_properties[mirror_window_property_index]}} $additional_operation additional_operand))
+								mirror_value=$((${mirror_value:-${second_window_properties[second_window_property_index]}} $additional_operation additional_operand))
 
 							if [[ $specific_mirror_property =~ [+-]$ ]]; then
-								((properties[mirror_window_property_index + 1] ${specific_mirror_property: -1}= ${mirror_value:-${mirror_window_properties[mirror_window_property_index]}}))
+								((properties[second_window_property_index + 1] ${specific_mirror_property: -1}= ${mirror_value:-${second_window_properties[second_window_property_index]}}))
 								continue
 							fi
 						fi
 
-						properties[mirror_window_property_index + 1]=${mirror_value:-${mirror_window_properties[mirror_window_property_index]}}
+						properties[second_window_property_index + 1]=${mirror_value:-${second_window_properties[second_window_property_index]}}
 					done
 
 					shift
-				elif ((${#mirror_window_properties[*]})); then
+				elif ((${#second_window_properties[*]})); then
 					index_property=${properties[index]}
 
 					properties=( $id )
-					properties+=( ${mirror_window_properties[*]:0:index - 1} )
+					properties+=( ${second_window_properties[*]:0:index - 1} )
 					properties+=( $index_property )
-					properties+=( "${mirror_window_properties[*]:index}" )
+					properties+=( "${second_window_properties[*]:index}" )
 				else
 					echo "Mirror window wasn't found in specified direction, please try another direction.."
 				fi
