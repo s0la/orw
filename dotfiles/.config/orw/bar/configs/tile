@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 300 -f 2 -s 0 -p 25 -n tile -M -l -A -r -v -d 
+~/.orw/scripts/bar/generate_bar.sh -x 250 -h 30 -p 15 -f 2 u -a 8 -c bar_tile bar_jund -M -n tile -c -l -j 250 -m P,s22,of5,i,of15,v -W -j 0 -e -u -v -j -d
