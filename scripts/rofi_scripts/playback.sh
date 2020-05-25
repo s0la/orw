@@ -18,7 +18,7 @@ if [[ -z $@ ]]; then
 		$sep$up
 		$sep$down
 		$sep$controls
-		$sep$playlist
+		$sep$pl
 	EOF
 else
 	case "$@" in
