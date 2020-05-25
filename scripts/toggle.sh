@@ -211,13 +211,13 @@ wm() {
 		new_mode=$(awk '/^'$1'/ { print ("'$2'") ? "'$2'" : ($NF == "true") ? "false" : "true" }' $orw_conf)
 		[[ $new_mode == true ]] && state=ON || state=OFF
 
-		~/.orw/scripts/notify.sh "<b>${1^^}</b> is <b>$state</b>"
+		~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
 
 		sed -i "/^$1/ s/\w*$/$new_mode/" $orw_conf
 	else
 		new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
 
-		[[ $2 ]] || ~/.orw/scripts/notify.sh "<b>WM</b> switched to <b>$new_mode</b> mode"
+		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$new_mode</b> mode"
 
 		[[ $new_mode == tiling ]] && new_mode='\*' || new_mode=tiling
 		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$new_mode\"/" $openbox_conf
