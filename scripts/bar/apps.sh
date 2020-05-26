@@ -6,6 +6,7 @@ lines=${@: -1}
 offset=$padding
 window_name_lenght=20
 
+mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
 
 if [[ $# -gt 3 ]]; then
@@ -46,46 +47,57 @@ function set_line() {
 
 current_window_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
 
-while read -r window_id window_name; do
-	[[ $window_id -eq $current_window_id ]] && current='p' || current='s'
+get_window() {
+	#[[ $window_id -eq $current_window_id ]] && current='p' current_index=$window_index || current='s'
+	[[ $window_id -ne $current_window_id ]] && current='s' ||
+		current='p' current_index=$window_index previous_index=$(((current_index + count - 1) % count))
 
 	if [[ ${#window_name} -gt $window_name_lenght ]]; then
 		window_name="${window_name:0:$window_name_lenght}"
-		#[[ $current == s ]] && window_name+='..'
 		window_name+='..'
 	fi
 
-	#window_name="${padding}${window_name}${padding}"
 	window_name="${offset}${window_name}${offset}"
 
 	if [[ $window_id ]]; then
 		bg="\${A${current}bg:-\${Asbg:-\$${current}bg}}"
 		fg="\${A${current}fg:-\${Asfg:-\$${current}fg}}"
 
-		window="%{A:wmctrl -ia $window_id:}$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}"
+		[[ $current == s ]] &&
+			left_command="wmctrl -ia $window_id" ||
+			left_command="xdotool getactivewindow windowminimize"
+		[[ $mode == floating ]] &&
+			middle_command="wmctrl -c :ACTIVE:" ||
+			middle_command="~/.orw/scripts/get_window_neighbours.sh"
+		commands="%{A:$left_command:}%{A2:$middle_command:}"
 
-		#if [[ $lines == single ]]; then
-		#	if [[ $current == p ]]; then
-		#		[[ ! $separator =~ ^[s%] ]] && window="\$start_line$window\$end_line" ||
-		#			window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
-		#	else
-		#		window="%{-o}%{-u}$window"
-		#	fi
-
-		#	#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
-		#fi
+		window="$commands$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}%{A}"
 
 		[[ $lines == single && $separator =~ ^% && $current == p ]] &&
 				window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
-
-		apps+="$window$app_separator"
 	fi
-done <<< $(wmctrl -l | awk '$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
-		print $1, (NF > 3) ? substr($0, index($0, $4)) : "no name" }')
+}
 
-#~/.orw/scripts/notify.sh "s: $separator"
+
+eval windows=( $(wmctrl -l | awk '\
+	$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
+		wn = (NF > 3) ? substr($0, index($0, $4)) : "no name"
+		print "\"" $1, wn "\"" }') )
+count=${#windows[*]}
+
+for window_index in "${!windows[@]}"; do
+	window_id="${windows[window_index]%% *}"
+	window_name="${windows[window_index]#* }"
+
+	get_window
+	apps+="$window$app_separator"
+done
 
 [[ $app_separator ]] && apps=${apps%\%*}
+
+[[ $apps ]] && apps="%{A4:wmctrl -ia ${windows[previous_index]%% *}:}\
+%{A5:wmctrl -ia ${windows[$(((current_index + 1) % count))]%% *}:}\
+$apps%{A}%{A}"
 
 if [[ $lines != false ]]; then
 	#~/.orw/scripts/notify.sh "s: $separator"
