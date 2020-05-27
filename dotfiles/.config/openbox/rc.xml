@@ -206,6 +206,11 @@
     </keybind>
     <keybind key="A-t">
       <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/toggle_dmenu.sh</command>
+      </action>
+    </keybind>
+	<keybind key="A-S-t">
+      <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/torrents_group.sh torrents</command>
       </action>
     </keybind>
@@ -948,6 +953,7 @@
     <manageDesktops>yes</manageDesktops>
     <!-- show the manage desktops section in the client-list-(combined-)menu -->
   </menu>
+
   <applications>
     <application name="*">
       <decor>no</decor>
@@ -1013,14 +1019,14 @@
     </application>
 
     <application class="tiling">
-      <monitor>1</monitor>
+      <monitor>2</monitor>
       <position force="yes">
         <x>970</x>
-        <y>124</y>
+        <y>100</y>
       </position>
       <size>
         <width>742</width>
-        <height>848</height>
+        <height>872</height>
       </size>
     </application>
 

@@ -1,7 +1,9 @@
 #!/bin/bash
 
+theme=$(awk -F '"' 'END { m = $(NF - 1); print (m == "icons") ? "list" : m }' ~/.config/rofi/main.rasi)
+
 function populate_menu() {
-	toggle=$(echo -e $1 | rofi -dmenu -theme main)
+	toggle=$(echo -e $1 | rofi -dmenu -theme $theme)
 }
 
 populate_menu 'rofi\nbash\ntmux\nbuttons\nfolders\ntitlebar'
@@ -12,7 +14,7 @@ populate_menu 'rofi\nbash\ntmux\nbuttons\nfolders\ntitlebar'
 			case $toggle in
 				rofi) populate_menu 'mode\nprompt';;
 				mode) populate_menu 'list\ndmenu\nfullscreen';;
-				prompt) prompt='prompt -c' && populate_menu 'list\ndmenu';;
+				prompt) prompt='prompt -c' && populate_menu 'list\nicons\ndmenu';;
 				*)
 					~/.orw/scripts/toggle.sh rofi $prompt $toggle
 					exit;;
