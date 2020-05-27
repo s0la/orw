@@ -35,8 +35,9 @@ else
 
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) }' ~/.config/orw/config)
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.config/openbox/rc.xml)
-	mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
-	[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && ~/.orw/scripts/tile_window.sh
+	mode=$(awk '/class.*(selection|\*)/ { print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
+	[[ $mode == selection ]] && class='--class=selection'
+	#[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && ~/.orw/scripts/tile_window.sh
 
 	#count_windows() {
 	#	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
@@ -71,6 +72,49 @@ else
 		title=$(wmctrl -l | awk '$NF ~ "^'$1'[0-9]+?" { wc++ } END { print "'$1'" wc }')
 	}
 
+	#get_command() {
+	#	command="$@"
+	#	command="${command## }"
+
+	#	if [[ $command ]]; then
+	#		if [[ $command =~ -c ]]; then
+	#			shopt -s extglob
+	#			command="${command/-c?( )/}"
+
+	#			class='--class=selection'
+
+	#			read x y w h <<< \
+	#			$(~/.orw/scripts/windowctl.sh -C -p | awk '{ print gensub(/([0-9]+ ){2}/, "", 1) }')
+	#			~/.orw/scripts/set_geometry.sh -c custom_size -x $x -y $y -w $w -h $h
+	#		fi
+
+	#		[[ $command ]] &&
+	#			command="-e \"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh $title $command'\""
+	#	fi
+	#}
+
+	get_command() {
+		command="$@"
+		command="${command## }"
+
+		[[ $command ]] &&
+			command="-e \"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh $title $command'\""
+	}
+
+	tile_term() {
+		get_title termite
+		~/.orw/scripts/tile_terminal.sh -t $title -b "$@"
+	}
+
+	run_term() {
+		if [[ $mode == tiling ]] && ((!window_count)); then
+			tile_term $command
+		else
+			[[ $mode ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+			eval termite $class -t $title $command
+		fi
+	}
+
     case "$@" in
         *$dropdown*) ~/.orw/scripts/dropdown.sh ${@#*$dropdown};;
 		*$tile*)
@@ -80,15 +124,21 @@ else
 		*$term*)
 			#count_windows termite
 
-			get_title termite
+			#get_title termite
+			#get_command "${@#*$term}"
 
-			if [[ $mode == tiling ]]; then
-				((window_count)) &&
-					termite -t $title ${@#*$term} ||
-					~/.orw/scripts/tile_terminal.sh ${@#*$term}
-			else
-				termite -t $title ${@#*$term}
-			fi;;
+			#if [[ $mode == tiling ]]; then
+			#	((window_count)) &&
+			#		termite -t $title $command ||
+			#		~/.orw/scripts/tile_terminal.sh $command
+			#else
+			#	eval termite -t $title "$command"
+			#	#termite -t $title -e "~/.ore/scripts/execute_on_terminal_startup $title $custom_size $command"
+			#fi;;
+
+			get_title termite
+			get_command "${@#*$term}"
+			run_term;;
 
 			#[[ $mode != tiling ]] &&
 			#	termite -t termite$window_count ${@#*$term} ||
@@ -102,14 +152,22 @@ else
 			#title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { wc++ } END { print "vifm" wc }')
 			
 			get_title vifm
+			get_command "vifm.sh ${@#*$vifm}"
 
-			if [[ $mode == tiling ]]; then
-				((window_count)) &&
-					~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
-					~/.orw/scripts/tile_terminal.sh ~/.orw/scripts/vifm.sh ${@#*$vifm}
-			else
-				~/.orw/scripts/vifm.sh -t $title ${@#*$vifm}
-			fi;;
+			if [[ ! $mode ]]; then
+				class="--class=custom_size"
+				~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
+			fi
+
+			run_term;;
+
+			#if [[ $mode == tiling ]]; then
+			#	((window_count)) &&
+			#		~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
+			#		~/.orw/scripts/tile_terminal.sh ~/.orw/scripts/vifm.sh ${@#*$vifm}
+			#else
+			#	~/.orw/scripts/vifm.sh -t $title ${@#*$vifm}
+			#fi;;
 
 			#[[ $mode != tiling ]] && 
 			#	~/.orw/scripts/vifm.sh -t $title ${@#*$vifm} ||
@@ -120,6 +178,7 @@ else
 			#~/.orw/scripts/vifm.sh -t "vifm$window_count" -c "$command" ${@#*$vifm} &;;
 			#coproc(~/.orw/scripts/vifm.sh -t "vifm$window_count" ${@#*$vifm} &);;
         *$qb*)
+			[[ $mode == tiling ]] && ~/.orw/scripts/tile_window.sh
 			[[ ! $@ =~ private ]] && qutebrowser ${@#*$browser} ||
 				qutebrowser -s content.private_browsing true;;
 		*$lock) ~/.orw/scripts/lock_screen.sh;;

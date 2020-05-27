@@ -68,14 +68,25 @@ rofi() {
 
 		config=~/.config/rofi/${config:-$current_mode}.rasi
 
-		if [[ ! $explicit_prompt ]]; then
-			current_prompt=$(sed -n '/#inputbar/,/children/ s/.* \(.*\),.*/\1/p' $config)
-			[[ $current_prompt == prompt ]] && prompt='textbox-prompt-colon' || prompt='prompt'
+		if [[ $current_mode == icons ]]; then
+			awk -i inplace '{
+				if(/ horibox /) {
+					$0 = gensub(/(\[).*(horibox.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1)
+				}
+
+				print
+				}' $path/icons.rasi
+			exit
+		else
+			if [[ ! $explicit_prompt ]]; then
+				current_prompt=$(sed -n '/#inputbar/,/children/ s/.* \(.*\),.*/\1/p' $config)
+				[[ $current_prompt == prompt ]] && prompt='textbox-prompt-colon' || prompt='prompt'
+			fi
+
+			[[ $prompt ]] && prompt+=', '
+
+			sed -i "/#inputbar/,/children/ s/\(.*\[ \).*\(entry.*\)/\1$prompt\2/" $config
 		fi
-
-		[[ $prompt ]] && prompt+=', '
-
-		sed -i "/#inputbar/,/children/ s/\(.*\[ \).*\(entry.*\)/\1$prompt\2/" $config
 	elif [[ $1 == sidebar ]]; then
 		sidebar_mode=$(awk -F '[; ]' '/sidebar/ { print ($(NF - 1) == "true") ? "false" : "true" }' $path/config.rasi)
 		sed -i "/sidebar/ s/ \w[^;]*/ ${2:-$sidebar_mode}/" $path/config.rasi 
@@ -215,12 +226,20 @@ wm() {
 
 		sed -i "/^$1/ s/\w*$/$new_mode/" $orw_conf
 	else
-		new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
+		#new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
+		new_mode=$(awk '/class.*(tiling|selection|\*)/ {
+			print ("'$1'") ? "'$1'" : (/tiling/) ? "tiling" : "floating" }' $openbox_conf)
 
 		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$new_mode</b> mode"
 
-		[[ $new_mode == tiling ]] && new_mode='\*' || new_mode=tiling
-		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$new_mode\"/" $openbox_conf
+		if [[ $new_mode != selection ]]; then
+			[[ $new_mode == tiling ]] && new_mode='\*' || new_mode=tiling
+		fi
+
+		[[ $new_mode == selection ]] && monitor=Mouse || monitor=Active
+
+		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
+		sed -i "/class.*\(tiling\|selection\|\*\)/ s/\".*\"/\"$new_mode\"/" $openbox_conf
 	fi
 
 	#awk -i inplace '{\

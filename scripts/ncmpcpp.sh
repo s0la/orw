@@ -167,11 +167,22 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 				[[ $title ]] || show_status yes
 
-				mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
-				[[ $mode == tiling ]] && unset pre ||
-					~/.orw/scripts/set_geometry.sh -c size -w $width -h $height
+				#mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+				mode=$(awk '/class.*(selection|\*)/ {
+					print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
 
-				termite -t ${title:=ncmpcpp} --class=custom_size \
+				if [[ $mode ]]; then
+					unset pre
+
+					if [[ $mode == selection ]]; then
+						class=selection
+						~/.orw/scripts/set_window_geometry.sh $mode
+					fi
+				else
+					~/.orw/scripts/set_geometry.sh -c custom_size -w $width -h $height
+				fi
+
+				termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
 					-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
 					\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\";$close'" &> /dev/null &
 					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\"'" &> /dev/null &
