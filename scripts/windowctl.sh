@@ -437,8 +437,6 @@ tile_adjucent() {
 						we = ws + $(si + 2)
 						cp = (r) ? $i : $i + $(i + 2)
 
-						#system("~/.orw/scripts/notify.sh " c)
-
 						if((cp == c) &&
 							((ws >= cws && ws <= cwe) ||
 							(we >= cws && we <= cwe) ||
@@ -493,7 +491,6 @@ add_offset() {
 				print substr(o, 2)
 			}' $offsets_file | { read -r o; { printf "%s\n" "$o" >&1; cat > $offsets_file; } })
 
-		#~/.orw/scripts/notify.sh "${1%%_*}: <b>${!1}</b>"
 		~/.orw/scripts/notify.sh -pr 22 "<b>${1/_/ }</b> changed to <b>${!1}</b>"
 	fi
 }
@@ -533,7 +530,7 @@ property_log=~/.config/orw/windows_properties
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
 
-read display_count {x,y}_offset orientation <<< $(awk '\
+read display_count {x,y}_offset display_orientation <<< $(awk '\
 	/^display_[0-9]/ { dc++ } /[xy]_offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
 	END { print dc / 2, offsets, o }' $config)
 
@@ -779,7 +776,7 @@ while ((argument_index <= $#)); do
 										y = '$display_y'
 										r = "'$reverse'"
 										s = '$separator'
-										o = "'$orientation'"
+										o = "'$display_orientation'"
 
 										$('$index' + 1) -= (o == "h") ? x : y
 
@@ -787,7 +784,7 @@ while ((argument_index <= $#)); do
 										$('$index' + 3) = '$original_property' - p
 										$('$index' + 1) = (r == "true") ? '$original_start' : $('$index' + 1) + p
 										sub(/[^ ]* /, "")
-										print rp, d, $0
+										print d, $0
 									}' <<< "${properties[*]}"
 
 								#((reverse_property)) && (( properties[index] += reverse_property ))
@@ -1139,8 +1136,21 @@ while ((argument_index <= $#)); do
 						print
 					}' <<< ${properties[*]}
 				else
-					echo -n "$border_x $border_y "
+					if [[ $second_window_properties ]]; then
+						[[ ! $properties ]] && properties=( ${second_window_properties[*]} )
 
+						[[ $display_orientation == h ]] && index=1 || index=2
+						get_display_properties $index
+
+						properties=( ${properties[*]:1} )
+
+						(( properties[0] -= display_x ))
+						(( properties[1] -= display_y ))
+
+						monitor="$display "
+					fi
+
+					echo -n "$border_x $border_y $monitor"
 					[[ $properties ]] && echo ${properties[*]} ||
 						get_windows ${id:-name} | cut -d ' ' -f 2-
 				fi
