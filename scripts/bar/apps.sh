@@ -66,12 +66,13 @@ get_window() {
 		[[ $current == s ]] &&
 			left_command="wmctrl -ia $window_id" ||
 			left_command="xdotool getactivewindow windowminimize"
-		[[ $mode == floating ]] &&
-			middle_command="wmctrl -c :ACTIVE:" ||
+		[[ $mode != tiling ]] &&
+			middle_command="wmctrl -ic $window_id" ||
 			middle_command="~/.orw/scripts/get_window_neighbours.sh"
-		commands="%{A:$left_command:}%{A2:$middle_command:}"
+		right_command="~/.orw/scripts/windowctl.sh -i $window_id -C -M x,y,w,h"
+		commands="%{A:$left_command:}%{A2:$middle_command:}%{A3:$right_command:}"
 
-		window="$commands$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}%{A}"
+		window="$commands$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}%{A}%{A}"
 
 		[[ $lines == single && $separator =~ ^% && $current == p ]] &&
 				window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
