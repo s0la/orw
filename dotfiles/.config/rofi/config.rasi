@@ -7,9 +7,9 @@ configuration {
 	sidebar-mode:     false;
 
 	kb-cancel:        "Escape";
-	kb-page-prev:     "Alt+Up";
-	kb-page-next:     "Alt+Down";
-	kb-mode-next:     "Alt+Right";
+	kb-page-prev:     "Alt+k";
+	kb-page-next:     "Alt+j";
+	kb-mode-next:     "Alt+l";
 	kb-delete-entry:  "Alt+Delete";
-	kb-mode-previous: "Alt+Left";
+	kb-mode-previous: "Alt+h";
 }
