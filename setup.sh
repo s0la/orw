@@ -169,28 +169,19 @@ function apps() {
 }
 
 function backup() {
-	cd ~/$1
-	echo "backing up files in ~/$1"
+	cd $1
+	echo "backing up files in ${1/$HOME/\~}"
 
-	for dir in $(find ~/.orw/dotfiles/$1 -maxdepth 1 ! -regex ".*\(dotfiles/\|config\|services\)"); do
-		existing=${dir##*/}
+	for file in $(find ~/.orw/dotfiles/${1#$HOME/} -maxdepth 1 ! -regex ".*\(dotfiles/\|config\|services\)"); do
+		file_name=${file##*/}
 
-		if [[ -e $existing ]]; then
-			tar uhf .backup_by_orw.tar.gz $existing
-			rm -rf $existing
+		if [[ -e $file_name ]]; then
+			tar uhf .backup_by_orw.tar.gz $file_name
+			rm -rf $file_name
 		fi
 
-		ln -s $dir $existing
+		ln -s $file $file_name
 	done
-}
-
-function firefox() {
-	if [[ -d ~/.mozilla ]]; then
-		default_dir=$(ls -d ~/.mozilla/firefox/*default*)
-
-		mkdir $default_dir/chrome
-		ln -s ~/.orw/themes/firefox/userChrome.css $default_dir/chrome/
-	fi
 }
 
 function orw() {
@@ -199,8 +190,6 @@ function orw() {
 	[[ -d ~/.fonts ]] || mkdir ~/.fonts
 	[[ -d ~/.icons ]] || mkdir ~/.icons
 	[[ -d ~/.themes ]] || mkdir ~/.themes
-
-	firefox
 
 	ln -s $destination/.fonts/* ~/.fonts
 	ln -s $destination/themes/icons ~/.icons/orw
