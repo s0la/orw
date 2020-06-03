@@ -509,14 +509,585 @@ get_neighbour_window_properties() {
 
 	start_index=$((index % 2 + 1))
 
-	read -a second_window_properties <<< $( \
-		sort_windows $direction | sort $reverse -nk 1,1 | awk \
+	read -a second_window_properties <<< \
+		$(sort_windows $direction | sort $reverse -nk 1,1 | awk \
 			'{ cwp = '${properties[index]}'; cwsp = '${properties[start_index]}'; \
 			if("'$direction'" ~ /[br]/) cwp += '${properties[index + 2]}'; \
 				wp = $1; wsp = $('$start_index' + 2); xd = (cwsp - wsp) ^ 2; yd = (cwp - wp) ^ 2; \
 				print sqrt(xd + yd), $0 }' | sort -nk 1,1 | awk 'NR == 2 \
 				{ if(NF > 7) { $6 += ($NF - '$border_x'); $7 += ($NF - '$border_y')}
 				print gensub("([^ ]+ ){" '${first_field-3}' "}|" $8 "$)", "", 1) }')
+}
+
+print_wm_properties() {
+	(( wm_properties[0] -= display_x ))
+	(( wm_properties[1] -= display_y ))
+	echo $display ${wm_properties[*]}
+}
+
+resize_by_ratio() {
+	local argument=$1
+	local orientation=$2
+	local ratio=$3
+
+	#[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift
+	#[[ $orientation =~ r$ ]] && orientation=${orientation:0:1} reverse=true ||
+	#	reverse=$(awk '/^reverse/ { print $NF }' $config)
+	[[ $orientation =~ r$ ]] && orientation=${orientation:0:1} reverse=true
+
+	if [[ ${orientation:0:1} == a ]]; then
+		((${properties[3]} > ${properties[4]})) && orientation=h || orientation=v
+		((ratio)) || ratio=$(awk '/^(part|ratio)/ { if(!r) r = $NF; else { print $NF "/" r; exit } }' $config)
+
+		auto_tile=true
+		argument=H
+	fi
+
+	set_orientation_properties $orientation
+
+	[[ ${ratio:=2} =~ / ]] && part=${ratio%/*} ratio=${ratio#*/}
+
+	[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
+	[[ $orientation == h ]] && direction=x || direction=y
+
+	if ((!separator)); then
+		border=border_$direction
+		offset=${direction}_offset
+		separator=$(((${!border} + ${margin:-${!offset}})))
+	fi
+
+	original_start=${properties[index]}
+	original_property=${properties[index + 2]}
+
+	if [[ $argument == H || $part ]]; then
+		portion=$((original_property - (ratio - 1) * separator))
+		(( portion /= ratio ))
+
+		if [[ $part ]]; then
+			(( portion *= part ))
+			(( portion += (part - 1) * separator ))
+		fi
+
+		if [[ $argument == H ]]; then
+			properties[index + 2]=$portion
+			[[ $reverse == true ]] && (( properties[index] += original_property - portion ))
+		else
+			(( properties[index + 2] += portion + separator ))
+			[[ $reverse == true ]] && (( properties[index] -= portion + separator ))
+		fi
+	else
+		portion=$(((original_property + separator) * (ratio - 1)))
+		(( properties[index + 2] += portion ))
+		[[ $reverse == true ]] && (( properties[index] -= portion ))
+	fi
+
+	read -a wm_properties <<< $(awk '{
+		r = "'$reverse'"
+		s = '$separator'
+		o = "'$display_orientation'"
+
+		p = $('$index' + 3) + s
+		$('$index' + 3) = '$original_property' - p
+		$('$index' + 1) = (r == "true") ? '$original_start' : $('$index' + 1) + p
+		print gensub(/[^ ]* /, "", 1)
+	}' <<< "${properties[*]}")
+}
+
+set_alignment_direction() {
+	[[ $1 == h ]] &&
+		index=1 opposite_index=2 direction=x opposite_direction=v display_property=$display_x ||
+		index=2 opposite_index=1 direction=y opposite_direction=h display_property=$display_y
+
+	border=border_$direction
+	offset=${direction}_offset
+	separator=$(((${!border} + ${margin:-${!offset}})))
+}
+
+get_alignment() {
+	[[ $1 ]] && local current_direction=$1_
+
+	set_alignment_direction ${1:-$align_direction}
+
+	read ${current_direction}alignment_start ${current_direction}alignment_area ${current_direction}alignment_ratio \
+		${current_direction}aligned_window_count ${current_direction}aligned_windows <<< \
+		$(list_all_windows | sort -nk $((index + 1)),$((index + 1)) | \
+			awk '\
+				function is_aligned(win1, win2) {
+					delta = (win1 > win2) ? win1 - win2 : win2 - win1
+					return delta < wc
+				}
+
+				BEGIN {
+					i = '$index'
+					s = '$separator'
+					oi = '$opposite_index'
+					wc = '${#all_windows[*]}'
+					d = '${properties[index + 2]}'
+					od = '${properties[opposite_index + 2]}'
+					p = '${properties[opposite_index]}'
+				}
+
+				$(oi + 1) == p && od == $(oi + 3) && is_aligned(d, $(i + 3)) {
+					na = aa && $(i + 1) - s != as + aa
+
+					if(!length(aa) || na) {
+						if(na && c) exit
+						as = $(i + 1)
+						aa = $(i + 3)
+						aw = ""
+						awc = 0
+					} else {
+						aa += s + $(i + 3)
+					}
+
+					if($1 == "'$id'") c = 1
+
+					aw = aw " \"" $0 "\""
+					awc++
+				} END { print as, aa, aa / od, awc, aw }')
+}
+
+align() {
+	if [[ ! $all_windows ]]; then
+		set_windows_properties $display_orientation
+		set_orientation_properties $display_orientation
+	fi
+
+	read mode align_direction reverse <<< $(awk '{
+		if(/^mode/) m = $NF
+		else if(/^reverse/) r = ($NF == "true") ? "r" : ""
+		else if(/^direction/) print m, $NF, r }' $config)
+
+	[[ $optarg =~ c$ ]] && close=true
+	[[ $optarg && $optarg != c ]] && align_direction=${optarg:0:1}
+
+	if [[ ( $mode == auto || ${#all_windows[*]} -eq 1 ) && ! $close ]]; then
+		[[ $mode == auto ]] && align_direction=a
+
+		if [[ $mode == stack ]]; then
+			[[ $align_direction == h ]] && align_direction=v || align_direction=h
+		fi
+
+		resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+
+		generate_printable_properties "${properties[*]}"
+		apply_new_properties
+
+		read x y w h <<< ${wm_properties[*]}
+		~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+	else
+		if [[ $mode == stack && ! $close ]]; then
+			[[ $align_direction == h ]] && align_index=3 || align_index=2
+			properties=( $(list_all_windows | sort -nk $align_index,$align_index | tail -1) )
+		fi
+
+		if [[ $close ]]; then
+			if [[ $mode != auto ]]; then
+				get_alignment h
+				get_alignment v
+			fi
+
+			if [[ $mode == auto ]] || ((h_aligned_window_count + v_aligned_window_count <= 2)); then
+				get_closest_windows() {
+					set_alignment_direction $1
+
+					local start=${properties[opposite_index]}
+					local end=$((start + ${properties[opposite_index + 2]}))
+
+					read $1_size $1_aligned_windows <<< $(list_all_windows | sort -nk $index,$index | awk '\
+						function set_current_window() {
+							cp = p
+							cd = d
+							cid = "\"" $0 "\""
+							dis = (p < ws) ? ws - (p + $('$index' + 2)) : p - we
+						}
+
+						BEGIN {
+							ws = '${properties[index]}'
+							we = ws + '${properties[index + 2]}'
+						}
+
+						$1 != "'$id'" {
+							p = $('$index' + 1)
+							s = $('$opposite_index' + 1)
+							d = $('$opposite_index' + 3)
+							e = s + d
+
+							if(s >= '$start' && e <= '$end') {
+								if(cp) {
+									if(cp == p) {
+										cd += d
+										cid = cid " \"" $0 "\""
+									} else if(cd >= max && (!md || dis < md)) {
+										max = cd
+										md = dis
+										id = cid
+										mp = p
+										set_current_window()
+									}
+								} else {
+									set_current_window()
+								}
+							}
+						} END { print (cd >= max && (!md || dis < md)) ? cd " " cid : max " " id }')
+				}
+
+				get_closest_windows h
+				get_closest_windows v
+				
+				((h_size > v_size)) &&
+					dominant_alignment=h aligned_windows="$h_aligned_windows" ||
+					ominant_alignment=v aligned_windows="$v_aligned_windows"
+
+				set_alignment_direction $dominant_alignment
+				eval aligned=( "$aligned_windows" )
+				wmctrl -ic $id
+
+				align_size=$((${properties[index + 2]} + separator))
+
+				for window in "${aligned[@]}"; do
+					properties=( $window )
+					id=${properties[0]}
+
+					(( properties[index + 2] += align_size ))
+
+					generate_printable_properties "${properties[*]}"
+					apply_new_properties
+				done
+				exit
+			else
+				if ((h_aligned_window_count == v_aligned_window_count)); then
+					dominant_alignment=$(echo $h_alignment_ratio $v_alignment_ratio | awk '{ print ($1 < $2) ? "h" : "v" }')
+				else
+					((h_aligned_window_count > v_aligned_window_count)) && dominant_alignment=h || dominant_alignment=v
+				fi
+			fi
+
+			set_alignment_direction $dominant_alignment
+
+			[[ $dominant_alignment == h ]] &&
+				alignment_start=$h_alignment_start alignment_area=$h_alignment_area aligned_windows=$h_aligned_windows ||
+				alignment_start=$v_alignment_start alignment_area=$v_alignment_area aligned_windows=$v_aligned_windows
+
+			aligned_windows="${aligned_windows/\"${properties[*]}\"/}" 
+			wmctrl -ic $id
+		else
+			get_alignment
+		fi
+
+		eval aligned=( "$aligned_windows" )
+		aligned_count="${#aligned[@]}"
+
+		[[ $close ]] &&
+			align_size=$(((alignment_area - (aligned_count - 1) * separator) / aligned_count)) ||
+			align_size=$(((alignment_area - aligned_count * separator) / (aligned_count + 1)))
+
+		for window_index in "${!aligned[@]}"; do
+			properties=( ${aligned[window_index]} )
+
+			if ((window_index)); then
+				 properties[index]=$next_window_start
+			 else
+				 #[[ $reverse ]] && (( properties[index] += align_size + separator )) || properties[index]=$alignment_start
+				 [[ ! $reverse || $close ]] &&
+					 properties[index]=$alignment_start || (( properties[index] += align_size + separator ))
+			fi
+
+			[[ $close || $reverse ]] && ((window_index == aligned_count - 1)) &&
+				original_align_size=$align_size align_size=$((alignment_start + alignment_area - ${properties[index]}))
+
+			properties[index + 2]=$align_size
+			next_window_start=$((${properties[index]} + ${properties[index + 2]} + separator))
+
+			#echo ${properties[*]}
+			generate_printable_properties "${properties[*]}"
+			apply_new_properties
+		done
+
+		if [[ ! $close ]]; then
+			if [[ $reverse ]]; then
+				properties[index]=$alignment_start
+				properties[index + 2]=$original_align_size
+			else
+				properties[index]=$next_window_start
+				properties[index + 2]=$((alignment_area - (aligned_count * (align_size + separator))))
+			fi
+
+			read x y w h <<< ${properties[*]:1}
+			~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+		fi
+	fi
+
+	exit
+
+
+
+	#list_all_windows | sort -nk $((index + 1)),$((index + 1)) | \
+	#	awk '\
+	#		function is_aligned(win1, win2) {
+	#			delta = (win1 > win2) ? win1 - win2 : win2 - win1
+	#			return delta < wc
+	#		}
+
+	#		BEGIN {
+	#			i = '$index'
+	#			s = '$separator'
+	#			oi = '$opposite_index'
+	#			wc = '${#all_windows[*]}'
+	#			d = '${properties[index + 2]}'
+	#			od = '${properties[opposite_index + 2]}'
+	#			p = '${properties[opposite_index]}'
+	#		}
+
+	#		$(oi + 1) == p && od == $(oi + 3) && is_aligned(d, $(i + 3)) {
+	#			na = aa && $(i + 1) - s != as + aa
+
+	#			if($1 == "'$id'") c = 1
+
+	#			if(!length(aa) || na) {
+	#				if(na && c) exit
+	#				as = $(i + 1)
+	#				aa = $(i + 3)
+	#				aw = ""
+	#			} else {
+	#				aa += s + $(i + 3)
+	#			}
+
+	#			aw = aw " \"" $0 "\""
+	#		} END { print as, aa, aw }'
+
+	exit
+
+
+
+
+
+
+
+
+
+
+	#list_all_windows | awk '\
+	#	function is_aligned(win1, win2) {
+	#		d = (win1 > win2) ? win1 - win2 : win2 - win1
+	#		return d < wc
+	#	}
+
+	#	BEGIN {
+	#		w = '${properties[3]}'
+	#		h = '${properties[4]}'
+	#		wc = '${#all_windows[*]}'
+	#	}
+
+	#	$1 != "'$id'" && is_aligned(w, $4) && is_aligned(h, $5)'
+	#exit
+
+
+
+
+
+
+
+	[[ $optarg =~ c$ ]] && close=true
+
+	read mode align_direction reverse <<< $(awk '{
+		if(/^mode/) m = $NF
+		else if(/^reverse/) r = ($NF == "true") ? "r" : ""
+		else if(/^direction/) print m, $NF, r }' $config)
+
+	[[ $optarg && $optarg != c ]] && align_direction=${optarg:0:1}
+	[[ $align_direction == h ]] &&
+		index=1 opposite_index=2 direction=x opposite_direction=v display_property=$display_x ||
+		index=2 opposite_index=1 direction=y opposite_direction=h display_property=$display_y
+
+	#[[ $optarg =~ c$ ]] && resize_argument=D || resize_argument=H
+
+	if [[ $mode == auto || ${#all_windows[*]} -eq 1 ]]; then
+		[[ $mode == auto ]] && align_direction=a
+		[[ $mode == stack ]] && unset reverse
+		#resize_by_ratio ${resize_argument:-H} ${opposite_direction:-$align_direction}$reverse
+		#resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+
+		resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+
+		generate_printable_properties "${properties[*]}"
+		apply_new_properties
+
+		#(( properties[index + 2] -= separator ))
+		#(( properties[index + 2] /= 2 ))
+
+		read x y w h <<< ${wm_properties[*]}
+		~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+
+		#generate_printable_properties "${properties[*]}"
+		#apply_new_properties
+
+		#print_wm_properties
+	else
+		if [[ $mode == stack ]]; then
+			align_index=$((opposite_index + 1))
+			properties=( $(list_all_windows | sort -nk $align_index,$align_index | tail -1) )
+		fi
+
+		[[ $close ]] && unset reverse
+
+		#eval aligned=( $(list_all_windows | awk '{
+		#		w = '${properties[3]}'
+		#		h = '${properties[4]}'
+		#		p = '${properties[opposite_index]}'
+		#	}
+		#	$('$opposite_index' + 1) == p && $4 == w && $5 == h { print "\"" $0 "\"" }' | \
+		#		sort -n${reverse}k $((index + 1)),$((index + 1))) )
+
+		#read alignment_start whole_area aligned_windows <<< \
+		#	$(list_all_windows | sort -n${reverse}k $((index + 1)),$((index + 1)) | \
+		#		awk '{
+		#			w = '${properties[3]}'
+		#			h = '${properties[4]}'
+		#			p = '${properties[opposite_index]}'
+		#		}
+		#		$('$opposite_index' + 1) == p && $4 == w && $5 == h {
+		#			if(!length(as)) as = $('$index' + 1)
+		#			aw = aw " \"" $0 "\""
+		#		} END { print as, $('$index' + 3) + $('$index' + 1) - as, aw }')
+
+		read alignment_start aligned_area aligned_windows <<< \
+			$(list_all_windows | sort -nk $((index + 1)),$((index + 1)) | \
+				awk '\
+					BEGIN {
+						i = '$index'
+						oi = '$opposite_index'
+						d = '${properties[index + 2]}'
+						od = '${properties[opposite_index + 2]}'
+						p = '${properties[opposite_index]}'
+					}
+					$(oi + 1) == p && od == $(oi + 3) && $(i + 3) - d <= awc++ {
+						if(!length(as)) as = $(i + 1)
+						aw = aw " \"" $0 "\""
+					} END { print as, $(i + 1) + $(i + 3) - as, aw }')
+
+		#eval aligned=( "${aligned_windows/${properties[*]}}" )
+		if [[ $close ]]; then
+			aligned_windows="${aligned_windows/\"${properties[*]}\"/}" 
+			#close_command="wmctrl -ic $id"
+			wmctrl -ic $id
+		fi
+
+		eval aligned=( "$aligned_windows" )
+
+		aligned_count="${#aligned[@]}"
+		#[[ $optarg =~ c$ ]] &&
+		#	ratio=$((aligned_count + 1))/$aligned_count ||
+		#	ratio=$aligned_count/$((aligned_count + 1))
+
+		if ((!separator)); then
+			border=border_$direction
+			offset=${direction}_offset
+			separator=$(((${!border} + ${margin:-${!offset}})))
+		fi
+
+		#[[ $optarg =~ ^c ]] &&
+			#d_count=$((aligned_count + 1)) h_count=$aligned_count ||
+			#d_count=$aligned_count h_count=$((aligned_count - 1)) ||
+			#d_count=$((aligned_count - 1)) h_count=$aligned_count
+		#[[ ! $optarg =~ c$ ]] && d_count=$((aligned_count - 1)) h_count=$aligned_count
+		#[[ ! $optarg =~ c$ ]] && count_offset=1
+
+		#align_size=$((aligned_area - (aligned_count - count_offset) * (${properties[index + 2]} + separator)))
+		#align_size=$((aligned_area - (aligned_count - count_offset) * (align_size + separator)))
+
+		[[ $close ]] &&
+			align_size=$(((aligned_area - (aligned_count - 1) * separator) / aligned_count)) ||
+			align_size=$(((aligned_area - aligned_count * separator) / (aligned_count + 1)))
+
+		for window_index in "${!aligned[@]}"; do
+			properties=( ${aligned[window_index]} )
+
+			if ((window_index)); then
+				 properties[index]=$next_window_start
+			 else
+				 [[ $reverse ]] && (( properties[index] += align_size + separator )) || properties[index]=$alignment_start
+			fi
+
+			#if [[ $reverse ]]; then
+			#	original_align_property=${properties[index]}
+			#	[[ $wm_properties ]] && properties[index]=$((${wm_properties[index - 1]} + ${wm_properties[index + 1]} - ${properties[index + 2]}))
+			#else
+			#	#[[ $wm_properties ]] && properties[index]=${wm_properties[index - 1]}
+			#	((window_index)) && properties[index]=$next_window_start || properties[index]=$alignment_start
+			#fi
+
+			#((window_index)) || properties[index]=$alignment_start
+
+			#resize_by_ratio H $align_direction${reverse} $ratio
+
+			#(( properties[index + 2] += (aligned_count - count_offset) * (${properties[index + 2]} + separator) ))
+
+			#properties[index + 2]=$aligned_area
+			#resize_by_ratio H $align_direction$reverse $((aligned_count + count_offset))
+
+			#((window_index == aligned_count - 1)) &&
+			#	align_size=$((aligned_area - (alignment_start + aligned_area - ${properties[index]})))
+			#	#align_size=$((aligned_area - (window_index * (align_size + separator))))
+
+			[[ $close || $reverse ]] && ((window_index == aligned_count - 1)) &&
+				align_size=$((alignment_start + aligned_area - ${properties[index]}))
+				#align_size=$((aligned_area - ((aligned_count - 1) * (align_size + separator))))
+
+			properties[index + 2]=$align_size
+			next_window_start=$((${properties[index]} + ${properties[index + 2]} + separator))
+
+
+			#if [[ $optarg =~ ^c ]]; then
+			#	(( properties[index + 2] += aligned_count * ${properties[index + 2]} + separator) ))
+			#else
+			#	(( properties[index + 2] += (aligned_count - 1) * (${properties[index + 2]} + separator) ))
+			#	resize_by_ratio H $align_direction$reverse $((aligned_count + 1))
+			#	#(( properties[index + 2] -= aligned_count * separator ))
+			#	#(( properties[index + 2] /= aligned_count + 1 ))
+
+
+			##(( properties[index + 2] += (aligned_count - 1) * (${properties[index + 2]} + separator) ))
+			##(( properties[index + 2] -= aligned_count * (${properties[index + 2]} + separator) ))
+
+			#	#resize_by_ratio D $align_direction${reverse} $aligned_count
+			##	resize_by_ratio H $align_direction${reverse} $((aligned_count + 1))
+			#fi
+
+			#echo ${properties[*]}
+			generate_printable_properties "${properties[*]}"
+			apply_new_properties
+		done
+
+		if [[ ! $close ]]; then
+			if [[ $reverse ]]; then
+				properties[index]=$alignment_start
+				properties[index + 2]=$align_size
+			else
+				properties[index]=$next_window_start
+				properties[index + 2]=$((aligned_area - (aligned_count * (align_size + separator))))
+			fi
+
+			read x y w h <<< ${properties[*]:1}
+			~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+		fi
+	fi
+
+	#align_size=$((aligned_area - (aligned_count * (align_size + separator))))
+	#echo $next_window_start $align_size
+	exit
+			#align_size=$((aligned_area - (window_index * (align_size + separator))))
+
+		#echo $aligned_count
+		#echo $alignment_start $aligned_area
+		#echo ${properties[index]}
+		#exit
+
+		wm_properties[index + 1]=${properties[index + 2]}
+		[[ $reverse ]] && wm_properties[index - 1]=$original_align_property
+		print_wm_properties
+		$close_command
+	#fi
 }
 
 arguments="$@"
@@ -582,7 +1153,7 @@ while ((argument_index <= $#)); do
 		fi
 	else
 		optarg=${!argument_index}
-		[[ $argument =~ ^[SMCTRBLHDtrblhvjxymoidsrcp]$ &&
+		[[ $argument =~ ^[SMCATRBLHDtrblhvjxymoidsrcp]$ &&
 			! $optarg =~ ^(-[A-Za-z]|$options)$ ]] && ((argument_index++))
 
 		case $argument in
@@ -594,7 +1165,7 @@ while ((argument_index <= $#)); do
 					print r "," g "," b }' ~/.orw/themes/theme/openbox-3/themerc)
 
 				read -a second_window_properties <<< $( \
-					slop -n 1 -b $((border_x / 2)) -c $color -f '%i %x %y %w %h' | awk '{
+					slop -n -b $((border_x / 2)) -c $color -f '%i %x %y %w %h' | awk '{
 						$1 = sprintf("0x%.8x", $1)
 						x = '$border_x'
 						y = '$border_y'
@@ -602,8 +1173,9 @@ while ((argument_index <= $#)); do
 						$3 -= (y / 2)
 						print
 					}');;
-				#echo ${second_window_properties[2]}
-				#exit;;
+			A)
+				align
+				exit;;
 			[TRBLHD])
 				if [[ ! $option ]]; then
 					if [[ $argument == R ]]; then
@@ -674,122 +1246,125 @@ while ((argument_index <= $#)); do
 							properties[2]=$((${max:-$end} - offset - ${properties[4]} - border_y));;
 						*)
 							[[ ${!argument_index} =~ ^[1-9] ]] && ratio=${!argument_index} && shift
-							[[ $optarg =~ r$ ]] && optarg=${optarg:0:1} reverse=true ||
-								reverse=$(awk '/^reverse/ { print $NF }' $config)
+							resize_by_ratio $argument $optarg $ratio
 
-							if [[ ${optarg:0:1} == a ]]; then
-								((${properties[3]} > ${properties[4]})) && optarg=h || optarg=v
-								((ratio)) ||
-									ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
+							#[[ $optarg =~ r$ ]] && optarg=${optarg:0:1} reverse=true ||
+							#	reverse=$(awk '/^reverse/ { print $NF }' $config)
 
-								auto_tile=true
-								argument=H
-							fi
+							#if [[ ${optarg:0:1} == a ]]; then
+							#	((${properties[3]} > ${properties[4]})) && optarg=h || optarg=v
+							#	((ratio)) ||
+							#		#ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
+							#		ratio=$(awk '/^(part|ratio)/ { if(!r) r = $NF; else { print $NF "/" r; exit } }' $config)
 
-							set_orientation_properties $optarg
-
-							#[[ ${!argument_index} =~ ^[2-9/]+$ ]] && ratio=${!argument_index} && shift || ratio=2
-
-							#if [[ ${!argument_index} =~ ^[2-9] ]]; then
-							#	ratio=${!argument_index}
-							#	shift
-							#else
-							#	ratio=2
+							#	auto_tile=true
+							#	argument=H
 							#fi
 
-							[[ ${ratio:=2} =~ / ]] && part=${ratio%/*} ratio=${ratio#*/}
+							#set_orientation_properties $optarg
 
-							[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
-							[[ $optarg == h ]] && direction=x || direction=y
+							##[[ ${!argument_index} =~ ^[2-9/]+$ ]] && ratio=${!argument_index} && shift || ratio=2
 
-							border=border_$direction
-							offset=${direction}_offset
-							separator=$(((${!border} + ${margin:-${!offset}})))
+							##if [[ ${!argument_index} =~ ^[2-9] ]]; then
+							##	ratio=${!argument_index}
+							##	shift
+							##else
+							##	ratio=2
+							##fi
 
-							original_start=${properties[index]}
-							original_property=${properties[index + 2]}
-							#total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
+							#[[ ${ratio:=2} =~ / ]] && part=${ratio%/*} ratio=${ratio#*/}
 
-							#(( properties[index + 2] $op2= (ratio - 1) * separator ))
-							#(( properties[index + 2] $op1= ratio ))
+							#[[ $argument == D ]] && op1=* op2=+ || op1=/ op2=-
+							#[[ $optarg == h ]] && direction=x || direction=y
 
-							#[[ $argument == H ]] && (( properties[index + 2] -= (ratio - 1) * separator ))
-							#(( properties[index + 2] $op1= ratio ))
-							#[[ $argument == D ]] && (( properties[index + 2] += (ratio - 1) * separator ))
+							#border=border_$direction
+							#offset=${direction}_offset
+							#separator=$(((${!border} + ${margin:-${!offset}})))
 
-							if [[ $argument == H || $part ]]; then
-								portion=$((original_property - (ratio - 1) * separator))
-								(( portion /= ratio ))
+							#original_start=${properties[index]}
+							#original_property=${properties[index + 2]}
+							##total_separation=$(((ratio - 1) * (${!border} + ${!offset})))
 
-								#(( properties[index + 2] -= (ratio - 1) * separator ))
-								#(( properties[index + 2] /= ratio ))
+							##(( properties[index + 2] $op2= (ratio - 1) * separator ))
+							##(( properties[index + 2] $op1= ratio ))
 
-								if [[ $part ]]; then
-									(( portion *= part ))
-									(( portion += (part - 1) * separator ))
-								fi
+							##[[ $argument == H ]] && (( properties[index + 2] -= (ratio - 1) * separator ))
+							##(( properties[index + 2] $op1= ratio ))
+							##[[ $argument == D ]] && (( properties[index + 2] += (ratio - 1) * separator ))
 
-								#[[ $argument == D ]] && size_direction=- && (( portion += separator ))
+							#if [[ $argument == H || $part ]]; then
+							#	portion=$((original_property - (ratio - 1) * separator))
+							#	(( portion /= ratio ))
 
-								#properties[index + 2]=$portion
-								#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= original_property - (portion ) ))
+							#	#(( properties[index + 2] -= (ratio - 1) * separator ))
+							#	#(( properties[index + 2] /= ratio ))
 
+							#	if [[ $part ]]; then
+							#		(( portion *= part ))
+							#		(( portion += (part - 1) * separator ))
+							#	fi
 
+							#	#[[ $argument == D ]] && size_direction=- && (( portion += separator ))
 
-
-
-								if [[ $argument == H ]]; then
-									properties[index + 2]=$portion
-									[[ $reverse == true ]] && (( properties[index] += original_property - portion ))
-								else
-									#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
-									(( properties[index + 2] += portion + separator ))
-									[[ $reverse == true ]] && (( properties[index] -= portion + separator ))
-								fi
+							#	#properties[index + 2]=$portion
+							#	#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= original_property - (portion ) ))
 
 
 
 
 
-								#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= portion + separator ))
+							#	if [[ $argument == H ]]; then
+							#		properties[index + 2]=$portion
+							#		[[ $reverse == true ]] && (( properties[index] += original_property - portion ))
+							#	else
+							#		#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+							#		(( properties[index + 2] += portion + separator ))
+							#		[[ $reverse == true ]] && (( properties[index] -= portion + separator ))
+							#	fi
 
-								#if [[ $argument == H ]]; then
-								#	[[ $reverse ]] && (( properties[index] += portion + separator ))
-								#else
-								#	#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
-								#	properties[index + 2]=$((portion + separator))
-								#	[[ $reverse ]] && (( properties[index] -= portion + separator ))
-								#fi
-							else
-								#(( properties[index + 2] *= ratio ))
-								#(( properties[index + 2] += (ratio - 1) * separator ))
-								portion=$(((original_property + separator) * (ratio - 1)))
-								(( properties[index + 2] += portion ))
-								[[ $reverse == true ]] && (( properties[index] -= portion ))
-							fi
 
-							if [[ $auto_tile ]]; then
-								#read $reverse tiling_properties <<< $(awk '{
-								awk '{
-										d = '$display'
-										x = '$display_x'
-										y = '$display_y'
-										r = "'$reverse'"
-										s = '$separator'
-										o = "'$display_orientation'"
 
-										$('$index' + 1) -= (o == "h") ? x : y
 
-										p = $('$index' + 3) + s
-										$('$index' + 3) = '$original_property' - p
-										$('$index' + 1) = (r == "true") ? '$original_start' : $('$index' + 1) + p
-										sub(/[^ ]* /, "")
-										print d, $0
-									}' <<< "${properties[*]}"
 
-								#((reverse_property)) && (( properties[index] += reverse_property ))
-								#echo ${tiling_properties[*]}
-							fi
+							#	#[[ $reverse ]] && (( properties[index] ${size_direction:-+}= portion + separator ))
+
+							#	#if [[ $argument == H ]]; then
+							#	#	[[ $reverse ]] && (( properties[index] += portion + separator ))
+							#	#else
+							#	#	#[[ $argument == D ]] && (( properties[index + 2] += separator + original_property ))
+							#	#	properties[index + 2]=$((portion + separator))
+							#	#	[[ $reverse ]] && (( properties[index] -= portion + separator ))
+							#	#fi
+							#else
+							#	#(( properties[index + 2] *= ratio ))
+							#	#(( properties[index + 2] += (ratio - 1) * separator ))
+							#	portion=$(((original_property + separator) * (ratio - 1)))
+							#	(( properties[index + 2] += portion ))
+							#	[[ $reverse == true ]] && (( properties[index] -= portion ))
+							#fi
+
+							#if [[ $auto_tile ]]; then
+							#	#read $reverse tiling_properties <<< $(awk '{
+							#	awk '{
+							#			d = '$display'
+							#			x = '$display_x'
+							#			y = '$display_y'
+							#			r = "'$reverse'"
+							#			s = '$separator'
+							#			o = "'$display_orientation'"
+
+							#			$('$index' + 1) -= (o == "h") ? x : y
+
+							#			p = $('$index' + 3) + s
+							#			$('$index' + 3) = '$original_property' - p
+							#			$('$index' + 1) = (r == "true") ? '$original_start' : $('$index' + 1) + p
+							#			sub(/[^ ]* /, "")
+							#			print d, $0
+							#		}' <<< "${properties[*]}"
+
+							#	#((reverse_property)) && (( properties[index] += reverse_property ))
+							#	#echo ${tiling_properties[*]}
+							#fi
 					esac
 
 					update_properties
@@ -865,17 +1440,96 @@ while ((argument_index <= $#)); do
 							properties=( $id $(backtrace_properties) )
 							update_properties;;
 						t)
+							##align_direction=v
+							##reverse=true
+
+							##[[ $reverse ]] && reverse_align=-r
+
+							#set_windows_properties $display_orientation
+							#set_orientation_properties $display_orientation
+
+							#read mode align_direction opposite_direction index opposite_index display_property reverse <<< \
+							#	$(awk '{
+							#		if(/^mode/) m = $NF
+							#		else if(/^reverse/) r = ($NF == "true") ? "r" : ""
+							#		else if(/^direction/) {
+							#			p = ($NF == "h") ? "v 1 2 '$display_x'" : "h 2 1 '$display_y'"
+							#			print m, $NF, p, r
+							#		}
+							#	}' $config)
+
+							#if [[ $mode == auto || ${#all_windows[*]} -eq 1 ]]; then
+							#	[[ $mode == auto ]] && align_direction=a
+							#	[[ $mode == stack ]] && unset reverse
+							#	resize_by_ratio H ${opposite_direction:-$align_direction}$reverse
+
+							#	generate_printable_properties "${properties[*]}"
+							#	apply_new_properties
+
+							#	print_wm_properties
+							#else
+							#	if [[ $mode == stack ]]; then
+							#		align_index=$((opposite_index + 1))
+							#		properties=( $(list_all_windows | sort -nk $align_index,$align_index | tail -1) )
+							#	fi
+
+							#	eval aligned=( $(list_all_windows | awk '{
+							#			w = '${properties[3]}'
+							#			h = '${properties[4]}'
+							#			p = '${properties[opposite_index]}'
+							#		}
+							#		$('$opposite_index' + 1) == p && $4 == w && $5 == h { print "\"" $0 "\"" }' | \
+							#			sort -n${reverse}k $((index + 1)),$((index + 1))) )
+
+							#	aligned_count="${#aligned[@]}"
+							#	ratio=$aligned_count/$((aligned_count + 1))
+
+							#	for window in "${aligned[@]}"; do
+							#		properties=( $window )
+
+							#		if [[ $reverse ]]; then
+							#			original_align_property=${properties[index]}
+							#			[[ $wm_properties ]] && properties[index]=$((${wm_properties[index - 1]} + ${wm_properties[index + 1]} - ${properties[index + 2]}))
+							#		else
+							#			[[ $wm_properties ]] && properties[index]=${wm_properties[index - 1]}
+							#		fi
+
+							#		resize_by_ratio H $align_direction${reverse} $ratio
+
+							#		generate_printable_properties "${properties[*]}"
+							#		apply_new_properties
+							#	done
+
+							#	wm_properties[index + 1]=${properties[index + 2]}
+							#	[[ $reverse ]] && wm_properties[index - 1]=$original_align_property
+							#	print_wm_properties
+							#	#echo ${wm_properties[*]}
+							#fi
+
 							tiling=true
 
 							set_windows_properties $display_orientation
 							set_orientation_properties $display_orientation
+
 							[[ $second_window_properties ]] || get_neighbour_window_properties $optarg
 
-							#tiling_properties=( $(get_neighbour_window_properties $optarg) )
-							#new_properties=( $($0 -i ${tiling_properties[0]} resize -H a) )
+							original_id=$id
+							properties=( ${second_window_properties[*]} )
+							new_properties=( $original_id $(align | cut -d ' ' -f 2-) )
 
-							new_properties=( $($0 -i ${second_window_properties[0]} resize -H a$optarg) )
-							properties=( $id ${new_properties[*]:1} )
+							(( new_properties[1] += display_x ))
+							(( new_properties[2] += display_y ))
+
+							properties=( ${new_properties[*]} )
+
+							#echo ${properties[*]}
+
+							#new_properties=( $original_id $(align) )
+
+							#properties=( $id ${new_properties[*]:1} )
+
+							#new_properties=( $($0 -i ${second_window_properties[0]} resize -H a$optarg) )
+							#properties=( $id ${new_properties[*]:1} )
 					esac
 				else
 					value=${optarg#*[-+]}
@@ -993,10 +1647,14 @@ while ((argument_index <= $#)); do
 
 				get_bar_properties add
 
-				if [[ ! $second_window_properties ]]; then
+				if [[ $second_window_properties ]]; then
+					second_window_properties=( ${second_window_properties[*]:1} )
+					optind=$optarg
+				else
 					case $optarg in
 						[trbl])
-							second_window_properties=( $(get_neighbour_window_properties $optarg) );;
+							get_neighbour_window_properties $optarg;;
+							#second_window_properties=( $(get_neighbour_window_properties $optarg) );;
 							#[[ $optarg =~ [lr] ]] && index=1 || index=2
 							#[[ $optarg =~ [br] ]] && reverse=-r
 
@@ -1024,12 +1682,9 @@ while ((argument_index <= $#)); do
 									if(NF > 5) { $4 += ($NF - '${border_x:=0}'); $5 += ($NF - '${border_y:=0}') }
 										print gensub("(" $1 "|" $6 "$)", "", "g") }') )
 					esac
-				else
-					second_window_properties=( ${second_window_properties[*]:1} )
-					optind=$optarg
 				fi
 
-				if [[ $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
+				if [[ $optind && $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
 					for specific_mirror_property in ${optind//,/ }; do 
 						unset operation operand additional_{operation,operand} mirror_value
 
