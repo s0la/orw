@@ -227,19 +227,17 @@ wm() {
 		sed -i "/^$1/ s/\w*$/$new_mode/" $orw_conf
 	else
 		#new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
-		new_mode=$(awk '/class.*(tiling|selection|\*)/ {
-			print ("'$1'") ? "'$1'" : (/tiling/) ? "tiling" : "floating" }' $openbox_conf)
+		new_mode=$(awk '/^mode/ {
+			print ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating" }' $orw_conf)
 
-		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$new_mode</b> mode"
-
-		if [[ $new_mode != selection ]]; then
-			[[ $new_mode == tiling ]] && new_mode='\*' || new_mode=tiling
-		fi
-
+		[[ $new_mode == floating ]] && pattern=tiling || pattern='\*'
 		[[ $new_mode == selection ]] && monitor=Mouse || monitor=Active
 
+		sed -i "/^mode/ s/\w*$/$new_mode/" $orw_conf
 		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
-		sed -i "/class.*\(tiling\|selection\|\*\)/ s/\".*\"/\"$new_mode\"/" $openbox_conf
+		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$pattern\"/" $openbox_conf
+
+		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$new_mode</b> mode"
 	fi
 
 	#awk -i inplace '{\

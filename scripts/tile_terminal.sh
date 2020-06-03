@@ -20,8 +20,9 @@ win_args="${all_arguments#*-t * }"
 #current_mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.orw/dotfiles/.config/openbox/rc.xml)
 
 offsets_file=~/.config/orw/offsets
-offset=$(awk '/^offset/ { print $NF }' ~/.config/orw/config)
-current_mode=$(awk '/class.*\*/ { print "tiling" }' ~/.orw/dotfiles/.config/openbox/rc.xml)
+read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' ~/.config/orw/config | xargs)
+#offset=$(awk '/^offset/ { print $NF }' ~/.config/orw/config)
+#current_mode=$(awk '/^mode/ { print $NF }' 
 
 while getopts :t:d:x:y:m:o flag; do
 	[[ $flag == t ]] && title=$OPTARG || eval "$flag=$OPTARG"
@@ -54,4 +55,4 @@ termite --class=custom_size -t ${title:=termite} \
 	-e "bash -c '~/.orw/scripts/windowctl.sh $win_args tile;${command:-bash}'" &> /dev/null &
 
 sleep 1
-replace center "${current_mode:-floating}"
+replace center $mode

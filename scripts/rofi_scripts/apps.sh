@@ -65,6 +65,8 @@ else
 	#	[[ ! $@ =~ $tile ]] && command=$(~/.orw/scripts/windowctl.sh resize H a 2)
 	#fi
 
+	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+
 	desktop=$(xdotool get_desktop)
 	window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
 
@@ -107,11 +109,12 @@ else
 	}
 
 	run_term() {
-		if [[ $mode == tiling ]] && ((!window_count)); then
+		#if [[ $mode == tiling ]] && ((!window_count)); then
+		if [[ ! $mode =~ tiling|selection ]] && ((!window_count)); then
 			tile_term $command
 		else
-			[[ $mode ]] && ~/.orw/scripts/set_window_geometry.sh $mode
-			eval termite $class -t $title $command
+			[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+			eval termite -t $title $command
 		fi
 	}
 

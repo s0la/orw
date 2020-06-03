@@ -22,7 +22,7 @@ wm() {
 	#	reverse $reverse
 	#EOF
 
-	echo "#wm\npart 1\nratio 2\nx_offset $x_offset\ny_offset $y_offset\noffset $offset\nreverse $reverse\n"
+	echo "#wm\nmode floating\npart 1\nratio 2\nreverse false\ndirection h\nx_offset $x_offset\ny_offset $y_offset\noffset false\n"
 }
 
 display() {
