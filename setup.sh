@@ -197,8 +197,8 @@ function orw() {
 
 	echo 'linking config files..'
 
-	backup
-	backup .config
+	backup ~/
+	backup ~/.config
 
 	services_dir=/etc/systemd/user
 	[[ ! -d $services_dir ]] && sudo mkdir $services_dir
