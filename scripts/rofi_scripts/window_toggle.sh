@@ -15,7 +15,7 @@ if [[ -z $@ ]]; then
 else
 	[[ $@ =~  ]] && option=offset
 	[[ $@ =~  ]] && option=reverse
-	[[ $@ =~  ]] && mode="${@#*$sep$wm_mode }"
+	[[ $@ =~  ]] && mode="${@#*$sep$wm_mode}"
 
 	~/.orw/scripts/toggle.sh wm $option $mode
 
