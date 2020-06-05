@@ -8,7 +8,7 @@ cover="$HOME/Music/covers/${album// /_}.jpg"
 
 if [[ ! -f "${cover//[()]/}" ]]; then
 	file=$(mpc current -f %file%)
-	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.mpd/mpd.conf)
+	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.config/mpd/mpd.conf)
 	full_path="$root/$file"
 
 	#echo "$file"
