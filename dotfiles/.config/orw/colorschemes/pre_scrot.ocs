@@ -1,0 +1,165 @@
+#ob
+t #2a2b2d
+tb #2a2b2d
+b #917c5b
+c #917c5b
+it #a9a9a9
+itb #a9a9a9
+ib #18191d
+ic #18191d
+cbt #608985
+mabt #608985
+mibt #608985
+cbth #8d6e68
+mabth #8d6e68
+mibth #8d6e68
+ibt #a9a9a9
+ibth #B39C80
+mbg #18191d
+mfg #3d3e42
+mtbg #18191d
+mtfg #35363a
+msbg #18191d
+msfg #62716d
+mb #18191d
+ms #18191d
+bfg #212226
+bsfg #62716d
+osd #917c5b
+osdh #bbbbbb
+osdu #888888
+
+#dunst
+bg #0d0e12
+fg #cccccc
+fc #ca8065
+pbfg #979392
+
+#term
+fg #cccccc
+bg #ff18191d
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg none
+fg #d0d0d0
+ifg #545557
+vfg #959595
+cfg #c0c0c0
+ffg #846358
+sfg #f3f3f3
+nbg none
+nfg #25262a
+lbg #1e1f23
+lfg #846358
+syfg #c0c0c0
+cmfg #25262a
+slbg #202125
+slfg #555658
+bcbg #b5bc6d
+bdbg #846358
+nmbg #bcbcbc
+imbg #846358
+vmbg #C8935F
+
+#vifm
+fg
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+sfg #b8987e
+tfg #494a4c
+slbg #6e4d42
+slfg #1e1f23
+
+#bar
+bg #101115
+fc #101115
+bfc #608985
+bbg #101115
+bsbg #101115
+bsfg #5c5d5f
+pbg #18191d
+pfg #999999
+sbg #18191d
+sfg #5c5d5f
+pbefg #608985
+msfg #47484a
+mlfg #7a8d90
+pbfg #494643
+mpfg #999999
+mfc #608985
+Tafg #785A5A
+Apbg #f2101115
+
+#ncmpcpp
+npp #b2adae
+np #b2adae
+sip #2e2f31
+sc #2e2f31
+mc #2e2f31
+etc #2e2f31
+c2 #DBBD7D
+pc #2e2f31
+pec #6e4d42
+vc #6e4d42
+
+#tmux
+bg default
+fg #656c1d
+bc #1e1f23
+mc #3a3a3a
+ibg #202125
+ifg #3d3e40
+sfg #202125
+wbg #202125
+wfg #3d3e40
+cbg #2e2f33
+cfg #62716d
+
+#rofi
+bg #131418
+fg #37383c
+bc #131418
+ibg #131418
+ibc #ca8065
+abg #87939c
+afg #d5d5d5
+ebg #131418
+efg #ca8065
+sbg #191a1e
+sfg #979392
+sul #191a1e
+lpc #979392
+dpc #212226
+btc #131418
+sbtc #131418
+btbc #131418
+
+#bash
+bg default
+fg #414244
+sc #414244
+ic #6ba0a4
+sec #81625c
+gcc #879394
+gdc #6e4d42
+vc #87939c
+
+#qb
+bg #1d1e20
+fg #2d3235
+sbg #191a1c
+sfg #999999
+mfg #87939c
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ff715e42
+ic #a4121315
+wc #ff6D4E48
+
+#sxiv
+bg #18191d
+fg #6e4d42

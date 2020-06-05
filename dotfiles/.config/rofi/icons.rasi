@@ -7,7 +7,7 @@
 }
 
 #window {
-	width:       332px;
+	width:       637px;
 	border:      0;
 	padding:     15px;
 	children:    [ horibox ];
@@ -34,9 +34,8 @@
 	margin: 0 10px;
 }
 
-#textbox-prompt-colon {
-	str:          "";
-	color:        @efg;
+#prompt {
+	color:        @fg;
 }
 
 #element {

@@ -1,0 +1,165 @@
+#ob
+t #2a2b2d
+tb #2a2b2d
+b #A897A2
+c #A897A2
+it #a9a9a9
+itb #a9a9a9
+ib #1E2329
+ic #1E2329
+cbt #608985
+mabt #608985
+mibt #608985
+cbth #8d6e68
+mabth #8d6e68
+mibth #8d6e68
+ibt #a9a9a9
+ibth #B39C80
+mbg #1E2329
+mfg #3e414c
+mtbg #1E2329
+mtfg #35363a
+msbg #1E2329
+msfg #A897A2
+mb #1E2329
+ms #1E2329
+bfg #212226
+bsfg #A897A2
+osd #A897A2
+osdh #bbbbbb
+osdu #888888
+
+#dunst
+bg #1e2329
+fg #cccccc
+fc #ca8065
+pbfg #979392
+
+#term
+fg #cccccc
+bg #ff1e2329
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg none
+fg #d0d0d0
+ifg #545557
+vfg #959595
+cfg #c0c0c0
+ffg #9d8c97
+sfg #f3f3f3
+nbg none
+nfg #25262a
+lbg #22272d
+lfg #9d8c97
+syfg #c0c0c0
+cmfg #2f343a
+slbg #262b31
+slfg #52575d
+bcbg #b5bc6d
+bdbg #858b92
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+sfg #b8987e
+tfg #494a4c
+slbg #6e4d42
+slfg #1e1f23
+
+#bar
+bg #101115
+fc #101115
+bfc #608985
+bbg #101115
+jbg #101115
+jfg #5c5d5f
+pbg #1E2329
+pfg #999999
+sbg #1E2329
+sfg #5c5d5f
+pbefg #608985
+msfg #47484a
+mlfg #7a8d90
+pbfg #494643
+mpfg #999999
+mfc #608985
+Tafg #785A5A
+Apbg #f2101115
+
+#ncmpcpp
+npp #999999
+np #999999
+sip #464954
+sc #464954
+mc #464954
+etc #2e2f31
+c2 #DBBD7D
+pc #464954
+pec #A897A2
+vc #A897A2
+
+#tmux
+bg default
+fg #656c1d
+bc #1e1f23
+mc #3a3a3a
+ibg #202125
+ifg #3d3e40
+sfg #202125
+wbg #202125
+wfg #3d3e40
+cbg #2e2f33
+cfg #62716d
+
+#rofi
+bg #171c22
+fg #37383c
+bc #171c22
+ibg #171c22
+ibc #A897A2
+abg #87939c
+afg #d5d5d5
+ebg #171c22
+efg #A897A2
+sbg #1d2228
+sfg #979392
+sul #1d2228
+lpc #979392
+dpc #1d2228
+btc #171c22
+sbtc #171c22
+btbc #171c22
+
+#bash
+bg default
+fg #464954
+sc #464954
+ic #6ba0a4
+sec #81625c
+gcc #879394
+gdc #a897a2
+vc #87939c
+
+#qb
+bg #1d1e20
+fg #2d3235
+sbg #191a1c
+sfg #999999
+mfg #87939c
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ff917c5b
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #1e2329
+fg #A897A2

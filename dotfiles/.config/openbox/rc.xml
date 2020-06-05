@@ -30,7 +30,7 @@
     <center>yes</center>
     <!-- whether to place windows in the center of the free area found or
        the top left corner -->
-    <monitor>Mouse</monitor>
+    <monitor>Active</monitor>
     <!-- with Smart placement on a multi-monitor system, try to place new windows
        on: 'Any' - any monitor, 'Mouse' - where the mouse is, 'Active' - where
        the active window is, 'Primary' - only on the primary monitor -->
@@ -1010,7 +1010,7 @@
       <desktop>all</desktop>
       <position force="yes">
         <x>528</x>
-        <y>43</y>
+        <y>70</y>
       </position>
       <size>
         <width>864</width>
@@ -1018,15 +1018,15 @@
       </size>
     </application>
 
-    <application class="selection">
-      <monitor>2</monitor>
+    <application class="tiling">
+      <monitor>-x</monitor>
       <position force="yes">
         <x>970</x>
-        <y>100</y>
+        <y>124</y>
       </position>
       <size>
-        <width>742</width>
-        <height>872</height>
+        <width>642</width>
+        <height>848</height>
       </size>
     </application>
 
@@ -1035,7 +1035,7 @@
       <focus>yes</focus>
       <layer>below</layer>
       <position force="yes">
-        <x>855</x>
+        <x>930</x>
         <y>510</y>
       </position>
       <size>
@@ -1048,8 +1048,8 @@
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>1612</x>
-        <y>124</y>
+        <x>734</x>
+        <y>224</y>
       </position>
 	  <size>
 		  <width>100</width>
