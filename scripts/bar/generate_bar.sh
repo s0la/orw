@@ -17,12 +17,12 @@ bg="#101115"
 fc="#101115"
 bfc="#608985"
 bbg="#101115"
-bsbg="%{B#101115}"
-bsfg="%{F#5c5d5f}"
+jbg="%{B#101115}"
+jfg="%{F#5c5d5f}"
 
-pbg="%{B#18191d}"
+pbg="%{B#1E2329}"
 pfg="%{F#999999}"
-sbg="%{B#18191d}"
+sbg="%{B#1E2329}"
 sfg="%{F#5c5d5f}"
 
 get_mpd() {
@@ -67,7 +67,7 @@ get_disk_usage() {
 }
 
 get_network() {
-	echo -e "NETWORK $($path/system_info.sh network $label)"
+	echo -e "NETWORK $($path/system_info.sh Network $padding $label)"
 }
 
 get_email() {
@@ -95,7 +95,7 @@ get_torrents() {
 }
 
 get_date() {
-	echo -e "DATE $($path/system_info.sh date $tweener $date_format)"
+	echo -e "DATE $($path/system_info.sh date $padding $tweener $date_format)"
 }
 
 get_updates() {
@@ -172,7 +172,7 @@ format() {
 			#local left_line=$(eval echo -e "${start_line:-$left_frame}")
 			modules+="%{U$frame_color}$left_line\${$1% *}${joiner:1}"
 			#eval joiner_end_frame="$bar_side_frame%{-o}%{-u}"
-			eval joiner_right_frame="$bar_side_frame%{-o}%{-u}"
+			#eval joiner_right_frame="$bar_side_frame%{-o}%{-u}"
 			#~/.orw/scripts/notify.sh "start: $1 $frame_color $left_line"
 		elif [[ $joiner_end ]]; then
 			#~/.orw/scripts/notify.sh "end: $1"
@@ -240,6 +240,11 @@ all_arguments="$@"
 
 while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 	tweener="${joiner_start:-$joiner_end}$joiner_end_frame${joiner:-$separator}"
+
+	if [[ $joiner_start ]]; then
+		set_frame_color
+		eval joiner_right_frame="$bar_side_frame%{-o}%{-u}"
+	fi
 
 	case $flag in
 		b)
@@ -355,6 +360,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			fi;;
 		j)
 			check_arg joiner_distance "${!OPTIND}" && shift
+			[[ ${!OPTIND} =~ ^[hn0-9] ]] && next_module_bg=${!OPTIND} && shift
 			check_arg joiner_symbol "${!OPTIND}" && shift
 
 			if [[ $joiner_distance ]]; then
@@ -363,20 +369,28 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 				#next_arg=${!OPTIND}
 				#joined_arg=$(sed "s/-[ijOp][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\1/" <<< $all_arguments)
-				joiner_bg=$(sed "s/-[ijlOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
+				[[ $next_module_bg ]] && joiner_bg=$(sed "s/-[ijlOps][^-]*//g; s/.*${!OPTIND}[^-]*-\(.\).*/\${\1sbg:-\${\1pbg:-\$pbg}}/" <<< $all_arguments)
 				#modules_args="${all_arguments//-[ijOp]*-/-}"
 				#second_next="${modules_args#*$next_arg*-}"
 				#~/.orw/scripts/notify.sh "ma: $modules_args"
 				#~/.orw/scripts/notify.sh "na: $next_arg sn $second_next"
 				#~/.orw/scripts/notify.sh "ja: $joined_arg"
-				if [[ ! $joiner_symbol ]]; then
+				if [[ ! $joiner_symbol && ! $next_module_bg =~ [h0-9] ]]; then
 					joiner="%{O$joiner_distance}"
 				else
-					half_distance="%{O$((joiner_distance / 2))}"
-					joiner="$half_distance$bsfg$joiner_symbol$half_distance"
+					if [[ $next_module_bg =~ [0-9] ]]; then
+						first_half=$((joiner_distance * next_module_bg / 100))
+						second_half=$((joiner_distance - first_half))
+					else
+						half_distance=$((joiner_distance / 2))
+					fi
+
+					joiner="%{O${first_half:-$half_distance}}$jfg$joiner_symbol$joiner_bg%{O${second_half:-$half_distance}}"
+					[[ $next_module_bg =~ [h0-9] ]] && unset joiner_bg
 				fi
 
 				eval joiner="j$joiner_bg$joiner"
+				unset next_module_bg {first,second}_half
 				#~/.orw/scripts/notify.sh "j: $joiner"
 			else
 				if [[ $joiner ]]; then
