@@ -116,7 +116,7 @@ if [[ $single_line == true ]]; then
 
 	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
 else
-	workspaces+="%{B\$bg}$format_delimiter$separator"
+	workspaces+="$format_delimiter%{B\$bg}$separator"
 fi
 
 echo -e "$workspaces"
