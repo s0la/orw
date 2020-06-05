@@ -22,13 +22,25 @@ let s:settings .= 'ln.m.  %l:%c  .fr;'
 let s:settings .= 't.f. %Y .fr;'
 
 let s:swap_colors = 0
+let g:statusline_state = 'full'
 
 let s:separator = "%#None#"
 
 " let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
 " let s:active_buffer_modules = 'm.s.b.s.f.c.e.ln'
 let s:active_buffer_modules = 'b.f.c.e.t.ln'
+"let s:active_buffer_modules = 'f.c.e.ln'
 let s:inactive_buffer_modules = 'f.c.e.ln'
+
+func! HideStatusline()
+	let g:statusline_state = 'blank'
+
+	set noshowmode
+	set noruler
+	set laststatus=0
+	set noshowcmd
+	set cmdheight=1
+endf
 
 func! MapModule(module)
 	if a:module ==? 'n'
@@ -428,21 +440,23 @@ function! SetTabline()
 endfunction
 
 func! SetStatus()
-	for buffer in split(execute('ls'), '\n')
-		let l:buffer_properties = split(buffer)
-		let l:bufnr = str2nr(l:buffer_properties[0])
+	if g:statusline_state != 'blank'
+		for buffer in split(execute('ls'), '\n')
+			let l:buffer_properties = split(buffer)
+			let l:bufnr = str2nr(l:buffer_properties[0])
 
-		if l:buffer_properties[1] =~ '[%#]a'
-			if l:bufnr == bufnr('%')
-				let l:modules = s:active_buffer_modules
-			else
-				let l:modules = s:inactive_buffer_modules
+			if l:buffer_properties[1] =~ '[%#]a'
+				if l:bufnr == bufnr('%')
+					let l:modules = s:active_buffer_modules
+				else
+					let l:modules = s:inactive_buffer_modules
+				endif
+
+				call setbufvar(l:bufnr, 'branch', GetBranch(l:bufnr))
+				call setbufvar(l:bufnr, '&statusline', '%!GenerateStatusline("' . l:modules . '",' . l:bufnr . ')')
 			endif
-
-			call setbufvar(l:bufnr, 'branch', GetBranch(l:bufnr))
-			call setbufvar(l:bufnr, '&statusline', '%!GenerateStatusline("' . l:modules . '",' . l:bufnr . ')')
-		endif
-	endfor
+		endfor
+	endif
 endf
 
 set tabline=%!SetTabline()
