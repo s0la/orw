@@ -1,0 +1,2 @@
+#~/.orw/scripts/bar/generate_bar.sh -x 200 -y 33 -h 30 -a 7 -f 3 -c bar_bw bar_4pt -M -n bw -i -s 7 -l -p 10 -j 30 -W o3,id -j -L o6 -r -j 30 -m oe10,c:pctcn,P,s22,of10,T,of10,i -i only -p 6 -j 0 -u -N -B -j -e -i icon -j 20 -v -d a,_d_b_I:M -j -P i,lro
+~/.orw/scripts/bar/generate_bar.sh -x 350 -y 20 -h 35 -a 8 -f 3 -c bar_bw bar_4pt -M -n bw -i -s 20 -l -p 10 -c -j 50 80 -L o5 -j -W o2,id -p 22 -d a_d,_b_I:M -p 7 -i only -j 0 -N -B -j 60 25 -v -j -m c:ct,of5,p4 
