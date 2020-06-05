@@ -7,7 +7,7 @@ if [[ -z $@ ]]; then
 	cat <<- EOF
 		$sep$loggout
 		$sep$reboot
-		$sep$poweroff
+		$sep$off
 	EOF
 else
 	case "$option" in
