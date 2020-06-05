@@ -1,7 +1,7 @@
 let $fg = 'default'
 let $dfg = 56
 let $efg = 5
-let $cbg = 59
+let $cbg = 124
 let $sfg = 66
 let $tfg = 0
 let $slbg = 123
@@ -25,7 +25,7 @@ highlight Fifo cterm=none ctermfg=172 ctermbg=default
 highlight Socket cterm=bold ctermfg=223 ctermbg=default
 
 if layoutis('split')
-	let $bbg = 114
+	let $bbg = 'default'
 	let $bfg = 114
 else
 	let $bbg = 'default'
