@@ -440,11 +440,9 @@ if [[ ${option% *} ]]; then
 					[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
 
 					if [[ ! $option =~ destination ]]; then
-						#pidof transmission-daemon &> /dev/null || (transmission-daemon && sleep 0.5)
-						#eval transmission-remote -a "${regex:-'$torrent'}" -w "${torrent_directory-~/Downloads/}" $torrent_state &> /dev/null
 						pidof transmission-daemon &> /dev/null || coproc (transmission-daemon &)
 
-						command="transmission-remote -a ${regex:-'$torrent'} "
+						command="transmission-remote -a ${regex:-\"$torrent\"} "
 						command+="-w '${torrent_directory-$HOME/Downloads/}' $torrent_state &> /dev/null"
 						coproc (execute_on_finish "sleep 0.5 && $command" &)
 
@@ -555,7 +553,7 @@ if [[ ! -d "$current" && ! $selection && ! $git ]]; then
 			case $mime in
 				*torrent)
 					options+=( 'add_torrent' 'start_torrent' 'select_torrent_destination' 'select_torrent_content' );;
-				*[bgx]z|*zip*|*rar) options+=( 'password' 'list_archive' 'extract_archive' );;
+				*tar|*[bgx]z|*zip*|*rar) options+=( 'password' 'list_archive' 'extract_archive' );;
 				*image*) options+=( 'set_as_wallpaper' );;
 				*audio*) options+=( 'add_to_playlist' );;
 				*text*) options+=( 'edit_text' );;
