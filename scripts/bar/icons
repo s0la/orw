@@ -1,7 +1,7 @@
 email_icon=%{I+2}%{I-}
 dropdown_icon=%{I+5}%{I-}
 rec_icon=%{I+7}%{I-}
-network_icon=%{I+7}%{I-}
+Network_icon=%{I+7}%{I-}
 sun_icon=%{I-2}%{I-}
 partly_icon=%{I-2}%{I-}
 cloud_icon=%{I-2}%{I-}
