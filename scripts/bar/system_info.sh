@@ -30,6 +30,8 @@ function format() {
 	if [[ ! $1 == fading ]]; then
 		[[ "$1" == *[![:ascii:]]* && ! "$1" =~ I- ]] && icon_width=%{I-n}
 
+		local padding=${padding:-\$padding}
+
 		case $style in
 			hidden)
 				hidden="\$padding${fg}$icon_width$1%{I-}%{F-}\$padding"
@@ -39,9 +41,9 @@ function format() {
 				done
 
 				echo -e $hidden;;
-			mono) echo -e "\${$pbg}\$padding\${$pfg}$icon_width$mono_fg$1%{I-}\$padding$2 ${separator:-\$separator}";;
-			trim) echo -e "\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2\$padding$3 \$separator";;
-			*) echo -e "\${$sbg}\$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}\${padding}%{B\$bg} ${separator:-\$separator}";;
+			mono) echo -e "\${${mono_bg:-$pbg}}$padding\${$pfg}$icon_width$mono_fg$1%{I-}$padding$2 ${separator:-\$separator}";;
+			trim) echo -e "$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2$padding$3 \$separator";;
+			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
 		esac
 	else
 		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
@@ -84,6 +86,7 @@ format_fading() {
 	if [[ ${count:-$content} ]]; then
 		if [[ $icon_type == only ]]; then
 			style=mono
+			mono_bg="$sbg"
 			mono_fg="\${$sfg}"
 			#format fading "%{A:$left_command:}%{A3:$right_command:}$icon%{A}%{A}"
 			format fading "$left_command$right_command$icon$left_command_end$right_command_end"
@@ -110,7 +113,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=93
+		old_mail_count=78
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -165,14 +168,16 @@ case $1 in
 		#~/.orw/scripts/notify.sh "arg1 ${args[1]}"
 		if [[ $3 == only ]]; then
 			style=mono
+			mono_bg="$sbg"
 			mono_fg="\${$sfg}"
 			format "${args[0]}"
 		else
 			format "${args[@]}"
 		fi;;
 	date*)
-		separator="$2"
-		date="$(date +"$(([[ $3 ]] && echo "${3//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
+		padding=$2
+		separator="$3"
+		date="$(date +"$(([[ $4 ]] && echo "${4//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
 
 		[[ $date =~ .*\ .*:.* ]] && time="${date##* }" date="${date% *}" || style=mono
 
@@ -186,7 +191,7 @@ case $1 in
 			id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
 
 			if [[ $id ]]; then
-				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg='${pfg}' || fg='${sfg}'
+				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg="\${$pfg}" || fg="\${$sfg}"
 
 				#icon=%{I+3}%{I-}
 				set_icon dropdown
@@ -238,8 +243,9 @@ case $1 in
 #			echo -e "%{U$fc}\${start_line:-$left_frame}"
 #		fi
 #	fi;;
-	network)
+	Network)
 		#icon=
+		padding=$2
 		set_icon $1
 
 		ssid=$(nmcli dev wifi | awk ' \
@@ -259,7 +265,7 @@ case $1 in
 		#	[[ $ssid ]] && format ${!2-NET} $ssid
 		#fi;;
 
-		format_fading NET "" "${2-none}" "$ssid";;
+		format_fading NET "" "${3-none}" "$ssid";;
 	Weather*)
 		separator="$2"
 		lines=${@: -1}
@@ -301,6 +307,7 @@ case $1 in
 				mono_fg="\${$pfg}"
 			else
 				label=$icon
+				mono_bg="$sbg"
 				mono_fg="\${$sfg}"
 				unset weather
 			fi
@@ -393,6 +400,7 @@ case $1 in
 	Battery)
 		icon=
 		icon=%{I-b}%{I-}
+		icon=%{I-b}%{I-}
 
 		info="${2//,/ }"
 
@@ -433,6 +441,7 @@ case $1 in
 
 		if [[ $3 == only ]]; then
 			style=mono
+			mono_bg="$sbg"
 			mono_fg="\${$sfg}"
 			format $icon
 		else
@@ -537,6 +546,7 @@ case $1 in
 
 		if [[ $2 == only ]]; then
 			style=mono
+			mono_bg="$sbg"
 			mono_fg="\${$sfg}"
 			format $icon
 		else
@@ -548,9 +558,11 @@ case $1 in
 		#separator="$3"
 		#[[ $5 == icon ]] && set_icon Power
 		set_icon Power
+
+		[[ $5 =~ icon|only ]] && label=$icon
 		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"
 		#~/.orw/scripts/notify.sh "$4 ${!4:-LOG}"
 		#~/.orw/scripts/notify.sh "all: $all"
 
-		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 $4 &:}\${inner}${!5:-POW}\$inner%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 $4 &:}\${inner}${label:-POW}\$inner%{A}";;
 esac
