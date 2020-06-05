@@ -12,10 +12,10 @@ done
 
 ((arg_count)) && shift $arg_count
 
-mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-if [[ $mode == tiling ]]; then
-	~/.orw/scripts/tile_window.sh
+if [[ ! $mode =~ floating|selection ]]; then
+	~/.orw/scripts/windowctl.sh -A
 else
 	read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -p)
 	geaometry=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} |\

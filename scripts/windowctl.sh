@@ -647,12 +647,25 @@ get_alignment() {
 				} END { print as, aa, aa / od, awc, aw }')
 }
 
-align() {
-	if [[ ! $all_windows ]]; then
-		set_windows_properties $display_orientation
-		set_orientation_properties $display_orientation
-	fi
+select_window() {
+	color=$(awk -Wposix -F '#' '/\.active.border/ { 
+		r = sprintf("%d", "0x" substr($NF, 1, 2)) / 255
+		g = sprintf("%d", "0x" substr($NF, 3, 2)) / 255
+		b = sprintf("%d", "0x" substr($NF, 5, 2)) / 255
+		print r "," g "," b }' ~/.orw/themes/theme/openbox-3/themerc)
 
+	read -a second_window_properties <<< $( \
+		slop -n -b $((border_x / 2)) -c $color -f '%i %x %y %w %h' | awk '{
+			$1 = sprintf("0x%.8x", $1)
+			x = '$border_x'
+			y = '$border_y'
+			$2 -= (x / 2)
+			$3 -= (y / 2)
+			print
+		}')
+}
+
+align() {
 	read mode align_direction reverse <<< $(awk '{
 		if(/^mode/) m = $NF
 		else if(/^reverse/) r = ($NF == "true") ? "r" : ""
@@ -661,160 +674,185 @@ align() {
 	[[ $optarg =~ c$ ]] && close=true
 	[[ $optarg && $optarg != c ]] && align_direction=${optarg:0:1}
 
-	if [[ ( $mode == auto || ${#all_windows[*]} -eq 1 ) && ! $close ]]; then
-		[[ $mode == auto ]] && align_direction=a
+	if [[ $mode == selection ]]; then
+		select_window
 
-		if [[ $mode == stack ]]; then
-			[[ $align_direction == h ]] && align_direction=v || align_direction=h
-		fi
+		(( second_window_properties[0] -= display_x ))
+		(( second_window_properties[1] -= display_y ))
 
-		resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+		read x y w h <<< ${second_window_properties[*]}
+		~/.orw/scripts/set_geometry.sh -c '\\\*' -x $x -y $y -w $w -h $h
+		exit
+	elif [[ $id == none ]]; then
+		get_bar_properties
+		read width height <<< $(awk '/^display_'${display-1}' / { print $2, $3 }' $config)
 
-		generate_printable_properties "${properties[*]}"
-		apply_new_properties
+		border=$(awk '/^border/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
 
-		read x y w h <<< ${wm_properties[*]}
-		~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+		#~/.orw/scripts/notify.sh "$x_offset $((y_offset + bar_top_offset)) $((width - 2 * x_offset - border)) $((height - (bar_top_offset + bar_bottom_offset) - 2 * y_offset - border))"
+		~/.orw/scripts/set_geometry.sh -c '\\\*' -x $x_offset -y $((y_offset + bar_top_offset)) \
+			-w $((width - 2 * x_offset - border)) -h $((height - (bar_top_offset + bar_bottom_offset) - 2 * y_offset - border))
 	else
-		if [[ $mode == stack && ! $close ]]; then
-			[[ $align_direction == h ]] && align_index=3 || align_index=2
-			properties=( $(list_all_windows | sort -nk $align_index,$align_index | tail -1) )
+		if [[ ! $all_windows ]]; then
+			set_windows_properties $display_orientation
+			set_orientation_properties $display_orientation
 		fi
 
-		if [[ $close ]]; then
-			if [[ $mode != auto ]]; then
-				get_alignment h
-				get_alignment v
+		if [[ ( $mode == auto || ${#all_windows[*]} -eq 1 ) && ! $close ]]; then
+			[[ $mode == auto ]] && align_direction=a
+
+			if [[ $mode == stack ]]; then
+				[[ $align_direction == h ]] && align_direction=v || align_direction=h
 			fi
 
-			if [[ $mode == auto ]] || ((h_aligned_window_count + v_aligned_window_count <= 2)); then
-				get_closest_windows() {
-					set_alignment_direction $1
+			resize_by_ratio ${resize_argument:-H} $align_direction$reverse
 
-					local start=${properties[opposite_index]}
-					local end=$((start + ${properties[opposite_index + 2]}))
-
-					read $1_size $1_aligned_windows <<< $(list_all_windows | sort -nk $index,$index | awk '\
-						function set_current_window() {
-							cp = p
-							cd = d
-							cid = "\"" $0 "\""
-							dis = (p < ws) ? ws - (p + $('$index' + 2)) : p - we
-						}
-
-						BEGIN {
-							ws = '${properties[index]}'
-							we = ws + '${properties[index + 2]}'
-						}
-
-						$1 != "'$id'" {
-							p = $('$index' + 1)
-							s = $('$opposite_index' + 1)
-							d = $('$opposite_index' + 3)
-							e = s + d
-
-							if(s >= '$start' && e <= '$end') {
-								if(cp) {
-									if(cp == p) {
-										cd += d
-										cid = cid " \"" $0 "\""
-									} else if(cd >= max && (!md || dis < md)) {
-										max = cd
-										md = dis
-										id = cid
-										mp = p
-										set_current_window()
-									}
-								} else {
-									set_current_window()
-								}
-							}
-						} END { print (cd >= max && (!md || dis < md)) ? cd " " cid : max " " id }')
-				}
-
-				get_closest_windows h
-				get_closest_windows v
-				
-				((h_size > v_size)) &&
-					dominant_alignment=h aligned_windows="$h_aligned_windows" ||
-					ominant_alignment=v aligned_windows="$v_aligned_windows"
-
-				set_alignment_direction $dominant_alignment
-				eval aligned=( "$aligned_windows" )
-				wmctrl -ic $id
-
-				align_size=$((${properties[index + 2]} + separator))
-
-				for window in "${aligned[@]}"; do
-					properties=( $window )
-					id=${properties[0]}
-
-					(( properties[index + 2] += align_size ))
-
-					generate_printable_properties "${properties[*]}"
-					apply_new_properties
-				done
-				exit
-			else
-				if ((h_aligned_window_count == v_aligned_window_count)); then
-					dominant_alignment=$(echo $h_alignment_ratio $v_alignment_ratio | awk '{ print ($1 < $2) ? "h" : "v" }')
-				else
-					((h_aligned_window_count > v_aligned_window_count)) && dominant_alignment=h || dominant_alignment=v
-				fi
-			fi
-
-			set_alignment_direction $dominant_alignment
-
-			[[ $dominant_alignment == h ]] &&
-				alignment_start=$h_alignment_start alignment_area=$h_alignment_area aligned_windows=$h_aligned_windows ||
-				alignment_start=$v_alignment_start alignment_area=$v_alignment_area aligned_windows=$v_aligned_windows
-
-			aligned_windows="${aligned_windows/\"${properties[*]}\"/}" 
-			wmctrl -ic $id
-		else
-			get_alignment
-		fi
-
-		eval aligned=( "$aligned_windows" )
-		aligned_count="${#aligned[@]}"
-
-		[[ $close ]] &&
-			align_size=$(((alignment_area - (aligned_count - 1) * separator) / aligned_count)) ||
-			align_size=$(((alignment_area - aligned_count * separator) / (aligned_count + 1)))
-
-		for window_index in "${!aligned[@]}"; do
-			properties=( ${aligned[window_index]} )
-
-			if ((window_index)); then
-				 properties[index]=$next_window_start
-			 else
-				 #[[ $reverse ]] && (( properties[index] += align_size + separator )) || properties[index]=$alignment_start
-				 [[ ! $reverse || $close ]] &&
-					 properties[index]=$alignment_start || (( properties[index] += align_size + separator ))
-			fi
-
-			[[ $close || $reverse ]] && ((window_index == aligned_count - 1)) &&
-				original_align_size=$align_size align_size=$((alignment_start + alignment_area - ${properties[index]}))
-
-			properties[index + 2]=$align_size
-			next_window_start=$((${properties[index]} + ${properties[index + 2]} + separator))
-
-			#echo ${properties[*]}
 			generate_printable_properties "${properties[*]}"
 			apply_new_properties
-		done
 
-		if [[ ! $close ]]; then
-			if [[ $reverse ]]; then
-				properties[index]=$alignment_start
-				properties[index + 2]=$original_align_size
-			else
-				properties[index]=$next_window_start
-				properties[index + 2]=$((alignment_area - (aligned_count * (align_size + separator))))
+			read x y w h <<< ${wm_properties[*]}
+			~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+		else
+			if [[ $mode == stack && ! $close ]]; then
+				[[ $align_direction == h ]] && align_index=3 || align_index=2
+				properties=( $(list_all_windows | sort -nk $align_index,$align_index | tail -1) )
 			fi
 
-			read x y w h <<< ${properties[*]:1}
-			~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+			if [[ $close ]]; then
+				if [[ $mode != auto ]]; then
+					get_alignment h
+					get_alignment v
+				fi
+
+				if [[ $mode == auto ]] || ((h_aligned_window_count + v_aligned_window_count <= 2)); then
+					get_closest_windows() {
+						set_alignment_direction $1
+
+						local start=${properties[opposite_index]}
+						local end=$((start + ${properties[opposite_index + 2]}))
+
+						read $1_size $1_aligned_windows <<< $(list_all_windows | sort -nk $index,$index | awk '\
+							function set_current_window() {
+								cp = p
+								cd = d
+								cid = "\"" $0 "\""
+								dis = (p < ws) ? ws - (p + $('$index' + 2)) : p - we
+							}
+
+							BEGIN {
+								ws = '${properties[index]}'
+								we = ws + '${properties[index + 2]}'
+							}
+
+							$1 != "'$id'" {
+								p = $('$index' + 1)
+								s = $('$opposite_index' + 1)
+								d = $('$opposite_index' + 3)
+								e = s + d
+
+								if(s >= '$start' && e <= '$end') {
+									if(cp) {
+										if(cp == p) {
+											cd += d
+											cid = cid " \"" $0 "\""
+										} else if(cd >= max && (!md || dis < md)) {
+											max = cd
+											md = dis
+											id = cid
+											mp = p
+											set_current_window()
+										}
+									} else {
+										set_current_window()
+									}
+								}
+							} END { print (cd >= max && (!md || dis < md)) ? cd " " cid : max " " id }')
+					}
+
+					get_closest_windows h
+					get_closest_windows v
+					
+					((h_size > v_size)) &&
+						dominant_alignment=h aligned_windows="$h_aligned_windows" ||
+						ominant_alignment=v aligned_windows="$v_aligned_windows"
+
+					set_alignment_direction $dominant_alignment
+					eval aligned=( "$aligned_windows" )
+					wmctrl -ic $id
+
+					align_size=$((${properties[index + 2]} + separator))
+
+					for window in "${aligned[@]}"; do
+						properties=( $window )
+						id=${properties[0]}
+
+						(( properties[index + 2] += align_size ))
+
+						generate_printable_properties "${properties[*]}"
+						apply_new_properties
+					done
+					exit
+				else
+					if ((h_aligned_window_count == v_aligned_window_count)); then
+						dominant_alignment=$(echo $h_alignment_ratio $v_alignment_ratio | awk '{ print ($1 < $2) ? "h" : "v" }')
+					else
+						((h_aligned_window_count > v_aligned_window_count)) && dominant_alignment=h || dominant_alignment=v
+					fi
+				fi
+
+				set_alignment_direction $dominant_alignment
+
+				[[ $dominant_alignment == h ]] &&
+					alignment_start=$h_alignment_start alignment_area=$h_alignment_area aligned_windows=$h_aligned_windows ||
+					alignment_start=$v_alignment_start alignment_area=$v_alignment_area aligned_windows=$v_aligned_windows
+
+				aligned_windows="${aligned_windows/\"${properties[*]}\"/}" 
+				wmctrl -ic $id
+			else
+				get_alignment
+			fi
+
+			eval aligned=( "$aligned_windows" )
+			aligned_count="${#aligned[@]}"
+
+			[[ $close ]] &&
+				align_size=$(((alignment_area - (aligned_count - 1) * separator) / aligned_count)) ||
+				align_size=$(((alignment_area - aligned_count * separator) / (aligned_count + 1)))
+
+			for window_index in "${!aligned[@]}"; do
+				properties=( ${aligned[window_index]} )
+
+				if ((window_index)); then
+					 properties[index]=$next_window_start
+				 else
+					 #[[ $reverse ]] && (( properties[index] += align_size + separator )) || properties[index]=$alignment_start
+					 [[ ! $reverse || $close ]] &&
+						 properties[index]=$alignment_start || (( properties[index] += align_size + separator ))
+				fi
+
+				[[ $close || $reverse ]] && ((window_index == aligned_count - 1)) &&
+					original_align_size=$align_size align_size=$((alignment_start + alignment_area - ${properties[index]}))
+
+				properties[index + 2]=$align_size
+				next_window_start=$((${properties[index]} + ${properties[index + 2]} + separator))
+
+				#echo ${properties[*]}
+				generate_printable_properties "${properties[*]}"
+				apply_new_properties
+			done
+
+			if [[ ! $close ]]; then
+				if [[ $reverse ]]; then
+					properties[index]=$alignment_start
+					properties[index + 2]=$original_align_size
+				else
+					properties[index]=$next_window_start
+					properties[index + 2]=$((alignment_area - (aligned_count * (align_size + separator))))
+				fi
+
+				read x y w h <<< ${properties[*]:1}
+				~/.orw/scripts/set_geometry.sh -c '\\\*' -x $((x - display_x)) -y $((y - display_y)) -w $w -h $h
+			fi
 		fi
 	fi
 
@@ -1157,22 +1195,7 @@ while ((argument_index <= $#)); do
 			! $optarg =~ ^(-[A-Za-z]|$options)$ ]] && ((argument_index++))
 
 		case $argument in
-			C)
-				color=$(awk -Wposix -F '#' '/\.active.border/ { 
-					r = sprintf("%d", "0x" substr($NF, 1, 2)) / 255
-					g = sprintf("%d", "0x" substr($NF, 3, 2)) / 255
-					b = sprintf("%d", "0x" substr($NF, 5, 2)) / 255
-					print r "," g "," b }' ~/.orw/themes/theme/openbox-3/themerc)
-
-				read -a second_window_properties <<< $( \
-					slop -n -b $((border_x / 2)) -c $color -f '%i %x %y %w %h' | awk '{
-						$1 = sprintf("0x%.8x", $1)
-						x = '$border_x'
-						y = '$border_y'
-						$2 -= (x / 2)
-						$3 -= (y / 2)
-						print
-					}');;
+			C) select_window;;
 			A)
 				align
 				exit;;
@@ -1801,11 +1824,9 @@ while ((argument_index <= $#)); do
 
 						(( properties[0] -= display_x ))
 						(( properties[1] -= display_y ))
-
-						monitor="$display "
 					fi
 
-					echo -n "$border_x $border_y $monitor"
+					echo -n "$border_x $border_y"
 					[[ $properties ]] && echo ${properties[*]} ||
 						get_windows ${id:-name} | cut -d ' ' -f 2-
 				fi

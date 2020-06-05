@@ -35,8 +35,8 @@ else
 
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) }' ~/.config/orw/config)
 	#mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.config/openbox/rc.xml)
-	mode=$(awk '/class.*(selection|\*)/ { print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
-	[[ $mode == selection ]] && class='--class=selection'
+	#mode=$(awk '/class.*(selection|\*)/ { print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
+	#[[ $mode == selection ]] && class='--class=selection'
 	#[[ $mode == tiling && $@ =~ $vifm|$term|$qb ]] && ~/.orw/scripts/tile_window.sh
 
 	#count_windows() {
@@ -67,8 +67,9 @@ else
 
 	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-	desktop=$(xdotool get_desktop)
-	window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
+	#[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+	[[ $@ =~ $vifm|$term|$qb && $mode != floating ]] &&
+		~/.orw/scripts/windowctl.sh -i none -A
 
 	get_title() {
 		title=$(wmctrl -l | awk '$NF ~ "^'$1'[0-9]+?" { wc++ } END { print "'$1'" wc }')
@@ -110,12 +111,15 @@ else
 
 	run_term() {
 		#if [[ $mode == tiling ]] && ((!window_count)); then
-		if [[ ! $mode =~ tiling|selection ]] && ((!window_count)); then
-			tile_term $command
-		else
-			[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
-			eval termite -t $title $command
-		fi
+		#if [[ ! $mode =~ floating|selection ]] && ((!window_count)); then
+		#	tile_term $command
+		#else
+		#	[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+		#	eval termite -t $title $command
+		#fi
+
+		#[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+		eval termite $class -t $title $command
 	}
 
     case "$@" in
@@ -157,7 +161,7 @@ else
 			get_title vifm
 			get_command "vifm.sh ${@#*$vifm}"
 
-			if [[ ! $mode ]]; then
+			if [[ $mode == floating ]]; then
 				class="--class=custom_size"
 				~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
 			fi
