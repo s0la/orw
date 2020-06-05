@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=4pt,tutorial
+last_running=bw
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -62,7 +62,7 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 					lr = "'$last_running'"
 				}
 
-				$NF ~ /'${pattern//\*/\.\*}'/ {
+				$NF ~ /^'${pattern//\*/\.\*}'/ {
 					b = $NF
 					if(! r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
 					ub = ub "," b
