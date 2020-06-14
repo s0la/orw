@@ -156,14 +156,20 @@ vim() {
 }
 
 tmux() {
-	mode=$(awk '/current/ { print (/cbg/) ? "simple" : "rice" }' $tmux_conf)
-
-	if [[ ${1:-$mode} == simple ]]; then
-		sed -i '/right\|current/ s/\wbg/bg/' $tmux_conf
-		sed -i '/window-\w*-format/ s/\w\([bf]g\)/\1/g' $tmux_conf
+	if [[ $1 == justify ]]; then
+		awk -i inplace '{
+			if(/justify/) $NF = ("'$2'") ? "'$2'" : (/left/) ? "centre" : "left"
+		} { print }' $tmux_conf
 	else
-		sed -i '/right\|current/ s/$\([bf]g\)/$c\1/g' $tmux_conf
-		sed -i '/window-\w*-format/ { s/$\([bf]g\)/$i\1/g; s/$\w\?\([bf]g\)/$s\1/3; s/$\w\?\([bf]g\)/$w\1/4g }' $tmux_conf
+		mode=$(awk '/current/ { print (/cbg/) ? "simple" : "rice" }' $tmux_conf)
+
+		if [[ ${1:-$mode} == simple ]]; then
+			sed -i '/right\|current/ s/\wbg/bg/' $tmux_conf
+			sed -i '/window-\w*-format/ s/\w\([bf]g\)/\1/g' $tmux_conf
+		else
+			sed -i '/right\|current/ s/$\([bf]g\)/$c\1/g' $tmux_conf
+			sed -i '/window-\w*-format/ { s/$\([bf]g\)/$i\1/g; s/$\w\?\([bf]g\)/$s\1/3; s/$\w\?\([bf]g\)/$w\1/4g }' $tmux_conf
+		fi
 	fi
 
 	$(which tmux) source-file $tmux_conf

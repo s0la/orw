@@ -188,6 +188,39 @@ case $1 in
 			#	print
 			#}' $rofi_path/${rofi_conf:-$rofi_mode}
 		fi;;
+	tm*)
+		[[ $1 == tms ]] && pattern=separator || pattern='window.*format'
+
+		awk -i inplace '
+			function set_value() {
+				cv = length(s)
+				uv = "'${new_value:-$2}'"
+				nv = sprintf("%*.s", ("'$sign'") ? cv '$sign' uv : uv, " ")
+			}
+
+			{
+				if(/'$pattern'/) {
+					if(!s) {
+						w = (/format/)
+						p = (w) ? ".*W" : ".*\""
+						s = gensub(p "(.*)\"$", "\\1", 1)
+					}
+
+					set_value()
+
+					if(w) {
+						wp = (/current/) ? "W" : "I"
+						$0 = gensub("( *)(#[" wp "]|\"$)", nv "\\2", "g")
+					} else {
+						sub(/".*"/, "\"" nv "\"")
+					}
+				}
+			}
+		{ print }' ~/.orw/dotfiles/.config/tmux/tmux.conf
+
+		tmux source-file ~/.orw/dotfiles/.config/tmux/tmux.conf
+
+		exit;;
 	tp)
 		awk -i inplace '\
 			{
