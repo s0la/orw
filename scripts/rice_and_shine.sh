@@ -1099,30 +1099,31 @@ if [[ $replace_color ]]; then
 				[[ $module == term && ${#color} -gt 7 ]] &&
 					color="#${color: -6}" term_transparency="${color:1:2}"
 
-				if [[ $replace_module == bash ]]; then
-					rgb_color=$($colorctl -c -s ';' -h $color)
-					new_rgb_color=$($colorctl -c -s ';' -h $new_color)
-					sed -i "s/$rgb_color/$new_rgb_color/" $bash_conf
-				fi
+				case $replace_module in
+					bash)
+						rgb_color=$($colorctl -c -s ';' -h $color)
+						new_rgb_color=$($colorctl -c -s ';' -h $new_color)
+						sed -i "s/$rgb_color/$new_rgb_color/" $bash_conf;;
+					tmux)
+						[[ $new_color =~ ^# && ${#new_color} -gt 8 ]] && new_color="#${new_color: -6}"
+						sed -i "s/$color/$new_color/" $tmux_conf;;
+					lock)
+						((${#color} > 7)) && lock_color=${color:3}${color:1:2} new_lock_color=${new_color:3}${new_color:1:2} ||
 
-				if [[ $replace_module == lock ]]; then
-					((${#color} > 7)) && lock_color=${color:3}${color:1:2} new_lock_color=${new_color:3}${new_color:1:2} ||
+						sed -i "s/${lock_color:-${color:1}}/${new_lock_color:-$new_color}/" ${!config_file};;
+					*)
+						if [[ $transparency ]]; then
+							((${#new_color} < 8)) && color=${color: -6}
+						else
+							new_color=${new_color: -6}
+						fi
 
-					#echo ${lock_color:-$color} ${new_lock_color:-$new_color}
-					sed -i "s/${lock_color:-${color:1}}/${new_lock_color:-$new_color}/" ${!config_file}
-					#sed -i "s/${color:3}${color:1:2}/${new_color:3}${new_color:1:2}/" ${!config_file}
-				else
-					if [[ $transparency ]]; then
-						((${#new_color} < 8)) && color=${color: -6}
-					else
-						new_color=${new_color: -6}
-					fi
+						[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
+						sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
+				esac
 
-					[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
-					sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
 					#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
 					#sed -i "s/$color/$new_color/" ${!config_file} $bar_module_colors
-				fi
 			fi
 		fi
 	done
