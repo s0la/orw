@@ -328,7 +328,7 @@ if [[ ${option% *} ]]; then
 					done
 				else
 					#thunar "$current"
-					~/.orw/scripts/vifm.sh "$current"
+					~/.orw/scripts/vifm.sh -i "$current"
 				fi
 			fi;;
 		xdg-open)
