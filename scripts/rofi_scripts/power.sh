@@ -10,9 +10,9 @@ if [[ -z $@ ]]; then
 		$sep$off
 	EOF
 else
-	case "$option" in
+	case "$@" in
 		*) openbox --exit;;
-		)* systemctl reboot;;
+		*) systemctl reboot;;
 		suspend) systemctl suspend;;
 		*) systemctl poweroff ;;
 	esac
