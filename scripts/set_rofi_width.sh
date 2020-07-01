@@ -15,7 +15,9 @@ if [[ $theme == icons ]]; then
 	else
 		case $1 in
 			wallpapers) item_count=$(count_items icons);;
-			workspaces) item_count=$(count_items 'workspaces=\(.*\)');;
+			workspaces)
+				extend=8
+				item_count=$(count_items 'workspaces=\(.*\)');;
 			*) item_count=$(awk '/<<-/ { start = 1; nr = NR + 1 } /^\s*EOF/ && start { print NR - nr; exit }' $script)
 		esac
 	fi
@@ -30,7 +32,7 @@ if [[ $theme == icons ]]; then
 		/font/ { fs = get_value() }
 		/spacing/ { s = get_value() }
 		/padding/ { if(wp) ep = get_value(); else wp = get_value() }
-		END { print 2 * wp + int(ic * (2 * ep + s + fs * 1.4)) - s }' ~/.config/rofi/icons.rasi)
+		END { print 2 * wp + int(ic * (2 * ep + s + fs * 1.4'$extend')) - s }' ~/.config/rofi/icons.rasi)
 
 	#~/.orw/scripts/notify.sh "ic: $item_count   w: $width    $script"
 	sed -i "/width/ s/[0-9]\+/$((width + 0))/" ~/.config/rofi/icons.rasi
