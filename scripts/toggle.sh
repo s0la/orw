@@ -210,55 +210,58 @@ blur() {
 	if [[ $1 ]]; then
 		[[ $1 == bar ]] && pattern=Bar || pattern='^[^o]*Rofi'
 
-		state=$(awk '/'$pattern'/ { print ($1 == "#") ? "false" : "true" }' $compton_conf)
+		state=$(awk '/'$pattern'/ { print ($1 == "#") ? "false" : "true" }' $picom_conf)
 
 		[[ ${2:-$state} == true ]] && replace="/$pattern/ s/^/#/" || replace="/$pattern/ s/#//"
-		eval sed -i "'$replace'" $compton_conf
+		eval sed -i "'$replace'" $picom_conf
 	else
-		state=$(awk '/^blur-background / { print (/true/) ? "false" : "true" }' $compton_conf)
-		sed -i "/^blur-background/ s/ \w\+/ ${1:-$state}/" $compton_conf
+		state=$(awk '/^blur-background / { print (/true/) ? "false" : "true" }' $picom_conf)
+		sed -i "/^blur-background/ s/ \w\+/ ${1:-$state}/" $picom_conf
 	fi
 
-	killall compton
-	compton &> /dev/null &
+	killall picom
+	picom --experimental-backends &> /dev/null &
 }
 
 wm() {
-	if [[ $1 =~ offset|reverse ]]; then
-		new_mode=$(awk '/^'$1'/ { print ("'$2'") ? "'$2'" : ($NF == "true") ? "false" : "true" }' $orw_conf)
-		[[ $new_mode == true ]] && state=ON || state=OFF
+	if [[ $1 =~ offset|reverse|direction ]]; then
+		read mode state <<< $(awk '/^'$1'/ {
+			if("'$2'") {
+				m = "'$2'"
+			} else {
+				if("'$1'" == "direction") m = ($NF == "h") ? "v" : "h"
+				else m = ($NF == "true") ? "false" : "true"
+			}
+
+			if(length(m) > 1) s = (m == "true") ? "ON" : "OFF"
+			else s = (m == "h") ? "horizontal" : "vertical"
+
+			print m, s
+		}' $orw_conf)
 
 		~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
 
-		sed -i "/^$1/ s/\w*$/$new_mode/" $orw_conf
+		sed -i "/^$1/ s/\w*$/$mode/" $orw_conf
 	else
-		#new_mode=$(awk '/class.*(tiling|\*)/ { print ("'$1'") ? "'$1'" : (/\*/) ? "floating" : "tiling" }' $openbox_conf)
-		new_mode=$(awk '/^mode/ {
-			print ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating" }' $orw_conf)
+		read mode pattern monitor <<< $(awk '/^mode/ {
+			nm = ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating"
+			m = (nm == "selection") ? "Mouse" : "Actiove"
+			p = (nm == "floating") ? "tiling" : "\*"
+			print nm, p, m
+		}' $orw_conf)
 
-		[[ $new_mode == floating ]] && pattern=tiling || pattern='\*'
-		[[ $new_mode == selection ]] && monitor=Mouse || monitor=Active
-
-		sed -i "/^mode/ s/\w*$/$new_mode/" $orw_conf
+		sed -i "/^mode/ s/\w*$/$mode/" $orw_conf
 		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
 		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$pattern\"/" $openbox_conf
 
-		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$new_mode</b> mode"
+		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
 	fi
-
-	#awk -i inplace '{\
-	#	if(/class.*(tiling|\*)/) {
-	#		nm = ("'$1'") ? "'$1'" : (/\*/) ? "tiling" : "*"
-	#		sub(/".*"/, "\"" nm "\"")
-	#	}
-	#	print
-	#}' $openbox_conf
 }
 
 bash_conf=~/.orw/dotfiles/.bashrc
 orw_conf=~/.orw/dotfiles/.config/orw/config
 tmux_conf=~/.orw/dotfiles/.config/tmux/tmux.conf
-compton_conf=~/.orw/dotfiles/.config/compton.conf
+picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 openbox_conf=~/.orw/dotfiles/.config/openbox/rc.xml
 
 $@
