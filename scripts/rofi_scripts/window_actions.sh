@@ -21,7 +21,11 @@ else
 			[[ $action == unmax ]] && command="-r" ||
 				command="-s move -h 1/1 -v 1/1 resize -h 1/1 -v 1/1"
 			~/.orw/scripts/windowctl.sh $args $command;;
-		*) ~/.orw/scripts/windowctl.sh -A c;;
+		*)
+			mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+			[[ $mode == floating ]] &&
+				wmctrl -c :ACTIVE: ||
+				~/.orw/scripts/windowctl.sh -A c;;
 			#~/.orw/scripts/get_window_neighbours.sh
 			#mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
 
