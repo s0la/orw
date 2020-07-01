@@ -74,13 +74,13 @@ function format() {
 format_fading() {
 	local label=$1
 	local count=$2
-	local icon_type=${3-none}
+	local icon_type=${3:-none}
 	local content="$4"
 
-	#~/.orw/scripts/notify.sh "c: $3 ${content:-$count}"
+	#[[ $1 == UPD ]] && ~/.orw/scripts/notify.sh "c: $3 ${content:-$count}"
 
-	[[ $left_command ]] && local left_command="%{A:$left_command:}" left_command_end="%{A}"
-	[[ $right_command ]] && local right_command="%{A:$right_command:}" right_command_end="%{A}"
+	[[ $left_command ]] && local left_command="%{A1:$left_command:}" left_command_end="%{A}"
+	[[ $right_command ]] && local right_command="%{A3:$right_command:}" right_command_end="%{A}"
 
 	#if ((count)); then
 	if [[ ${count:-$content} ]]; then
@@ -113,7 +113,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=78
+		old_mail_count=12
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -526,7 +526,7 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading UPD "$updates_count" "${3-none}";;
+		format_fading UPD "$updates_count" "${3:-none}";;
 	Temp)
 		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
 		temp=$(awk '{ tt += $NF / 1000; tc++ } END { print $NF / 1000 "°C" }' /sys/class/thermal/thermal_zone*/temp)
