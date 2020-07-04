@@ -1,9 +1,9 @@
 :root {
-	--bg: #1d1e20;
-	--fg: #2d3235;
-	--sbg: #191a1c;
+	--bg: #191a1e;
+	--fg: #3a3b3f;
+	--sbg: #16171b;
 	--sfg: #999999;
-	--mfg: #87939c;
+	--mfg: #9a796e;
 }
 
 @font-face {

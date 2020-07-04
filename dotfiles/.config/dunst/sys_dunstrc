@@ -29,7 +29,7 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "700x5-40+50"
+    geometry = "188x288+816+684"
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -41,7 +41,7 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.).
-transparency = 25
+	transparency = 10
 
     # The height of the entire notification.  If the height is smaller
     # than the font height and padding combined, it will be raised
@@ -54,10 +54,10 @@ transparency = 25
     separator_height = 2
 
     # Padding between text and separator.
-    padding = 2
+    padding = 20
 
     # Horizontal padding.
-    horizontal_padding = 2
+    horizontal_padding = 20
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
@@ -132,7 +132,7 @@ transparency = 25
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
-    alignment = left
+    alignment = center
 
     # Show age of message if message is older than show_age_threshold
     # seconds.
@@ -165,7 +165,7 @@ transparency = 25
     icon_position = left
 
     # Scale larger icons down to this size, set to 0 to disable
-    max_icon_size = 75
+    max_icon_size = 60
 
     # Paths to default icons.
     icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
@@ -216,7 +216,7 @@ transparency = 25
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 0
+    corner_radius = 20
 
     ### Legacy
 

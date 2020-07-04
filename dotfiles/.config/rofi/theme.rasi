@@ -1,27 +1,27 @@
 /* color definition */
 
 * {
-	bg: #171c22;
-	fg: #37383c;
-	bc: #171c22;
+	bg: #0d0e12;
+	fg: #1c1d21;
+	bc: #0d0e12;
 
-	ibg: #171c22;
-	ibc: #A897A2;
+	ibg: #0d0e12;
+	ibc: #846358;
 
 	abg: #87939c;
 	afg: #d5d5d5;
 
-	ebg: #171c22;
-	efg: #A897A2;
-	sbg: #1d2228;
+	ebg: #0d0e12;
+	efg: #846358;
+	sbg: #121317;
 	sfg: #979392;
-	sul: #1d2228;
+	sul: #121317;
 
 	lpc: #979392;
-	dpc: #1d2228;
-	btc: #171c22;
-	sbtc: #171c22;
-	btbc: #171c22;
+	dpc: #121317;
+	btc: #0d0e12;
+	sbtc: #0d0e12;
+	btbc: #0d0e12;
 
 	background-color: @bg;
 
@@ -29,7 +29,7 @@
 }
 
 #window {
-	border: 4px;
+	border: 3px;
 	border-color: @bc;
 }
 
