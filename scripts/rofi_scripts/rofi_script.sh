@@ -10,6 +10,7 @@ modis+="move_to:$path/workspaces.sh move,"
 modis+="wall:$path/workspaces.sh wall,"
 modis+="workspaces:$path/workspaces.sh,"
 modis+="wallpapers:$path/wallpapers.sh,"
+modis+="brightness:$path/brightness.sh,"
 modis+="windows:$path/list_windows.sh,"
 modis+="bar_icons:$path/bar_icons.sh,"
 modis+="playback:$path/playback.sh,"
@@ -29,7 +30,7 @@ modis+="rec:$path/rec.sh"
 #fi
 
 if [[ $theme == icons ]]; then
-	[[ $1 =~ apps|playback|power|volume|wallpapers|window_(action|ratio)|workspaces ]] &&
+	[[ $1 =~ apps|brightness|playback|power|volume|wallpapers|window_(action|ratio)|workspaces ]] &&
 		${path%/*}/set_rofi_width.sh $1 || theme=list
 fi
 
