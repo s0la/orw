@@ -1,0 +1,2 @@
+#~/.orw/scripts/bar/generate_bar.sh -x 500 -h 7 -b -F 5 -f 5 -a 7 -c bar_opt bar_full -M -n opt -l -p 5 -W o3,ib -l -p 15 -r -e -u -v -d 
+~/.orw/scripts/bar/generate_bar.sh -x 500 -h 15 -b -F 4 -f 2 -a 7 -c bar_opt bar_full -M -n opt -p 5 -W o3,ib -r -p 15 -l -t b -j 25 -e -u -v -j -d 
