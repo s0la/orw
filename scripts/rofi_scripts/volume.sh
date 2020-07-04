@@ -1,8 +1,8 @@
 #!/bin/bash
 
-mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
-if [[ $mode != tiling ]]; then
+if [[ $theme != icons ]]; then
 	mute=mute up='volume up' down='volume down' sep=' '
 fi
 
@@ -14,7 +14,7 @@ if [[ -z $@ ]]; then
 	EOF
 else
 	case $@ in
-		*$*) amixer -q -D pulse set Master toggle;;
+		*) amixer -q -D pulse set Master toggle;;
 		*)
 			volume="$@"
 			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
@@ -22,5 +22,6 @@ else
 			amixer -q -D pulse set Master $((${multiplier:-1} * 10))%$direction;;
 	esac
 
-	~/.orw/scripts/volume_notification.sh
+	killall rofi
+	~/.orw/scripts/system_notification.sh system_volume
 fi

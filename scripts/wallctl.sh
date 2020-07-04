@@ -1165,18 +1165,28 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			(systemctl --user $boot change_wallpaper.timer
 			systemctl --user $new_state change_wallpaper.timer) &> /dev/null
 
-			[[ $new_state == start ]] && notification_icon= || notification_icon=
-			set_notification_icon
+			#[[ $new_state == start ]] && notification_icon= || notification_icon=
+			#set_notification_icon
 
-			$notify -p "$icon Wallpaper auto-changer has been ${new_state}ed."
+			#$notify -p "$icon Wallpaper auto-changer has been ${new_state}ed."
+			#[[ $new_state == start ]] && icon= || icon=
+			[[ $new_state == start ]] && icon= || icon=
+
+			message="Auto-changer ${new_state}ed"
+			~/.orw/scripts/notify.sh osd $icon "$message"
 		else
 			systemctl --user daemon-reload
 			systemctl --user restart change_wallpaper.timer
 
-			notification_icon=
-			set_notification_icon
+			#notification_icon=
+			#set_notification_icon
 
-			$notify -p "$icon Wallpaper auto-changer $service_property has been set to ${order:-$interval ${unit:-min}}."
+			#$notify -p "$icon Wallpaper auto-changer $service_property has been set to ${order:-$interval ${unit:-min}}."
+			icon=
+			icon=
+			message="$service_property: ${order:-$interval ${unit:-min}}"
+			#message="$(offset_message "$message")"
+			~/.orw/scripts/notify.sh osd $icon "$message"
 		fi
 
 		exit

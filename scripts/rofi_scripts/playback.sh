@@ -21,6 +21,8 @@ if [[ -z $@ ]]; then
 		$sep$pl
 	EOF
 else
+	killall rofi
+
 	case "$@" in
 		*) mpc -q toggle;;
 		*|*)
@@ -28,7 +30,8 @@ else
 			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
 			[[ ${volume%% *} ==   ]] && direction=+ || direction=-
 
-			mpc -q volume $direction$((${multiplier:-1} * 5));;
+			mpc -q volume $direction$((${multiplier:-1} * 5))
+			~/.orw/scripts/system_notification.sh mpd_volume;;
 		*)
 			indicator=''
 			mpc playlist | awk '{ p = ($0 == "'"$current_song"'") ? "'$indicator' " : "'"$empty"'"; print p $0 }';;

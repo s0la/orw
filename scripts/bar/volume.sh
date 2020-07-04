@@ -35,7 +35,7 @@ if [[ $1 == system ]]; then
 			print o }')
 			#print ($4 == "on") ? "'$volume_default_icon' " $2 : ("'$2'") ? " 0%" : " MUTE" }')
 
-	notification=~/.orw/scripts/volume_notification.sh
+	notification="~/.orw/scripts/system_notification.sh $1_volume"
 	command='amixer -q -D pulse set Master'
 
 	up="$command 5%+ && $notification"

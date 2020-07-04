@@ -239,7 +239,14 @@ wm() {
 			print m, s
 		}' $orw_conf)
 
-		~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
+		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
+		case $1 in
+			direction) [[ $mode == h ]] && icon=  || icon=;;
+			offset) [[ $mode == true ]] && icon=  || icon=;;
+			*) icon=
+		esac
+
+		~/.orw/scripts/notify.sh osd $icon "$1: $mode"
 
 		sed -i "/^$1/ s/\w*$/$mode/" $orw_conf
 	else
@@ -254,7 +261,12 @@ wm() {
 		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
 		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$pattern\"/" $openbox_conf
 
-		[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
+		#[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
+		if [[ ! $2 ]]; then
+			[[ $mode == floating ]] && icon=  || icon=
+			#~/.orw/scripts/notify.sh osd $icon "<bold>Mode: $mode</bold>"
+			~/.orw/scripts/notify.sh osd $icon "Mode: $mode"
+		fi
 	fi
 }
 

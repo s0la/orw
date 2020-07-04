@@ -219,7 +219,6 @@ case $1 in
 		{ print }' ~/.orw/dotfiles/.config/tmux/tmux.conf
 
 		tmux source-file ~/.orw/dotfiles/.config/tmux/tmux.conf
-
 		exit;;
 	tp)
 		awk -i inplace '\
@@ -262,8 +261,9 @@ case $1 in
 			print
 		}' $dunst_conf
 
+		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
 		killall dunst
-		dunst &;;
+		$command &> /dev/null &;;
 	l*)
 		case $1 in
 			lr) pattern=radius;;

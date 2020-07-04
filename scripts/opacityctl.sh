@@ -3,7 +3,7 @@
 lock_conf=~/.orw/dotfiles/.config/i3lockrc
 term_conf=~/.orw/dotfiles/.config/termite/config
 dunst_conf=~/.orw/dotfiles/.config/dunst/dunstrc
-compton_conf=~/.orw/dotfiles/.config/compton.conf
+picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 
 if [[ $1 =~ bar|lock ]]; then
 	[[ $1 == bar ]] && property=bg || property=ic
@@ -15,7 +15,7 @@ elif [[ $1 =~ term|dunst ]]; then
 	conf="$1_conf"
 	[[ $1 == term ]] && pattern='^background' || pattern='^\s*transparency'
 else
-	conf=compton_conf
+	conf=picom_conf
 	[[ $1 == rofi ]] && pattern="opacity-rule.*Rofi" || pattern="^\s*${1:0:1}\w*(-|_)${1:1}\w* "
 fi
 
@@ -58,9 +58,12 @@ awk -i inplace '{ \
 case $conf in
 	term*) killall -USR1 termite;;
 	dunst*)
+		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
+
 		killall dunst
-		$(which dunst) &> /dev/null &;;
-	compton*)
-		killall compton
-		compton &> /dev/null &
+		$command &> /dev/null &;;
+		#$(which dunst) &> /dev/null &;;
+	picom*)
+		killall picom
+		picom --experimental-backends &> /dev/null &
 esac

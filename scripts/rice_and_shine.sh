@@ -1205,8 +1205,13 @@ if [[ ${reload-yes} == yes ]]; then
 		fi
 	fi
 	if [[ $reload_dunst ]]; then
+		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
+		#command=$(ps -C dunst -o args= | awk '$1 == "dunst" { $1 = "'$(which dunst)'" } { print }')
+
 		killall dunst
-		/usr/local/bin/dunst &> /dev/null &
+		$command &> /dev/null &
+		#killall dunst
+		#/usr/local/bin/dunst &> /dev/null &
 	fi
 fi
 
