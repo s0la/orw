@@ -18,7 +18,14 @@ if [[ $theme != icons ]]; then
 	lock=lock tile=tile vifm=vifm term=termite dropdown=dropdown qb=qutebrowser
 	[[ $running ]] && eval "$running empty='  '"
 else
-	lock= tile= vifm= term= dropdown= qb=
+	#lock= tile= vifm= term= dropdown= qb=
+	#lock= tile= vifm= term=  dropdown= qb=
+
+	#lock= tile= vifm= term= dropdown= qb=
+	#lock= tile= vifm= term= dropdown= qb=
+	lock= tile= vifm= term= dropdown= qb=
+
+	#lock= tile= vifm= term= dropdown= qb=
 fi
 
 if [[ -z $@ ]]; then
@@ -67,9 +74,9 @@ else
 
 	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-	#[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
-	[[ $@ =~ $vifm|$term|$qb && $mode != floating ]] &&
-		~/.orw/scripts/windowctl.sh -i none -A
+	[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+	#[[ $@ =~ $vifm|$term|$qb && $mode != floating ]] &&
+	#	~/.orw/scripts/windowctl.sh -i none -A
 
 	get_title() {
 		title=$(wmctrl -l | awk '$NF ~ "^'$1'[0-9]+?" { wc++ } END { print "'$1'" wc }')
@@ -185,8 +192,7 @@ else
 			#~/.orw/scripts/vifm.sh -t "vifm$window_count" -c "$command" ${@#*$vifm} &;;
 			#coproc(~/.orw/scripts/vifm.sh -t "vifm$window_count" ${@#*$vifm} &);;
         *$qb*)
-			[[ $mode == tiling ]] && ~/.orw/scripts/tile_window.sh
-			[[ ! $@ =~ private ]] && qutebrowser ${@#*$browser} ||
+			[[ ! $@ =~ private ]] && qutebrowser ${@#*$qb} ||
 				qutebrowser -s content.private_browsing true;;
 		*$lock) ~/.orw/scripts/lock_screen.sh;;
     esac

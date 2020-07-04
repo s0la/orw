@@ -7,6 +7,10 @@ window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
 	#mode=$(awk '/class.*(selection|\*)/ { print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
 
 if [[ $mode ]]; then
+	((window_count)) || id='-i none'
+	~/.orw/scripts/windowctl.sh $id -A
+	exit
+
 	if [[ $mode != selection ]]; then
 		#((window_count)) && read m x y w h <<< $(~/.orw/scripts/windowctl.sh resize -H a)
 		((window_count)) && ~/.orw/scripts/windowctl.sh -A
