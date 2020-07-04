@@ -4,7 +4,8 @@ xset s off -dpms
 xset s blank
 xset s 1000
 
-compton --config /dev/null &
+#compton --config /dev/null &
+picom --experimental-backends -b &> /dev/null &
 mpd &
 
 path=~/.orw/scripts
