@@ -537,7 +537,8 @@ resize_by_ratio() {
 
 	if [[ ${orientation:0:1} == a ]]; then
 		((${properties[3]} > ${properties[4]})) && orientation=h || orientation=v
-		((ratio)) || ratio=$(awk '/^(part|ratio)/ { if(!r) r = $NF; else { print $NF "/" r; exit } }' $config)
+		((ratio)) || ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
+		#((ratio)) || ratio=$(awk '/^(part|ratio)/ { if(!r) r = $NF; else { print $NF "/" r; exit } }' $config)
 
 		auto_tile=true
 		argument=H
@@ -699,10 +700,10 @@ align() {
 		fi
 
 		if [[ ( $mode == auto || ${#all_windows[*]} -eq 1 ) && ! $close ]]; then
-			[[ $mode == auto ]] && align_direction=a
-
 			if [[ $mode == stack ]]; then
 				[[ $align_direction == h ]] && align_direction=v || align_direction=h
+			elif [[ $mode == auto ]]; then
+				ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
 			fi
 
 			resize_by_ratio ${resize_argument:-H} $align_direction$reverse
@@ -1826,9 +1827,9 @@ while ((argument_index <= $#)); do
 						(( properties[1] -= display_y ))
 					fi
 
-					echo -n "$border_x $border_y"
+					echo -n "$border_x $border_y "
 					[[ $properties ]] && echo ${properties[*]} ||
-						get_windows ${id:-name} | cut -d ' ' -f 2-
+						get_windows ${id:-$name} | cut -d ' ' -f 2-
 				fi
 				exit;;
 			o) overwrite=true;;
