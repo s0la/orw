@@ -7,7 +7,10 @@ album=$(mpc current -f %album%)
 cover=~/Music/covers/${album// /_}.jpg
 cover="${cover//[()]/}"
 
-info="$artist    <b>$title</b>"
+font='Iosevka Orw'
+#info="$artist    ››    <b>$title</b>"
+#info="<span font='$font 8'>$artist</span>    <span font='$font 8'> </span>   <span font='$font 8'><b>$title</b></span>"
+info="$artist        <b>$title</b>"
 
 #info="<b>artist:</b>  $artist\n"
 #info+="<b>title:</b>   $title\n"

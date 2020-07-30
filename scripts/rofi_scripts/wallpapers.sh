@@ -9,17 +9,25 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
-[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
+#[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
+	#next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
+
+if [[ $theme == icons ]]; then
+	auto=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print ($2 == "active") ? "" : "" }')
+	prev= next= rand= restore= view= 
+	prev= next= rand= restore= view= 
+else
 	next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
+fi
 
 if [[ -z $@ ]]; then
-	echo -e "$next\n$prev\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
+	echo -e "$prev\n$next\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
 else
 	wallctl=~/.orw/scripts/wallctl.sh
 
 	if [[ $@ =~ select ]]; then
 		indicator='●'
-		indicator=''
+		indicator=''
 
 		get_directory
 

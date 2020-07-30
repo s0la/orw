@@ -19,10 +19,22 @@ if [[ $theme != icons ]]; then
 
 	current_workspace=$(xdotool get_desktop)
 	indicator=''
-	indicator=''
+	indicator='●'
 	empty=' '
 else
-	workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
+
+	workspaces+=( $(wmctrl -d | awk '$NF ~ "^[0-9]$" {
+		if($NF == 1) i = " "
+		else if($NF == 2) i = " "
+		else if($NF == 3) i = " "
+		else if($NF == 4) i = " "
+		else if($NF == 5) i = " "
+
+		tw = tw " " i
+	} END { print tw }') )
+
+	workspaces+=( '' )
 fi
 
 workspace_count=${#workspaces[*]}
@@ -34,14 +46,16 @@ if [[ -z $@ || $@ =~ (move|wall)$ ]]; then
 	done
 
 	#[[ $move ]] && echo  
-	[[ $move ]] && echo " +tmp"
+	#[[ $move ]] && echo " +tmp"
+	[[ $move ]] && echo "   tmp"
 else
 	killall rofi
 
 	window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 
 	#if [[ "$@" =~   ]]; then
-	if [[ "$@" =~ \+tmp ]]; then
+	#if [[ "$@" =~ \+tmp ]]; then
+	if [[ "$@" =~   ]]; then
 		new_workspace_name='tmp'
 		new_workspace_index=$workspace_count
 

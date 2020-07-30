@@ -16,7 +16,7 @@ list_icons() {
 			print "selection"
 			print "━━━━━━━━━"
 		} {
-			if("'$selection'") s = (/^('$icons')_icon/) ? " " : " "
+			if("'$selection'") s = (/^('$icons')_icon/) ? " " : " "
 			print s $4 "  " $1
 		}' $icons_file
 }
@@ -26,15 +26,15 @@ if [[ -z $@ ]]; then
 else
 	case $@ in
 		*[![:alpha:]])
-			if [[ $@ =~   ]]; then
+			if [[ $@ =~   ]]; then
 				unset selection icons
 				set selection
 				set icons
 
 				list_icons
 			else
-				[[ $@ =~   ]] && sign=+
-				[[ $@ =~   ]] && sign=-
+				[[ $@ =~   ]] && sign=+
+				[[ $@ =~   ]] && sign=-
 
 				arg=${@#* }
 				value="$sign${arg:-1}"
@@ -48,9 +48,9 @@ else
 					sub(cv, s nv)
 				} { print }' $icons_file
 
-				echo -e ' \n \n '
+				echo -e ' \n \n '
 			fi;;
-		resize) echo -e ' \n \n ';;
+		resize) echo -e ' \n \n ';;
 		selection)
 			[[ $selection ]] && selection='' || selection=true
 			set selection
@@ -69,7 +69,7 @@ else
 				list_icons
 			else
 				set icons "${@#*  }"
-				echo -e ' \n \n '
+				echo -e ' \n \n '
 			fi
 	esac
 fi

@@ -241,9 +241,10 @@ wm() {
 
 		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
 		case $1 in
-			direction) [[ $mode == h ]] && icon=  || icon=;;
-			offset) [[ $mode == true ]] && icon=  || icon=;;
-			*) icon=
+			direction) [[ $mode == h ]] && icon=  || icon=;;
+			direction) [[ $mode == h ]] && icon=  || icon=;;
+			offset) [[ $mode == true ]] && icon=  || icon=;;
+			*) icon=
 		esac
 
 		~/.orw/scripts/notify.sh osd $icon "$1: $mode"
@@ -263,7 +264,7 @@ wm() {
 
 		#[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
 		if [[ ! $2 ]]; then
-			[[ $mode == floating ]] && icon=  || icon=
+			[[ $mode == floating ]] && icon= || icon=
 			#~/.orw/scripts/notify.sh osd $icon "<bold>Mode: $mode</bold>"
 			~/.orw/scripts/notify.sh osd $icon "Mode: $mode"
 		fi

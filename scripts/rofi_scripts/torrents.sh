@@ -24,7 +24,7 @@ list_torrents() {
 			i = index($0, "Name")
 		}
 		$2 ~ "[0-9]+%" {
-			s = ("'$selection'") ? ($1 ~ "^('${multiple_torrents//,/|}')\\*?$") ? " " : " " : $2
+			s = ("'$selection'") ? ($1 ~ "^('${multiple_torrents//,/|}')\\*?$") ? " " : " " : $2
 			printf("%-*s%s\n", (s ~ "%$") ? 6 : 0, s, substr($0, i))
 		}'
 }
@@ -33,7 +33,7 @@ get_current_torrent_id() {
 	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current=""
+current="   archlinux-2020.07.01-x86_64.iso"
 selection=""
 multiple_torrents=""
 

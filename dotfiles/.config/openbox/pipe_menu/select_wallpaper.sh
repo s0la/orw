@@ -7,7 +7,7 @@ root="${directory%/\{*}"
 
 empty='   '
 indicator='●'
-indicator=''
+indicator=''
 
 current_desktop=$(xdotool get_desktop)
 current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)

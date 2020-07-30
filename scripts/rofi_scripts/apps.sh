@@ -23,7 +23,18 @@ else
 
 	#lock= tile= vifm= term= dropdown= qb=
 	#lock= tile= vifm= term= dropdown= qb=
-	lock= tile= vifm= term= dropdown= qb=
+	#lock=   tile= vifm= term= dropdown= qb=
+
+	#lock=  tile= vifm= term= dropdown= qb=
+
+	id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
+
+	if [[ $id ]]; then
+		#[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && state= || state=
+		[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && state= || state=
+	fi
+
+	lock= tile= vifm= term= dropdown=${state:-} qb=
 
 	#lock= tile= vifm= term= dropdown= qb=
 fi
@@ -74,7 +85,9 @@ else
 
 	mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-	[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
+	[[ $@ =~ $vifm|$term|$qb && $mode != floating ]] &&
+		~/.orw/scripts/set_window_geometry.sh $mode
+	#[[ $mode != floating ]] && ~/.orw/scripts/set_window_geometry.sh $mode
 	#[[ $@ =~ $vifm|$term|$qb && $mode != floating ]] &&
 	#	~/.orw/scripts/windowctl.sh -i none -A
 

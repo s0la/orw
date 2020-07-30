@@ -6,19 +6,23 @@ if [[ $theme != icons ]]; then
 	mute=mute up='volume up' down='volume down' sep=' '
 fi
 
+icon_up=
+icon_down=
+icon_mute=
+
 if [[ -z $@ ]]; then
 	cat <<- EOF
-		$sep$mute
-		$sep$up
-		$sep$down
+		$icon_up$sep$up
+		$icon_mute$sep$mute
+		$icon_down$sep$down
 	EOF
 else
 	case $@ in
-		*) amixer -q -D pulse set Master toggle;;
+		$icon_mute*) amixer -q -D pulse set Master toggle;;
 		*)
 			volume="$@"
 			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
-			[[ ${volume%% *} ==  ]] && direction=+ || direction=-
+			[[ ${volume%% *} == $icon_up ]] && direction=+ || direction=-
 			amixer -q -D pulse set Master $((${multiplier:-1} * 10))%$direction;;
 	esac
 

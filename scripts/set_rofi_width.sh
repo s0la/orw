@@ -14,10 +14,11 @@ if [[ $theme == icons ]]; then
 		item_count=$2
 	else
 		case $1 in
-			wallpapers) item_count=$(count_items icons);;
+			wallpapers) item_count=6;;
 			workspaces)
-				extend=8
-				item_count=$(count_items 'workspaces=\(.*\)');;
+				#extend=8
+				#item_count=$(count_items 'workspaces=\(.*\)');;
+				item_count=$(wmctrl -d | awk 'END { print NR + 1 }');;
 			*) item_count=$(awk '/<<-/ { start = 1; nr = NR + 1 } /^\s*EOF/ && start { print NR - nr; exit }' $script)
 		esac
 	fi

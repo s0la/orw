@@ -1,7 +1,9 @@
 #!/bin/bash
 
+colorscheme=$4
 close_offset=20
-close_font="icomoon_fa:size=8"
+close_font="icomoon_material_tile:size=10"
+close_font="remix:size=15"
 
 pid="\\\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)"
 
@@ -10,7 +12,8 @@ pid="\\\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)"
 for arg in ${3//,/ }; do
 	case $arg in
 		i) 
-			main_font_type="icomoon_fa"
+			main_font_type="icomoon_material_tile"
+			main_font_type="remix"
 			eval $(sed -n 's/power_\(.*=\)[^}]*.\(.\).*/\1\2/p' ~/.orw/scripts/bar/icons);;
 		#[0-9]*) [[ $arg =~ x ]] && width_ratio=${arg%x*} height_ratio=${arg#*x} || equal_ratio=$arg;;
 		s[0-9]*) main_font_size=${arg:1};;
@@ -77,8 +80,8 @@ eval $(awk '\
 		}
 
 		if($1) print $1 "=\"" c "\""
-	} nr && (/^$/ || (b && NR > nr + b)) { exit }' ~/.config/orw/colorschemes/bar_power.ocs)
+	} nr && (/^$/ || (b && NR > nr + b)) { exit }' ~/.config/orw/colorschemes/$colorscheme.ocs)
 
-close="%{A:kill "$pid":} %{A}"
+close="%{A:kill "$pid":} %{A}"
 eval "all=\"$pfg%{c}$actions%{r}%{T2}$sfg$close%{O$close_offset}\""
 echo -e "$all" | lemonbar -B $bg -p -g $geometry -f "$main_font" -o 0 -f "$close_font" -o -$offset -n power_bar | bash

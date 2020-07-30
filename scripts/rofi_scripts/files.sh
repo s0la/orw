@@ -57,7 +57,7 @@ function create_archive() {
 	pid=$((COPROC_PID + 1))
 	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-	echo -e  
+	echo -e  
 
 	un_set archive
 }
@@ -66,7 +66,6 @@ function list_archive() {
 	format=${current##*.}
 
 	case $format in
-		
 		*[bgx]z*) tar tf "$current" | awk '{ if("'$selection'") s = (/^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
 			print s $0 }';;
 		zip) nr=2 flag=-l;;
@@ -184,7 +183,11 @@ archive_multiple=""
 
 bookmarks=${0%/*}/bookmarks
 
-echo -e 
+[[ $options ]] && back_icon= || back_icon=
+back_icon=
+echo -e $back_icon
+
+#~/.orw/scripts/notify.sh "o: $back_icon $options"
 
 if [[ -z $@ ]]; then
 	set current "$HOME"
@@ -202,7 +205,6 @@ elif [[ $file ]]; then
 		cd "$current"
 
 		if [[ "$unstaged" =~ (^|\|)"$file"(\||$) ]]; then
-
 			toggle_file unstaged
 
 			((${#staged})) && staged+="|$file" || staged="$file"
@@ -242,7 +244,7 @@ if [[ ${option% *} ]]; then
 	[[ $selection && $option =~ ^[a-z] && ! $option =~ selection|_all$ ]] && un_set selection
 
 	case "$option" in
-		 )
+		$back_icon)
 			if [[ $options ]]; then
 				[[ $options =~ ^options|bookmarks || $list ]] && un_set options || set options options
 			elif [[ "$archive" && -f "$current" && "$archive" == "$current" ]]; then
@@ -301,14 +303,14 @@ if [[ ${option% *} ]]; then
 			killall rofi
 			termite -e "bash -c \"cd '$current'\";bash"
 			exit;;
-		 ) set options options;;
+		) set options options;;
 		 );;
 		 );;
 		 );;
-		 )
+		 )
 			awk '{ print $1 }' $bookmarks
 			set options bookmarks;;
-		 )
+		 )
 			killall rofi
 
 			if [[ ! $file ]]; then
@@ -403,7 +405,7 @@ if [[ ${option% *} ]]; then
 					pid=$((COPROC_PID + 1))
 					coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-					echo -e  ;;
+					echo -e  ;;
 				add_to_bookmarks) echo "${arg:-${current##*/}} $current" >> $bookmarks;;
 				by_*|reverse|alpha*)
 					case ${option#*_} in
@@ -569,9 +571,9 @@ else
 fi
 
 if [[ -d "$current" && ! $options ]]; then
-	echo -e 
-	echo -e 
-	echo -e 
+	echo -e 
+	echo -e 
+	echo -e 
 
 	if [[ $git ]]; then
 		print_git_files() {
@@ -588,13 +590,13 @@ if [[ -d "$current" && ! $options ]]; then
 		while read -r s file; do
 			if [[ $file ]]; then
 				if [[ $selection ]]; then
-					((s)) && icon= || icon=
+					((s)) && icon= || icon=
 				else
 					if [[ -d "$current/$file" ]]; then
-						icon=
+						icon=
 					else
 						#icon=
-						icon=
+						icon=
 					fi
 				fi
 

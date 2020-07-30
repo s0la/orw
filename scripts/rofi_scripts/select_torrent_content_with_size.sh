@@ -21,11 +21,11 @@ agregate() {
 			if(file) {
 				s = sv
 				cfn = n
-				cfs = (st == "Yes") ? " " : " "
+				cfs = (st == "Yes") ? " " : " "
 			} else {
 				s = ts
 				cfn = pfn
-				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
 			}
 
 			tc = 0; sc = 0; ts = 0;
@@ -142,9 +142,9 @@ offset=$(awk '
 	/padding/ && NR < nr + 5 { p = get_value() }
 	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' .config/rofi/large_list.rasi)
 
-torrent_id="16"
-current=""
-full_path="Spaceslug - Discography"
+torrent_id="13"
+current="done"
+full_path="archlinux-2020.07.01-x86_64.iso"
 
 depth="2"
 final_depth="0"

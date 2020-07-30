@@ -169,20 +169,82 @@ format_module() {
 
 get_branch_info() {
 	read branch icon clean s <<< $(git status -sb 2> /dev/null | \
-		awk -F '[,.\\[\\]]' 'NR == 1 { b = gensub(/.* /, "", 1, $1); \
-		r = NF; if(r > 4) for(f = 5; f < NF; f++) \
-		{ i = ($f ~ /^ ?a/) ? "  " : "  "; \
-			s = s gensub(/ ?.* /, i, 1, $f) } } \
+		awk -F '[,.\\[\\]]' '\
+			NR == 1 {
+				b = gensub(/.* /, "", 1, $1)
+				r = NF
+				if(r > 4) for(f = 5; f < NF; f++) {
+					#i = ($f ~ /^ ?a/) ? "  " : "  "
+					i = ($f ~ /^ ?a/) ? "  " : "  "
+					i = ($f ~ /^ ?a/) ? " ↑ " : " ↓ "
+					i = ($f ~ /^ ?a/) ? "  " : "  "
+					s = s gensub(/ ?.* /, i, 1, $f)
+				}
+			}
 			END { if(b) print b, (r > 1) ? "╋" : "┣", (NR == 1), s }')
 
 	eval $(git status --porcelain 2> /dev/null | \
-		awk '{ if(/^\s*M/) m++; else if(/^\s*D/) d++; else if(/^A/) a++; else if(/^\?/) u++ } \
-		END { i = "'$1'"; \
-		if(i ~ "m" && m) o = "m=\"  "m"\""; \
-			if (i ~ "d" && d) o = o" d=\"  "d"\""; \
-				if(i ~ "a" && a) o = o" a=\"  "a"\""; \
-					if(i ~ "u" && u) o = o" u=\"  "u"\""; \
-						print o }')
+		awk '{
+				if(/^\s*M/) m++
+				else if(/^\s*D/) d++
+				else if(/^A/) a++
+				else if(/^\?/) u++
+				if(!/^\?/ && index($0, $1) == 1) i++
+			} END {
+				gm = "'$1'"
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				if(gm ~ "u" && u) o = o" u=\"  "u"\""
+				if(gm ~ "u" && u) o = o" u=\"  "u"\""
+				print o }')
 
 	if [[ $1 ]]; then
 		for branch_module in ${1//,/ }; do
@@ -304,13 +366,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="default"
-	fg="69;70;74;"
-	sc="69;70;74;"
-	ic="107;160;164;"
+	bg="36;37;41;"
+	fg="62;67;68;"
+	sc="62;67;68;"
+	ic="238;205;196;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="165;132;121;"
+	gdc="192;222;233;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -323,18 +385,18 @@ generate_ps1() {
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=simple
-		edge_mode=flat
+		mode=rice
+		edge_mode=sharp
 
 		set_edge
 
 		#modules
 		info_module="h"
-		git_module="s,m,a,d,u"
+		git_module="s,m,i,a,d,u"
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
 		#modules="i,w,v,r,g"
-		modules="w,v,g"
+		modules="i,w,v,r,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_module 3 $fg)("
@@ -344,11 +406,15 @@ generate_ps1() {
 
 			format_module -f $fg -b $bg
 			color_modules
-			format_module -f $sc -c ' '
+			format_module -f $sc -c ' ›'
 		else
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
-				symbol_end='╰────'
+				symbol_end='╰────›'
+				symbol_start='┌── '
+				symbol_end='└────›'
+				symbol_start='┌─╼ '
+				symbol_end='└────╼'
 			else
 				symbol_start='┌─╼ '
 				symbol_end='└────╼'
@@ -360,6 +426,10 @@ generate_ps1() {
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
 
 			format_module -f $sc -c "$symbol_start"
 			format_module -f $bg
@@ -374,7 +444,9 @@ generate_ps1() {
 	fi
 }
 
-PROMPT_COMMAND='PS1="$(generate_ps1)"'
+[[ $blank ]] &&
+	PROMPT_COMMAND='PS1=""' ||
+	PROMPT_COMMAND='PS1="$(generate_ps1)"'
 
 ras() {
 	~/.orw/scripts/rice_and_shine.sh $@

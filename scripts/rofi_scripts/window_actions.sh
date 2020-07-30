@@ -3,16 +3,20 @@
 theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 [[ $theme != icons ]] && close=close min=min max=max sep=' '
 
+icon_max=
+icon_min=
+icon_close=
+
 if [[ -z $@ ]]; then
 	cat <<- EOF
-		$sep$close
-		$sep$max
-		$sep$min
+		$icon_close$sep$close
+		$icon_max$sep$max
+		$icon_min$sep$min
 	EOF
 else
 	case "$@" in
-		*) xdotool getactivewindow windowminimize;;
-		*)
+		$icon_min*) xdotool getactivewindow windowminimize;;
+		$icon_max*)
 			id=$(printf "0x%.8x" $(xdotool getactivewindow))
 			#state=$()
 			args="${@#$sep$max}"
@@ -21,11 +25,15 @@ else
 			[[ $action == unmax ]] && command="-r" ||
 				command="-s move -h 1/1 -v 1/1 resize -h 1/1 -v 1/1"
 			~/.orw/scripts/windowctl.sh $args $command;;
-		*)
+		$icon_close*)
 			mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 			[[ $mode == floating ]] &&
 				wmctrl -c :ACTIVE: ||
-				~/.orw/scripts/windowctl.sh -A c;;
+				~/.orw/scripts/windowctl.sh -A c
+
+			tmux_command='tmux -S /tmp/tmux_hidden'
+			tmux_session=$($tmux_command ls | awk -F ':' '$1 == "'$name'" { print $1 }')
+			[[ $tmux_session ]] && $tmux_command kill-session -t $tmux_session;;
 			#~/.orw/scripts/get_window_neighbours.sh
 			#mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
 

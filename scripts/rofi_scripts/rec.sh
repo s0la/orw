@@ -12,7 +12,7 @@ else
 		stop)
 			#icon=  message='recording stoped'
 			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
-			~/.orw/scripts/notify.sh osd   'recording stoped'
+			~/.orw/scripts/notify.sh osd   'recording stoped'
 			kill $pid;;
 	esac
 

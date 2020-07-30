@@ -239,7 +239,7 @@ filextype *.bmp,*.jpg,*.jpeg,*.png,*.gif,*.xpm
         \ gpicview %c,
         \ {View in shotwell}
         \ shotwell,
-fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.xpm
+fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.svg,*.xpm
         \ image_preview draw %px %py %pw %ph %c
         \ %pc
         \ image_preview clear
@@ -262,14 +262,12 @@ nnoremap ad :adddirectory<cr>
 command! setwall wallctl set_wall %f:p &
 command! setwalldir wallctl set_wall_dir %f &
 command! addwalldir wallctl add_wall_dir %f &
-command! removewalldir wallctl remove_wall_dir %f &
-command! setwallcolor wallctl set_wall_color %f:p &
+command! deletewalldir wallctl delete_wall_dir %f &
 
 nnoremap sw :setwall<cr>
 nnoremap swd :setwalldir<cr>
 nnoremap awd :addwalldir<cr>
-nnoremap rwd :removewalldir<cr>
-nnoremap swc :setwallcolor<cr>
+nnoremap dwd :deletewalldir<cr>
 
 " resizing
 nnoremap > :5wincmd><cr>
@@ -415,16 +413,24 @@ filextype */
 " For Windows:
 " filetype * start, explorer
 
-set classify=' ::../::, :dir:, :reg:, :exe:,'
+set classify='::../::,:dir:'
+
+" set classify='  ::../::, :dir:/'
+" set classify=' ::../::, :dir:, :reg:, :exe:,'
+" set classify=' ::../::, :dir:, :reg:, :exe:,'
+set classify='  ::../::,  :dir:, :reg:, :exe:,'
 
 " archives
-set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
+" set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
+set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
 
 " images
-set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
+" set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
+set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
 
 " audio
-set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
+" set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
+set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
 
 
 " ------------------------------------------------------------------------------

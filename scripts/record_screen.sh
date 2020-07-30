@@ -19,7 +19,10 @@ read resolution position <<< $(awk '\
 shift $((arg_count * 2))
 [[ $@ ]] && filename="$@" || filename=$(date +"%Y-%m-%d-%H:%M")
 
-~/.orw/scripts/notify.sh -p "<span font='Roboto Mono 10'>      </span>recording started"
+#~/.orw/scripts/notify.sh -p "<span font='Roboto Mono 10'>      </span>recording started"
+~/.orw/scripts/notify.sh osd    'recording started'
+#~/.orw/scripts/notify.sh osd    'recording started'
+#~/.orw/scripts/notify.sh osd     'recording started'
 
-ffmpeg -y -f x11grab -r ${fps-25} -s $resolution -draw_mouse 0 -i $DISPLAY$position \
+ffmpeg -y -f x11grab -r ${fps-25} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
 	-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 ~/Videos/$filename.mp4

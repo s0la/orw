@@ -18,7 +18,7 @@ fc="#101115"
 bfc="#608985"
 bbg="#101115"
 jbg="%{B#101115}"
-jfg="%{F#5c5d5f}"
+jfg="%{F#}"
 
 pbg="%{B#1E2329}"
 pfg="%{F#999999}"
@@ -99,7 +99,7 @@ get_date() {
 }
 
 get_updates() {
-	echo -e "UPDATES $($path/system_info.sh updates $tweener $label ${lines-false})"
+	echo -e "UPDATES $($path/system_info.sh updates $tweener "$label" ${lines-false})"
 }
 
 config=~/.config/orw/config
@@ -418,8 +418,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 				check_arg power_args ${!OPTIND} && shift
 			fi
 
+			[[ $power_args ]] && check_arg power_color ${!OPTIND} && shift
+
 			#~/.orw/scripts/notify.sh "$padding $separator"
-			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_geometry-25x18} ${power_args-i,Llro} $label)\"");;
+			Power=$(eval "echo -e \"$($path/system_info.sh Power ${display-0} ${power_geometry-25x18} ${power_args-i,Llro} ${power_color:-bar_power} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power ${display_width}x$display_height ${ratio-20} ${icons-i} $label)\"");;
 			#Power=$(eval "echo -e \"$($path/system_info.sh Power $padding $separator ${display_width}x$display_height $icon)\"");;
 		L)
@@ -427,7 +429,12 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			check_arg launchers_args ${!OPTIND} && shift
 
-			run_function get_launchers 1;;
+			if [[ $launchers_args =~ a ]]; then
+				run_function get_launchers 1
+			else
+				get_fifo
+				get_launchers > "$fifo" &
+			fi;;
 		m)
 			format mpd
 			check_arg mpd_modules ${!OPTIND} && shift
@@ -551,13 +558,35 @@ if ((bar_height < 20)); then
 fi
 
 font_offset=$((main_font_offset - 1))
+((font_size == 9)) && ((main_font_offset++))
+if ((font_size < 10)); then
+	#((remix_offset--))
+	((remix_offset -= 0))
+	#((font_size % 2 == 0)) && ((remix_offset--))
+else
+	((font_size % 2 == 1)) && ((remix_offset--))
+fi
+#((font_size < 9)) && remix_offset=$((font_offset + 1))
 
 font1="Roboto Mono Medium:size=$font_size"
 font1="Iosevka Orw:style=Medium:size=$font_size"
 font2="icomoon_fa:size=$font_size"
+font2="MaterialIcons-Regular:size=$((font_size + 2))"
+font2="remixicon:size=$((font_size + 2))"
+font2="awesome_material_remix_dev:size=$((font_size + 1))"
 font3="Font Awesome 5 Free:style=Solid:size=$((font_size - 1))"
+font3="MaterialIcons-Regular:size=$((font_size + 2))"
 font4="DejaVu Sans Mono:size=$font_size"
 font5="orw_fi:size=$font_size"
+
+#main font
+font1="Iosevka Orw:style=Medium:size=$font_size"
+
+#icon fonts
+font2="remix:size=$((font_size + 3))"
+font3="awesome_new_sorted:size=$((font_size + 1))"
+font4="icomoon_material_tile:size=$((font_size + 1))"
+#~/.orw/scripts/notify.sh "i: $icomoon_offset f: $font_offset m: $main_font_offset"
 
 ends_with_line=$(awk -F '-l' '{ if((NF - 1) % 2) print "true" }' <<< "$all_arguments")
 
@@ -743,10 +772,17 @@ while read -r module; do
 	sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
-	-f "$font2" -o ${icomoon_offset:-$((font_offset - 0))} \
-	-f "$font4" -o $main_font_offset \
-	-f "$font5" -o $((font_offset - 0)) \
-	-a 70 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
+	-f "$font2" -o ${remix_offset:-$((${font_offset:-$main_font_offset} + 0))} \
+	-f "$font3" -o $((${font_offset:-$main_font_offset} - 0)) \
+	-f "$font4" -o $((${font_offset:-$main_font_offset} - 0)) \
+	-a 100 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
+
+#done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
+#	-f "$font1" -o $main_font_offset \
+#	-f "$font2" -o ${icomoon_offset:-$((font_offset + 1))} \
+#	-f "$font3" -o $((main_font_offset - 1)) \
+#	-f "$font4" -o $((font_offset - 0)) \
+#	-a 90 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
 
 sleep 0.5
 xdo lower -N Bar

@@ -9,12 +9,12 @@ fi
 read wm_icon offset_icon reverse_icon direction_icon <<< \
 	$(awk '{
 		if(/^mode/) {
-			wm = ($NF == "floating") ? "" : ""
+			wm = ($NF == "floating") ? "" : ""
 		} else if(/^offset/) {
-			o = ($NF == "true") ? "" : ""
-		} else if(/^reverse/) r = ""
+			o = ($NF == "true") ? "" : " "
+		} else if(/^reverse/) r = ""
 		else if(/^direction/) {
-			d = ($NF == "h") ? "" : ""
+			d = ($NF == "h") ? "" : " "
 		}
 	} END {
 		print wm, o, r, d
@@ -33,6 +33,7 @@ else
 	[[ $@ =~ $direction_icon ]] && option=direction
 	[[ $@ =~ $wm_icon ]] && mode="${@#*$wm_icon$sep$wm_mode}"
 
+	killall rofi
 	~/.orw/scripts/toggle.sh wm $option $mode
 
 	list_options

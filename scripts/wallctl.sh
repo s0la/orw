@@ -409,7 +409,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			service=true
 
 			assign_value state ${!OPTIND} && shift
-			current_state=$(systemctl --user status change_wallpaper.timer | awk '/Active/ {print $2}')
+			current_state=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print $2 }')
 
 			if [[ ${current_state:-$state} == 'inactive' ]]; then
 				new_state='start'
@@ -1170,7 +1170,9 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 
 			#$notify -p "$icon Wallpaper auto-changer has been ${new_state}ed."
 			#[[ $new_state == start ]] && icon= || icon=
-			[[ $new_state == start ]] && icon= || icon=
+
+			#[[ $new_state == start ]] && icon= || icon=
+			[[ $new_state == start ]] && icon= || icon=
 
 			message="Auto-changer ${new_state}ed"
 			~/.orw/scripts/notify.sh osd $icon "$message"
@@ -1183,7 +1185,8 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 
 			#$notify -p "$icon Wallpaper auto-changer $service_property has been set to ${order:-$interval ${unit:-min}}."
 			icon=
-			icon=
+			icon=
+			icon=
 			message="$service_property: ${order:-$interval ${unit:-min}}"
 			#message="$(offset_message "$message")"
 			~/.orw/scripts/notify.sh osd $icon "$message"
