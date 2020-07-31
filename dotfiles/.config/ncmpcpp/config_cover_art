@@ -33,7 +33,7 @@ volume_color = "77"
 statusbar_color = "77"
 header_window_color = "77"
 main_window_color = "77"
-empty_tag_color = "1"
+empty_tag_color = "77"
 color2 = "4"
 
 color1 = "white"
@@ -56,4 +56,6 @@ visualizer_type = "spectrum" (spectrum/wave)
 visualizer_color = 85,85,85,85,85,85,85,85,85,85,85
 
 #execute_on_song_change = "~/.orw/scripts/ncmpcpp.sh -r 90 -C && ~/.orw/scripts/song_notification.sh"
-execute_on_song_change = "~/.orw/scripts/ncmpcpp.sh -r 90 -C"
+#execute_on_song_change = "~/.orw/scripts/ncmpcpp.sh -r 90 -C"
+#execute_on_song_change = "~/Desktop/ncmp_cover.sh"
+execute_on_song_change = "~/.orw/scripts/ncmpcpp.sh -C"
