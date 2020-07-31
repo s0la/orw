@@ -25,28 +25,95 @@ function show_progessbar() {
 }
 
 function get_cover_properties() {
-	ratio=${ratio-90}
-	padding=$(sed -n 's/[^0-9]*\([0-9]\+\).*/\1/p' ~/.config/gtk-3.0/gtk.css 2> /dev/null)
+	#ratio=${ratio-90}
+	#padding=$(sed -n 's/[^0-9]*\([0-9]\+\).*/\1/p' ~/.config/gtk-3.0/gtk.css 2> /dev/null)
 
-	if [[ ! $width && ! $height ]]; then
-		read width height <<< $(wmctrl -lG | \
-		awk '$NF == "ncmpcpp_with_cover_art" { print $5 - ('$padding' * 2), $6 - ('$padding' * 2) }')
-	fi
+	#if [[ ! $width && ! $height ]]; then
+	#	read width height <<< $(wmctrl -lG | \
+	#	awk '$NF == "ncmpcpp_with_cover_art" { print $5 - ('$padding' * 2), $6 - ('$padding' * 2) }')
+	#fi
 
-	sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art
+	#sed -i "/^execute/ s/[0-9]\+/$ratio/" ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art
 
-	read s x y r <<< $(awk 'BEGIN { \
-		r = 0.'$ratio'; w = '$width'; h = '$height'; \
-		if (h < 300 && r >= 0.8) { x = int('$padding' + (h * (1 - r)) / 2); div = h; a = 1 } \
-		else { x = ('$padding' + 2); div = int(h * r); a = 1 }; \
-		s = int(h * r); y = int((h - s + ('$padding' / 2)) / 2); w = int(100 - (100 / (w / div)) - a); print s, x, y, w}')
+	#read s x y r <<< $(awk 'BEGIN { \
+	#	r = 0.'$ratio'; w = '$width'; h = '$height'; \
+	#	if (h < 300 && r >= 0.8) { x = int('$padding' + (h * (1 - r)) / 2); div = h; a = 1 } \
+	#	else { x = ('$padding' + 2); div = int(h * r); a = 1 }; \
+	#	s = int(h * r); y = int((h - s + ('$padding' / 2)) / 2); w = int(100 - (100 / (w / div)) - a); print s, x, y, w}')
+
+
+	#read pane_count pane_width pane_height <<< \
+	#	$(tmux -S /tmp/tmux_hidden display -p -F '#{window_panes} #{window_width} #{window_height}' -t ncmpcpp_with_cover_art)
+
+	#read x y cover_width cover_height ratio <<< $(awk '\
+	#	$NF == "ncmpcpp_with_cover_art" {
+	#		p = '$padding'
+	#		pw = '$pane_width'
+	#		ph = '$pane_height'
+	#		w = $1
+	#		h = $2
+	#		cw = (w - 2 * p) / pw
+	#		ch = (h - 2 * p) / ph
+	#		x = int(p / cw)
+	#		y = int(p / ch)
+	#		r = int((h - 2 * p) / w * 100)
+	#		cw = int(pw / 100 * r)
+	#		print x, y, cw, ph - 2 * y, 100 - r
+	#	}' <<< echo $width $height)
+
+	padding=$(awk '/padding/ { print gensub(/[^0-9]*([0-9]+).*/, "\\1", 1) }' .config/gtk-3.0/gtk.css)
+
+	read pane_count pane_width pane_height <<< \
+		$(tmux -S /tmp/tmux_hidden display -p -F '#{window_panes} #{window_width} #{window_height}' -t ncmpcpp_with_cover_art)
+
+	read x y cover_width cover_height width ratio <<< $(wmctrl -lG | \
+		awk '$NF == "ncmpcpp_with_cover_art" {
+			p = '$padding'
+			pw = '$pane_width'
+			ph = '$pane_height'
+			w = $5
+			h = $6
+			uh = ((h - 2 * p) / ph)
+			uw = ((w - 2 * p) / pw)
+
+			cw = int((h - 2 * p) / uw)
+			r = int(100 / ((w - 2 * p) / (h - 2 * p)))
+
+			print 0, 0, cw, ph, cw + 1, r }')
 }
 
 function draw_cover_art() {
-	cover=$(~/.orw/scripts/get_cover_art.sh)
+	#cover=$(~/.orw/scripts/get_cover_art.sh)
 
-	[[ -f "$cover" ]] && echo -e "0;1;$x;$y;$s;$s;;;;;$cover\n3;" | /usr/lib/w3m/w3mimgdisplay || 
-		$base_command send -t ncmpcpp_with_cover_art:0.0 'clear' Enter
+	##[[ -f "$cover" ]] && echo -e "0;1;$x;$y;$s;$s;;;;;$cover\n3;" | /usr/lib/w3m/w3mimgdisplay || 
+	##	$base_command send -t ncmpcpp_with_cover_art:0.0 'clear' Enter
+	#[[ -f "$cover" ]] && local args="draw $x $y $cover_width $cover_height $cover"
+	#~/.orw/scripts/ueberzug_wrapper.sh "$args"
+	##~/Desktop/ub.sh "$args"
+	#	#$base_command send -t ncmpcpp_with_cover_art:0.0 'clear' Enter
+	#exit
+
+	cover=$(~/.orw/scripts/get_cover_art.sh)
+	[[ -f "$cover" ]] && args="draw $x $y $cover_width $cover_height $cover"
+	command="~/.orw/scripts/ueberzug_wrapper.sh $args"
+
+	tmux_name="ncmpcpp_with_cover_art"
+	tmux_base="tmux -S /tmp/tmux_hidden"
+
+	if ((pane_count == 1)); then
+		$tmux_base split-pane -hbp $ratio -t $tmux_name:0.0
+		initialize='export blank=true && source ~/.bashrc && ~/.orw/scripts/ueberzug_parser.sh'
+		$tmux_base send -t $tmux_name:0.0 "$initialize" Enter
+	else
+		$tmux_base resize-pane -x $width -t $tmux_name:0.0
+		$tmux_base select-pane -t $tmux_name:0.1
+		eval "$command"
+		exit
+	fi
+
+	$tmux_base send -t $tmux_name:0.0 "clear" Enter
+	$tmux_base select-pane -t $tmux_name:0.1
+	eval "$command"
 	exit
 }
 
@@ -112,13 +179,19 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 			command='new -s split ncmpcpp \; splitw -p 20 cava \; selectp -U';;
 		c)
-			[[ $@ =~ -i ]] && width=${width-550} height=${height-200}
+			[[ $@ =~ -i ]] && width=${width-630} height=${height-230}
 			title=ncmpcpp_with_cover_art
 
-			get_cover_properties
+			#get_cover_properties
 			show_progessbar yes
 
-			command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
+			#command="new -s ncmpcpp_with_cover_art \; splitw -h -p $r ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
+			#command="new -s ncmpcpp_with_cover_art ~/Desktop/read_ub.sh \; splitw -h -p $ratio ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
+			#init_ueberzug='export blank=true && source ~/.bashrc && ~/Desktop/read_ub.sh'
+			#command="new -s ncmpcpp_with_cover_art ~/Desktop/read_ub.sh \; splitw -hp 80 ncmpcpp -c ~/.config/ncmpcpp/config_cover_art";;
+			command="new -s ncmpcpp_with_cover_art ~/.orw/scripts/ueberzug_parser.sh \; "
+			command+="splitw -hp 80 ncmpcpp -c ~/.config/ncmpcpp/config_cover_art";;
+			#command="new -s ncmpcpp_with_cover_art ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
 		d)
 			~/.orw/scripts/ncmpcpp.sh $display $V -v -i
 			until [[ $(wmctrl -l | awk '$NF ~ "visualizer"') ]]; do continue; done
@@ -127,7 +200,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		C)
 			arg=${!OPTIND}
 
-			if [[ ! $arg =~ ^- ]]; then
+			if [[ $arg && ! $arg =~ ^- ]]; then
 				class=$arg
 				shift
 			else
