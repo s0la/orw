@@ -113,7 +113,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=12
+		old_mail_count=
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -191,46 +191,50 @@ case $1 in
 			id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
 
 			if [[ $id ]]; then
-				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] && fg="\${$pfg}" || fg="\${$sfg}"
+				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] &&
+					state=down fg="\${$pfg}" || state=up fg="\${$sfg}"
 
 				#icon=%{I+3}%{I-}
-				set_icon dropdown
+				set_icon dropdown_$state
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
 			fi
 		}
 
-	recorder() {
-		state=rec
-		#[[ $state == stop ]] && icon= fg=\${$pfg} || icon=%{I+n}%{I-} fg=\${$sfg}
-		if [[ $state == stop ]]; then
-			icon=
-			fg=\${$pfg}
-		else
-			set_icon rec
-			fg=\${$sfg}
+		recorder() {
+			state=rec
+			#[[ $state == stop ]] && icon= fg=\${$pfg} || icon=%{I+n}%{I-} fg=\${$sfg}
+			if [[ $state == stop ]]; then
+				set_icon rec
+				fg="\${$pfg}"
+			else
+				set_icon rec
+				fg="\${$sfg}"
+			fi
+
+			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
+
+			if [[ $pid ]]; then
+				rec_command="~/.orw/scripts/record_screen.sh"
+				kill_command="kill $pid"
+				rec=$(format ${!1-${state^^}} ":$rec_command:" "2:$kill_command:")
+			fi
+		}
+
+		[[ $4 ]] && label=icon
+
+		#~/.orw/scripts/notify.sh "3: $3"
+
+		if [[ $3 == all ]]; then
+			dropdown $label
+			recorder $label
 		fi
 
-		pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
+		#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
+		#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-		if [[ $pid ]]; then
-			rec_command="~/.orw/scripts/record_screen.sh"
-			kill_command="kill $pid"
-			rec=$(format ${!1-${state^^}} ":$rec_command:" "2:$kill_command:")
-		fi
-	}
-
-	[[ $4 ]] && label=icon
-
-	if [[ $3 == all ]]; then
-		dropdown $label
-		recorder $label
-	fi
-
-	#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
-	#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
-
-	[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
-	format_fading "" "" "none" "$hidden";;
+		[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
+		[[ $hidden ]] && echo "$hidden" > ~/Desktop/hid
+		format_fading "" "" "none" "$hidden";;
 
 #	if [[ $term || $rec ]]; then
 #		hidden="\${$sbg}\${inner}$term$rec\$inner"
@@ -351,8 +355,15 @@ case $1 in
 
 		while read -r dev usage location; do
 			unmount="~/.orw/scripts/mount.sh $dev $dev"
-			disk+="$(format "%{A1:thunar $location 2> /dev/null:}%{A2:$unmount:}${!2} ${dev##*/}%{A}%{A}" $usage)"
-		done <<< $(df -h | awk '/sd.[0-9]/ { usage = ($5 > 95) ? $4 : $5; print $1, usage, $NF }' | xargs -n 3)
+			vifm_command="~/.orw/scripts/vifm.sh -i $location"
+			disk+="$(format "%{A1:$vifm_command:}%{A2:$unmount:}${!2} ${dev##*/}%{A}%{A}" $usage)"
+		done <<< $(df -h | \
+			awk '/^\/dev/ {
+				p = gensub(/.*\/([^-]*-)?(.*) (.*)%/, "\\2  \\3", 1, $1 " " $5 )
+				split(p, pa)
+				print pa[1], (pa[2] > 95) ? $4 : $5, $NF
+			}' | xargs -n 3)
+		#done <<< $(df -h | awk '/sd.[0-9]/ { usage = ($5 > 95) ? $4 : $5; print $1, usage, $NF }' | xargs -n 3)
 
 		echo -e "${disk%\*}";;
 	Usage*)
@@ -559,10 +570,10 @@ case $1 in
 		#[[ $5 == icon ]] && set_icon Power
 		set_icon Power
 
-		[[ $5 =~ icon|only ]] && label=$icon
+		[[ $6 =~ icon|only ]] && label=$icon
 		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"
 		#~/.orw/scripts/notify.sh "$4 ${!4:-LOG}"
 		#~/.orw/scripts/notify.sh "all: $all"
 
-		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 $4 &:}\${inner}${label:-POW}\$inner%{A}";;
+		format "%{A:~/.orw/scripts/bar/power.sh $2 $3 $4 $5 &:}\${inner}${label:-POW}\$inner%{A}";;
 esac
