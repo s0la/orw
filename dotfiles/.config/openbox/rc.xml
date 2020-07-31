@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>7</size>
+      <size>9</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -199,7 +199,7 @@
         <command>~/.orw/scripts/rofi_scripts/ncmpcpp_group.sh playback</command>
       </action>
     </keybind>
-    <keybind key="A-b">
+    <keybind key="A-S-l">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/rofi_script.sh bar_launchers</command>
       </action>
@@ -229,6 +229,11 @@
         <command>~/.orw/scripts/rofi_scripts/rofi_script.sh volume</command>
       </action>
     </keybind>
+	<keybind key="A-b">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/rofi_script.sh brightness</command>
+      </action>
+    </keybind>
     <keybind key="A-a">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/apps_group.sh apps</command>
@@ -256,7 +261,7 @@
     </keybind>
 	<keybind key="A-x">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/tiling_group.sh ratio</command>
+        <command>~/.orw/scripts/rofi_scripts/tiling_group.sh toggle</command>
       </action>
     </keybind>
     <keybind key="A-d">
@@ -299,42 +304,42 @@
         <command>~/Desktop/read2.sh</command>
       </action>
     </keybind>
-    <keybind key="W-Left">
+    <keybind key="W-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -l +50</command>
       </action>
     </keybind>
-    <keybind key="W-Right">
+    <keybind key="W-l">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -r +50</command>
       </action>
     </keybind>
-    <keybind key="W-Up">
+    <keybind key="W-k">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -t +50</command>
       </action>
     </keybind>
-    <keybind key="W-Down">
+    <keybind key="W-j">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -b +50</command>
       </action>
     </keybind>
-    <keybind key="W-C-Left">
+    <keybind key="W-C-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -L</command>
       </action>
     </keybind>
-    <keybind key="W-C-Right">
+    <keybind key="W-C-l">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -R</command>
       </action>
     </keybind>
-    <keybind key="W-C-Up">
+    <keybind key="W-C-k">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -T</command>
       </action>
     </keybind>
-    <keybind key="W-C-Down">
+    <keybind key="W-C-j">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh move -B</command>
       </action>
@@ -344,12 +349,12 @@
         <command>~/.orw/scripts/windowctl.sh resize -r -50</command>
       </action>
     </keybind>
-    <keybind key="A-C-Left">
+    <keybind key="A-C-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -l +50</command>
       </action>
     </keybind>
-    <keybind key="A-W-Left">
+    <keybind key="A-W-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -l -50</command>
       </action>
@@ -359,12 +364,12 @@
         <command>~/.orw/scripts/windowctl.sh resize -r +50</command>
       </action>
     </keybind>
-    <keybind key="A-C-Right">
+    <keybind key="A-C-l">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -r +50</command>
       </action>
     </keybind>
-    <keybind key="A-W-Right">
+    <keybind key="A-W-l">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -r -50</command>
       </action>
@@ -374,12 +379,12 @@
         <command>~/.orw/scripts/windowctl.sh resize -b -50</command>
       </action>
     </keybind>
-    <keybind key="A-C-Up">
+    <keybind key="A-C-k">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -t +50</command>
       </action>
     </keybind>
-    <keybind key="A-W-Up">
+    <keybind key="A-W-k">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -t -50</command>
       </action>
@@ -389,12 +394,12 @@
         <command>~/.orw/scripts/windowctl.sh resize -b +50</command>
       </action>
     </keybind>
-    <keybind key="A-C-Down">
+    <keybind key="A-C-j">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -b +50</command>
       </action>
     </keybind>
-    <keybind key="A-W-Down">
+    <keybind key="A-W-j">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b -a resize -b -50</command>
       </action>
@@ -402,26 +407,6 @@
     <keybind key="W-w">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl_by_input.sh windowctl</command>
-      </action>
-    </keybind>
-    <keybind key="W-h">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl resize -O h</command>
-      </action>
-    </keybind>
-    <keybind key="W-v">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl resize -O v</command>
-      </action>
-    </keybind>
-    <keybind key="C-W-h">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl move -O -h</command>
-      </action>
-    </keybind>
-    <keybind key="C-W-v">
-      <action name="Execute">
-        <command>~/.orw/scripts/windowctl_by_input.sh windowctl move -O -v</command>
       </action>
     </keybind>
     <!--
@@ -972,8 +957,8 @@
 		  <y>default</y>
       </position>
       <size>
-        <height>500</height>
-        <width>400</width>
+        <height>250</height>
+        <width>650</width>
       </size>
     </application>
 
@@ -1004,29 +989,29 @@
       </size>
     </application>
 
+    <application class="tiling">
+      <monitor>1</monitor>
+      <position force="yes">
+        <x>20</x>
+        <y>20</y>
+      </position>
+      <size>
+        <width>1874</width>
+        <height>987</height>
+      </size>
+    </application>
+
     <application class="dropdown">
       <decor>no</decor>
       <focus>yes</focus>
       <desktop>all</desktop>
       <position force="yes">
         <x>528</x>
-        <y>70</y>
+        <y>50</y>
       </position>
       <size>
         <width>864</width>
         <height>467</height>
-      </size>
-    </application>
-
-    <application class="tiling">
-      <monitor>-x</monitor>
-      <position force="yes">
-        <x>970</x>
-        <y>124</y>
-      </position>
-      <size>
-        <width>642</width>
-        <height>848</height>
       </size>
     </application>
 
@@ -1035,8 +1020,8 @@
       <focus>yes</focus>
       <layer>below</layer>
       <position force="yes">
-        <x>930</x>
-        <y>510</y>
+        <x>1444</x>
+        <y>776</y>
       </position>
       <size>
         <width>70</width>
@@ -1048,8 +1033,8 @@
       <focus>no</focus>
       <decor>no</decor>
       <position force="yes">
-        <x>734</x>
-        <y>224</y>
+        <x>1279</x>
+        <y>310</y>
       </position>
 	  <size>
 		  <width>100</width>
