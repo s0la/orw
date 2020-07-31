@@ -296,19 +296,40 @@ function gtk() {
 function dunst() {
 	reload_dunst=true
 
-	if [[ $property == pbfg ]]; then
-		sed -i "/^pbfg/ s/#\w*/#${color: -6}/" ~/.orw/scripts/notify.sh
-	else
-		[[ $property =~ ^c ]] && urgency=critical
+	[[ $property =~ ^c ]] &&
+		urgency=critical property=${property:1}
 
-		case $property in
-			*bg) local pattern=background;;
-			*fg) local pattern=foreground;;
-			*fc) local pattern=frame_color;;
-		esac
+	case $property in
+		bg) local pattern=background;;
+		fg) local pattern=foreground;;
+		fc) local pattern=frame_color;;
+		*)
+			sed -i "/^$property/ s/#\w*/#${color: -6}/" ~/.orw/scripts/notify.sh
+	esac
 
-		sed -i "/urgency_${urgency:-normal}/,/^$/ { /$pattern/ s/#\w*/#${color: -6}/ }" $dunst_conf
-	fi
+		[[ $pattern ]] && sed -i "/urgency_${urgency:-normal}/,/^$/ { /$pattern/ s/#\w*/#${color: -6}/ }" ${dunst_conf%/*}/*
+
+	#if [[ $property == pbfg ]]; then
+	#	sed -i "/^pbe\?fg/ s/#\w*/#${color: -6}/" ~/.orw/scripts/notify.sh
+	#else
+	#	[[ $property =~ ^c ]] && urgency=critical property=${property:1}
+
+	#	#case $property in
+	#	#	*bg) local pattern=background;;
+	#	#	*fg) local pattern=foreground;;
+	#	#	*fc) local pattern=frame_color;;
+	#	#	*)
+	#	#esac
+
+	#	case $property in
+	#		bg) local pattern=background;;
+	#		fg) local pattern=foreground;;
+	#		fc) local pattern=frame_color;;
+	#		*)
+	#	esac
+
+	#	sed -i "/urgency_${urgency:-normal}/,/^$/ { /$pattern/ s/#\w*/#${color: -6}/ }" ${dunst_conf%/*}/*
+	#fi
 }
 
 function term() {
@@ -592,7 +613,8 @@ function get_dunst() {
 		{ if($0 ~ /background/) print "bg", $2; \
 		else if(/foreground/) print "fg", $2; \
 		else if(/frame/) { print "fc", $2; exit } } }' ${dunst_conf%/*}/dunstrc
-	awk '/^pbfg/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' ~/.orw/scripts/notify.sh
+	awk '/^\w*[bf]g/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' ~/.orw/scripts/notify.sh
+	#awk '/^pbfg/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' ~/.orw/scripts/notify.sh
 }
 
 function get_term() {
@@ -620,7 +642,7 @@ get_vim() {
 
 get_vifm() {
 	while read vifm_property index; do
-		[[ $index != default ]] && get_color_properties $((index + 1))
+		[[ $index == default ]] && color=$index || get_color_properties $((index + 1))
 		echo $vifm_property $color
 	done <<< $(sed -n "s/^let \$\(\w*\) = '\?\([^']*\).*/\1 \2/p" $vifm_conf)
 }
