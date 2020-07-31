@@ -33,47 +33,67 @@ get_app() {
 	cd && rm -rf ~/Downloads/$3) &> /dev/null
 }
 
+install_picom() {
+	echo 'installing picom..'
+
+	(wget https://www.archlinux.org/packages/community/x86_64/libev/download -O ~/Downloads/libev.tar.zst
+	sudo tar xfC $HOME/Downloads/libev.tar.zst /
+	rm ~/Downloads/libev.tar.zst
+
+	git clone https://github.com/ibhagwan/picom ~/Downloads/picom
+	cd ~/Downloads/picom
+	git submodule update --init --recursive
+
+	ninja --buildtype=release . build
+	meson -C build
+	sudo meson -C build install
+
+	cd && rm -rf ~/Downloads/picom) &> /dev/null || handle_failure 'Failed to install picom'
+}
+
+install_termite() {
+	echo 'installing termite..'
+
+	sudo apt-get install -y \
+		git \
+		g++ \
+		libgtk-3-dev \
+		gtk-doc-tools \
+		gnutls-bin \
+		valac \
+		intltool \
+		libpcre2-dev \
+		libglib3.0-cil-dev \
+		libgnutls28-dev \
+		libgirepository1.0-dev \
+		libxml2-utils \
+		gperf &> /dev/null
+
+	(git clone https://github.com/thestinger/vte-ng.git ~/Downloads/vte
+	git clone --recursive https://github.com/thestinger/termite.git ~/Downloads/termite
+
+	echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
+
+	sed -i '/^\s*public.*audible/i\\tpublic int dummy;' ~/Downloads/vte/bindings/vala/app.vala
+
+	cd ~/Downloads/vte && ./autogen.sh && make && sudo make install
+	cd ~/Downloads/termite && make && sudo make install
+
+	rm -rf ~/Downloads/{vte,termite}
+
+	sudo ldconfig
+	sudo mkdir -p /lib/terminfo/x
+	sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
+	sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60) &> /dev/null
+}
+
 handle_failure() {
 	echo "${1:-Failed to install dependencies, please check your internet connection and available disk space, and try again.}"
 	exit
 }
 
 function deps() {
-	install_termite() {
-		echo 'installing termite..'
-
-		sudo apt-get install -y \
-			git \
-			g++ \
-			libgtk-3-dev \
-			gtk-doc-tools \
-			gnutls-bin \
-			valac \
-			intltool \
-			libpcre2-dev \
-			libglib3.0-cil-dev \
-			libgnutls28-dev \
-			libgirepository1.0-dev \
-			libxml2-utils \
-			gperf &> /dev/null
-
-		(git clone https://github.com/thestinger/vte-ng.git ~/Downloads/vte
-		git clone --recursive https://github.com/thestinger/termite.git ~/Downloads/termite
-
-		echo export LIBRARY_PATH="/usr/include/gtk-3.0:$LIBRARY_PATH"
-
-		sed -i '/^\s*public.*audible/i\\tpublic int dummy;' ~/Downloads/vte/bindings/vala/app.vala
-
-		cd ~/Downloads/vte && ./autogen.sh && make && sudo make install
-		cd ~/Downloads/termite && make && sudo make install
-
-		rm -rf ~/Downloads/{vte,termite}
-
-		sudo ldconfig
-		sudo mkdir -p /lib/terminfo/x
-		sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
-		sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60) &> /dev/null
-	}
+	install_termite
 
 	echo 'installing dependencies..'
 
@@ -119,8 +139,8 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant &> /dev/null \
-			libconfig libev xcb-util-image libxml2 glibc icu ||
+			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant meson community/uthash \
+			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> /dev/null ||
 			handle_failure "$failure_message"
 
 		echo 'cleaning..'
@@ -138,8 +158,11 @@ function deps() {
 }
 
 function apps() {
-	#compton with kawase blur
-	get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
+	##compton with kawase blur
+	#get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
+
+	#picom with kawase blur
+	install_picom
 
 	#neovim python3 installation
 	sudo ln -s /usr/lib/libffi.so.6 /usr/lib/libffi.so.7
