@@ -2,12 +2,14 @@
 
 tn_span="<span foreground='\\\$fg'>"
 pd_span="<span font='Roboto Mono 3' foreground='\\\$pbfg'>"
-pr_span="<span foreground='\\\$epbfg'>"
+pr_span="<span foreground='\\\$sbg'>"
 end_span='</span></span></span>'
 
 read ft <<< $(transmission-remote -l | awk '\
 	function print_progress(percent) {
-		if(percent > 0) return gensub(/ /, "██", "g", sprintf("%*s", percent, " "))
+		#if(percent > 0) return gensub(/ /, "██", "g", sprintf("%*s", percent, " "))
+		#if(percent > 0) return gensub(/ /, "━", "g", sprintf("%*s", percent, " "))
+		if(percent > 0) return gensub(/ /, "▔", "g", sprintf("%*s", percent, " "))
 	}
 
 	NR == 1 {
