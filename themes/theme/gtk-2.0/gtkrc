@@ -9,10 +9,10 @@ gtk-color-scheme = "active_color:#a6bbbf"
 gtk-color-scheme = "base_bg_color:#303030"
 gtk-color-scheme = "base_fg_color:#c0c0c0"
 
-gtk-color-scheme = "mbg_color:#191a1e"
+gtk-color-scheme = "mbg_color:#0c1112"
 gtk-color-scheme = "mfg_color:#2f3034"
-gtk-color-scheme = "msbg_color:#191a1e"
-gtk-color-scheme = "msfg_color:#9a796e"
+gtk-color-scheme = "msbg_color:#0c1112"
+gtk-color-scheme = "msfg_color:#8fa398"
 
 gtk-color-scheme = "text_color:#777777"
 gtk-color-scheme = "link_color:#2d71b8" # Hyperlinks

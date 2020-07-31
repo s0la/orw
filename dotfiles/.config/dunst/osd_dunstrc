@@ -285,8 +285,8 @@ transparency = 20
     #icon = /path/to/icon
 
 [urgency_normal]
-    background = "#191a1e"
-    foreground = "#cccccc"
+    background = "#c0c0c0"
+    foreground = "#333333"
 	frame_color = "#ca8065"
 	#87939c = "#a1b5c0"
     timeout = 5

@@ -7,7 +7,7 @@ allow_bold = false
 #font = Monaco for PowerLine 9
 #font = Roboto Mono 9
 #font = FiraCode-Regular 9
-font = Iosevka Orw 9
+font = Iosevka Orw 10
 #font = SF Pro Display 9
 #font = Rubik-Regular 9
 #fullscreen = true
@@ -54,7 +54,7 @@ cursor_shape = block
 
 #colors
 foreground = #c0c0c0
-background = rgba(25,26,30,1.00)
+background = rgba(12,17,18,0.95)
 
 #palette
 color0 = #494a4c
@@ -183,6 +183,12 @@ color122 = #978691
 color123 = #8c7b86
 color124 = #191e24
 color125 = #9a796e
+color126 = #1A2026
+color127 = #242D35
+color128 = #2D3741
+color129 = #94CF95
+color130 = #bdd9d5
+color131 = #eecdc4
 
 [hints]
 #font = Monospace 12

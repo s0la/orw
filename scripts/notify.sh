@@ -4,7 +4,7 @@ read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
 sbg='#9d9d9d'
-pbfg='#a58479'
+pbfg='#bdd9d5'
 #sbg=$(~/.orw/scripts/colorctl.sh -o +30 -h $bg)
 #epbfg=$(~/.orw/scripts/colorctl.sh -o +30 -h $bg)
 
@@ -39,7 +39,7 @@ if [[ $1 =~ ^(osd|mini|vert) ]]; then
 	#[[ "$type" =~ dunst$ ]] && killall dunst
 	[[ "$type" =~ ${1}_dunstrc$ ]] || killall dunst
 
-	restore_default_config_pid=1405311
+	restore_default_config_pid=
 	restore_default_config
 
 	pid=$(pidof dunst)

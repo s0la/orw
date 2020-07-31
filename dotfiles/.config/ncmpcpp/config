@@ -1,5 +1,6 @@
 song_status_format = "{%a - %t}"
 song_list_format = "{%a - %t} $R {%l}"
+song_columns_list_format = "(50)[black]{ar}(50)[green] {t}"
 song_window_title_format = "{%a - }{%t}|{%f}"
 
 ncmpcpp_directory = "/home/sola/.config/ncmpcpp"
@@ -7,15 +8,17 @@ mpd_music_dir = "/home/sola/Music"
 external_editor = "vim"
 user_interface = "classic"
 playlist_display_mode = "classic"
+autocenter_mode = "yes"
+centered_cursor = "yes"
 
 message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
 now_playing_prefix = "$(24)"
 now_playing_suffix = "$0"
-selected_item_prefix = "$(77)"
-current_item_prefix = "$(77)$r"
-browser_playlist_prefix = "$77»$77 "
+selected_item_prefix = "$(125)"
+current_item_prefix = "$(125)$r"
+browser_playlist_prefix = "$125»$125 "
 
 colors_enabled = "yes"
 cyclic_scrolling = "yes"
@@ -27,11 +30,11 @@ titles_visibility = "no"
 statusbar_visibility = "yes"
 display_remaining_time = "yes"
 
-volume_color = "77"
-statusbar_color = "77"
-header_window_color = "77"
-main_window_color = "77"
-empty_tag_color = "77"
+volume_color = "125"
+statusbar_color = "125"
+header_window_color = "125"
+main_window_color = "125"
+empty_tag_color = "125"
 color2 = "4"
 
 color1 = "white"
@@ -41,9 +44,9 @@ window_border_color = "white"
 active_window_border = "cyan"
 alternative_ui_separator_color = "black"
 
-progressbar_color = "77"
+progressbar_color = "125"
 progressbar_look = "━━━"
-progressbar_elapsed_color = "126"
+progressbar_elapsed_color = "130"
 
 visualizer_in_stereo = "no"
 visualizer_fifo_path = "/home/sola/.config/mpd/mpd.fifo"
@@ -51,6 +54,6 @@ visualizer_output_name = "mpd_fifo"
 visualizer_sync_interval = "30"
 visualizer_look = "○▋"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_color = 126,126,126,126,126,126,126,126,126,126,126
+visualizer_color = 19,19,19,19,19,19,19,19,19,19,19
 
 #execute_on_song_change = "~/.orw/scripts/song_notification.sh"
