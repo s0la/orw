@@ -16,6 +16,9 @@ noremap <silent> <leader>q :call CloseGitOutput()<cr>
 noremap <silent> <leader>f :silent! call Sidebar()<cr>
 noremap <silent> <leader>r :so ~/.config/nvim/init.vim<cr>
 
+"command! -nargs=* >leader>te split | terminal <args>
+command! -nargs=* Tre :call Term(<args>)
+
 "resizing
 noremap <silent> <C-j> :resize +3<cr>
 noremap <silent> <C-k> :resize -3<cr>
