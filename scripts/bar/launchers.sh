@@ -8,26 +8,100 @@ offset=$padding
 launchers_directory=~/.config/orw/bar/launchers
 launchers_file=$launchers_directory/$1
 
+current_desktop=$(xdotool get_desktop)
+current_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
+
 [[ ! -d $launchers_directory ]] && mkdir $launchers_directory
 [[ ! -f $launchers_file ]] && cp ~/.orw/scripts/bar/launchers $launchers_file
 
-if (($# > 4)); then
-	for argument in ${4//,/ }; do
-		value=${argument:1}
-		property=${argument:0:1}
+mouse_action() {
+	local name="$1" action="$2"
+	#~/.orw/scripts/notify.sh "n: $name"
 
-		[[ $5 == true ]] && separator_color='%{B${Lfc:-$fc}}'
+	#~/.orw/scripts/notify.sh "a: $action"
 
-		if [[ $property == s ]]; then
-			launcher_separator="${separator_color:-\$bsbg}%{O$value}"
+	read count position ids <<< $(wmctrl -l | awk '\
+		BEGIN { c = 0 }
+		$NF != "input" && /'"$name"'[0-9]+?/ {
+			if($1 == "'$current_id'") p = c
+			ids = ids " " $1
+			c++
+		} END { print c, p, ids }')
+
+	if ((count)); then
+		ids=( $ids )
+
+		if [[ $action == left ]]; then
+			[[ ${ids[position]} == $current_id ]] &&
+				#~/.orw/scripts/notify.sh "n: $name"
+				command="xdotool getactivewindow windowminimize" ||
+				command="wmctrl -a $name"
+		elif [[ $action == middle ]]; then
+			command="wmctrl -ic ${ids[position]}"
 		else
-			if [[ $value =~ [0-9] ]]; then
-				offset="%{O$value}"
-			else
-				[[ $value == p ]] && offset=$padding || offset='${inner}'
+			if ((count > 1)); then
+				if [[ $action =~ up|down ]]; then
+					[[ $action == down ]] &&
+						index=$(((position + 1) % count)) ||
+						index=$(((position + count - 1) % count))
+					command="wmctrl -ia ${ids[index]}"
+				fi
 			fi
 		fi
-	done
+	fi
+
+	#~/.orw/scripts/notify.sh "com: $3"
+	eval "${command:-$3}"
+	#echo "${command:-$3}" >> ~/Desktop/ls
+	exit
+
+					#local next_index=$(((position + 1) % count))
+					#local previous_index=$(((position + count - 1) % count))
+
+					#local down="wmctrl -ia ${ids[next_index]}"
+					#local up="wmctrl -ia ${ids[previous_index]}"
+	#			fi
+	#		else
+	#			local current=s
+	#		fi
+	#	fi
+	#fi
+
+}
+
+if [[ $1 == mouse_action ]]; then
+	#$@
+	#all="$@"
+	#~/.orw/scripts/notify.sh "c: $4"
+	mouse_action "${@:2}"
+	#eval "$all"
+	exit
+	#eval mouse_action "$@"
+else
+	if (($# > 4)); then
+		for argument in ${4//,/ }; do
+			if [[ $argument == a ]]; then
+				active=true
+			else
+				value=${argument:1}
+				property=${argument:0:1}
+
+				[[ $5 == true ]] && separator_color='%{B${Lfc:-$fc}}'
+
+				if [[ $property == s ]]; then
+					#~/.orw/scripts/notify.sh "sc: $value"
+					launcher_separator="${separator_color:-\$bsbg}%{O$value}"
+					#~/.orw/scripts/notify.sh "sc: $launcher_separator"
+				else
+					if [[ $value =~ [0-9] ]]; then
+						offset="%{O$value}"
+					else
+						[[ $value == p ]] && offset=$padding || offset='${inner}'
+					fi
+				fi
+			fi
+		done
+	fi
 fi
 
 function set_line() {
@@ -42,62 +116,85 @@ function set_line() {
 
 [[ $lines != false ]] && set_line
 
-current_desktop=$(xdotool get_desktop)
-current_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
-
 make_launcher() {
 	local count position ids commands closing
 
-	read count position ids <<< $(wmctrl -l | awk '\
-		BEGIN { c = 0 }
-		$NF != "input" && /'"$name"'[0-9]+?/ {
-			if($1 == "'$current_id'") p = c
-			ids = ids " " $1
-			c++
-		} END { print c, p, ids }')
+	#read count position ids <<< $(wmctrl -l | awk '\
+	#	BEGIN { c = 0 }
+	#	$NF != "input" && /'"$name"'[0-9]+?/ {
+	#		if($1 == "'$current_id'") p = c
+	#		ids = ids " " $1
+	#		c++
+	#	} END { print c, p, ids }')
 
-	if [[ $name =~ ^bar ]]; then
-		current=$(ps aux | awk '{ b = (/-n '${name#*_}'$/); if(b) exit } END { print b ? "p" : "s" }')
-	else
-		if [[ $up && $down ]]; then
-			local current=s
-		else
-			if ((count)); then
-				ids=( $ids )
-				local current=p
+	#if [[ $name =~ ^bar ]]; then
+	#	current=$(ps aux | awk '{ b = (/-n '${name#*_}'$/); if(b) exit } END { print b ? "p" : "s" }')
+	#else
+	#	if [[ $up && $down ]]; then
+	#		local current=s
+	#	else
+	#		if ((count)); then
+	#			ids=( $ids )
+	#			local current=p
 
-				[[ ${ids[position]} == $current_id ]] &&
-					local toggle="xdotool getactivewindow windowminimize" ||
-					local focus="wmctrl -a $name"
+	#			[[ ${ids[position]} == $current_id ]] &&
+	#				local toggle="xdotool getactivewindow windowminimize" ||
+	#				local focus="wmctrl -a $name"
 
-				if ((count > 1)); then
-					local next_index=$(((position + 1) % count))
-					local previous_index=$(((position + count - 1) % count))
+	#			if ((count > 1)); then
+	#				local next_index=$(((position + 1) % count))
+	#				local previous_index=$(((position + count - 1) % count))
 
-					local down="wmctrl -ia ${ids[next_index]}"
-					local up="wmctrl -ia ${ids[previous_index]}"
-				fi
-			else
-				local current=s
-			fi
-		fi
-	fi
+	#				local down="wmctrl -ia ${ids[next_index]}"
+	#				local up="wmctrl -ia ${ids[previous_index]}"
+	#			fi
+	#		else
+	#			local current=s
+	#		fi
+	#	fi
+	#fi
 
 	error='\&\> \/dev\/null \&'
-	left="${toggle:-${focus:-$left $error}}"
 	[[ $right ]] || right="$left $error"
-	[[ $middle ]] || middle="wmctrl -ic ${ids[position]}"
+	left="$0 mouse_action \'$name\' left \'$left $error\'"
+	[[ $middle ]] || middle="$0 mouse_action \'$name\' middle"
+	[[ $up ]] || up="$0 mouse_action \'$name\' up"
+	[[ $down ]] || down="$0 mouse_action \'$name\' down"
+
+	#left="${toggle:-${focus:-$left $error}}"
+	#[[ $right ]] || right="$left $error"
+	#[[ $middle ]] || middle="wmctrl -ic ${ids[position]}"
 
 	[[ $left ]] && commands+="%{A1:$left:}" && closing+="%{A}"
 	[[ $middle ]] && commands+="%{A2:$middle:}" && closing+="%{A}"
 	[[ $right ]] && commands+="%{A3:$right:}" && closing+="%{A}"
 	[[ $up ]] && commands+="%{A4:$up:}" && closing+="%{A}"
 	[[ $down ]] && commands+="%{A5:$down:}" && closing+="%{A}"
+	#[[ $up ]] && commands+="%{A4:$up:}" && closing+="%{A}"
+	#[[ $down ]] && commands+="%{A5:$down:}" && closing+="%{A}"
+
+	if [[ $active ]]; then
+		[[ ! $name =~ bar ]] &&
+			current_name="$name[0-9]+?" current_command="wmctrl -l" ||
+			current_name="${name#*_}" current_command="ps -C lemonbar -o args="
+
+		current=$(eval "$current_command" | awk '{
+				r = $NF ~ "'"$current_name"'"
+				if(r) exit
+			} END { print r ? "p" : "s" }')
+
+			#current=$(wmctrl -l | awk '{ r = $NF ~ "'"$name"'[0-9]+"; if(r) exit } END { print r ? 
+			#current=$(ps -C lemonbar -o args= | awk '{ r = $NF ~= "'${name#*_}'"; if(r) exit } END { print r ? "s" : "p" }')
+	else
+		current=s
+	fi
 
 	bg="\${L${current}bg:-\${Lsbg:-\$${current}bg}}"
 	fg="\${L${current}fg:-\${Lsfg:-\$${current}fg}}"
 
+	#commands="%{A:if ! wmctrl -a "$name"; then $left; fi:A}"
 	launcher="$commands$bg$fg$offset$icon$offset$closing"
+	#echo "$commands" >> ~/Desktop/ls
 
 	#if [[ $lines == single ]]; then
 	#	if [[ $current == p ]]; then
@@ -108,8 +205,10 @@ make_launcher() {
 	#	fi
 	#fi
 
-	if [[ $lines == single ]]; then
-		[[ $separator =~ ^% && $current == p ]] &&
+	#if [[ $lines == single ]]; then
+	if [[ $lines == single && $current == p ]]; then
+		#~/.orw/scripts/notify.sh "s: $separator"
+		#[[ $separator =~ ^% && $current == p ]] &&
 			launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
 	fi
 
@@ -125,13 +224,21 @@ done <<< $(awk '{ if(/^$/) {
 					} else { if(!/^#/) l = l " " $0 }
 					} END { for(li in al) print al[li]; print l }' $launchers_file)
 
-[[ $launcher_separator ]] && launchers=${launchers%\%*}
+#echo "$launchers" > ~/Desktop/ls
+
+#[[ $launcher_separator ]] && ~/.orw/scripts/notify.sh "le: ${launchers##*%}"
+[[ $launcher_separator ]] && launchers="${launchers%\%*}\${Lsbg:-\$sbg}"
 launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
 #[[ $separator =~ ^% ]] && launchers="$remove_frame$launchers"
 	#~/.orw/scripts/notify.sh "s: $separator"
 
 #if [[ $launchers && $lines == true ]]; then
-if [[ $lines != false ]]; then
+#if [[ $lines != false ]]; then
+#[[ $lines == single && $separator =~ ^% ]] && ~/.orw/scripts/notify.sh here
+if [[ $lines == false || ($lines == single && $separator =~ ^% ) ]]; then
+	#~/.orw/scripts/notify.sh here
+	launchers+="%{B\$bg}$separator"
+else
 	#~/.orw/scripts/notify.sh "s: $separator"
 	case $separator in
 		[ej]*)
@@ -143,12 +250,17 @@ if [[ $lines != false ]]; then
 		#e*) launchers+="${separator:1}";;
 		*) [[ $lines == true ]] &&
 			launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator";;
+			#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator" || launchers+="%{B\$bg}$separator";;
 	esac
-
-	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
-else
-	launchers+="%{B\$bg}$separator"
 fi
+
+#	esac
+#
+#	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
+#else
+#	#~/.orw/scripts/notify.sh here
+#	launchers+="%{B\$bg}$separator"
+#fi
 
 #~/.orw/scripts/notify.sh "s: $1 $separator"
 
