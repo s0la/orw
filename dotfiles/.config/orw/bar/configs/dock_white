@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -y 20 -w a -h 19 -a 11 -b -f 0 -F 12 -M -c bar_white bar_bw -n dock_white -O 18 -L a,s5,o8 -O 18 
