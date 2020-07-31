@@ -706,7 +706,8 @@ align() {
 				ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $config)
 			fi
 
-			resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+			#resize_by_ratio ${resize_argument:-H} $align_direction$reverse
+			resize_by_ratio H $align_direction$reverse $ratio
 
 			generate_printable_properties "${properties[*]}"
 			apply_new_properties
