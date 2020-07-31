@@ -34,7 +34,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=bw
+last_running=white,new_dock
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -146,7 +146,8 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 						if(i_c && NR == FNR) {
 							if(i_f) split(i_f, ia, ","); else ia = fa
 
-							for(iai in ia) naa[iai] = gensub(".*-" ia[iai] " ([^-]*).*", "\\1", 1)
+							#for(iai in ia) naa[iai] = gensub(".*-" ia[iai] " ([^-]*).*", "\\1", 1)
+							for(iai in ia) naa[iai] = gensub("(([^-]*-[^" ia[iai] "])*[^-]*-" ia[iai] ") ([^-]*).*", "\\3", 1)
 
 							print
 							nextfile
