@@ -253,7 +253,7 @@ wm() {
 	else
 		read mode pattern monitor <<< $(awk '/^mode/ {
 			nm = ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating"
-			m = (nm == "selection") ? "Mouse" : "Actiove"
+			m = (nm == "selection") ? "Mouse" : "Active"
 			p = (nm == "floating") ? "tiling" : "\*"
 			print nm, p, m
 		}' $orw_conf)
