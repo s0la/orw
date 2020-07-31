@@ -28,8 +28,9 @@ function toggle_command() {
 }
 
 if [[ $1 == system ]]; then
+		#'/Front.*Playback/ {
 	read label vol <<< $(amixer -D pulse get Master toggle | awk -F '[][]' \
-		'/Front.*Playback/ {
+		'/Playback.*%/ {
 			if($4 == "on") o = ("'$2'") ? "'$volume_default_icon' " $2 : "VOL " $2
 			else o = ("'$2'") ? "'$volume_mute_icon' 0%" : "VOL MUTE"
 			print o }')
