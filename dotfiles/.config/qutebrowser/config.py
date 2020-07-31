@@ -11,12 +11,13 @@ h_padding = 20
 
 config.load_autoconfig()
 
-c.fonts.tabs = f'{font_size}pt Roboto'
-c.fonts.hints = f'{font_size + 2}pt Roboto'
 c.hints.border = f'2px solid {mfg}'
+c.fonts.hints = f'{font_size + 2}pt Roboto'
 c.fonts.statusbar = f'{font_size}pt Roboto'
 c.fonts.downloads = f'{font_size}pt Roboto'
 c.fonts.contextmenu = f'{font_size}pt Roboto'
+c.fonts.tabs.selected = f'{font_size}pt Roboto'
+c.fonts.tabs.unselected = f'{font_size}pt Roboto'
 c.fonts.completion.entry = f'{font_size + 1}pt Roboto'
 c.fonts.completion.category = f'{font_size + 2}pt Roboto'
 
@@ -39,7 +40,7 @@ c.downloads.remove_finished = 60000
 c.downloads.location.prompt = False
 c.downloads.location.directory = "~/Downloads"
 
-c.statusbar.hide = True
+c.statusbar.show = 'in-mode'
 c.statusbar.position = 'bottom'
 c.statusbar.widgets = ['history', 'url', 'scroll', 'progress']
 c.statusbar.padding = { 'top': v_padding, 'bottom': v_padding, 'left': v_padding, 'right': h_padding }
@@ -102,7 +103,7 @@ c.colors.statusbar.private.fg = fg
 c.colors.statusbar.progress.bg = mfg
 c.colors.statusbar.url.error.fg = fg
 c.colors.statusbar.url.fg = sfg
-c.colors.statusbar.url.hover.fg = 'aqua'
+c.colors.statusbar.url.hover.fg = sfg
 c.colors.statusbar.url.success.http.fg = sfg
 c.colors.statusbar.url.success.https.fg = sfg
 c.colors.statusbar.url.warn.fg = 'yellow'
