@@ -271,6 +271,16 @@ wm() {
 	fi
 }
 
+notify() {
+	notify_conf=~/.orw/scripts/system_notification.sh
+	mode=$(awk -F '=' '/^style/ { print ("'$1'") ? "'$1'" : ($NF == "osd") ? "vertical" : "osd" }' $notify_conf)
+
+	#~/.orw/scripts/notify.sh "System notification style changed to <b>$mode</b>"
+	~/.orw/scripts/notify.sh "System notification style changed to <b>$mode</b>"
+
+	sed -i "/^style/ s/\w*$/$mode/" $notify_conf
+}
+
 bash_conf=~/.orw/dotfiles/.bashrc
 orw_conf=~/.orw/dotfiles/.config/orw/config
 tmux_conf=~/.orw/dotfiles/.config/tmux/tmux.conf

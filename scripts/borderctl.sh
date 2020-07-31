@@ -11,13 +11,15 @@ rofi_list_conf=list
 while getopts :c: flag; do
 	case $flag in
 		c)
-			rofi_mode=$OPTARG.rasi
+			mode=$OPTARG
+			[[ $3 =~ ^r ]] && mode+=.rasi
+
 			shift 2;;
 	esac
 done
 
-[[ ! $rofi_mode ]] &&
-	rofi_mode=$(awk -F '"' 'END { print $(NF - 1) ".rasi" }' $rofi_path/main.rasi)
+[[ ! $mode ]] &&
+	mode=$(awk -F '"' 'END { print $(NF - 1) ".rasi" }' $rofi_path/main.rasi)
 
 if [[ $2 =~ [0-9]+ ]]; then
 	sign=${2%%[0-9]*}
@@ -120,7 +122,7 @@ case $1 in
 					set = 0
 
 					if(av) {
-						if("'$rofi_mode'" ~ "dmenu") v2 = v1
+						if("'$mode'" ~ "dmenu") v2 = v1
 					} else {
 						fv = '$new_value'
 						sv = '${second_arg-0}'
@@ -129,13 +131,13 @@ case $1 in
 
 						v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
 						v2 = (sv) ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : \
-							("'$rofi_mode'" ~ "dmenu") ? v[2] : v1
+							("'$mode'" ~ "dmenu") ? v[2] : v1
 					}
 
 					gsub("[0-9]+px [0-9]+", v1 "px " v2)
 				}
 				print
-			}' $rofi_path/$rofi_mode
+			}' $rofi_path/$mode
 		else
 			case $1 in
 				rf) pattern=font;;
@@ -146,7 +148,7 @@ case $1 in
 				rim)
 					px=px
 					pattern=margin
-					[[ $rofi_mode =~ dmenu ]] && pattern+=".* 0 .*";;
+					[[ $mode =~ dmenu ]] && pattern+=".* 0 .*";;
 				rwp)
 					px=px
 				 	pattern=padding;;
@@ -156,8 +158,8 @@ case $1 in
 
 					[[ $1 == ribw ]] && pattern="${pattern/\./.*0.}" rofi_conf=theme.rasi
 
-					[[ $rofi_mode =~ list ]] && rofi_conf=theme.rasi;;
-					#[[ ! $rofi_mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
+					[[ $mode =~ list ]] && rofi_conf=theme.rasi;;
+					#[[ ! $mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
 				rln)
 					pattern=lines
 					rofi_conf=config.rasi;;
@@ -175,7 +177,7 @@ case $1 in
 						set--
 					}
 				print
-			}' $rofi_path/${rofi_conf:-$rofi_mode}
+			}' $rofi_path/${rofi_conf:-$mode}
 
 			#awk -i inplace '\
 			#	{ if(/'"$pattern"'/ && ! set) {
@@ -186,7 +188,7 @@ case $1 in
 			#		set = '${set-1}'
 			#	}
 			#	print
-			#}' $rofi_path/${rofi_conf:-$rofi_mode}
+			#}' $rofi_path/${rofi_conf:-$mode}
 		fi;;
 	tm*)
 		[[ $1 == tms ]] && pattern=separator || pattern='window.*format'
@@ -245,6 +247,8 @@ case $1 in
 		}' $openbox_conf;;
 	d*)
 		#[[ $1 == dp ]] && pattern=padding || pattern=frame_width
+		[[ $mode ]] && dunst_conf="${dunst_conf%/*}/${mode}_dunstrc"
+
 		if [[ $1 =~ df ]]; then
 			pattern=frame_width
 		else
@@ -255,7 +259,6 @@ case $1 in
 		awk -i inplace '{ \
 			if(/^\s*\w*'$pattern'/) {
 				nv = '$new_value'
-				#$NF = ("'$sign'") ? $NF '$sign' nv : nv
 				sub($NF, ("'$sign'") ? $NF '$sign' nv : nv)
 			}
 			print
