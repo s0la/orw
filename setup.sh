@@ -44,9 +44,9 @@ install_picom() {
 	cd ~/Downloads/picom
 	git submodule update --init --recursive
 
-	ninja --buildtype=release . build
-	meson -C build
-	sudo meson -C build install
+	meson --buildtype=release . build
+	ninja -C build
+	sudo ninja -C build install
 
 	cd && rm -rf ~/Downloads/picom) &> /dev/null || handle_failure 'Failed to install picom'
 }
