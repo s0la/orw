@@ -1540,12 +1540,20 @@ while ((argument_index <= $#)); do
 
 							original_id=$id
 							properties=( ${second_window_properties[*]} )
-							new_properties=( $original_id $(align | cut -d ' ' -f 2-) )
 
-							(( new_properties[1] += display_x ))
-							(( new_properties[2] += display_y ))
+							resize_by_ratio H a
 
-							properties=( ${new_properties[*]} )
+							generate_printable_properties "${properties[*]}"
+							apply_new_properties
+
+							properties=( $original_id ${wm_properties[*]} )
+
+							#new_properties=( $original_id $(align | cut -d ' ' -f 2-) )
+
+							#(( new_properties[1] += display_x ))
+							#(( new_properties[2] += display_y ))
+
+							#properties=( ${new_properties[*]} )
 
 							#echo ${properties[*]}
 
