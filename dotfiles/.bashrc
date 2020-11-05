@@ -116,7 +116,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-color_module() {
+color_content() {
 	echo "\[\033[${1}8;2;${2}2m\]"
 }
 
@@ -128,7 +128,7 @@ format_module() {
 			b)
 				#if [[ $reverse ]]; then
 				#	[[ $mode == rice && $edge_mode != flat && $last_bg && $last_bg != default ]] &&
-				#		local edge="$(color_module 3 $last_bg)$edge_symbol"
+				#		local edge="$(color_content 3 $last_bg)$edge_symbol"
 				#fi
 
 
@@ -136,34 +136,88 @@ format_module() {
 
 				if [[ $mode == rice && $edge_mode != flat ]]; then
 					if [[ $reverse ]]; then
-						[[ ! $last_module ]] && local edge="$(color_module 3 $OPTARG)$edge_symbol"
+						local content="${@: -1}"
+						[[ ${content// /} && ! $last_module ]] && local edge="$(color_content 3 $OPTARG)$edge_symbol"
 					else
 						[[ $last_bg && $last_bg != default ]] &&
-							local edge="$(color_module 3 $last_bg)$edge_symbol"
+							local edge="$(color_content 3 $last_bg)$edge_symbol"
 					fi
 				fi
 
 				#[[ ! ($reverse && $last_bg == default) ]] && local
 				#[[ $mode == rice && $edge_mode != flat && $last_bg && $last_bg != default ]] &&
-				#	local edge="$(color_module 3 $last_bg)$edge_symbol"
+				#	local edge="$(color_content 3 $last_bg)$edge_symbol"
 
 
 
-				#[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_module 4 $OPTARG)"
-				[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_module 4 $OPTARG)"
+				#[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_content 4 $OPTARG)"
+				[[ $OPTARG == default ]] && local mbg=$default || local mbg="$(color_content 4 $OPTARG)"
 				last_bg=$OPTARG;;
 			f)
 				[[ $OPTARG == default ]] && local fg=$fg || local fg=$OPTARG
-				mfg="$(color_module 3 $fg)";;
+				mfg="$(color_content 3 $fg)";;
+				#mfg="$(color_content 3 $fg)";;
+
+				#mfg="$separator_fg$(color_content 3 $fg)";;
 			c)
 				local content="$OPTARG"
+				#var="${content:0: -1}"
+				#echo "${#var}" "${var}"
+				#var="${content% *}"
+				#var="${content##* }"
+				#var="${var:0:2}"
+				#echo ${#var} "^$var^"
 				(( content_length += ${#content} ))
-				[[ $content =~ [[:alnum:]] && $edge_mode != flat ]] && (( content_length++ ))
+				#echo ${FUNCNAME[*]}
+				#[[ $content && ${FUNCNAME[1]} == color_modules ]] && echo $content
+				#[[ $content && ${FUNCNAME[-2]} == color_modules ]] && echo $content
+				[[ $content && $mode == rice && $edge_mode != flat &&
+					${FUNCNAME[-2]} == color_modules ]] && (( content_length++ ))
+				#echo ${FUNCNAME[*]}
+
+				#[[ $content =~ [[:alnum:]] && $(echo -e "$content" | wc -l) -eq 1 &&
+				#	$mode == rice && $edge_mode != flat ]] && (( content_length++ )) && echo $content
+
+				#[[ $content =~ [[:alnum:]] && $mode == rice && $edge_mode != flat ]] && (( content_length++ ))
+				#[[ $add_separator ]] && (( content_length++ ))
+				#[[ $content =~ [[:alnum:]] && $mode == rice && $edge_mode != flat ]] && (( content_length++ )) && echo here "^$content^"
 				#(( content_length += ${#content} ));;
 		esac
 	done
 
-	[[ $reverse ]] && all_modules+="$edge$mbg$mfg$content" || all_modules+="$mbg$edge$mfg$content"
+	#if [[ $separator && $edge_mode != flat ]]; then
+	#	#echo "^$edge   $content^"
+	#	unset edge
+	#	#if [[ ${content// /} ]]; then
+	#	#	local separator_fg="$(color_content 3 $term_bg)$edge_symbol"
+	#	#else
+	#	#	[[ $reverse ]] &&
+	#	#fi
+	#	[[ ${content// /} || $reverse ]] && local separator_fg="$(color_content 3 $term_bg)$edge_symbol"
+	#	(( content_length++ ))
+
+
+	#	#[[ $reverse ]] && local mfg+="$separator_fg" || local mfg="$separator_fg$mfg"
+	#	#[[ $reverse ]] && local mfg+="$separator_fg" || local mfg="$separator_fg$mfg"
+
+	#	#if [[ $reverse ]]; then
+	#	#	 local separator_bg
+	#	# else
+	#	#	 local mfg="$separator_fg$mfg"
+	#	#fi
+
+	#	#(( content_length++ ))
+	#fi
+
+	if [[ $add_separator && $edge_mode != flat ]]; then
+		#echo here "^$content^"
+		[[ ${content// /} || $reverse ]] && local separator_fg="$(color_content 3 $term_bg)$edge_symbol"
+		[[ $content || $reverse ]] && (( content_length++ ))
+	fi
+
+	[[ $reverse ]] &&
+		all_modules+="$separator_fg$edge$mbg$mfg$content" ||
+		all_modules+="$mbg$separator_fg$edge$mfg$content"
 	#all_modules+="$mbg$edge$mfg$content"
 }
 
@@ -259,6 +313,7 @@ get_branch_info() {
 		if [[ $mode == simple ]]; then
 			[[ $start_bracket ]] && all_modules+=$start_bracket
 			format_module -f $gc -c "$branch$sorted_branch_modules$end_bracket"
+			#[[ $end_bracket ]] && all_modules+=$end_bracket && ((content_length += 3))
 		else
 			format_module -b $gc -f $bg -c " $icon $branch$sorted_branch_modules "
 		fi
@@ -324,18 +379,56 @@ color_modules() {
 				format_module -b $bg -f $fg -c "$working_directory"
 				[[ $mode == rice ]] && format_module -f $bg;;
 			s*)
-				if [[ $mode == rice ]]; then
-					#((${#module} > 1)) && separator="$(printf '%*.s' ${module:1} ' ')"
-					((${#module} > 1)) && separator_length=${module:1}
-					separator="$(printf '%*.s' ${separator_length-1} ' ')"
-					format_module -b default -c "${separator- }"
+				#if [[ $mode == rice ]]; then
+				#	#((${#module} > 1)) && separator="$(printf '%*.s' ${module:1} ' ')"
+				#	((${#module} > 1)) && separator_length=${module:1}
+				#	separator="$(printf '%*.s' ${separator_length-1} ' ')"
+				#	format_module -b default -c "${separator- }"
 
-					(( content_length += ${separator_length-1} ))
+				#	(( content_length += ${separator_length-1} ))
+				#	before_separator_content_length=$content_length
+
+				#	#for reverse edge on next module
+				#	reverse=true
+				#	set_edge
+
+				#	#format_module -b default -c "${separator- }"
+				#	#all_modules+="$default${separator_length:- }"
+				#	#(( content_length += ${separator_length-1} ))
+				#fi
+
+				if [[ $mode == rice ]]; then
+					add_separator=true
+
+					[[ $term_bg ]] ||
+						term_bg=$(awk -F '[()]' '/^background/ {
+									gsub(",", ";")
+									print gensub("(.*;).*", "\\1", 1, $(NF - 1))
+								}' ~/.config/termite/config)
+
+					#((${#module} > 1)) && separator_length=${module:1}
+					#separator="$(printf '%*.s' ${separator_length:=1} ' ')"
+
+					#((${#module} > 1)) && separator="$(printf '%*.s' ${module:1} ' ')"
+
+					((${#module} > 1)) && separator_length=${module:1} || separator_length=1
+					[[ $edge_mode != flat ]] && (( separator_length-- ))
+					#[[ $separator_length && $edge_mode != flat ]] && (( separator_length-- ))
+					((separator_length)) && separator="$(printf '%*.s' $separator_length ' ')"
+
+					#if ((${#separator} > 1)); then
+
+						format_module -b default -c "$separator"
+						#(( content_length += separator_length ))
+						#(( content_length += separator_length ))
+
+					#else
+					#	all_modules+="$(color_content 4 default)"
+					#fi
+
 					before_separator_content_length=$content_length
 
 					#for reverse edge on next module
-					reverse=true
-					set_edge
 
 					#format_module -b default -c "${separator- }"
 					#all_modules+="$default${separator_length:- }"
@@ -343,13 +436,17 @@ color_modules() {
 				fi
 		esac
 
+		#echo "sep: ^$separator^"
 		[[ $module == ${modules##*,} ]] && last_module=true
+		[[ ! $module =~ ^s || $reverse ]] && unset add_separator separator_length
+		#[[ ! $module =~ ^[rs] ]] && (( content_length++ )) && echo $module
 
 		#if [[ $edge_mode != flat && ${modules%,$module*} =~ ,s$ ]]; then
-		if [[ $edge_mode != flat && $before_separator_content_length && $content_length -gt $before_separator_content_length ]]; then
-			unset reverse before_separator_content_length
-			set_edge
-		fi
+
+		#if [[ $edge_mode != flat && $before_separator_content_length && $content_length -gt $before_separator_content_length ]]; then
+		#	unset reverse before_separator_content_length
+		#	set_edge
+		#fi
 	done
 
 	all_modules+="$default"
@@ -358,21 +455,38 @@ color_modules() {
 		left=${all_modules:0:left_part_length}
 		right=${all_modules:left_part_length}
 		#[[ $edge_mode != flat ]] && edge_length=${modules//+([sr,])}
-		separator_length="$(printf "%*s" $((COLUMNS - content_length - 1)) ' ')"
-		all_modules="$left$default$separator_length$right"
+		#separator_length="$(printf "%*s" $((COLUMNS - content_length - 1)) ' ')"
+		#[[ $right ]] || (( content_length++ ))
+		#((${#right})) || (( content_length++ ))
+		separator_length="$(printf "%*s" $((COLUMNS - content_length)) ' ')"
+		#((${#right})) && separator_length=${separator_length:0: -1}
+
+		#echo lp $left_part_length rp "^$right^"
+		#echo cl $content_length sl ${#separator_length} $COLUMNS
+
+		#echo $COLUMNS
+		#echo $content_length
+		#echo "^$separator_length^"
+
+		if [[ $mode == simple ]]; then
+			local save_cursor='\e[s'
+			local restore_cursor='\e[u'
+		fi
+
+		all_modules="$left$save_cursor$default$separator_length$right$restore_cursor"
 	fi
 }
 
 generate_ps1() {
 	local exit_code=$?
 
-	bg="36;37;41;"
-	fg="62;67;68;"
-	sc="62;67;68;"
-	ic="248;210;201;"
+	bg="20;20;20;"
+	fg="48;48;48;"
+	sc="48;48;48;"
+	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="186;206;217;"
+	gdc="109;123;115;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -391,16 +505,16 @@ generate_ps1() {
 		set_edge
 
 		#modules
-		info_module="h"
+		info_module="u"
 		git_module="s,m,i,a,d,u"
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
 		#modules="i,w,v,r,g"
-		modules="i,w,v,r,g"
+		modules="w,v,r,g"
 
 		if [[ $mode == simple ]]; then
-			start_bracket="$(color_module 3 $fg)("
-			end_bracket="$(color_module 3 $fg))"
+			start_bracket="$(color_content 3 $fg)("
+			end_bracket="$(color_content 3 $fg))"
 
 			working_directory=' \W'
 
