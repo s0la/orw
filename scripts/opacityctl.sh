@@ -2,7 +2,7 @@
 
 lock_conf=~/.orw/dotfiles/.config/i3lockrc
 term_conf=~/.orw/dotfiles/.config/termite/config
-dunst_conf=~/.orw/dotfiles/.config/dunst/dunstrc
+dunst_conf=~/.orw/dotfiles/.config/dunst/*dunstrc
 picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 
 if [[ $1 =~ bar|lock ]]; then
@@ -31,7 +31,8 @@ awk -i inplace '{ \
 			v = '$value'
 
 			if("'$1'" == "dunst") {
-				$NF = 100 - (("'$sign'") ? 100 - $NF '$sign' v : v)
+				#$NF = 100 - (("'$sign'") ? 100 - $NF '$sign' v : v)
+				sub(/[0-9]+/, 100 - (("'$sign'") ? 100 - $NF '$sign' v : v))
 			} else {
 				if("'$1'" == "rofi") {
 					cv = gensub("[^0-9]*([0-9]+).*", "\\1", 1)
@@ -45,7 +46,8 @@ awk -i inplace '{ \
 						f = "%.2f"
 					}
 
-					cv = gensub(".*([0-9])(\\.[0-9]+)" pa ".?$", "\\1\\2", 1)
+					#cv = gensub(".*([0-9])(\\.[0-9]+)" pa ".?$", "\\1\\2", 1)
+					cv = gensub("[^0-9]*([0-9.]+).?", "\\1", 1)
 				}
 
 				sub(cv, sprintf(f, ("'$sign'") ? cv '$sign' v : v))
@@ -63,7 +65,8 @@ case $conf in
 		killall dunst
 		$command &> /dev/null &;;
 		#$(which dunst) &> /dev/null &;;
-	picom*)
-		killall picom
-		picom --experimental-backends &> /dev/null &
+	#picom*)
+	#	killall picom
+	#	picom -b &> /dev/null
+	#	#picom --experimental-backends &> /dev/null &
 esac
