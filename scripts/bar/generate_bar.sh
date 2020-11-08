@@ -15,7 +15,7 @@ bar_name='main_bar'
 
 bg="#101115"
 fc="#101115"
-bfc="#608985"
+bfc="#fe608985"
 bbg="#101115"
 jbg="%{B#101115}"
 jfg="%{F#}"
@@ -768,11 +768,11 @@ while read -r module; do
 	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
 	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
-	#sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame" >> log
+	#sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame" >> ~/Desktop/bar_log
 	sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
-	-f "$font2" -o ${remix_offset:-$((${font_offset:-$main_font_offset} + 0))} \
+	-f "$font2" -o $((main_font_offset - ${remix_offset:-$((${font_offset:-$main_font_offset} + 0))})) \
 	-f "$font3" -o $((${font_offset:-$main_font_offset} - 0)) \
 	-f "$font4" -o $((${font_offset:-$main_font_offset} - 0)) \
 	-a 100 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
