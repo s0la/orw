@@ -70,7 +70,7 @@ set_cover_geometry() {
 		else
 			value=$OPTARG
 			[[ $value == r ]] && value+=" ${!OPTIND}" && shift
-			~/.orw/scripts/barctl.sh -b mw* -n -e $flag $value
+			~/.orw/scripts/barctl.sh -b n_mw* -n -e $flag $value
 		fi
 	done
 
@@ -88,8 +88,8 @@ cover() {
 		openbox --reconfigure
 	}
 
-	previous_geometry='52x52+300+50'
-	previous_bg='#1c1d21'
+	previous_geometry='63x63+770+952'
+	previous_bg='#e80a0a0a'
 
 	check_cover
 
@@ -109,18 +109,20 @@ cover() {
 				size=$(awk '{
 					for(fi = 1; fi <= 3; fi++)
 						s += gensub("([^-]*([^Ffh]*[^0-9]*)([0-9]*)){" fi "}.*", "\\3", 1)
-					} END { print s - '$border' }' ~/.config/orw/bar/configs/mw*)
+					} END { print s - '$border' }' ~/.config/orw/bar/configs/n_mw*)
 
 				#read x y <<< $(~/.orw/scripts/windowctl.sh -n mwi -p |\
 				#	awk '{ print ($4 >= 300) ? $2 : $2 - '$(($size / 3 * 2))', $3 }')
-				read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2 - $5, $3, $5 - '$border' }')
+
+				read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2, $3, $5 - '$border' }')
+				#read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2 - $5, $3, $5 - '$border' }')
 				geometry="${size}x${size}+${x}+${y}"
 			else
 				[[ $input == true ]] && get_geometry_input cover
 			fi
 		fi
 
-		[[ ! $bg ]] && bg=$(sed -n 's/^bg //p' ~/.config/orw/colorschemes/bar_mw.ocs)
+		[[ ! $bg ]] && bg=$(sed -n 's/^bg //p' ~/.config/orw/colorschemes/bar_n_mw.ocs)
 
 		replace default
 
@@ -161,8 +163,8 @@ layout() {
 					local mirror=visualizer
 					local delta="+$border"
 				else
-					local mirror=mwc
-					local delta=$(~/.orw/scripts/windowctl.sh -n mwc -p |\
+					local mirror=n_mwc
+					local delta=$(~/.orw/scripts/windowctl.sh -n n_mwc -p |\
 						awk '{ s = '$size'; d = ($4 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
 
 					[[ $1 == playlist ]] && progressbar=no status=no
@@ -172,8 +174,8 @@ layout() {
 			fi
 		else
 			if [[ $controls_running ]]; then
-				get_display mwi
-				layout="-d $display -M mwi x,h*15,ys-10,w"
+				get_display n_mwi
+				layout="-d $display -M n_mwi x,h*15,ys-10,w"
 			else
 				get_display ncmpcpp_playlist
 				[[ $(wmctrl -l | awk '$NF == "ncmpcpp_playlist"') ]] &&
@@ -197,10 +199,10 @@ visualizer() {
 
 controls() {
 	if [[ $1 == -k ]]; then
-		~/.orw/scripts/barctl.sh -b mw* -k &
+		~/.orw/scripts/barctl.sh -b n_mw* -k &
 	else
 		[[ $input == true ]] && get_geometry_input controles 
-		~/.orw/scripts/barctl.sh -b mw*
+		~/.orw/scripts/barctl.sh -b n_mw*
 	fi
 }
 
