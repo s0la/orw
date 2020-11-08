@@ -90,6 +90,78 @@ rofi() {
 	elif [[ $1 == sidebar ]]; then
 		sidebar_mode=$(awk -F '[; ]' '/sidebar/ { print ($(NF - 1) == "true") ? "false" : "true" }' $path/config.rasi)
 		sed -i "/sidebar/ s/ \w[^;]*/ ${2:-$sidebar_mode}/" $path/config.rasi 
+	elif [[ $1 =~ ^(or|loc) ]]; then
+		last_v_margin=30px
+		last_h_margin=60px
+		last_v_location=west
+		last_h_location=center
+
+		conf=~/.orw/dotfiles/.config/rofi/icons.rasi
+
+		eval $(awk -F '[ ;]' '\
+			/window-orientation:/ {
+				co = $(NF - 1)
+				o = ("'${1:0:1}'" == "o")
+
+				if(o) {
+					no = ("'$2'") ? "'$2'" : \
+						(co == "vertical") ? "horizontal" : "vertical"
+					 sub(co, no)
+				 }
+			}
+
+			/window-location:/ {
+				cl = $(NF - 1)
+				ro = (o) ? no : co
+
+				#nl = (o) ? (ro == "horizontal") ? nl = "center" : "'$last_location'" : \
+				#	("'$2'") ? "'$2'" : (cl == "east") ? "west" : "east"
+
+				nl = (o) ? (ro == "horizontal") ? nl = "'$last_h_location'" : "'$last_v_location'" : \
+					("'$2'") ? "'$2'" : (co == "horizontal") ? \
+					(cl == "center") ? "south" : "center" : (cl == "east") ? "west" : "east"
+
+				sub(cl, nl)
+			}
+
+			/window-margin:/ {
+				#mv = gensub(/.* ([0-9.]+%).*/, "\\1", 1)
+				#if(ro == "horizontal") p = "%"
+				mv = gensub(/.* ([0-9.]+px).*/, "\\1", 1)
+				if(ro == "horizontal") p = "px"
+				sub(mv, 0)
+
+				#system("~/.orw/scripts/notify.sh " mv)
+
+				#if(ro == "vertical") {
+				#	if(ro != co) mv = "'$last_margin'"
+				#	mi = (nl == "east") ? 2 : 4
+				#	#$0 = gensub($(NF - mi), mv, 1)
+				#	$0 = gensub(/[0-9]+/, mv, mi)
+				#}
+
+				if(ro != co) {
+					lm = mv
+					mv = (ro == "vertical") ? "'$last_v_margin'" : "'$last_h_margin'"
+				}
+
+				if(!lm) lm = mv
+
+				mi = (ro == "vertical") ? (nl == "east") ? 2 : 4 : (nl == "south") ? 3 : 1
+				$0 = gensub(/[0-9]+/, mv, mi)
+			} { wo = wo "\n" $0 }
+			END {
+				#print "last_location=" nl, "last_margin=" mv
+				print "co=" co, "no=" ro, "ll=" cl, "lm=" lm
+				print substr(wo, 2)
+			}' $conf | { read -r wo; { echo "$wo" >&1; cat > $conf; } })
+
+		#if [[ $1 =~ ^or && $no == horizontal && $no != $co ]]; then
+		if [[ $1 =~ ^or && $no != $co ]]; then
+			#sed -i "/^\s*last_margin/ s/[0-9.]\+%/$lm/" $0
+			sed -i "/^\s*last_${co:0:1}_margin/ s/[0-9.]\+px/$lm/" $0
+			sed -i "/^\s*last_${co:0:1}_location/ s/\w*$/$ll/" $0
+		fi
 	else
 		if [[ $1 ]]; then
 			new_mode=$1
@@ -183,6 +255,27 @@ titlebar() {
 				sub(s, s == "no" ? "yes" : "no")
 			}
 		} { print }' $openbox_conf
+
+	#new_state=$(awk -i inplace '/name="\*"/ { nr = NR + 1 }
+	#	{
+	#		if(nr == NR) {
+	#			s = gensub(".*>(.*)<.*", "\\1", 1)
+	#			ns = (s == "no") ? "yes" : "no"
+	#			sub(s, ns)
+	#		}
+	#	} { o = o "\n" $0 }
+	#	END {
+	#		print ns
+	#		print sub(o, 2)
+	#	}' $openbox_conf | { read -r o; { echo "$o" >&1; cat > $openbox_conf; } })
+
+	openbox --reconfigure
+	reconfigured=true
+
+	read {x,y}_border <<< $(~/.orw/scripts/print_borders.sh open)
+	awk -i inplace '/^[xy]_border/ {
+		sub($NF, (/^x/) ? '$x_border' : '$y_border')
+	} { print }' $orw_conf
 }
 
 ncmpcpp() {
@@ -206,25 +299,67 @@ ncmpcpp() {
 	~/.orw/scripts/ncmpcpp.sh -a
 }
 
-blur() {
-	if [[ $1 ]]; then
-		[[ $1 == bar ]] && pattern=Bar || pattern='^[^o]*Rofi'
+#bar_and_rofi() {
+#	awk -i inplace '{
+#		if(!s) s = (/^'$2'.*-exclude/)
+#		if(s && /'${1^}'/) {
+#			if($1 == "#") sub($1, "")
+#			else sub(/^/, "#")
+#			s = 0
+#		}
+#	} { print }' $picom_conf
+#}
 
-		state=$(awk '/'$pattern'/ { print ($1 == "#") ? "false" : "true" }' $picom_conf)
+#blur() {
+#	if [[ $1 ]]; then
+#		bar_and_rofi $1 blur
+#		#[[ $1 == bar ]] && pattern=Bar || pattern='^[^o]*Rofi'
+#
+#		#state=$(awk '/'$pattern'/ { print ($1 == "#") ? "false" : "true" }' $picom_conf)
+#
+#		#[[ ${2:-$state} == true ]] && replace="/$pattern/ s/^/#/" || replace="/$pattern/ s/#//"
+#		#eval sed -i "'$replace'" $picom_conf
+#	else
+#		state=$(awk '/^blur-background / { print (/true/) ? "false" : "true" }' $picom_conf)
+#		sed -i "/^blur-background/ s/ \w\+/ ${1:-$state}/" $picom_conf
+#	fi
+#
+#	#killall picom
+#	#picom --experimental-backends &> /dev/null &
+#}
 
-		[[ ${2:-$state} == true ]] && replace="/$pattern/ s/^/#/" || replace="/$pattern/ s/#//"
-		eval sed -i "'$replace'" $picom_conf
+blur_and_shadow() {
+	if [[ $1 =~ bar|rofi ]]; then
+		awk -i inplace '{
+			if(!s) s = (/^'$property'.*-exclude/)
+			if(s && /'${1^}'/) {
+				if($1 == "#") sub($1, "")
+				else sub(/^/, "#")
+				s = 0
+			}
+		} { print }' $picom_conf
 	else
-		state=$(awk '/^blur-background / { print (/true/) ? "false" : "true" }' $picom_conf)
-		sed -i "/^blur-background/ s/ \w\+/ ${1:-$state}/" $picom_conf
+		awk -F '[ ;]' -i inplace \
+			'/^'$property' / {
+				s = $(NF - 1)
+				ns = (s == "true") ? "false" : "true"
+				sub(s, ("'$1'") ? "'$1'" : ns)
+			} { print }' $picom_conf
 	fi
+}
 
-	killall picom
-	picom --experimental-backends &> /dev/null &
+blur() {
+	property=blur-background
+	blur_and_shadow $1
+}
+
+shadow() {
+	property=shadow
+	blur_and_shadow $1
 }
 
 wm() {
-	if [[ $1 =~ offset|reverse|direction ]]; then
+	if [[ $1 =~ full|offset|reverse|direction ]]; then
 		read mode state <<< $(awk '/^'$1'/ {
 			if("'$2'") {
 				m = "'$2'"
@@ -240,14 +375,22 @@ wm() {
 		}' $orw_conf)
 
 		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
+		#case $1 in
+		#	direction) [[ $mode == h ]] && icon=  || icon=;;
+		#	direction) [[ $mode == h ]] && icon=  || icon=;;
+		#	offset) [[ $mode == true ]] && icon=  || icon=;;
+		#	*) icon=
+		#esac
+
 		case $1 in
-			direction) [[ $mode == h ]] && icon=  || icon=;;
-			direction) [[ $mode == h ]] && icon=  || icon=;;
-			offset) [[ $mode == true ]] && icon=  || icon=;;
-			*) icon=
+			direction) [[ $mode == h ]] && icon=  || icon=;;
+			#offset) [[ $mode == true ]] && icon=  || icon=;;
+			offset) icon=;;
+			full) icon=;;
+			*) icon=;;
 		esac
 
-		~/.orw/scripts/notify.sh osd $icon "$1: $mode"
+		~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "$1: $mode"
 
 		sed -i "/^$1/ s/\w*$/$mode/" $orw_conf
 	else
@@ -263,22 +406,44 @@ wm() {
 		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$pattern\"/" $openbox_conf
 
 		#[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
+
+		#pid=( $(pidof -x listen_windows.sh) )
+		pid=( $(pidof -x tile_windows.sh) )
+
+		if [[ $mode == floating ]]; then
+			opacity=100
+			((${#pid[*]})) && kill ${pid[*]}
+		else
+			#((${#pid[*]})) || ~/.orw/scripts/listen_windows.sh &
+			((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
+		fi
+
+		~/.orw/scripts/opacityctl.sh ao ${opacity:-0}
+
+		if ((!opacity)); then
+			source ~/.orw/scripts/set_window_opacity.sh
+
+			while read id; do
+				set_opacity 100
+			done <<< $(wmctrl -l | awk '{ print $1 }')
+		fi
+
 		if [[ ! $2 ]]; then
-			[[ $mode == floating ]] && icon= || icon=
-			#~/.orw/scripts/notify.sh osd $icon "<bold>Mode: $mode</bold>"
-			~/.orw/scripts/notify.sh osd $icon "Mode: $mode"
+			[[ $mode == floating ]] && icon= || icon=
+			[[ $mode == floating ]] && icon= || icon=
+			~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "Mode: $mode"
 		fi
 	fi
 }
 
 notify() {
 	notify_conf=~/.orw/scripts/system_notification.sh
-	mode=$(awk -F '=' '/^style/ { print ("'$1'") ? "'$1'" : ($NF == "osd") ? "vertical" : "osd" }' $notify_conf)
+	mode=$(awk -F '=' '/^theme/ { print ("'$1'") ? "'$1'" : ($NF == "osd") ? "vertical" : "osd" }' $notify_conf)
 
-	#~/.orw/scripts/notify.sh "System notification style changed to <b>$mode</b>"
-	~/.orw/scripts/notify.sh "System notification style changed to <b>$mode</b>"
+	#~/.orw/scripts/notify.sh "System notification theme changed to <b>$mode</b>"
+	~/.orw/scripts/notify.sh "System notification theme changed to <b>$mode</b>"
 
-	sed -i "/^style/ s/\w*$/$mode/" $notify_conf
+	sed -i "/^theme/ s/\w*$/$mode/" $notify_conf
 }
 
 bash_conf=~/.orw/dotfiles/.bashrc
@@ -288,4 +453,4 @@ picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 openbox_conf=~/.orw/dotfiles/.config/openbox/rc.xml
 
 $@
-openbox --reconfigure &
+[[ $reconfigured ]] || openbox --reconfigure &
