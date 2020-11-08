@@ -10,6 +10,11 @@ kill_bar() {
 	[[ $pid ]] && kill $pid
 }
 
+kill_running_script() {
+	local running_pids=( $(pidof -o %PPID -x ${0##*/}) )
+	((${#running_pids[*]})) && kill ${running_pids[*]}
+}
+
 lower_bars() {
 	for bar in "${bars[@]}"; do
 		xdo lower -N Bar
@@ -34,7 +39,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=white,new_dock
+last_running=hope_full
 
 while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 	case $flag in
@@ -198,7 +203,8 @@ while getopts :ds:i:gb:m:E:e:r:R:klanc: flag; do
 					kill_bar
 				done
 			else
-				ps -C barctl.sh o pid= --sort=-start_time | awk 'NR > 1' | xargs kill &> /dev/null
+				#ps -C barctl.sh o pid= --sort=-start_time | awk 'NR > 1' | xargs kill &> /dev/null
+				kill_running_script
 				sleep 0.1
 				killall generate_bar.sh lemonbar
 			fi
@@ -244,7 +250,8 @@ done
 
 if [[ ! $no_reload ]]; then
 	current_pid=$$
-	ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
+	#ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
+	kill_running_script
 
 	while true; do
 		monitor_memory_consumption
