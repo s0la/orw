@@ -1,7 +1,7 @@
 #!/bin/bash
 
+indicator=''
 indicator='●'
-indicator=''
 
 current_song="$(mpc current -f "%artist% - %title%")"
 [[ $current_song ]] && empty='  '
