@@ -1,39 +1,61 @@
 /* dmenu config */
 
+* {
+	window-width:         1520px;
+	window-border:        0px;
+	window-margin:        46px 0 0 0;
+
+	element-padding:      3px 20px;
+	element-border:       0 0 1px;
+
+	input-padding:        3px 3px;
+
+	entry-margin:         0 0 -1px;
+	entry-margin:         0 5px -1px;
+
+	prompt-padding:       0px 3px;
+	prompt-margin:        0 0 0 3px;
+
+	colon-margin:         1px 3px -1px;
+	colon-margin:         0 0 0 5px;
+}
+
 @import "theme"
 
 #window {
-	margin:     71px 200px;
+	width:      @window-width;
+	border:     @window-border;
+	margin:     @window-margin;
+	padding:    0px;
 	anchor:     north;
 	location:   north;
-	width:      100%;
-	padding:    0px;
 	children:   [ horibox ];
 }
 
 #horibox {
-	spacing:     0px;
+	spacing:     0;
 	orientation: horizontal;
 	children:    [ inputbar, listview ];
 }
 
 #listview {
 	layout:      horizontal;
-	spacing:     0px;
+	spacing:     0;
 	lines:       100;
 }
 
 #element {
-	padding:      3px 20px;
+	padding:      @element-padding;
 }
 
 #element.selected.normal, element.selected.active {
-	border:       0 0 2px;
+	border:       @element-border;
 }
 
 #inputbar {
 	border:           0;
-	padding:          3px 3px;
+	margin:           0;
+	padding:          @input-padding;
 	children:         [ textbox-prompt-colon, entry ];
 	background-color: @ibg;
 }
@@ -42,19 +64,19 @@
 	width:        10em;
 	expand:       false;
 	background-color: @ibg;
-	margin:       0 0 -1px;
+	margin:       @entry-margin;
 }
 
 #prompt {
-	padding:      0px 3px;
-	margin:       0 0 0 2px;
+	margin:       @prompt-margin;
+	padding:      @prompt-padding;
 	background-color: @ibg;
 }
 
 #textbox-prompt-colon {
-	str:          "";
+	str:          "›";
 	color:        @dpc;
 	expand:       false;
 	background-color: @ibg;
-	margin:       1px 3px -1px;
+	margin:       @colon-margin;
 }

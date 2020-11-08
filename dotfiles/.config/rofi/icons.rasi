@@ -3,35 +3,60 @@
 @import "theme"
 
 * {
-	font: "icomoon_fa 12";
+	bg: @tbg;
+
+	font:                   "remix 13";
+
+	window-orientation:     vertical;
+
+	list-spacing:           5px;
+
+	input-margin:           0 0 5px;
+
+	entry-margin:           0 5px;
+
+	element-padding:        26px 26px;
+	element-border:         0 0 0px;
+	element-radius:         5px;
+
+	window-location:        west;
+	window-padding:         5px 5px;
+	window-margin:          0 0 0 25px;
+	window-radius:          5px;
+	window-height:          622.2px;
+	window-width:           104.81px;
 }
 
 #window {
-	width:       697px;
+	width:       @window-width;
+	height:      @window-height;
+	margin:      @window-margin;
+	anchor:      @window-location;
+	location:    @window-location;
 	border:      0;
-	padding:     15px;
+	padding:     @window-padding;
 	children:    [ horibox ];
-	border-radius:       5px;
+	border-radius:       @window-radius;
 }
 
 #horibox {
-	orientation: horizontal;
+	orientation: @window-orientation;
 	children:    [ listview ];
 }
 
 #listview {
-	layout:      horizontal;
-	spacing:     3;
-	lines:       100;
+	layout:      @window-orientation;
+	spacing:     @list-spacing;
+	lines:       0.260417;
 }
 
 #inputbar {
-	margin:       0 0 10px;
+	margin:       @input-margin;
 	border-color: @bg;
 }
 
 #entry {
-	margin: 0 10px;
+	margin: @entry-margin;
 }
 
 #prompt {
@@ -39,8 +64,8 @@
 }
 
 #element {
-	padding:        46px 46px;
-	border-radius:       5px;
+	padding:        @element-padding;
+	border-radius:  @element-radius;
 }
 
 #element.normal.normal, element.alternate.normal {
@@ -51,5 +76,9 @@
 #element.selected.normal {
 	text-color:       @efg;
 	background-color: @sbg;
-	border:           0 0 3px;
+	border:           @element-border;
+}
+
+#element.selected.active {
+	text-color:       @efg;
 }

@@ -2,48 +2,66 @@
 
 @import "theme"
 
+* {
+	window-width:      30%;
+	window-padding:    20px 30px;
+
+	list-padding:      0px 0px;
+
+	input-border:      0 0 2px;
+	input-margin:      0 0 12px;
+	input-padding:     3px 5px;
+
+	entry-margin:      0 3px 0;
+	input-padding:     3px 5px;
+
+	element-padding:   3px 5px;
+}
+
 #mainbox {
-	spacing: 0;
-	font:    "Iosevka Orw 8";
+	spacing:      0;
+	font:         "Iosevka Orw 8";
 }
 
 #window {
-	width:          30%;
-	padding:        20px;
+	width:          @window-width;
+	border:         @window-border;
+	padding:        @window-padding;
 }
 
 #listview {
-	padding:        0px 0px;
 	scrollbar:      false;
 	vertical-align: 0.5;
 }
 
 #inputbar {
-	margin:           0 0 10px;
-	padding:          5px 5px;
+	border:           @input-border;
+	margin:           @input-margin;
+	padding:          @input-padding;
 	children:         [ prompt, entry ];
 }
 
 #entry {
+	margin: @entry-margin;
 	background-color: @ibg;
 }
 
 #prompt {
+	str:              "";
 	background-color: @ibg;
-	margin:           0 2px 0 0;
 	color:            @lpc;
 }
 
 #textbox-prompt-colon {
 	str:              "";
+	str:              "›";
 	color:            @lpc;
-	margin:           1px 2px 0 0;
 	expand:           false;
 	background-color: @ibg;
 }
 
 #element {
-	padding:        5px 5px;
+	padding:        @element-padding;
 }
 
 sidebar {

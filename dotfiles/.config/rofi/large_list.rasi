@@ -4,37 +4,52 @@
 
 * {
 	font:   "Iosevka Orw 9";
+
+	window-width:    45%;
+	window-height:   43%;
+	window-border:   3px;
+	window-padding:  60px 60px;
+
+	input-border:    0 0 2px;
+	list-padding:    0px 0px;
+	list-spacing:    0px;
+
+	input-margin:    0 0 10px;
+	input-padding:   2px 5px;
+
+	entry-margin:      0 3px 0;
+
+	element-padding:   2px 5px;
 }
 
 #window {
-	width:   45%;
-	height:  43%;
-	padding: 60px;
+	width:   @window-width;
+	height:  @window-height;
+	border:  @window-border;
+	padding: @window-padding;
 }
 
 #listview {
-	padding:        0px 0px;
-	spacing:        0px;
+	padding:        @list-padding;
+	spacing:        @list-spacing;
 	scrollbar:      false;
 	vertical-align: 0.5;
 }
 
 #inputbar {
-	margin:         0 0 5px;
-	padding:        2px 5px;
-	children:       [ prompt, entry ];
 	background:     @bg;
+	border:         @input-border;
+	margin:         @input-margin;
+	padding:        @input-padding;
+	children:       [ prompt, entry ];
 }
 
 #element {
-	padding:        2px 5px;
-}
-
-#inputbar {
-	background-color: @bg;
+	padding:        @element-padding;
 }
 
 #entry {
+	margin:           @entry-margin;
 	background-color: @bg;
 	border-color:     @fg;
 }

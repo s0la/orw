@@ -5,24 +5,34 @@
 * {
 	fullscreen: true;
 	show-match: false;
+
+	window-width:   30%;
+	window-padding: 200px 200px;
+
+	list-border:    2px 0 0;
+	list-margin:    3px 0;
+	list-padding:   0 400px 200px;
+	list-spacing:   10px;
+
+	input-margin:   200px 400px 10px;
 }
 
 #window {
-	padding:        200px;
-	width:          30%;
+	width:          @window-width;
+	padding:        @window-padding;
 }
 
 #listview {
-	margin:         4px 0px;
-	padding:        0px 400px 100px;
-	spacing:        10px;
+	border:         @list-border;
+	margin:         @list-margin;
+	padding:        @list-padding;
+	spacing:        @list-spacing;
 	scrollbar:      false;
-	border:         2px 0px 0px;
 	border-color:   @bg;
 	vertical-align: 0.5;
 }
 
 #inputbar {
-	margin:  200px 400px 10px;
+	margin:  @input-margin;
 	children: [ prompt, entry ];
 }
