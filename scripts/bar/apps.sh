@@ -79,9 +79,10 @@ get_window() {
 	fi
 }
 
+blacklisted_windows='input|image_preview|cover_art_widget'
 
 eval windows=( $(wmctrl -l | awk '\
-	$1 ~ /'$active'/ && !/ (input|image_preview)/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
+	$1 ~ /'$active'/ && !/ ('$blacklisted_windows')/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
 		wn = (NF > 3) ? substr($0, index($0, $4)) : "no name"
 		print "\"" $1, wn "\"" }') )
 count=${#windows[*]}
