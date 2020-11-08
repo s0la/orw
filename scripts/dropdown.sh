@@ -3,7 +3,7 @@
 set_position() {
 	window_border=$(awk '/^border.width/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
 
-	read x y width height <<< $(sed -n '/dropdown/,/^$/ s/[^0-9]*\([0-9]\+\).*/\1/p' .config/openbox/rc.xml | xargs)
+	read x y width height <<< $(sed -n '/dropdown/,/^$/ s/[^0-9]*\([0-9]\+\).*/\1/p' ~/.config/openbox/rc.xml | xargs)
 
 	read display display_x display_y display_width display_height bar_min bar_max x y <<< \
 		$(awk -F '[_ ]' '{ if(/^orientation/) \
@@ -34,7 +34,10 @@ set_position() {
 					(( bar_x -= bar_min ))
 				fi
 
-				echo $bar_x $((display_width - (bar_x + bar_width + frame))) $((bar_width + frame)) $((bar_y + bar_height + frame + 1))
+				bar_y_end=$((2 * bar_y + bar_height + frame))
+				((bar_y)) || (( bar_y_end+=5 ))
+				#echo $bar_x $((display_width - (bar_x + bar_width + frame))) $((bar_width + frame)) $((bar_y + bar_height + frame + 3))
+				echo $bar_x $((display_width - (bar_x + bar_width + frame))) $((bar_width + frame)) $bar_y_end
 			fi
 		done <<< $(~/.orw/scripts/get_bar_info.sh $display) | \
 			sort -nk ${sort_criteria:-4} | awk 'END { xo = $1; rxo = $2; bw = $3; yo = $4; \
