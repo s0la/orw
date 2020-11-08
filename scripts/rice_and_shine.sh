@@ -26,6 +26,7 @@ vifm_conf=$config/vifm/colors/orw.vifm
 qb_conf=$config/qutebrowser/config.py
 tmux_hidden_conf=$config/tmux/tmux_hidden.conf
 tmux_conf=$config/tmux/tmux.conf
+picom_conf=$config/picom/picom.conf
 
 themes=$root/themes
 gtk_conf=$themes/theme/gtk-2.0/gtkrc
@@ -39,8 +40,11 @@ update_colors=~/.orw/scripts/update_colors.sh
 pick_color=~/.orw/scripts/pick_color.sh
 colorctl=~/.orw/scripts/colorctl.sh
 
-icon=
-icon="<span font='Roboto Mono 12'>$icon   </span>"
+#                  
+#       
+icon=
+icon="<span font='Iosevka Orw 12'>$icon   </span>"
+icon=''
 
 function assign_value() {
 	[[ $2 && ! $2 =~ [-+][[:alnum:]]+ ]] && eval "$1=$2"
@@ -107,9 +111,11 @@ function get_color() {
 	fi
 
 	if [[ ${2:-$offset} ]]; then
-		color=$(offset_color $color ${2:-$offset})
+		((${#color} > 8)) && local transparency_level_backup=${color:0:3}
+		color=$(offset_color ${color: -6} ${2:-$offset})
 		unset color_{index,name}
 		get_color_properties
+		[[ $transparency_level_backup ]] && color=$transparency_level_backup${color: -6}
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
@@ -231,6 +237,19 @@ function ob() {
 		osd) local pattern='osd.\(bg\|label\|button\).*color';;
 		osdh) local pattern='osd.hilight';;
 		osdu) local pattern='osd.unhilight';;
+		s)
+			read red green blue <<< $($colorctl -cps ' ' -h ${new_color:-$color})
+
+			awk -i inplace \
+				'/shadow-(red|green|blue)/ {
+					if(/red/) c = '$red'
+					else if(/green/) c = '$green'
+					else c = '$blue'
+
+					sub(/[0-9.]+/, c / 255)
+				} { print }' $picom_conf
+
+			return
 	esac
 
 	color=${shade:-$color}
@@ -474,24 +493,47 @@ function tmux() {
 }
 
 function rofi() {
-	sed -i "/^\s*$property:/ s/ [^;]*/ #${color: -6}/" $rofi_conf
+	#sed -i "/^\s*$property:/ s/ [^;]*/ #${color: -6}/" $rofi_conf
+	sed -i "/^\s*$property:/ s/\w\{6\};/${color: -6};/" $rofi_conf
 
-	[[ ! $whole_module && $property == bg ]] && property=.*bt.*c && rofi
+	[[ ! $whole_module && $property == bg ]] && property=".*bt.*c\|tbg" && rofi
 
 	if [[ $property == ibg ]]; then
-		border_width=$(awk '/^\sborder/ { print gensub(/.* ([0-9]*).*/, "\\1", 1); exit }' $rofi_conf)
-		read rofi_bg rofi_bc <<< $(awk -F '[ ;]' '/^\s*b[cg]/ { print $(NF - 1) }' $rofi_conf | xargs)
+		#border_width=$(awk '/^\sborder/ { print gensub(/.* ([0-9]*).*/, "\\1", 1); exit }' $rofi_conf)
+		#border_width=$(awk '/window-border:/ { print gensub(/.* ([0-9]+).*/, "\\1", 1) }' ~/.config/rofi/list.rasi)
+		#border_width=$(awk '$1 == "window-border:" {
+		#	print gensub(/.* ([0-9]+).*/, "\\1", 1) }' ~/.config/rofi/theme.rasi)
+		read rofi_bg rofi_bc border_width <<< $(awk -F '[ ;]' \
+				'/^\s*b[cg]/ { print $(NF - 1) }
+				/window-border:/ { print gensub(/.* ([0-9]+).*/, "\\1", 1) }' $rofi_conf | xargs)
 
 		if [[ $rofi_bg != $rofi_bc ]]; then
 			[[ "#${color: -6}" == $rofi_bg ]] && input_border=$border_width padding=20 margin=10 ln=12
-			[[ "#${color: -6}" == $rofi_bc ]] && input_border=0 padding=0 item_padding=10 margin=0 ln=8
+			[[ "#${color: -6}" == $rofi_bc ]] && input_border=0 padding=0 element_padding=10 margin=0 ln=8
 
 			if [[ $padding && $margin ]]; then
-				~/.orw/scripts/borderctl.sh -c list rln $ln
-				~/.orw/scripts/borderctl.sh -c list rim $margin
-				~/.orw/scripts/borderctl.sh -c list rwp $padding
-				~/.orw/scripts/borderctl.sh -c list ribw $input_border
-				~/.orw/scripts/borderctl.sh -c list rip ${item_padding-3 5}
+				#~/.orw/scripts/borderctl.sh -c list rln $ln
+				#~/.orw/scripts/borderctl.sh -c list rim $margin
+				#~/.orw/scripts/borderctl.sh -c list rwp $padding
+				#~/.orw/scripts/borderctl.sh -c list ribw $input_border
+				#~/.orw/scripts/borderctl.sh -c list rip ${item_padding-3 5}
+
+				#echo $input_border $padding $element_padding $margin $ln
+
+				awk -i inplace '{
+					if ($1 == "lines:") { sub(/[0-9]+/, '$ln') }
+					else if($1 ~ "-padding:") {
+						if($1 ~ "(element|input)" && ! "'$element_padding'") {
+							sub(/([0-9]+px ?){2}/, "3px 5px")
+						} else {
+							gsub(/[0-9]+/, ($1 ~ "window") ? '$padding' : '${element_padding:-0}')
+						}
+					} else if ($1 ~ "^input-[^p]") {
+						v = ($1 ~ "margin") ? '$margin' : '$input_border'
+						sub(/[0-9]+px/, v "px")
+					}
+				}
+				{ print }' ~/.config/rofi/list.rasi
 			fi
 		fi
 	fi
@@ -568,33 +610,68 @@ function get_ob() {
 		echo mibt$hover $(get_ob_property ".*\.iconify.$state")
 	}
 
-	cat <<- EOF
-		t $(get_ob_property '.*\.active.label.text')
-		tb $(get_ob_property '.*\.active.*title.bg')
-		b $(get_ob_property '.*\.active.*border')
-		c $(get_ob_property '.*\.active.client')
-		it $(get_ob_property '.*inactive.label.text')
-		itb $(get_ob_property '.*\.inactive.*title.bg')
-		ib $(get_ob_property '.*\.inactive.*border')
-		ic $(get_ob_property '.*\.inactive.client')
-		$(get_buttons)
-		$(get_buttons hover)
-		ibt $(get_ob_property '.*\.inactive.*unpressed.*image')
-		ibth $(get_ob_property '.*\.inactive.*hover.*image')
-		mbg $(get_ob_property '^menu.items.bg')
-		mfg $(get_ob_property '^menu.items.text')
-		mtbg $(get_ob_property '^menu.title.bg')
-		mtfg $(get_ob_property '^menu.title.text')
-		msbg $(get_ob_property '^menu.*active.bg')
-		msfg $(get_ob_property '^menu.*active.text')
-		mb $(get_ob_property 'menu.border')
-		ms $(get_ob_property '^menu.separator')
-		bfg $(get_ob_property '.*bullet.image')
-		bsfg $(get_ob_property '.*bullet.selected.image')
-		osd $(get_ob_property '^osd.bg.color')
-		osdh $(get_ob_property '^osd.hilight')
-		osdu $(get_ob_property '^osd.unhilight')
-	EOF
+	awk -F '[ ;]' '{
+		i = (/inactive/) ? "i" : ""
+		if(/.*active.label.text.*#/) print i "t", $NF
+		else if(/.*active.*title.bg.*#/) print i "tb", $NF
+		else if(/.*active.*border.*#/) print i "b", $NF
+		else if(/.*active.client.*#/) print i "c", $NF
+		else if(/button.*(close|iconify|max).(unpressed|hover).*#/) {
+			h = (/hover/) ? "h" : ""
+			
+			if(/close/) print "cbt" h, $NF
+			if(/iconify/) print "mibt" h, $NF
+			if(/max/) print "mabt" h, $NF
+		}
+		else if(/.*\.inactive.*unpressed.*image.*#/) print "ibt", $NF
+		else if(/.*\.inactive.*hover.*image.*#/) print "ibth", $NF
+		else if(/^menu.items.bg.*#/) print "mbg", $NF
+		else if(/^menu.items.text.*#/) print "mfg", $NF
+		else if(/^menu.title.bg.*#/) print "mtbg", $NF
+		else if(/^menu.title.text.*#/) print "mtfg", $NF
+		else if(/^menu.*active.bg.*#/) print "msbg", $NF
+		else if(/^menu.*active.text.*#/) print "msfg", $NF
+		else if(/menu.border.*#/) print "mb", $NF
+		else if(/^menu.separator.*#/) print "ms", $NF
+		else if(/.*bullet.image.*#/) print "bfg", $NF
+		else if(/.*bullet.selected.image.*#/) print "bsfg", $NF
+		else if(/^osd.bg.color.*#/) print i "osd", $NF
+		else if(/^osd.hilight.*#/) print i "osdh", $NF
+		else if(/^osd.unhilight.*#/) print i "osdu", $NF
+		else if(/^shadow-(red|green|blue)/) rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
+		} END { print "s #" rgb }' $ob_conf $picom_conf
+
+		#read red green blue <<< $(awk -F '[ ;]' '/^shadow-(red|green|blue)/) {
+		#	rgb = rgb " " int($(NF - 1) * 255)
+		#} END { print rgb }' $picom_conf)
+
+	#cat <<- EOF
+	#	t $(get_ob_property '.*\.active.label.text')
+	#	tb $(get_ob_property '.*\.active.*title.bg')
+	#	b $(get_ob_property '.*\.active.*border')
+	#	c $(get_ob_property '.*\.active.client')
+	#	it $(get_ob_property '.*inactive.label.text')
+	#	itb $(get_ob_property '.*\.inactive.*title.bg')
+	#	ib $(get_ob_property '.*\.inactive.*border')
+	#	ic $(get_ob_property '.*\.inactive.client')
+	#	$(get_buttons)
+	#	$(get_buttons hover)
+	#	ibt $(get_ob_property '.*\.inactive.*unpressed.*image')
+	#	ibth $(get_ob_property '.*\.inactive.*hover.*image')
+	#	mbg $(get_ob_property '^menu.items.bg')
+	#	mfg $(get_ob_property '^menu.items.text')
+	#	mtbg $(get_ob_property '^menu.title.bg')
+	#	mtfg $(get_ob_property '^menu.title.text')
+	#	msbg $(get_ob_property '^menu.*active.bg')
+	#	msfg $(get_ob_property '^menu.*active.text')
+	#	mb $(get_ob_property 'menu.border')
+	#	ms $(get_ob_property '^menu.separator')
+	#	bfg $(get_ob_property '.*bullet.image')
+	#	bsfg $(get_ob_property '.*bullet.selected.image')
+	#	osd $(get_ob_property '^osd.bg.color')
+	#	osdh $(get_ob_property '^osd.hilight')
+	#	osdu $(get_ob_property '^osd.unhilight')
+	#EOF
 }
 
 function get_gtk() {
@@ -728,6 +805,19 @@ add_notification() {
 	full_message+="$notification\n"
 }
 
+shadow() {
+	read red green blue <<< $($colorctl -cps ' ' -h $color)
+
+	awk -i inplace \
+		'/shadow-(red|green|blue)/ {
+			if(/red/) c = '$red'
+			else if(/green/) c = '$green'
+			else c = '$blue'
+
+			sub(/[0-9.]+/, c / 255)
+		} { print }' ~/.config/picom/picom.conf
+}
+
 #all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash lock firefox $wall )
 #all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
 all_modules=( ob dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall sxiv )
@@ -749,6 +839,7 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			fi
 
 			get_color
+			color="#${color: -6}"
 
 			if [[ $offset ]]; then
 				unset color_{index,name}
@@ -798,7 +889,8 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				}
 
 				echo "Pick a color:"
-				color=$($pick_color)
+				color=$($pick_color | awk '{ print tolower($0) }')
+				#color=${color,,}
 
 				read -srn 1 -p $'Offset color? [y/N]\n' offset_color
 
@@ -970,7 +1062,12 @@ if [[ $edit_colorscheme ]]; then
 
 	if [[ $new_color ]]; then
 		if [[ $transparency ]]; then
-			((${#new_color} < 8)) && color=${color: -6}
+			if ((${#new_color} < 8)); then
+				#color=${color: -6}
+				((${#color} > 8)) &&
+					new_color=${color:0:3}${new_color: -6} ||
+					color=${color: -6}
+			fi
 		else
 			new_color=${new_color: -6}
 		fi
@@ -1029,14 +1126,14 @@ if [[ $backup ]]; then
 	echo "colorscheme ${final_filename%.*}.ocs changed on $(date +"%Y-%m-%d") at $(date +"%H:%M").." >> $colorschemes/.change_log
 fi
 
-if [[ ! $backup && ${replace_all_modules[*]:-${module:-${all_modules[*]}}} =~ ncmpcpp
+if [[ ! $backup && ${replace_all_modules[*]:-${module:-${all_modules[*]}}} =~ ncmpcpp|vifm
 	&& (! $colorscheme || ($colorscheme && ($inherited_module || $inherited_property))) ]]; then
 
 	[[ $replace_color ]] && var_name=new_color || var_name=color
 	index=${var_name}_index
 
 	if [[ ! ${!index} ]]; then
-		echo "${!var_name} is undefined. In order to apply provided color to ncmpcpp, you need to save it."
+		echo "${!var_name} is undefined. In order to apply provided color to ncmpcpp/vifm, you need to save it."
 		read -rsn 1 -p $'Would you like to save color? [Y/n] \n' save_color
 
 		if [[ $save_color != n ]]; then
@@ -1086,7 +1183,7 @@ if [[ $replace_color ]]; then
 				sed -i "/^foreground/ s/${color: -6}/${new_color: -6}/" $cava_conf
 			fi
 
-			sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}
+			sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}*
 		else
 			if [[ $replace_module == term ]]; then
 				[[ $term_transparency && ${#color} -lt 8 ]] && color="#$term_transparency${color#\#}"
@@ -1128,20 +1225,75 @@ if [[ $replace_color ]]; then
 						sed -i "s/$rgb_color/$new_rgb_color/" $bash_conf;;
 					tmux)
 						[[ $new_color =~ ^# && ${#new_color} -gt 8 ]] && new_color="#${new_color: -6}"
-						sed -i "s/$color/$new_color/" $tmux_conf;;
+						sed -i "/^\w*[gc]=/ s/${color#\#}/${new_color#\#}/" $tmux_conf;;
 					lock)
 						((${#color} > 7)) && lock_color=${color:3}${color:1:2} new_lock_color=${new_color:3}${new_color:1:2} ||
 
 						sed -i "s/${lock_color:-${color:1}}/${new_lock_color:-$new_color}/" ${!config_file};;
 					*)
+						replace_config=${!config_file}
+
 						if [[ $transparency ]]; then
 							((${#new_color} < 8)) && color=${color: -6}
 						else
 							new_color=${new_color: -6}
 						fi
 
-						[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
-						sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
+						if [[ $replace_module == ob ]]; then
+							#shadow_color=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
+							#		rgb = rgb sprintf("%.2x", int($(NF - 1) * 255))
+							#	} END { print "#" rgb }' $picom_conf)
+
+							replace_shadow=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
+									rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
+								} END { print ("#" rgb == "'$color'") }' $picom_conf)
+
+							#shadow_color=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
+							#		rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
+							#	} END { print "#" rgb }' $picom_conf)
+							#echo $replace_shadow $shadow_color $color
+
+							((replace_shadow)) && property=s && ob
+						elif [[ $replace_module == qb ]]; then
+							replace_config+=" ~/.orw/dotfiles/.config/qutebrowser/home.css"
+						elif [[ $replace_module == dunst ]]; then
+							replace_config+=" ~/.orw/scripts/notify.sh"
+						elif [[ $replace_module == bar ]]; then
+							replace_config="$bar_conf $bar_module_colors"
+
+							running_bars=$(ps aux |
+								awk '/lemonbar.*-n \w*$/ {
+									if(c) { s = ","; bs = "{"; be = "}" }
+									rb = rb gensub(".* (\\w*)$", s "\\1", 1)
+									c++
+								} END { print bs rb be }')
+
+							if [[ $running_bars ]]; then
+								running_bar_configs="$(eval ls ~/.config/orw/bar/configs/$running_bars)"
+								bar_colorschemes=$(awk '{
+										if(c) { s = ","; bs = "{"; be = "}" }
+										cs = cs gensub(".*-c ([^-]\\w*).*", s "\\1", 1)
+										c++
+									} END { print "~/.config/orw/colorschemes/" bs cs be ".ocs" }' \
+										$running_bar_configs)
+
+								#[[ $bar_colorschemes ]] &&
+								#	eval sed -i "s/${color#\#}/${new_color#\#}/" $bar_colorschemes
+
+								[[ $bar_colorschemes ]] && replace_config+=" $bar_colorschemes" reload_bar=true
+									#replace_config=$bar_colorschemes || replace_config="$bar_conf $bar_module_colors"
+								#if [[ $bar_colorschemes ]]; then
+								#	eval sed -i "s/${color#\#}/${new_color#\#}/" $bar_colorschemes
+
+								#	~/.orw/scripts/barctl.sh -b ${running_bars//[{\}]/} &
+								#	continue
+								#fi
+							fi
+						fi
+
+						#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
+						#sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
+						eval sed -i "s/${color#\#}/${new_color#\#}/" "$replace_config"
 				esac
 
 					#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
@@ -1206,7 +1358,7 @@ add_notification
 
 if [[ ${reload-yes} == yes ]]; then
 	if [[ $reload_ob ]]; then $(which openbox) --reconfigure & fi
-	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh -d &> /dev/null & fi
+	if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh &> /dev/null & fi
 	if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
 	if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
 	if [[ $reload_term ]]; then killall -USR1 termite & fi
@@ -1237,4 +1389,4 @@ if [[ ${reload-yes} == yes ]]; then
 	fi
 fi
 
-$root/scripts/notify.sh -p "$icon ${full_message%\\*}" &
+$root/scripts/notify.sh -p "$icon <span font='Iosevka Orw 8'>${full_message%\\*}</span>" &
