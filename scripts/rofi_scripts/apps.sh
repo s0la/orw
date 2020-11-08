@@ -35,6 +35,8 @@ else
 	fi
 
 	lock= tile= vifm= term= dropdown=${state:-} qb=
+	#lock=s tile=c vifm=n term=n dropdown=${state:-s} qb=q
+	#lock= tile= vifm= term= dropdown=${state:-} qb=
 
 	#lock= tile= vifm= term= dropdown= qb=
 fi
