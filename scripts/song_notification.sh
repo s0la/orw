@@ -17,4 +17,4 @@ info="$artist        <b>$title</b>"
 #info+="<b>album:</b>   $album"
 
 [[ -f $cover ]] && icon="-i $cover"
-[[ $artist && $title ]] && ~/.orw/scripts/notify.sh $icon -r 101 -F 'Iosevka Orw' -f 8 -p "$info"
+[[ $artist && $title ]] && ~/.orw/scripts/notify.sh $icon -r 101 -F 'Iosevka Orw' -f 8 -po 8 "$info"
