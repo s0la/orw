@@ -30,7 +30,7 @@ get_app() {
 		(( $? > 0 )) && return 1
 	fi
 
-	cd && rm -rf ~/Downloads/$3) &> /dev/null
+	cd && rm -rf ~/Downloads/$3) &> $output
 }
 
 install_picom() {
@@ -48,7 +48,7 @@ install_picom() {
 	ninja -C build
 	sudo ninja -C build install
 
-	cd && rm -rf ~/Downloads/picom) &> /dev/null || handle_failure 'Failed to install picom'
+	cd && rm -rf ~/Downloads/picom) &> $output || handle_failure 'Failed to install picom'
 }
 
 install_termite() {
@@ -67,7 +67,7 @@ install_termite() {
 		libgnutls28-dev \
 		libgirepository1.0-dev \
 		libxml2-utils \
-		gperf &> /dev/null
+		gperf &> $output
 
 	(git clone https://github.com/thestinger/vte-ng.git ~/Downloads/vte
 	git clone --recursive https://github.com/thestinger/termite.git ~/Downloads/termite
@@ -84,7 +84,7 @@ install_termite() {
 	sudo ldconfig
 	sudo mkdir -p /lib/terminfo/x
 	sudo ln -s /usr/local/share/terminfo/x/xterm-termite /lib/terminfo/x/xterm-termite
-	sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60) &> /dev/null
+	sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/termite 60) &> $output
 }
 
 handle_failure() {
@@ -93,19 +93,17 @@ handle_failure() {
 }
 
 function deps() {
-	install_termite
-
 	echo 'installing dependencies..'
 
 	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
-	if [[ $(which apt 2> /dev/null) ]]; then
-		sudo apt update &> /dev/null
+	if [[ $(which apt 2> $output) ]]; then
+		sudo apt update &> $output
 		sudo apt install -y ${common_deps[*]} build-essential ninja-build automake autoconf pkg-config python3-pip xinit gettext \
 			libnotify-dev libreadline-dev libcurl4-gnutls-dev libxft-dev libx11-xcb-dev libxcb-randr0-dev libxcb-xinerama0-dev \
 			libtool{,-bin} libfftw3-dev libasound2-dev libncursesw5-dev libpulse-dev \
-			libxml2-utils curl thunar gawk &> /dev/null ||
+			libxml2-utils curl thunar gawk &> $output ||
 			handle_failure "$failure_message"
 
 		#termite installation
@@ -117,12 +115,12 @@ function deps() {
 		#cleaning
 		echo 'cleaning..'
 		sudo apt clean
-	elif [[ $(which pacman 2> /dev/null) ]]; then
+	elif [[ $(which pacman 2> $output) ]]; then
 		generate_mirrors() {
 			sudo sed -i '/Serbia/,/^$/ { /^#\w/ s/#// }' /etc/pacman.d/mirrorlist
 
 			(sudo pacman-key --init
-			sudo pacman-key --populate archlinux) &> /dev/null || 
+			sudo pacman-key --populate archlinux) &> $output || 
 				handle_failure "Failed to generate mirrors."
 		}
 
@@ -134,22 +132,22 @@ function deps() {
 
 		#generate_mirrors
 
-		sudo pacman --noconfirm -Syy archlinux-keyring &> /dev/null
-		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> /dev/null
+		sudo pacman --noconfirm -Syy archlinux-keyring &> $output
+		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> $output
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
 			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant meson community/uthash \
-			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> /dev/null ||
+			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
 			handle_failure "$failure_message"
 
 		echo 'cleaning..'
-		confirm 'y' 'y' | sudo pacman -Scc &> /dev/null || handle_failure 'Pacman error.'
+		confirm 'y' 'y' | sudo pacman -Scc &> $output || handle_failure 'Pacman error.'
 
 		( if [[ ! -f /lib/libreadline.so.8 ]]; then
 			wget https://www.archlinux.org/packages/core/x86_64/readline/download -O ~/Downloads/readline.tar.xz
 			sudo tar xfC $HOME/Downloads/readline.tar.xz /
-		fi ) &> /dev/null || handle_failure
+		fi ) &> $output || handle_failure
 	else
 		echo "Sorry, couldn't install dependencies for your distro :/"
 		echo "Try installing them manually, then run './setup.sh apps orw fonts man'"
@@ -166,10 +164,10 @@ function apps() {
 
 	#neovim python3 installation
 	sudo ln -s /usr/lib/libffi.so.6 /usr/lib/libffi.so.7
-	sudo pip3 install neovim &> /dev/null || handle_failure "Failed to install neovim python3."
+	sudo pip3 install neovim &> $output || handle_failure "Failed to install neovim python3."
 
 	#ueberzug installation
-	sudo pip3 install ueberzug &> /dev/null || handle_failure "Failed to install ueberzug."
+	sudo pip3 install ueberzug &> $output || handle_failure "Failed to install ueberzug."
 
 	#cava installation
 	get_app install karlstav cava ./autogen.sh ./configure || handle_failure "Failed to install cava."
@@ -255,8 +253,12 @@ function man() {
 	sudo ln -s $destination/.man/* /usr/share/man/man1/
 }
 
+arguments="$@"
+[[ $arguments =~ -v ]] &&
+	output=/dev/stdout arguments="${arguments/-v/}" || output=/dev/null
+
 while read -r function; do
 	${function##* }
-done <<< $([[ $@ ]] && echo $@ | xargs -n1 || awk -F '[( ]' '/^fun/ {print $2}' $0)
+done <<< $([[ $arguments ]] && echo "$arguments" | xargs -n1 || awk -F '[( ]' '/^fun/ {print $2}' $0)
 
 ((! $?)) && echo 'Installation completed succesfully, please re-login and enjoy! :)'
