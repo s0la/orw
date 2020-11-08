@@ -10,6 +10,8 @@ wm() {
 	offset=false
 	reverse=false
 
+	read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
+
 	#echo "#general\nx_offset $x_offset\ny_offset $y_offset\n\n"
 
 	#cat <<- EOF
@@ -22,7 +24,7 @@ wm() {
 	#	reverse $reverse
 	#EOF
 
-	echo "#wm\nmode floating\npart 1\nratio 2\nreverse false\ndirection h\nx_offset $x_offset\ny_offset $y_offset\noffset false\n"
+	echo "#wm\nmode floating\npart 1\nratio 2\nfull false\nuse_ratio false\nreverse false\ndirection h\nx_border $x_border\ny_border $y_border\nx_offset $x_offset\ny_offset $y_offset\noffset false\n"
 }
 
 display() {
