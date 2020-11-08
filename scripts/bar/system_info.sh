@@ -47,14 +47,23 @@ function format() {
 		esac
 	else
 		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
+		#[[ $module == H ]] && ~/.orw/scripts/notify.sh "${count:-$content}"
 		[[ $style == hidden ]] && formated="${@:2}" || formated="$(format "${@:2}")"
 
+		#if [[ $lines != true ]]; then
+		#	#~/.orw/scripts/notify.sh "s $separator i $icon"
+		#	#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+		#	#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+		#	#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
+		#	#~/.orw/scripts/notify.sh "$module $separator"
+		#	echo -e "$formated"
+		#else
+
+		#if [[ $lines == false ]]; then
+		#	echo -e "${formated% *}$separator"
+		#	#echo -e "${formated% *} %{B\$bg}$separator"
+		#else
 		if [[ $lines != true ]]; then
-			#~/.orw/scripts/notify.sh "s $separator i $icon"
-			#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
-			#echo -e "${formated% *}%{B\$bg}${separator:-\$separator}"
-			echo -e "$formated"
-		else
 			set_line
 
 			#~/.orw/scripts/notify.sh "s: $module $separator"
@@ -113,7 +122,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=
+		old_mail_count=47
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -232,8 +241,7 @@ case $1 in
 		#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
 		#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-		[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner"
-		[[ $hidden ]] && echo "$hidden" > ~/Desktop/hid
+		[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 		format_fading "" "" "none" "$hidden";;
 
 #	if [[ $term || $rec ]]; then
@@ -250,15 +258,24 @@ case $1 in
 	Network)
 		#icon=
 		padding=$2
-		set_icon $1
 
-		ssid=$(nmcli dev wifi | awk ' \
-			NR == 1 {
-				si = index($0, " SSID")
-				mi = index($0, " MODE")
-			}
-			/^*/ { nn = substr($0, si, mi - si)
-			print gensub(" {2,}", "", 1, nn) }')
+		type=$(ip a | awk '/^[0-9]/ && $2 ~ "^enp" { eth = 1 } END { print (eth) ? "eth" : "wifi" }')
+		set_icon $1_$type
+
+		if [[ $type == eth ]]; then
+			style=mono
+			format $icon
+		else
+			ssid=$(nmcli dev wifi | awk ' \
+				NR == 1 {
+					si = index($0, " SSID")
+					mi = index($0, " MODE")
+				}
+				/^*/ { nn = substr($0, si, mi - si)
+				print gensub(" {2,}", "", 1, nn) }')
+
+			format_fading NET "" "${3-none}" "$ssid"
+		fi;;
 
 		#if [[ $2 == only ]]; then
 		#	style=mono
@@ -269,7 +286,7 @@ case $1 in
 		#	[[ $ssid ]] && format ${!2-NET} $ssid
 		#fi;;
 
-		format_fading NET "" "${3-none}" "$ssid";;
+		#format_fading NET "" "${3-none}" "$ssid";;
 	Weather*)
 		separator="$2"
 		lines=${@: -1}
@@ -351,7 +368,9 @@ case $1 in
 		#icon=%{I-n}%{I-}
 		set_icon $1
 
-		[[ $@ =~ trim ]] && style=trim
+		#[[ $@ =~ trim ]] && style=trim
+
+		style=trim
 
 		while read -r dev usage location; do
 			unmount="~/.orw/scripts/mount.sh $dev $dev"
