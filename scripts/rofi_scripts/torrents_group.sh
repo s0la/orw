@@ -1,7 +1,7 @@
 #!/bin/bash
 
 path=~/.orw/scripts/rofi_scripts
-${path%/*}/set_rofi_margins.sh
+#${path%/*}/set_rofi_margins.sh
 
 pidof transmission-daemon &> /dev/null || (transmission-daemon; sleep 0.5)
 
