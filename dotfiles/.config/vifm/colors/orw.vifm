@@ -2,10 +2,11 @@ let $fg = 'default'
 let $dfg = 76
 let $efg = 5
 let $cbg = 114
+let $cfg = 'default'
 let $sfg = 66
 let $tfg = 0
-let $slbg = 125
-let $slfg = 114
+let $slbg = 'default'
+let $slfg = 145
 
 highlight clear
 
@@ -43,8 +44,10 @@ execute 'highlight Selected cterm=none ctermfg=' . $sfg . ' ctermbg=default'
 execute 'highlight Directory cterm=none ctermfg=' . $dfg . ' ctermbg=default'
 execute 'highlight StatusLine cterm=none ctermfg=' . $slfg . ' ctermbg=' . $slbg
 execute 'highlight ErrorMsg cterm=none ctermfg=' . $sfg . ' ctermbg=default'
-execute 'highlight WildMenu cterm=none ctermfg=' . $sfg . ' ctermbg=default'
+"execute 'highlight WildMenu cterm=none ctermfg=' . $sfg . ' ctermbg=default'
 execute 'highlight Executable cterm=none ctermfg=' . $efg . ' ctermbg=default'
-execute 'highlight CurrLine cterm=none ctermfg=default' . ' ctermbg=' . $cbg
+execute 'highlight CurrLine cterm=none ctermfg=' . $cfg . ' ctermbg=' . $cbg
 
+execute 'highlight WildMenu cterm=none ctermfg=' . $cfg . ' ctermbg=' . $cbg
 highlight WildMenu cterm=reverse ctermfg=default ctermbg=default
+execute 'highlight CmdLine cterm=none ctermfg=' . $dfg . ' ctermbg=default'

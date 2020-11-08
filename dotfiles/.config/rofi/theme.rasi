@@ -1,84 +1,65 @@
 /* color definition */
 
 * {
-	bg: #cecece;
-	fg: #64696a;
-	bc: #cecece;
+	bg: #121212;
+	tbg: #00121212;
+	fg: #202020;
+	bc: #121212;
 
-	ibg: #cecece;
-	ibc: #846358;
+	ibg: #121212;
+	ibc: #725d43;
 
-	abg: #87939c;
-	afg: #d5d5d5;
+	abg: #171717;
+	afg: #323232;
 
-	ebg: #cecece;
-	efg: #557e7a;
-	sbg: #b8b8b8;
-	sfg: #8fa398;
-	sul: #b8b8b8;
+	ebg: #121212;
+	efg: #b17953;
+	sbg: #222222;
+	sfg: #979392;
+	sul: #222222;
 
-	lpc: #979392;
-	dpc: #121317;
-	btc: #cecece;
-	sbtc: #cecece;
-	btbc: #cecece;
+	lpc: #202020;
+	dpc: #222222;
+	btc: #121212;
+	sbtc: #121212;
+	btbc: #121212;
 
 	background-color: @bg;
 
 	font: "Iosevka Orw 8";
+
+	window-border: 2px;
 }
 
 #window {
-	border: 3px;
+	border:       @window-border;
 	border-color: @bc;
 }
 
-#element.normal.normal {
+#element.normal.normal, element.urgent.normal, element.alternate.normal, element.alternate.urgent {
 	text-color:       @fg;
 	background-color: @bg;
 }
 
-#element.normal.active {
+#element.normal.active, element.alternate.active {
+	text-color:       @bg;
+	background-color: @fg;
 	text-color:       @afg;
 	background-color: @abg;
-}
-
-#element.urgent.normal {
-	text-color:       @fg;
-	background-color: @bg;
 }
 
 #element.selected.normal {
 	text-color:       @sfg;
+	border-color:     @sul;
 	background-color: @sbg;
 }
 
 #element.selected.active {
-	text-color:       @afg;
-	background-color: @abg;
-}
-
-#element.selected.normal, element.selected.active {
-	border-color: @sul;
-}
-
-#element.alternate.normal {
-	text-color:       @fg;
-	background-color: @bg;
-}
-
-#element.alternate.urgent {
-	text-color:       @fg;
-	background-color: @bg;
-}
-
-#element.alternate.active {
-	text-color:       @afg;
+	text-color:       @sfg;
 	background-color: @abg;
 }
 
 #inputbar {
-	border:           0 0 2px;
 	border-color:     @ibc;
 	background-color: @ibg;
 }
@@ -97,7 +78,7 @@
 
 #sidebar {
 	margin: 10px 0 0 0;
-	border: 2px;
+	border: @border;
 	border-color: @btbc;
 }
 

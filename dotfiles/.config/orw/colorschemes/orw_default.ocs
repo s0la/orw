@@ -28,6 +28,7 @@ bsfg #B3836B
 osd #a9a9a9
 osdh #bbbbbb
 osdu #888888
+s #608985
 
 #gtk
 ff #d6b878
@@ -125,6 +126,8 @@ fg #777777
 bc #B4938A
 ibg #303030
 ibc #373737
+ebg #303030
+efg #777777
 abg #867f8b
 afg #d5d5d5
 sbg #373737

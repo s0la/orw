@@ -1,0 +1,165 @@
+#ob
+mb #0c1112
+mtbg #0c1112
+mtfg #414246
+mbg #0c1112
+mfg #2f3034
+msbg #0c1112
+msfg #8fa398
+ms #0c1112
+bfg #1e1f23
+bsfg #8fa398
+b #0c1112
+c #bdd9d5
+mabt #0c1112
+mabth #8d6e68
+cbt #0c1112
+cbth #8d6e68
+mibt #0c1112
+mibth #8d6e68
+tb #0c1112
+t #0c1112
+ib #171c1d
+ic #171c1d
+ibth #B39C80
+ibt #1d1e22
+itb #171c1d
+it #171c1d
+osd #0c1112
+osdh #bbbbbb
+osdu #888888
+s #608985
+
+#dunst
+bg #c0c0c0
+fg #333333
+fc #d3efeb
+sbg #9d9d9d
+pbfg #d3efeb
+
+#term
+fg #f0f0f0
+bg #ff0c1112
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg #0C1112
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #6e8277
+sfg #f3f3f3
+nbg none
+nfg #191e1f
+lbg #121617
+lfg #8fa398
+syfg #c0c0c0
+cmfg #1e2324
+slbg #121617
+slfg #262a2b
+bcbg #b5bc6d
+bdbg #798d82
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+sfg #b8987e
+tfg #494a4c
+slbg #608985
+slfg #1e1f23
+
+#bar
+bg #101115
+fc #101115
+bfc #608985
+bbg #101115
+jbg #101115
+jfg #
+pbg #1E2329
+pfg #999999
+sbg #1E2329
+sfg #5c5d5f
+pbefg #608985
+msfg #47484a
+mlfg #7a8d90
+pbfg #494643
+mpfg #999999
+mfc #608985
+Tafg #785A5A
+
+#ncmpcpp
+npp #bdd9d5
+np #bdd9d5
+sip #33383b
+sc #33383b
+mc #33383b
+etc #191e24
+c2 #DBBD7D
+pec #bdd9d5
+vc #bdd9d5
+
+#tmux
+bg default
+fg #656c1d
+bc #14191a
+mc #3a3a3a
+ibg default
+ifg #383d3e
+sfg #383d3e
+wbg default
+wfg #383d3e
+cbg default
+cfg #bdd9d5
+
+#rofi
+bg #cecece
+fg #7e7e7e
+bc #bdd4d5
+ibg #cecece
+ibc #8fa398
+abg #b3b3b3
+afg #a0a0a0
+ebg #cecece
+efg #c8e4e0
+sbg #c2c2c2
+sfg #a0a5a6
+sul #bebebe
+lpc #979392
+dpc #bebebe
+btc #cecece
+sbtc #cecece
+btbc #cecece
+
+#bash
+bg #1b2021
+fg #3e4344
+sc #3e4344
+ic #9fc2c2
+sec #81625c
+gcc #879394
+gdc #bdd9d5
+vc #87939c
+
+#qb
+bg #191a1e
+fg #3a3b3f
+sbg #16171b
+sfg #999999
+mfg #9a796e
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ff8c7b86
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #0c1112
+fg #bdd9d5

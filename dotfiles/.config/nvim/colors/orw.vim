@@ -10,24 +10,24 @@ let s:dd = '#BF616A'
 let s:dd = '#a66c6c'
 let s:dc = '#EBCB8B'
 
-let g:bg = 'none'
+let g:bg = '#1a1a1a'
 let g:fg = '#d0d0d0'
 let g:ifg = '#34393a'
 let g:vfg = '#555a5b'
 let g:cfg = '#c0c0c0'
-let g:ffg = '#6e8277'
+let g:ffg = '#b17953'
 let g:sfg = '#f3f3f3'
 let g:nbg = 'none'
-let g:nfg = '#191e1f'
-let g:lbg = '#121617'
-let g:lfg = '#8fa398'
+let g:nfg = '#202020'
+let g:lbg = '#1d1d1d'
+let g:lfg = '#b17953'
 let g:syfg = '#c0c0c0'
-let g:cmfg = '#191e1f'
-let g:slbg = '#121617'
-let g:slfg = '#262a2b'
+let g:cmfg = '#292e2f'
+let g:slbg = '#1f1f1f'
+let g:slfg = '#313131'
 
 let g:bcbg = '#b5bc6d'
-let g:bdbg = '#798d82'
+let g:bdbg = '#b17953'
 
 let g:nmbg = '#bcbcbc'
 let g:imbg = '#917c5b'
@@ -37,7 +37,7 @@ exe 'hi Error          guibg=none'
 exe 'hi MoreMsg        guifg='.g:sfg
 exe 'hi ErrorMsg       guibg=none                 guifg='.g:ffg
 exe 'hi Visual         guibg='.g:slbg
-exe 'hi Normal         guifg='.g:fg             .' guibg='.g:bg
+exe 'hi Normal         guifg='.g:fg             .' guibg=none'
 exe 'hi Underlined     guifg='.g:fg
 exe 'hi NonText        guifg='.g:cmfg
 exe 'hi SpecialKey     guifg='.g:nfg            .' guibg='.g:lbg
@@ -92,5 +92,36 @@ exe 'hi DiffDelete     guifg='.s:dd             .' guibg='.g:slbg
 
 exe 'hi CursorLine     guibg='.g:lbg            .' gui=none'
 exe 'hi CursorLineNr   guifg='.g:lfg            .' guibg='.g:lbg
+
+" exe 'hi! fzf_bg guibg='.g:bg
+" exe 'hi! fzf_fg guifg='.g:fg
+" exe 'hi! fzf_fgp guifg='.g:lbg
+" exe 'hi! fzf_hl guifg='.g:lfg
+" exe 'hi! fzf_hlp guifg='.g:lfg
+" exe 'hi! fzf_info guifg='.g:cmfg
+" exe 'hi! fzf_prompt guifg='.g:cmfg
+" exe 'hi! fzf_spinner guifg='.g:lfg
+" exe 'hi! fzf_pointer guifg='.g:lfg
+
+"exe 'hi! fzf_bg guibg='.g:bg
+"exe 'hi! fzf_fg guifg='.g:cmfg
+"exe 'hi! fzf_fgp guifg='.g:fg
+"exe 'hi! fzf_hl guifg='.g:lfg
+"exe 'hi! fzf_hlp guifg='.g:lfg
+"exe 'hi! fzf_info guifg='.g:bg
+"exe 'hi! fzf_prompt guifg='.g:fg
+"exe 'hi! fzf_spinner guifg='.g:fg
+"exe 'hi! fzf_pointer guifg='.g:fg
+
+exe 'hi! fzf_bg guibg='.g:slbg
+exe 'hi! fzf_fg guifg='.g:slfg
+exe 'hi! fzf_fgp guifg='.g:fg
+exe 'hi! fzf_hl guifg='.g:lfg
+exe 'hi! fzf_hlp guifg='.g:lfg
+exe 'hi! fzf_info guifg='.g:slbg
+exe 'hi! fzf_prompt guifg='.g:slfg
+exe 'hi! fzf_spinner guifg='.g:slfg
+exe 'hi! fzf_pointer guifg='.g:slfg
+exe 'hi! fzf_border guibg='.g:lfg
 
 set cursorline

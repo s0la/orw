@@ -1,0 +1,167 @@
+#ob
+mb #0f0f0f
+mtbg #0f0f0f
+mtfg #414246
+mbg #0f0f0f
+mfg #2d2d2d
+msbg #1a1a1a
+msfg #b17953
+ms #0f0f0f
+bfg #0f0f0f
+bsfg #b17953
+b #bfbfbf
+c #bfbfbf
+mabt #b2b2b2
+mabth #8d6e68
+cbt #b2b2b2
+cbth #8d6e68
+mibt #b2b2b2
+mibth #8d6e68
+tb #bfbfbf
+t #bfbfbf
+ib #151515
+ic #171c1d
+ibth #B39C80
+ibt #111111
+itb #151515
+it #151515
+osd #bfbfbf
+osdh #bbbbbb
+osdu #888888
+s #b17953
+
+#dunst
+bg #121212
+fg #9e9e9e
+fc #d3efeb
+sbg #363636
+pbfg #C17748
+
+#term
+fg #f0f0f0
+bg #ff1a1a1a
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg #0a0a0a
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #b17953
+sfg #f3f3f3
+nbg none
+nfg #191e1f
+lbg #0e0e0e
+lfg #b17953
+syfg #c0c0c0
+cmfg #292e2f
+slbg #121212
+slfg #262a2b
+bcbg #b5bc6d
+bdbg #b17953
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+cfg default
+sfg #b8987e
+tfg #494a4c
+slbg default
+slfg #b17953
+
+#bar
+bg #101115
+fc #101115
+bfc #fe608985
+bbg #101115
+jbg #101115
+jfg #
+pbg #1E2329
+pfg #999999
+sbg #1E2329
+sfg #5c5d5f
+pbefg #fe608985
+msfg #47484a
+mlfg #7a8d90
+pbfg #494643
+mpfg #999999
+mfc #fe608985
+Tafg #785A5A
+
+#ncmpcpp
+npp #b17953
+np #b17953
+sip #33383b
+sc #33383b
+mc #33383b
+etc #191e24
+c2 #DBBD7D
+pc #1e1f23
+pec #b17953
+vc #b17953
+
+#tmux
+bg default
+fg #656c1d
+bc #1f1f1f
+mc #3a3a3a
+ibg default
+ifg #2c2c2c
+sfg #2c2c2c
+wbg default
+wfg #2c2c2c
+cbg default
+cfg #b17953
+
+#rofi
+bg #0a0a0a
+fg #202020
+bc #bdd3d5
+ibg #0a0a0a
+ibc #a5b9ae
+abg #171717
+afg #323232
+ebg #060606
+efg #b17953
+sbg #222222
+sfg #bb9e4e
+sul #222222
+lpc #979392
+dpc #222222
+btc #0a0a0a
+sbtc #0a0a0a
+btbc #0a0a0a
+
+#bash
+bg #141414
+fg #303030
+sc #303030
+ic #bcd1d3
+sec #81625c
+gcc #879394
+gdc #b17953
+vc #87939c
+
+#qb
+bg #0f0f0f
+fg #3a3b3f
+sbg #0b0b0b
+sfg #999999
+mfg #b09343
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ffC17748
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #0c1112
+fg #bdd9d5

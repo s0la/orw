@@ -1,0 +1,164 @@
+#ob
+t #cecece
+tb #cecece
+b #cecece
+c #cecece
+it #a9a9a9
+itb #a9a9a9
+ib #1d1e22
+ic #1d1e22
+cbt #84988d
+mabt #84988d
+mibt #84988d
+cbth #8d6e68
+mabth #8d6e68
+mibth #8d6e68
+ibt #939393
+ibth #B39C80
+mbg #0c1112
+mfg #2f3034
+mtbg #0c1112
+mtfg #414246
+msbg #0c1112
+msfg #8fa398
+mb #0c1112
+ms #0c1112
+bfg #1e1f23
+bsfg #8fa398
+osd #cecece
+osdh #bbbbbb
+osdu #888888
+
+#dunst
+bg #c0c0c0
+fg #333333
+fc #ca8065
+sbg #9d9d9d
+pbfg #d3efeb
+
+#term
+fg #c0c0c0
+bg #e20c1112
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg none
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #6e8277
+sfg #f3f3f3
+nbg none
+nfg #191e1f
+lbg #121617
+lfg #8fa398
+syfg #c0c0c0
+cmfg #191e1f
+slbg #121617
+slfg #262a2b
+bcbg #b5bc6d
+bdbg #798d82
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+sfg #b8987e
+tfg #494a4c
+slbg #9a796e
+slfg #1e1f23
+
+#bar
+bg #101115
+fc #101115
+bfc #608985
+bbg #101115
+jbg #101115
+jfg #
+pbg #1E2329
+pfg #999999
+sbg #1E2329
+sfg #5c5d5f
+pbefg #608985
+msfg #47484a
+mlfg #7a8d90
+pbfg #494643
+mpfg #999999
+mfc #608985
+Tafg #785A5A
+
+#ncmpcpp
+npp #bdd9d5
+np #bdd9d5
+sip #2D3741
+sc #2D3741
+mc #2D3741
+etc #191e24
+c2 #DBBD7D
+pec #bdd9d5
+vc #bdd9d5
+
+#tmux
+bg default
+fg #656c1d
+bc #14191a
+mc #3a3a3a
+ibg default
+ifg #222728
+sfg #222728
+wbg default
+wfg #222728
+cbg default
+cfg #8fa398
+
+#rofi
+bg #cecece
+fg #64696a
+bc #cecece
+ibg #cecece
+ibc #846358
+abg #87939c
+afg #d5d5d5
+ebg #cecece
+efg #c8e4e0
+sbg #b8b8b8
+sfg #8fa398
+sul #b8b8b8
+lpc #979392
+dpc #121317
+btc #cecece
+sbtc #cecece
+btbc #cecece
+
+#bash
+bg #242529
+fg #3e4344
+sc #3e4344
+ic #f8d2c9
+sec #81625c
+gcc #879394
+gdc #baced9
+vc #87939c
+
+#qb
+bg #191a1e
+fg #3a3b3f
+sbg #16171b
+sfg #999999
+mfg #9a796e
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ff8c7b86
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #1e2329
+fg #978691
