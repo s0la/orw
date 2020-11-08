@@ -461,4 +461,8 @@ endf
 
 set tabline=%!SetTabline()
 
-au BufWritePost,BufEnter * call SetStatus()
+"au BufWritePost,BufEnter * call SetStatus()
+augroup Statusline
+	autocmd!
+	autocmd BufWritePost,BufEnter * call SetStatus()
+augroup END
