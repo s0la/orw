@@ -9,7 +9,7 @@ function set() {
 	sed -i "s#^$1.*#$1 ${2:-${!1}}#" $config
 
 	if [[ $1 == directory ]]; then
-		$notify -p "$icon directory <b>$directory</b>\nhas been successfully set as default directory."
+		$notify -p "$icon directory <b>${directory//\'/}</b>\nhas been successfully set as default directory."
 		exit
 	fi
 }
@@ -409,7 +409,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			service=true
 
 			assign_value state ${!OPTIND} && shift
-			current_state=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print $2 }')
+			#current_state=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print $2 }')
+			current_state=$(systemctl --user is-active change_wallpaper.timer)
 
 			if [[ ${current_state:-$state} == 'inactive' ]]; then
 				new_state='start'
@@ -1175,7 +1176,7 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			[[ $new_state == start ]] && icon= || icon=
 
 			message="Auto-changer ${new_state}ed"
-			~/.orw/scripts/notify.sh osd $icon "$message"
+			~/.orw/scripts/notify.sh -s osd -i $icon "$message"
 		else
 			systemctl --user daemon-reload
 			systemctl --user restart change_wallpaper.timer
@@ -1189,7 +1190,7 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			icon=
 			message="$service_property: ${order:-$interval ${unit:-min}}"
 			#message="$(offset_message "$message")"
-			~/.orw/scripts/notify.sh osd $icon "$message"
+			~/.orw/scripts/notify.sh -s osd -i $icon "$message"
 		fi
 
 		exit
@@ -1262,5 +1263,6 @@ else
 		[[ -f "${config%/*}/colorschemes/$colorscheme.ocs" ]] && ~/.orw/scripts/rice_and_shine.sh -tC $colorscheme &
 	fi
 
-	eval "feh $wallpapers_to_set"
+	eval "feh $wallpapers_to_set" &> /dev/null
+	#eval "hsetroot -cover ${wallpapers_to_set#* }" &> /dev/null &
 fi
