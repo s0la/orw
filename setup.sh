@@ -97,7 +97,7 @@ function deps() {
 
 	echo 'installing dependencies..'
 
-	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq )
+	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then
@@ -228,8 +228,13 @@ function orw() {
 	sudo ln -s $destination/dotfiles/services/* $services_dir
 
 	#deoplete - neovim completion plugin
-	get_app download Shougo deoplete.nvim 'cp -r {autoload,*plugin} ~/.config/nvim' ||
-		handle_failure 'Failed to install deoplete.'
+	#get_app download Shougo deoplete.nvim 'cp -r {autoload,*plugin} ~/.config/nvim' ||
+		#handle_failure 'Failed to install deoplete.'
+	
+	#installing neovim pugins
+	plugin_path=$destination/dotfiles/.config/nvim/pack/plugins/start
+	git clone https://github.com/junegunn/fzf.vim $plugin_path/fzf
+	git clone https://github.com/Shougo/deoplete.nvim $plugin_path/deoplete
 	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)

@@ -1,0 +1,3 @@
+# preserve directory structure, but ignoring plugins because the latest versions will be installed during setup
+*
+!.gitignore
