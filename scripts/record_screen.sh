@@ -12,7 +12,7 @@ done
 [[ ! -f ~/.config/orw/config ]] && ~/.orw/scripts/generate_orw_config.sh
 
 read resolution position <<< $(awk '\
-	/^'${display-full_resolution}'/ {
+	/^'${display:-full_resolution}'/ {
 		if(/^full/ || xy) print $2 "x" $3, xy
 		else xy = "+" $2 "," $3 }' ~/.config/orw/config)
 
@@ -20,7 +20,7 @@ shift $((arg_count * 2))
 [[ $@ ]] && filename="$@" || filename=$(date +"%Y-%m-%d-%H:%M")
 
 #~/.orw/scripts/notify.sh -p "<span font='Roboto Mono 10'>      </span>recording started"
-~/.orw/scripts/notify.sh osd    'recording started'
+~/.orw/scripts/notify.sh -s osd  -i   'recording started'
 #~/.orw/scripts/notify.sh osd    'recording started'
 #~/.orw/scripts/notify.sh osd     'recording started'
 
