@@ -2,7 +2,11 @@
 
 function set() {
 	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
-	sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
+	#eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\2/g" <<< "${2:-${!1}}")'
+	#eval $1='$(sed "s/\(\\*\)\?\([][()]\)/\\\\\\\\\2/g; s/\//\\//g" <<< "${2:-${!1}}")'
+	#sed -i "s/\(^$1=\).*/\1\"${!1//&/\\&}\"/" $0
+	sed -i "s|\(^$1=\).*|\1\"${!1//&/\\&}\"|" $0
+	#sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
 }
 
 set_torrent_id() {
@@ -21,11 +25,15 @@ agregate() {
 			if(file) {
 				s = sv
 				cfn = n
-				cfs = (st == "Yes") ? " " : " "
+				#cfs = (st == "Yes") ? " " : " "
+				cfs = (st == "Yes") ? " " : " "
 			} else {
 				s = ts
 				cfn = pfn
-				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				#cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
 			}
 
 			tc = 0; sc = 0; ts = 0;
@@ -55,13 +63,21 @@ agregate() {
 			cn = ndp[1]
 
 			if(!fd) fd = (! ndp[2] && fn ~ fp && cn ~ "^" c "$")
+			#if(!fd) if(! ndp[2] && fn ~ fp && cn ~ "^" c "$") {
+			#	system("~/.orw/scripts/notify.sh \"" cn "\"")
+			#	fd = 1
+			#}
+			n = (p) ? cn : fn
+
 			n = (p) ? cn : fn
 
 			if(p) {
 				if(fn ~ fp "/") {
-					if(fd) {
+					#if(fd) {
+					if(fn ~ fp "/[^/]*$") {
 						if(tc) format_output()
 						format_output(1)
+						#system("~/.orw/scripts/notify.sh " cfn)
 					} else {
 						if(pfn && pfn != n) format_output()
 
@@ -136,18 +152,17 @@ offset=$(awk '
 		return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
 	}
 
-	/window/ { nr = NR }
 	/font/ { f = get_value() }
-	/width/ && NR < nr + 5 { w = get_value() }
-	/padding/ && NR < nr + 5 { p = get_value() }
-	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' .config/rofi/large_list.rasi)
+	/window-width:/ { w = get_value() }
+	/window-padding:/ { p = get_value() }
+	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' ~/.config/rofi/large_list.rasi)
 
-torrent_id="13"
-current="done"
-full_path="archlinux-2020.07.01-x86_64.iso"
+torrent_id=""
+current=""
+full_path=""
 
-depth="2"
-final_depth="0"
+depth=""
+final_depth=""
 
 [[ $@ =~ ^set_torrent_id ]] && $@
 
@@ -173,10 +188,11 @@ else
 			lf = $(NF - 2)
 			li = index($0, lf) + length(lf)
 			print substr($0, sil, li - sil)
-		}' <<< "$@") ||
-		current=$@
+		}' <<< "$@") || current="$@"
 
+	#~/.orw/scripts/notify.sh "c: $current"
 	set current
+	#~/.orw/scripts/notify.sh "c: $current"
 
 	if [[ $current == done ]]; then
 		transmission-remote -t $torrent_id -s &> /dev/null

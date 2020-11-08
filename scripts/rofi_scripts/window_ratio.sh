@@ -8,16 +8,16 @@ fi
 
 if [[ -z $@ ]]; then
 	cat <<- EOF
-		$sep$part_down
-		$sep$part_up
-		$sep$ratio_up
-		$sep$ratio_down
+		$sep$part_down
+		$sep$part_up
+		$sep$ratio_up
+		$sep$ratio_down
 	EOF
 else
 	[[ $@ =~ [0-9]+ ]] && value=${@: -1}
 
-	[[ $@ =~ ^(|) ]] && direction=+ || direction=-
-	[[ $@ =~ ^(|) ]] && property=part || property=ratio
+	[[ $@ =~ ^(|) ]] && direction=+ || direction=-
+	[[ $@ =~ ^(|) ]] && property=part || property=ratio
 
 	~/.orw/scripts/borderctl.sh w${property:0:1} $direction${value-1}
 
