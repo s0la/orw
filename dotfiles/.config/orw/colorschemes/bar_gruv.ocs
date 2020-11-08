@@ -1,6 +1,6 @@
 #bar
-bg #98cecece
-fc #98cecece
+bg #00cecece
+fc #b5bc6d
 bfc #98cecece
 bbg #98cecece
 jbg #001E2329
@@ -10,15 +10,11 @@ pfg #333333
 sbg #98cecece
 sfg #333333
 pbefg #bdd9d5
-mlfg #333333
 Tafg #333333
 tbefg #d3efeb
-bsbg #98cecece
+bsbg #00cecece
 bsfg #333333
-mpfg #333333
-msfg #333333
 tbfg #a6a6a6
 tsfg #333333
-msbg #bf333333
 Lpfg #63776c
 pbfg #545454

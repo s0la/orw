@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -y 15 -w a -h 27 -a 10 -b -f 0 -F 12 -M -c bar_fg_full -n fg_dock -O 10 -L a,s6,o6 -O 10

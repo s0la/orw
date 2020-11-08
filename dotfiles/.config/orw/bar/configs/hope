@@ -1,0 +1,1 @@
+/home/sola/.orw/scripts/bar/generate_bar.sh -x 400 -y 20 -h 28 -a 8 -F 3 -c bar_hope -M -n hope -p 7 -m c:cptn,of10,p4 -r -s 20 -W o1,if -p 5 -j 50 ● -e -v -d -j -P 33x18 i,s22,o15,Llro bar_hope

@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -y 20 -b -h 30 -a 8 -c bar_pt_bot bar_gruv -M -n pt_bot -c -s 10 -p 15 -i -m s22,i,of50,c:cptn -H -j 10 -v -d I:M_┃_d_b -j -P 20x8 i,s25,o15,Llro bar_pt_bot

@@ -1,0 +1,76 @@
+#qutebrowser
+icon="%{I+5}%{I-}"
+name="qutebrowser"
+left="qutebrowser"
+middle="~/Desktop/wq"
+
+#termite
+icon="%{I+5}%{I-}"
+name="termite"
+left="termite -t termite"
+
+#DROPDOWN
+icon="%{I+5}%{I-}"
+name="DROPDOWN"
+left="~/.orw/scripts/dropdown.sh"
+
+#vifm
+icon="%{I+5}%{I-}"
+name="vifm"
+left="~/.orw/scripts/vifm.sh -i"
+
+#bar_mwc
+#icon="%{I+5}%{I-}"
+#name="bar_mwc"
+#left="~/.orw/scripts/widgets.sh controls"
+#middle="~/.orw/scripts/widgets.sh controls -k"
+#right="mpc -q toggle"
+#up="mpc -q prev"
+#down="mpc -q next"
+
+#cover_art_widget
+#icon="%{I+5}%{I-}"
+#name="cover_art_widget"
+#left="~/.orw/scripts/widgets.sh cover"
+#middle="~/.orw/scripts/widgets.sh cover -k"
+
+#input
+#icon="\\${Lsfg:-\\$sfg}%{I+5}%{I-}"
+#name="input"
+#left="~/.orw/scripts/widgets.sh toggle_input"
+
+#ncmpcpp
+#icon="%{I+5}%{I-}"
+#name="ncmpcpp"
+#left="~/.orw/scripts/widgets.sh playlist"
+#middle="~/.orw/scripts/widgets.sh playlist -k"
+
+#visualizer
+#icon="%{I+5}%{I-}"
+#name="visualizer"
+#left="~/.orw/scripts/widgets.sh visualizer"
+#middle="~/.orw/scripts/widgets.sh visualizer -k"
+
+#bar_wwi
+#icon="%{I+1}%{I-}"
+#name="bar_wwi"
+#left="~/.orw/scripts/widgets.sh weather"
+#middle="~/.orw/scripts/widgets.sh weather -k"
+
+#wallctl
+#icon="%{I+2}%{I-}"
+#name="wallctl"
+#left="~/.orw/scripts/wallctl.sh"
+#middle="~/.orw/scripts/wallctl.sh -v"
+#up="~/.orw/scripts/wallctl.sh -o prev"
+#down="~/.orw/scripts/wallctl.sh -o next"
+
+#lock_screen
+icon="%{I+3}%{I-}"
+name="lock_screen"
+left="~/.orw/scripts/lock_screen.sh"
+
+#termite2
+icon="%{I+5}%{I-}"
+name="termite2"
+left=""

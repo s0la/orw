@@ -1,16 +1,16 @@
 #bar
-bg #e5232D35
-fc #e5232D35
+bg #e80a0a0a
+fc #e80a0a0a
 bfc #608985
-bbg #e5232D35
-bsbg #18191d
+bbg #e80a0a0a
+bsbg #0a0a0a
 bsfg #313131
-pbg #e5232D35
+pbg #e80a0a0a
 pfg #999999
-sbg #18191d
+sbg #0a0a0a
 sfg #5c5d5f
-pbefg #AC939F
-msfg #47484a
+pbefg #bd8854
+msfg #202020
 mlfg #7a8d90
-pbfg #4b555d
+pbfg #323232
 mpfg #999999

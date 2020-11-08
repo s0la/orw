@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -y 80 -x c 0 -w 220 -h 15 -b -p 0 -s 0 -a 8 -f 15 o -c bar_n_mw -M -n n_mwi -l -m P,s22,of5,i 
+~/.orw/scripts/bar/generate_bar.sh -y 90 -x  c 0 -w 220 -h 23 -b -p 0 -s 0 -a 8 -f 15 o -c bar_n_mw -M -n n_mwi -l -m P,s22,of5,i 
