@@ -27,11 +27,17 @@ evaluate() {
 		a) all=true;;
 		o) offsets=-o;;
 		A) adjucent=-a;;
+		I)
+			interactive=-I
+			stop=true;;
 		[Cc])
 			center=-c
 			[[ $input == C ]] && stop=true;;
 		E) equal=true;;
 		M) mirror=-M;;
+		T)
+			tile=-t
+			stop=true;;
 		S) swap=true;;
 		[Rs])
 			[[ $all ]] && state=-${input^} || state=-${input,}
@@ -47,12 +53,16 @@ evaluate() {
 					stop=true
 				fi
 			else
-				if [[ $mirror || $swap ]]; then
+				if [[ $mirror || $swap || $tile ]]; then
 					stop=true
-					[[ $mirror ]] && mirror+=" $input" || option="move -S $input"
+					if [[ $tile ]]; then
+						tile+=" $input"
+					else
+						[[ $mirror ]] && mirror+=" $input" || option="move -S $input"
+					fi
 				else
 					[[ $input == r ]] && option=resize || bar=-b
-					[[ $input == t ]] && tile=true
+					[[ $input == t ]] && open_tile=true
 				fi
 			fi;;
 		[HD])
@@ -120,8 +130,9 @@ get_argument_count() {
 }
 
 execute() {
-	~/.orw/scripts/windowctl.sh $x $y $margin $offsets $center $bar $state $grid $display $mirror $option $edge $multi $orientation $ratio $adjucent
-	[[ $tile ]] && ~/.orw/scripts/tile_terminal.sh
+	~/.orw/scripts/windowctl.sh $x $y $margin $offsets $center $bar $state $grid $display $mirror $tile $option $edge $interactive $multi $orientation $ratio $adjucent
+	#~/.orw/scripts/notify.sh "$x $y $margin $offsets $center $bar $state $grid $display $mirror $tile $option $edge $multi $orientation $ratio $adjucent"
+	[[ $open_tile ]] && ~/.orw/scripts/tile_terminal.sh
 }
 
 while getopts :o:O: flag; do
