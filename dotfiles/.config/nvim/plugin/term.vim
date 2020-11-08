@@ -1,4 +1,5 @@
 func! Term(...)
+	let l:command = ''
 	let l:orientation = 'sp'
 
 	if len(a:000)
