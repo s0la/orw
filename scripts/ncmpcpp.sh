@@ -61,7 +61,7 @@ function get_cover_properties() {
 	#		print x, y, cw, ph - 2 * y, 100 - r
 	#	}' <<< echo $width $height)
 
-	padding=$(awk '/padding/ { print gensub(/[^0-9]*([0-9]+).*/, "\\1", 1) }' .config/gtk-3.0/gtk.css)
+	padding=$(awk '/padding/ { print gensub(/[^0-9]*([0-9]+).*/, "\\1", 1) }' ~/.config/gtk-3.0/gtk.css)
 
 	read pane_count pane_width pane_height <<< \
 		$(tmux -S /tmp/tmux_hidden display -p -F '#{window_panes} #{window_width} #{window_height}' -t ncmpcpp_with_cover_art)
@@ -141,33 +141,35 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			layout="move -e $edge $orientation 1/2 -c $reverse_orientation"
 			pre+="$layout && sleep 0.1 > /dev/null"
 
-			command='new -s playlist ncmpcpp';;
+			command="new -s $title ncmpcpp";;
 		v)
-			#width=70
-			#height=70
 			title=visualizer
 			progressbar=yes
 
 			[[ ! $pre ]] && pre="~/.orw/scripts/windowctl.sh "
 
-			#[[ $V ]] && layout="move -h 2/3 -v 3/4 resize -h 1/3 -v 1/4" progressbar=yes ||
-			#	layout="move -v 3/7 -h 2/4 resize -v 3/7 -h 1/3"
+			running_playlist=$(tmux -S /tmp/tmux_hidden ls 2> /dev/null | cut -d ':' -f 1)
 
-			if [[ $V ]]; then
-				width=${width:-500}
-				height=${height:-150}
-				edge=t orientation=-v reverse_orientation=h progressbar=yes
+			if [[ $running_playlist ]]; then
+				mirror_args="$(wmctrl -lG | awk '$NF == "'$running_playlist'" {
+					print ($5 > $6) ? "xe+10,y,h -h 300" : "x,ye+10,w -v 120" }')"
+				pre+="-M $running_playlist $mirror_args"
 			else
-				width=${width:-250}
-				height=${height:-350}
-				edge=l orientation=-h reverse_orientation=v
+				if [[ $V ]]; then
+					width=${width:-500}
+					height=${height:-150}
+					edge=t orientation=-v reverse_orientation=h progressbar=yes
+				else
+					width=${width:-250}
+					height=${height:-350}
+					edge=l orientation=-h reverse_orientation=v
+				fi
+
+				layout="move -e $edge $orientation 2/2 -c $reverse_orientation"
+				pre+="$layout && sleep 0.1 > /dev/null"
 			fi
 
-			layout="move -e $edge $orientation 2/2 -c $reverse_orientation"
-
-			pre+="$layout && sleep 0.1 > /dev/null"
-
-			command='new -s visualizer cava'
+			command="new -s $title cava"
 			show_progessbar ${progressbar-no};;
 		s)
 			width=${width-450}
@@ -177,9 +179,14 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			#progressbar=no
 			show_status no
 
-			command='new -s split ncmpcpp \; splitw -p 20 cava \; selectp -U';;
+			command="new -s $title ncmpcpp \; splitw -p 20 cava \; selectp -U";;
 		c)
-			[[ $@ =~ -i ]] && width=${width-630} height=${height-230}
+			padding=$(awk '/padding/ {
+				p = gensub(/[^0-9]*([0-9]+).*/, "\\1", 1)
+				print p * 2 }' ~/.config/gtk-3.0/gtk.css)
+
+			#[[ $@ =~ -i ]] && width=${width-630} height=${height-250}
+			[[ $@ =~ -i ]] && width=${width-$((600 + padding))} height=${height-$((200 + padding))}
 			title=ncmpcpp_with_cover_art
 
 			#get_cover_properties
@@ -189,7 +196,8 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			#command="new -s ncmpcpp_with_cover_art ~/Desktop/read_ub.sh \; splitw -h -p $ratio ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
 			#init_ueberzug='export blank=true && source ~/.bashrc && ~/Desktop/read_ub.sh'
 			#command="new -s ncmpcpp_with_cover_art ~/Desktop/read_ub.sh \; splitw -hp 80 ncmpcpp -c ~/.config/ncmpcpp/config_cover_art";;
-			command="new -s ncmpcpp_with_cover_art ~/.orw/scripts/ueberzug_parser.sh \; "
+			#command="new -s ncmpcpp_with_cover_art ~/.orw/scripts/ueberzug_parser.sh";;
+			command="new -s $title ~/.orw/scripts/ueberzug_parser.sh \; "
 			command+="splitw -hp 80 ncmpcpp -c ~/.config/ncmpcpp/config_cover_art";;
 			#command="new -s ncmpcpp_with_cover_art ncmpcpp -c ~/.orw/dotfiles/.config/ncmpcpp/config_cover_art";;
 		d)
@@ -234,7 +242,8 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		w) width=$OPTARG;;
 		h) height=$OPTARG;;
 		i)
-			if ! xdotool search --name "'${title-ncmpcpp}'"; then
+			#if ! xdotool search --name "'${title-ncmpcpp}'"; then
+			if ! wmctrl -a "${title-ncmpcpp}"; then
 				width=${width:-900}
 				height=${height:-500}
 
