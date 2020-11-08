@@ -125,7 +125,10 @@ fi
 get_controls() {
 	local icon=mpd_${control}${circle}_icon
 	set_icon $control$circle
-	controls+="%{A:mpc -q $control:}${!icon}%{A}"
+	controls+="%{A:mpc -q $control:} ${!icon}%{A}"
+	#controls+="%{A:~/.orw/scripts/notify.sh '$control':} ${!icon}%{A}"
+	#controls+="%{A:~/.orw/scripts/notify.sh 'mpc -q $control':}${!icon}%{A}"
+	#~/.orw/scripts/notify.sh "c: $controls"
 }
 
 for module in ${4//,/ }; do
@@ -156,8 +159,10 @@ for module in ${4//,/ }; do
 
 					if [[ $current_control != c ]]; then
 						#((control_index > 1)) && controls+='${inner}'
-						[[ $control_index -eq 1 || $control_index -eq 2 &&
-							${selected_controls:control_index - 2:1} == c ]] || controls+='${inner}'
+
+						# add offset between control buttons, commented because space was added before each button, so the click action would respond on the right location
+						#[[ $control_index -eq 1 || $control_index -eq 2 &&
+						#	${selected_controls:control_index - 2:1} == c ]] || controls+='${inner}'
 						get_controls $control
 					fi
 				done
