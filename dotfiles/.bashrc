@@ -312,7 +312,9 @@ get_branch_info() {
 
 		if [[ $mode == simple ]]; then
 			[[ $start_bracket ]] && all_modules+=$start_bracket
-			format_module -f $gc -c "$branch$sorted_branch_modules$end_bracket"
+			format_module -f $gc -c "$branch$sorted_branch_modules"
+			all_modules+="$end_bracket"
+			(( content_length += 2 ))
 			#[[ $end_bracket ]] && all_modules+=$end_bracket && ((content_length += 3))
 		else
 			format_module -b $gc -f $bg -c " $icon $branch$sorted_branch_modules "
@@ -324,7 +326,9 @@ get_virtual_env() {
 	if [[ $VIRTUAL_ENV ]]; then
 		if [[ $mode == simple ]]; then
 			[[ $start_bracket ]] && all_modules+=$start_bracket
-			format_module -f $vc -c "${VIRTUAL_ENV##*/}$end_bracket"
+			format_module -f $vc -c "${VIRTUAL_ENV##*/}"
+			all_modules+="$end_bracket"
+			(( content_length += 2 ))
 		else
 			format_module -b $vc -c "   ${VIRTUAL_ENV##*/}"
 		fi
@@ -365,7 +369,7 @@ color_modules() {
 			i*) get_basic_info "$info_module";;
 			g*) get_branch_info "$git_module";;
 			r)
-				if [[ $mode == rice ]]; then
+				#if [[ $mode == rice ]]; then
 					format_module -b default -c ""
 
 					reverse=true
@@ -373,8 +377,9 @@ color_modules() {
 					left_part_length=${#all_modules}
 					left_content_length=$content_length
 
-					set_edge
-				fi;;
+					[[ $mode == simple ]] &&
+						(( content_length += 2 )) || set_edge;;
+				#fi;;
 			w)
 				format_module -b $bg -f $fg -c "$working_directory"
 				[[ $mode == rice ]] && format_module -f $bg;;
@@ -480,13 +485,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="20;20;20;"
-	fg="48;48;48;"
+	bg="34;34;34;"
+	fg="54;54;54;"
 	sc="48;48;48;"
 	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="109;123;115;"
+	gdc="177;121;83;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
