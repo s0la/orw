@@ -14,9 +14,13 @@ function! FloatingFZF()
 	let buf = nvim_create_buf(v:false, v:true)
 	call setbufvar(buf, '&signcolumn', 'no')
 
-	let height = float2nr(&lines * 0.4)
+	let height = float2nr(&lines * 0.5)
 	let width = float2nr(&columns * 0.7)
-	let vertical = float2nr((&lines - height) / 3)
+	" let vertical = float2nr(((&lines - height) / 3) * 2)
+	" let vertical = float2nr((&lines / 3) * 2)
+	let vertical = float2nr((&lines / 3) * 2 - 2)
+	let vertical = float2nr((&lines / 5) * 2)
+	" let vertical = float2nr(((&lines - height) / 2))
 	let horizontal = float2nr((&columns - width) / 2)
 
 	let opts = {
@@ -53,8 +57,10 @@ let g:fzf_action = {
 let g:fzf_tags_command = 'ctags -R'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
- let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-"let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.7, 'height': 0.5,'yoffset':0.5,'xoffset': 0.5, 'border': 'sharp' } }
+let g:fzf_preview_window = ['right:50%', 'ctrl-/']
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+" let g:fzf_layout = {'up':'~90%', 'window': { 'width': 0.7, 'height': 0.5,'yoffset':0.5,'xoffset': 0.5, 'border': 'sharp' } }
+" let g:fzf_layout = {'up':'~30%', 'window': { 'width': 1.0, 'height': 0.3, 'border': 'sharp' } }
 
 " let custom_bindings = 'up:space-k,down:space-j'
 let $FZF_DEFAULT_OPTS="--layout reverse --margin=2,5"
