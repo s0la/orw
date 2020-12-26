@@ -61,7 +61,7 @@ function get_cover_properties() {
 	#		print x, y, cw, ph - 2 * y, 100 - r
 	#	}' <<< echo $width $height)
 
-	padding=$(awk '/padding/ { print gensub(/[^0-9]*([0-9]+).*/, "\\1", 1) }' ~/.config/gtk-3.0/gtk.css)
+	padding=$(awk '/padding/ { print gensub(/[^0-9]*([0-9]+).*/, "\\1", 1); exit }' ~/.config/gtk-3.0/gtk.css)
 
 	read pane_count pane_width pane_height <<< \
 		$(tmux -S /tmp/tmux_hidden display -p -F '#{window_panes} #{window_width} #{window_height}' -t ncmpcpp_with_cover_art)
@@ -183,7 +183,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		c)
 			padding=$(awk '/padding/ {
 				p = gensub(/[^0-9]*([0-9]+).*/, "\\1", 1)
-				print p * 2 }' ~/.config/gtk-3.0/gtk.css)
+				print p * 2; exit }' ~/.config/gtk-3.0/gtk.css)
 
 			#[[ $@ =~ -i ]] && width=${width-630} height=${height-250}
 			[[ $@ =~ -i ]] && width=${width-$((600 + padding))} height=${height-$((200 + padding))}
