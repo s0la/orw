@@ -30,7 +30,7 @@ read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
 sbg='#363636'
-pbfg='#b17953'
+pbfg='#8e9999'
 
 type=$(ps -C dunst -o args=)
 
@@ -85,12 +85,17 @@ running_count=${#running_pids[*]}
 if [[ $style =~ ^(osd|vert) ]]; then
 	restore_default_config_pid=
 
+	#read {x,y}_offset <<< $(grep offset ~/.config/orw/offsets | xargs eval)
+	eval $(grep offset ~/.config/orw/offsets | xargs)
+
 	#if ((!restore_default_config_pid)); then
 	if ((!running_count)); then
 		read info_size icon_size geometry <<< \
 			$(awk '\
 				BEGIN { s = "'$style'" }
-				/^x_offset/ && s == "vertical" { x = $NF * 2 }
+				/^mode/ { t = ($NF != "floating") }
+				/^x_offset/ { x = $NF }
+				/^offset/ { if($NF == "true") x = '$x_offset' }
 				/^primary/ { p = $NF }
 				p && $1 == p {
 					dw = $2
@@ -112,7 +117,9 @@ if [[ $style =~ ^(osd|vert) ]]; then
 						is = bs - 2
 
 						h = 10 * bs + 4 * is
-						w = 5 * bs
+						w = 3 * bs
+						if(t) { if(x > w) x -= w }
+						else x /= 2
 						y = int((dh - h) / 2)
 
 						o = "-"
@@ -191,8 +198,22 @@ if [[ $style ]]; then
 			empty=$(color_bar ' ┃ ' $empty_value '\n')
 
 			font='DejaVu Sans Mono'
+
+			#slider=true
+
+			if [[ $slider ]]; then
+				slider_icon="<span font='$font 17'>  \\n</span>"
+				slider_icon="<span font='$font 13'>  \\n</span>"
+				slider_icon="<span font='$font 13'>  \\n</span>"
+				slider_icon="<span font='$font 13'>  \\n</span>"
+				slider_icon="<span font='$font 17'>  \\n</span>"
+				sbg=$pbfg
+			fi
+
 			empty_bar="<span font='$font 15' foreground='$sbg'>$empty</span>"
-			level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
+			#empty_bar="<span font='$font 15' foreground='$pbfg'>$empty</span>"
+			#level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
+			level_bar="<span font='$font 15' foreground='$pbfg'>$slider_icon$level</span>"
 
 			message="<span foreground='$fg' font='$font 13'>\n"$empty_bar\\n$level_bar"\n\n $font_icon \n</span>";;
 		mini)
@@ -206,9 +227,14 @@ if [[ $style ]]; then
 			font='Roboto Mono'
 			font='DejaVu Sans Mono'
 
+			#dashes=true
+
 			if [[ $bar ]]; then
-				level=$(color_bar '' $level_value)
-				empty=$(color_bar '' $empty_value)
+				#[[ $dashes ]] && bar_icon= || bar_icon=
+				[[ $dashes ]] && bar_icon= || bar_icon=
+
+				level=$(color_bar $bar_icon $level_value)
+				empty=$(color_bar $bar_icon $empty_value)
 
 				empty_bar="<span font='$font 9' foreground='$sbg'>$empty</span>"
 				level_bar="<span font='$font 9' foreground='$pbfg'>$level</span>"
