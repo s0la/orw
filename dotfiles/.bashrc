@@ -485,13 +485,13 @@ color_modules() {
 generate_ps1() {
 	local exit_code=$?
 
-	bg="34;34;34;"
+	bg="default"
 	fg="54;54;54;"
 	sc="48;48;48;"
 	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="177;121;83;"
+	gdc="142;153;153;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -504,7 +504,7 @@ generate_ps1() {
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
 	else
-		mode=rice
+		mode=simple
 		edge_mode=sharp
 
 		set_edge
@@ -515,7 +515,7 @@ generate_ps1() {
 
 		#modules="i:u_'on'_h,w,g:s_m_a_d_u,v"
 		#modules="i,w,v,r,g"
-		modules="w,v,r,g"
+		modules="w,v,g"
 
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_content 3 $fg)("
@@ -654,3 +654,8 @@ alias sb="source ~/.bashrc"
 
 #tmux
 alias tmux="tmux -f ~/.config/tmux/tmux.conf"
+
+#startx
+if [[ `tty` == '/dev/tty1' ]]; then
+	pidof openbox || startx ~/.orw/dotfiles/.config/X11/xinitrc
+fi
