@@ -1,8 +1,10 @@
 #!/bin/bash
 
-tty=$(tty)
+#tty=$(tty)
+[[ $1 ]] || id=$(wmctrl -l | awk '$2 > 0 { print $1; exit }')
 
-if [[ $tty =~ ^not || $1 ]]; then
+#if [[ $tty =~ ^not || $1 ]]; then
+if [[ -z $id ]]; then
 	fifo=/tmp/borders.fifo
 	mkfifo $fifo
 
@@ -13,7 +15,7 @@ if [[ $tty =~ ^not || $1 ]]; then
 	read x_border y_border < $fifo
 	rm $fifo
 else
-	read x_border y_border <<< $(~/Desktop/get_borders.sh)
+	read x_border y_border <<< $(~/.orw/scripts/get_borders.sh)
 fi
 
 echo $x_border $y_border
