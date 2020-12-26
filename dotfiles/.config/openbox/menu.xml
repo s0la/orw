@@ -36,6 +36,8 @@
 	<<menu id="select_wall" label="select__wall" execute="~/.config/openbox/pipe_menu/select_wallpaper.sh">
 	</menu>
 
+	<<menu id="exit" label="EXIT" execute="~/.config/openbox/pipe_menu/exit.sh"/>
+
 	<menu id="root-menu" label="Openbox 3">
 		<separator label="APPS"/>
 		<menu id="apps"/>
@@ -47,6 +49,9 @@
 		<separator label="DEVICES"/>
 		<menu id="mount"/>
 		<menu id="unmount"/>
+		<separator/>
+		<separator/>
+		<menu id="exit"/>
 	</menu>
 
 </openbox_menu>
