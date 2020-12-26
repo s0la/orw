@@ -14,7 +14,7 @@ for arg in ${3//,/ }; do
 		i) 
 			main_font_type="icomoon_material_tile"
 			main_font_type="remix"
-			eval $(sed -n 's/power_\(.*=\)[^}]*.\(.\).*/\1\2/p' ~/.orw/scripts/bar/icons);;
+			eval $(sed -n 's/power_bar_\(.*=\)[^}]*.\(.\).*/\1\2/p' ~/.orw/scripts/bar/icons);;
 		#[0-9]*) [[ $arg =~ x ]] && width_ratio=${arg%x*} height_ratio=${arg#*x} || equal_ratio=$arg;;
 		s[0-9]*) main_font_size=${arg:1};;
 		o[0-9]*) offset="%{${arg^}}";;
@@ -22,7 +22,9 @@ for arg in ${3//,/ }; do
 			action_count=${#arg}
 
 			for action_index in $(seq ${#arg}); do
-				[[ ! $offset ]] && ((action_index % ${#arg})) && actions+='%{O$separator}'
+				#[[ ! $offset ]] && ((action_index % ${#arg})) && actions+='%{O$separator}'
+
+				#[[ ! $offset ]] && ((action_index % ${#arg})) && ~/.orw/scripts/notify.sh "$action_index: $((action_index % ${#arg}))"
 
 				case ${arg:action_index - 1:1} in
 					l) actions+="$offset%{A:kill "$pid" && openbox --exit:}${logout_icon:-logout}%{A}$offset";;
@@ -31,6 +33,8 @@ for arg in ${3//,/ }; do
 					o) actions+="$offset%{A:kill "$pid" && systemctl poweroff:}${power_off_icon:-power off}%{A}$offset";;
 					L) actions+="$offset%{A:kill "$pid" && ~/.orw/scripts/lock_screen.sh:}${lock_icon:-lock}%{A}$offset";;
 				esac
+
+				[[ ! $offset ]] && actions+='%{O$separator}'
 			done
 	esac
 done
@@ -63,6 +67,7 @@ read geometry separator <<< $(awk -F '[_ ]' '{
 					o = int(h / 2 - '$close_offset')
 					x += int(($3 - w) / 2)
 					y = int(($4 - h) / 2)
+					#y = 100
 					#print w "x" h "+" x "+" y, o, s
 					print w "x" h "+" x "+" y, s
 					exit
@@ -102,5 +107,5 @@ eval "content=\"%{c}%{B$bg}%{F$fg}$actions\""
 
 #echo -e "%{c}$actions" | \
 echo -e "$content" | \
-	lemonbar -d -p -B $bg -F $fg -R ${Pfc:-$fc} -r 3\
+	lemonbar -d -p -B $bg -F $fg -R ${Pfc:-$fc} -r 3 \
 	-f "$main_font" -o 0 -g $geometry -n power_bar | bash
