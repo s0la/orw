@@ -10,18 +10,21 @@ let s:settings .= 'IMC.imbg.;'
 let s:settings .= 'VMC.vmbg.;'
 let s:settings .= 'BC.bcbg.;'
 let s:settings .= 'BU.bdbg.;'
-let s:settings .= 'b.b.;'
 let s:settings .= 'r.. RO ;'
 let s:settings .= 'm.m.;'
 let s:settings .= 'f.s. %F ;'
-let s:settings .= 'cpi.lfg.● ;'
+let s:settings .= 'b.b.;'
+"let s:settings .= 'cpi.lfg.● ;'
+let s:settings .= 'cpi.lfg. ● ;'
 " let s:settings .= 'c.imbg. ●.f;'
-let s:settings .= 'e.n.;'
-let s:settings .= 'ln.fr.  %l:%c  .fr;'
+let s:settings .= 'e..;'
+"let s:settings .= 'ln.fr.  %l:%c  .fr;'
+"let s:settings .= 'ln.fr. line: %l, column: %c .fr;'
+let s:settings .= 'ln.fr. ln: %l, cl: %c .fr;'
 " let s:settings .= 'ln.m.  line %l, column %c  .fr;'
 let s:settings .= 't.f. %Y .fr;'
 
-let s:swap_colors = 0
+let s:swap_colors = 1
 let g:statusline_state = 'full'
 
 let s:separator = "%#None#"
@@ -29,6 +32,7 @@ let s:separator = "%#None#"
 " let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
 " let s:active_buffer_modules = 'm.s.b.s.f.c.e.ln'
 let s:active_buffer_modules = 'b.f.c.e.t.ln'
+let s:active_buffer_modules = 'f.b.c.e.ln'
 "let s:active_buffer_modules = 'f.c.e.ln'
 let s:inactive_buffer_modules = 'f.c.e.ln'
 
@@ -249,17 +253,66 @@ func! SetBranchColor()
 	let l:branch = getbufvar(b:bufnr, 'branch')
 
 	if l:branch != ''
-		if join(s:modules) !~ 'f.*b'
+		"if join(s:modules) !~ 'f.*b'
+			"let s:branch_hi_group = GetHiGroup('b', (l:branch =~ '*$') ? s:branch_uncommited_color : s:branch_commited_color)
+
 			if l:branch =~ '*$'
-				let s:branch_label = ' ┣ ' . l:branch[:-2] . ' '
+				let s:branch_label = l:branch[:-2]
 				let s:branch_hi_group = GetHiGroup('b', s:branch_uncommited_color)
 			else
-				let s:branch_label = ' ┣ ' . l:branch . ' '
+				let s:branch_label = l:branch
 				let s:branch_hi_group = GetHiGroup('b', s:branch_commited_color)
 			endif
+
+			"if s:swap_colors
+			"	let l:file_hi_group = GetHiGroup('f', 'File')
+			"	let l:start_bracket = '%#' . l:file_hi_group . '#('
+			"	let l:end_branket = '%#' . l:file_hi_group . '#)'
+			"	let s:branch_label = l:start_bracket . s:branch_label . l:end_branket
+			"else
+			"	let s:branch_label = ' ┣ ' . s:branch_label
+			"endif
+
+			"if l:branch =~ '*$'
+			"	let s:branch_label = ' ┣ ' . l:branch[:-2] . ' '
+			"	"let s:branch_hi_group = GetHiGroup('b', s:branch_uncommited_color)
+			"else
+			"	let s:branch_label = ' ┣ ' . l:branch . ' '
+			"	"let s:branch_hi_group = GetHiGroup('b', s:branch_commited_color)
+			"endif
+		"else
+
+		if join(s:modules) =~ 'f.*b'
+			"if s:swap_colors
+				if !s:swap_colors
+					let s:branch_hi_group = ReverseHiGroup('b', s:branch_hi_group)
+				endif
+				"let l:file_hi_group = GetHiGroup('f', 'File')
+				"let l:start_bracket = '%#' . l:file_hi_group . '#('
+				"let l:end_branket = '%#' . l:file_hi_group . '#)'
+				let l:start_bracket = '%#File_hi_group#('
+				let l:end_bracket = '%#File_hi_group#)'
+				let l:branch_hi_group = '%#' . s:branch_hi_group . '#'
+				let s:branch_label = l:start_bracket . l:branch_hi_group . s:branch_label . l:end_bracket
+			"else
+			"	"let s:branch_hi_group = ''
+			"	"let s:branch_label = '(' . l:branch . ')'
+
+			"	"let s:branch_hi_group = ReverseHiGroup('b', s:branch_hi_group)
+
+			"	"let l:branch_hi_group = ReverseHiGroup('b', s:branch_hi_group)
+			"	"let l:start_bracket = '%#File_hi_group#('
+			"	"let l:end_bracket = '%#File_hi_group#)'
+			"	"let l:branch_hi_group = '%#' . l:branch_hi_group . '#'
+			"	"let s:branch_label = l:start_bracket . l:branch_hi_group . s:branch_label . l:end_bracket
+			"	"let s:branch_hi_group = s:file_hi_group
+			"endif
 		else
-			let s:branch_label = '(' . l:branch . ') '
+			let s:branch_label = ' ┣ ' . s:branch_label . ' '
 		endif
+
+			"let s:branch_label = '(' . l:branch . ') '
+		"endif
 	endif
 endf
 
