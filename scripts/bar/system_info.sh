@@ -43,7 +43,7 @@ function format() {
 				echo -e $hidden;;
 			mono) echo -e "\${${mono_bg:-$pbg}}$padding\${$pfg}$icon_width$mono_fg$1%{I-}$padding$2 ${separator:-\$separator}";;
 			trim) echo -e "$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2$padding$3 \$separator";;
-			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
+			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width%{T5}$1%{T1}%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
 		esac
 	else
 		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
@@ -60,23 +60,43 @@ function format() {
 		#else
 
 		#if [[ $lines == false ]]; then
+		if [[ $lines != false ]]; then
 		#	echo -e "${formated% *}$separator"
 		#	#echo -e "${formated% *} %{B\$bg}$separator"
 		#else
-		if [[ $lines != true ]]; then
+		#if [[ $lines != true ]]; then
 			set_line
 
-			#~/.orw/scripts/notify.sh "s: $module $separator"
 			case $separator in
-				#e*) echo -e "${separator:1}";;
-				[ej]*) echo -e "${formated% *}${separator:1}";;
-				s*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}${separator:2}";;
-				#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
-				*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
+				[ej]*) separator=${separator:1};;
+				*)
+					if [[ $separator =~ ^s ]]; then
+						separator=${separator:2}
+					else
+						separator=${separator:-\$separator}
+						local end="%{U$fc}\${end_line:-$right_frame}"
+					fi
+
+					local start="%{U$fc}\${start_line:-$left_frame}"
 			esac
+				#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+		fi
+
+			#~/.orw/scripts/notify.sh "s: $module $separator"
+
+			#latest changes
+			#case $separator in
+			#	#e*) echo -e "${separator:1}";;
+			#	[ej]*) echo -e "${formated% *}${separator:1}";;
+			#	s*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}${separator:2}";;
+			#	#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+			#	*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
+			#esac
+
+			echo -e "$start${formated% *}$end$separator"
 
 			#echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
-		fi
+		#fi
 	fi
 }
 
@@ -103,7 +123,7 @@ format_fading() {
 			#format fading "%{A:$left_command:}%{A3:$right_command:}${!icon_type-$label}%{A}%{A}" "$content"
 			[[ ! $label ]] &&
 				format fading "$content" ||
-				format fading "$left_command$right_command${!icon_type-$label}$left_command_end$right_command_end" "${content:-$count}"
+				format fading "$left_command$right_command${!icon_type:-$label}$left_command_end$right_command_end" "${content:-$count}"
 		fi
 	else
 		if [[ $separator =~ ^s ]]; then
@@ -122,7 +142,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=47
+		old_mail_count=20
 
 		email_auth=~/.orw/scripts/auth/email
 
