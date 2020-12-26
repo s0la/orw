@@ -583,10 +583,20 @@ font5="orw_fi:size=$font_size"
 font1="Iosevka Orw:style=Medium:size=$font_size"
 
 #icon fonts
+font1="SFMono-Regular:size=$font_size"
+font1="Iosevka Orw:style=Medium:size=$font_size"
 font2="remix:size=$((font_size + 3))"
 font3="awesome_new_sorted:size=$((font_size + 1))"
 font4="icomoon_material_tile:size=$((font_size + 1))"
+font5="Iosevka Orw:style=Heavy:size=$font_size"
 #~/.orw/scripts/notify.sh "i: $icomoon_offset f: $font_offset m: $main_font_offset"
+
+font1="Iosevka Orw:style=Semibold:size=$font_size"
+font5="Iosevka Orw:style=Extrabold:size=$font_size"
+
+#font1="SF Mono:style=Medium:size=$font_size"
+#font5="SF Mono:style=Heavy:size=$font_size"
+#font6="Iosevka Orw:style=Medium:size=$font_size"
 
 ends_with_line=$(awk -F '-l' '{ if((NF - 1) % 2) print "true" }' <<< "$all_arguments")
 
@@ -773,8 +783,9 @@ while read -r module; do
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
 	-f "$font2" -o $((main_font_offset - ${remix_offset:-$((${font_offset:-$main_font_offset} + 0))})) \
-	-f "$font3" -o $((${font_offset:-$main_font_offset} - 0)) \
+	-f "$font3" -o $((${font_offset:-$main_font_offset} + 0)) \
 	-f "$font4" -o $((${font_offset:-$main_font_offset} - 0)) \
+	-f "$font5" -o $main_font_offset \
 	-a 100 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
 
 #done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \

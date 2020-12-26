@@ -10,7 +10,7 @@ current_mode=controls
 
 function set_icon() {
 	local icon="$(sed -n "s/mpd_${1}_icon=//p" ${0%/*}/icons)"
-	eval mpd_${1}_icon=$icon
+	eval mpd_${1}_icon=\"$icon\"
 }
 
 set_icon toggle
@@ -34,12 +34,32 @@ get_song_info() {
 	[[ $show_time ]] && time_length=${#time}
 
 	minutes=${elapsed_time%:*} seconds=${elapsed_time#*:}
-	song_info="$(mpc current -f "%artist% - %title%")"
-	scrollable_area=${scrollable_area-25}
+	#song_info="$(mpc current -f "%artist% - %title%")"
+	scrollable_area=${scrollable_area:-25}
 	delay=${delay-3}
 
-	if [[ $scroll ]] && ((${#song_info} - time_length - 3 > $scrollable_area)); then
-		final_index=$((${#song_info} - scrollable_area))
+	#if [[ $scroll ]] && ((${#song_info} - time_length - 3 > $scrollable_area)); then
+	#	final_index=$((${#song_info} - scrollable_area))
+	#	(( $minutes == 0 && ${seconds#0} < 5 )) && song_info_index=0 ||
+	#		song_info_index=$(((minutes * 60 + ${seconds#0}) % (final_index + 2 * delay)))
+
+	#artist="$(mpc current -f "%artist%")"
+	#title="$(mpc current -f "%title%")"
+	##song_info="$(mpc current -f "%artist% - %title%")"
+	#info_length=$((${#artist} + ${#title} + 2))
+
+	artist="$(mpc current -f "%artist%")"
+	song_info="$(mpc current -f "$artist: %title%")"
+
+	artist_length=${#artist}
+	info_length=${#song_info}
+
+	#song_info="$artist: $title"
+
+	#~/.orw/scripts/notify.sh "il: $info_length, $scrollable_area"
+
+	if [[ $scroll ]] && ((info_length - time_length - 3 > $scrollable_area)); then
+		final_index=$((info_length - scrollable_area))
 		(( $minutes == 0 && ${seconds#0} < 5 )) && song_info_index=0 ||
 			song_info_index=$(((minutes * 60 + ${seconds#0}) % (final_index + 2 * delay)))
 
@@ -49,15 +69,33 @@ get_song_info() {
 		set_icon left_limiter
 		set_icon right_limiter
 
-		left_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_left_limiter_icon\${mpfg:-\$pfg}"
-		right_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_right_limiter_icon\${mpfg:-\$pfg}"
+		left_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_left_limiter_icon \${mpfg:-\$pfg}"
+		right_limiter="\${mlfg:-\${msfg:-\$sfg}} $mpd_right_limiter_icon\${mpfg:-\$pfg}"
 
-		song_info="$left_limiter ${song_info:$song_info_index:$scrollable_area} $right_limiter"
+		#currently_visible_portion="${song_info:$song_info_index:$scrollable_area}"
+		song_info="${song_info:$song_info_index:$scrollable_area}"
+
+		#~/.orw/scripts/notify.sh "cwp: $currently_visible_portion"
+
+		#if ((song_info_index < artist_length + 1)); then
+		#	artist_portion=$(((artist_length + 1) - song_info_index))
+		#	currently_visible_portion="%{T5}${currently_visible_portion:0:$artist_portion}%{T1}${currently_visible_portion:$artist_portion}"
+		#fi
+
+		#~/.orw/scripts/notify.sh "cwp: $currently_visible_portion"
+
+		#song_info="$currently_visible_portion"
 	elif [[ $show_time ]]; then
 		song_info+="  $tof$time$toe"
 	fi
 
-	echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
+	if ((song_info_index < artist_length + 1)); then
+		artist_portion=$(((artist_length + 1) - song_info_index))
+		song_info="%{T5}${song_info:0:$artist_portion}%{T1}${song_info:$artist_portion}"
+	fi
+
+	echo -e "$commands\${mpfg:-\$pfg}$left_limiter$song_info$right_limiter$commands_end"
+	#echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
 }
 
 if [[ $status == playing ]]; then
@@ -67,7 +105,16 @@ if [[ $status == playing ]]; then
 
 			for p in $(seq ${!var}); do
 				((percentage += progression_step))
-				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}█%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}■%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}█%{I-}%{A}\"
+				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}■%{I-}%{A}\"
 			done
 		}
 
@@ -125,7 +172,8 @@ fi
 get_controls() {
 	local icon=mpd_${control}${circle}_icon
 	set_icon $control$circle
-	controls+="%{A:mpc -q $control:} ${!icon}%{A}"
+	#controls+="%{A:mpc -q $control:} ${!icon}%{A}${control_separator}"
+	controls+="%{A:mpc -q $control:}${!icon}%{A}%{O${control_separator:-0}}"
 	#controls+="%{A:~/.orw/scripts/notify.sh '$control':} ${!icon}%{A}"
 	#controls+="%{A:~/.orw/scripts/notify.sh 'mpc -q $control':}${!icon}%{A}"
 	#~/.orw/scripts/notify.sh "c: $controls"
@@ -153,11 +201,16 @@ for module in ${4//,/ }; do
 						p) control=prev;;
 						n) control=next;;
 						s) control=stop;;
+						#S*) control_separator="%{O${current_control:1}}";;
+						S*) control_separator=${selected_controls//[^0-9]/};;
+						#S*) control_separator=${current_control:1};;
+							#separator_value=${current_control:1}
+							#control_separator="%{O$separator_value}";;
 						t) [[ $status == playing ]] && control=pause || control=play;;
 						c) [[ $circle ]] && unset circle || circle=_circle;;
 					esac
 
-					if [[ $current_control != c ]]; then
+					if [[ $current_control != [co0-9] ]]; then
 						#((control_index > 1)) && controls+='${inner}'
 
 						# add offset between control buttons, commented because space was added before each button, so the click action would respond on the right location
@@ -167,6 +220,7 @@ for module in ${4//,/ }; do
 					fi
 				done
 
+				controls="${controls%\%*}"
 				echo -e "CONTROLS $bg\${msfg:-\$sfg}$of%{T3}${controls}%{T-}$oe" > $fifo
 			fi;;
 
