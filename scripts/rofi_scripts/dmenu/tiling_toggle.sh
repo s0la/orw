@@ -101,6 +101,7 @@ get_state() {
 				ur = ""
 				ur = "    "
 				ur = ""
+				ur = ""
 				ur = ""
 				if($NF == "true") a = a ",2"
 			} else if(/^offset/) {
@@ -108,6 +109,7 @@ get_state() {
 				if($NF == "true") a = a ",3"
 			} else if(/^reverse/) {
 				r = ""
+				r = ""
 				r = ""
 				rev = ($NF == "true")
 				if(rev) a = a ",4"
