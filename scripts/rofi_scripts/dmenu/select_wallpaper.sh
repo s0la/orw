@@ -18,7 +18,7 @@ if [[ -z $@ ]]; then
 	((depth)) && maxdepth="-maxdepth $depth"
 
 	eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
-		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : "  "
 			sub("'"${root//\'}"'/?", ""); print i, $0 }'
 else
 	wall="$@"
