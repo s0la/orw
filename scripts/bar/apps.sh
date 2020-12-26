@@ -82,8 +82,9 @@ get_window() {
 blacklisted_windows='input|image_preview|cover_art_widget'
 
 eval windows=( $(wmctrl -l | awk '\
-	$1 ~ /'$active'/ && !/ ('$blacklisted_windows')/ && $2 ~ /^'${current_desktop-[0-9]}'/ {
+	$1 ~ /'$active'/ && !/ ('$blacklisted_windows')/ && $2 ~ /^'${current_desktop:--?[0-9]}'/ {
 		wn = (NF > 3) ? substr($0, index($0, $4)) : "no name"
+		gsub("\"", "\\", wn)
 		print "\"" $1, wn "\"" }') )
 count=${#windows[*]}
 
@@ -101,6 +102,8 @@ done
 %{A5:wmctrl -ia ${windows[$(((current_index + 1) % count))]%% *}:}\
 $apps%{A}%{A}"
 
+#~/.orw/scripts/notify.sh "apps: $separator"
+
 if [[ $lines != false ]]; then
 	#~/.orw/scripts/notify.sh "s: $separator"
 	case $separator in
@@ -108,7 +111,10 @@ if [[ $lines != false ]]; then
 			[[ $separator =~ j ]] &&
 				apps+='$start_line'
 			apps+="${separator:1}";;
-		s*) apps="%{U$fc}\${start_line:-$left_frame}$apps\$start_line${separator:2}";;
+		s*)
+			joiner_start="%{U$fc}\${start_line:-$left_frame}"
+			[[ $apps ]] && apps="$joiner_start$apps\$start_line${separator:2}" || apps=$joiner_start;;
+			#[[ $apps ]] && apps="%{U$fc}\${start_line:-$left_frame}$apps\$start_line${separator:2}";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
 		*) [[ $lines == true ]] &&
