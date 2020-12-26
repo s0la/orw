@@ -39,9 +39,10 @@ if [[ $action ]]; then
 			#	command="-s move -h 1/1 -v 1/1 resize -h 1/1 -v 1/1"
 			#~/.orw/scripts/windowctl.sh $args $command;;
 		$icon_close*)
-			[[ $mode == floating ]] &&
-				wmctrl -c :ACTIVE: ||
-				~/.orw/scripts/windowctl.sh -A c
+			#[[ $mode == floating ]] &&
+			#	wmctrl -c :ACTIVE: ||
+			#	~/.orw/scripts/windowctl.sh -A c
+			wmctrl -c :ACTIVE:
 
 			[[ $title =~ ^vifm ]] && vifm --remote -c quit
 
