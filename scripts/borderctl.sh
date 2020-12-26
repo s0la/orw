@@ -57,7 +57,12 @@ case $1 in
 			fi
 		}
 
-		read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { print; exit }' $orw_conf)
+		property="${1: -1}"
+		[[ $property == [xy] ]] && property+=_offset
+
+		read property value <<< $(awk '/^'$property'/ { print; exit }' $orw_conf)
+		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { print; exit }' $orw_conf)
+		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { o = $0 } END { print o }' $orw_conf)
 
 		if [[ $property =~ offset ]]; then
 			read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
@@ -484,8 +489,15 @@ esac
 
 [[ $ob_reload ]] && openbox --reconfigure || exit 0
 
-if [[ $1 == [bc][hwp] ]]; then
+if [[ $1 == [bcp][hwp] ]]; then
 	sleep 0.5
 	read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
 	awk -i inplace '/^[xy]_border/ { sub($NF, (/^x/) ? '$x_border' : '$y_border') } { print }' $orw_conf
+
+	pids="$(pidof -x tile_windows.sh)"
+
+	if [[ $pids ]]; then
+		kill "$pids"
+		~/.orw/scripts/tile_window.sh &
+	fi
 fi &
