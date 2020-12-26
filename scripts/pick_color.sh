@@ -5,7 +5,11 @@ pick_offset=$1
 preview=/tmp/color_preview.png
 colorctl=~/.orw/scripts/colorctl.sh
 
-read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+border=$(awk '/^x_border/ { print $NF }' ~/.config/orw/config)
+read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '\
+		{ print $3 + ($5 - 100) - '$border', $4 + ($2 - $1) + '$border' }')
+		#BEGIN { b = '$border' } { print $3 + ($5 - 100) - b, $4 + ($2 - $1) - b }')
+
 ~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 
 while
