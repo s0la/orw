@@ -85,7 +85,7 @@ while
 		esac
 	fi
 
-	[[ $action =~ $icon_up|$icon_down|$icon_rand ]]
+	[[ $action =~ $icon_prev|$icon_next|$icon_up|$icon_down|$icon_rand ]]
 do
 	continue
 done
