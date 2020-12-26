@@ -19,6 +19,8 @@ if [[ $theme == icons ]]; then
 	prev= next= rand= restore= view= select= auto=
 	prev= next= rand= restore= view= select= auto=
 	prev= next= rand= restore= view= select= auto=
+	prev= next= rand= restore= view= select= auto=
+	prev= next= rand= restore= view= select= auto=
 else
 	next=next prev=prev rand=rand restore=restore view=view_all select=select auto=autochange nl=\n
 fi
@@ -80,7 +82,7 @@ if [[ $action == $select ]]; then
 	((depth)) && maxdepth="-maxdepth $depth"
 
 	selected_wallpaper=$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
-		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : "  "
 			sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -theme large_list)
 
 	[[ $selected_wallpaper ]] && eval $wallctl -s "$root/${selected_wallpaper:2}"
