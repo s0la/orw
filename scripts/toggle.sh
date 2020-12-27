@@ -91,12 +91,16 @@ rofi() {
 		sidebar_mode=$(awk -F '[; ]' '/sidebar/ { print ($(NF - 1) == "true") ? "false" : "true" }' $path/config.rasi)
 		sed -i "/sidebar/ s/ \w[^;]*/ ${2:-$sidebar_mode}/" $path/config.rasi 
 	elif [[ $1 =~ ^(or|loc) ]]; then
+		option=$1 && shift
+
 		last_v_margin=30px
 		last_h_margin=60px
 		last_v_location=west
 		last_h_location=center
 
-		conf=~/.orw/dotfiles/.config/rofi/icons.rasi
+		getopts c: config
+		[[ $config ]] && mode=$OPTARG && shift 2
+		conf=~/.orw/dotfiles/.config/rofi/${mode:-icons}.rasi
 
 		eval $(awk -F '[ ;]' '\
 			/window-orientation:/ {
@@ -104,7 +108,7 @@ rofi() {
 				o = ("'${1:0:1}'" == "o")
 
 				if(o) {
-					no = ("'$2'") ? "'$2'" : \
+					no = ("'$1'") ? "'$1'" : \
 						(co == "vertical") ? "horizontal" : "vertical"
 					 sub(co, no)
 				 }
@@ -115,10 +119,10 @@ rofi() {
 				ro = (o) ? no : co
 
 				#nl = (o) ? (ro == "horizontal") ? nl = "center" : "'$last_location'" : \
-				#	("'$2'") ? "'$2'" : (cl == "east") ? "west" : "east"
+				#	("'$1'") ? "'$1'" : (cl == "east") ? "west" : "east"
 
 				nl = (o) ? (ro == "horizontal") ? nl = "'$last_h_location'" : "'$last_v_location'" : \
-					("'$2'") ? "'$2'" : (co == "horizontal") ? \
+					("'$1'") ? "'$1'" : (co == "horizontal") ? \
 					(cl == "center") ? "south" : "center" : (cl == "east") ? "west" : "east"
 
 				sub(cl, nl)
@@ -157,7 +161,7 @@ rofi() {
 			}' $conf | { read -r wo; { echo "$wo" >&1; cat > $conf; } })
 
 		#if [[ $1 =~ ^or && $no == horizontal && $no != $co ]]; then
-		if [[ $1 =~ ^or && $no != $co ]]; then
+		if [[ $option =~ ^or && $no != $co ]]; then
 			#sed -i "/^\s*last_margin/ s/[0-9.]\+%/$lm/" $0
 			sed -i "/^\s*last_${co:0:1}_margin/ s/[0-9.]\+px/$lm/" $0
 			sed -i "/^\s*last_${co:0:1}_location/ s/\w*$/$ll/" $0
@@ -177,25 +181,56 @@ rofi() {
 				sed -i "/font/ s/[0-9]\+/$((font $sign 4))/" $path/theme.rasi
 			fi
 
+			#border_width=$(awk '/^\s*[a-z]+-border/ { ba[++bai] = gensub(/.*([0-9]+)px.*/, "\\1", 1) }
+			#				END {
+			#					for(bai in ba) { cb = ba[bai]; if(cb > mb) mb = cb }
+			#					print mb }' $path/$current_mode.rasi)
+
 			border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
-			dmenu_color=$(awk -F '[ ;]' '\
+
+			#if [[ $new_mode == dmenu ]]; then
+			#[[ $new_mode == dmenu ]] &&
+
+			border_color=$(awk -F '[ ;]' '\
 				/^\s*(b[cg]|ibc)/ {
-							if(!bg) bg = $(NF - 1)
-							else if(!bc) bc = $(NF - 1)
-							else ibc = $(NF - 1)
-						} END {
-							print (bg == bc) ? "ibc" : "bc"
-						}' $path/theme.rasi)
+					if(!bg) bg = $(NF - 1)
+					else if(!bc) bc = $(NF - 1)
+					else ibc = $(NF - 1)
+				} END {
+					print (bg == bc) ? "ibc" : "bc"
+				}' $path/theme.rasi)
+
+			if [[ $new_mode == dmenu ]]; then
+				property=reb
+			else
+				[[ $new_mode == list && $border_color == ibc ]] &&
+					property=rib || property=rwb
+			fi
+
+			#if [[ $new_mode == list ]]; then
+			#	[[ $border_color == bc ]] && property=rwb || property=rib
+			#fi
+
+			#else
+			#	border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
+			#	theme=theme
+			#	color=sbg
+			#fi
 
 			#[[ $new_mode =~ list ]] && width=$border_width || width=0
 			#[[ $new_mode =~ dmenu ]] && property=bc || property=sbg
 
-			[[ $new_mode == dmenu ]] && width=0 property=$dmenu_color || width=$border_width property=sbg
+			#[[ $new_mode == dmenu ]] &&
+			#	width=0 color=$dmenu_color property=reb ||
+			#	width=$border_width color=sbg property=rwb
+
+			#[[ $new_mode == dmenu ]] && border_width=0 property=reb
 
 			sed -i "/import/ s/ .*/ \"$new_mode\"/" ~/.config/rofi/main.rasi
 
-			~/.orw/scripts/borderctl.sh -c list rbw $width
-			~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P $property
+			#~/.orw/scripts/borderctl.sh -c list rbw $width
+			~/.orw/scripts/borderctl.sh -c $new_mode $property $border_width
+			~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P ${border_color:-sbg}
 		else
 			if [[ $current_mode == icons && $# -gt 1 ]]; then
 				#awk '/children.*listview/ { print gensub(/(\[).*(listview.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1) }' $path/icons.rasi
@@ -247,6 +282,16 @@ tmux() {
 	$(which tmux) source-file $tmux_conf
 }
 
+restart_tiling() {
+	pid=( $(pidof -x tile_windows.sh) )
+
+	if [[ ${1:-$mode} == floating ]]; then
+		((${#pid[*]})) && kill ${pid[*]}
+	else
+		((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
+	fi
+}
+
 titlebar() {
 	awk -i inplace '/name="\*"/ { nr = NR + 1 }
 		{
@@ -273,9 +318,20 @@ titlebar() {
 	reconfigured=true
 
 	read {x,y}_border <<< $(~/.orw/scripts/print_borders.sh open)
-	awk -i inplace '/^[xy]_border/ {
-		sub($NF, (/^x/) ? '$x_border' : '$y_border')
-	} { print }' $orw_conf
+	#awk -i inplace '/^[xy]_border/ {
+	#	sub($NF, (/^x/) ? '$x_border' : '$y_border')
+	#} { print }' $orw_conf
+
+	eval $(awk -i inplace '\
+			/^mode/ { m = $NF }
+			/^[xy]_border/ { sub($NF, (/^x/) ? '$x_border' : '$y_border') }
+			{ wo = wo "\n" $0 }
+			END {
+				print "mode=" m
+				print substr(wo, 2)
+			}' $orw_conf | { read -r wo; { echo "$wo" >&1; cat > $orw_conf; } })
+
+	restart_tiling
 }
 
 ncmpcpp() {
@@ -408,16 +464,19 @@ wm() {
 		#[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
 
 		#pid=( $(pidof -x listen_windows.sh) )
-		pid=( $(pidof -x tile_windows.sh) )
 
-		if [[ $mode == floating ]]; then
-			opacity=100
-			((${#pid[*]})) && kill ${pid[*]}
-		else
-			#((${#pid[*]})) || ~/.orw/scripts/listen_windows.sh &
-			((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
-		fi
+		restart_tiling
+		#pid=( $(pidof -x tile_windows.sh) )
 
+		#if [[ $mode == floating ]]; then
+		#	opacity=100
+		#	((${#pid[*]})) && kill ${pid[*]}
+		#else
+		#	#((${#pid[*]})) || ~/.orw/scripts/listen_windows.sh &
+		#	((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
+		#fi
+
+		[[ $mode == floating ]] && opacity=100
 		~/.orw/scripts/opacityctl.sh ao ${opacity:-0}
 
 		if ((!opacity)); then
