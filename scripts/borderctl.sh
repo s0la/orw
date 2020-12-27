@@ -309,8 +309,8 @@ case $1 in
 						#cv = gensub(".* ([0-9.]+)px.*", "\\1", 1)
 						#sub(cv "px", ("'$sign'") ? cv '$sign' nv "px" : nv "px")
 
-						cv = gensub(".* ([0-9.]+)" u ".*", "\\1", 1)
-						sub(cv u, ("'$sign'") ? cv '$sign' nv u : nv u)
+						cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
+						sub(cv "(%|px)", ("'$sign'") ? cv '$sign' nv u : nv u)
 
 						#sub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%")
 						#print gensub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%", 1)
