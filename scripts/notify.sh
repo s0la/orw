@@ -93,7 +93,7 @@ if [[ $style =~ ^(osd|vert) ]]; then
 		read info_size icon_size geometry <<< \
 			$(awk '\
 				BEGIN { s = "'$style'" }
-				/^mode/ { t = ($NF != "floating") }
+				/^mode/ { f = ($NF = "floating") }
 				/^x_offset/ { x = $NF }
 				/^offset/ { if($NF == "true") x = '$x_offset' }
 				/^primary/ { p = $NF }
@@ -118,9 +118,10 @@ if [[ $style =~ ^(osd|vert) ]]; then
 
 						h = 10 * bs + 4 * is
 						w = 3 * bs
-						if(t) { if(x > w) x -= w }
-						else x /= 2
 						y = int((dh - h) / 2)
+
+						if(f) x = int(x / 3)
+						else if(x > w) x -= w
 
 						o = "-"
 					}
