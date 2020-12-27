@@ -1,3 +1,1 @@
-#~/.orw/scripts/bar/generate_bar.sh -x 500 -h 20 -a 8 -n mon -M -W -c -m s25,i -r -v -d 
-~/.orw/scripts/bar/generate_bar.sh -x 500 -h 20 -a 8 -n mon -M -m s25,i -c -W -r -v -d 
-#~/.orw/scripts/bar/generate_bar.sh -x 500 -s 0 -f 2 u -F 2 -a 8 -n mon -M -l -W n,o7 -l -c -m s25,i -r -v -d 
+~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 24 -a 8 -f 2 u -F 2 -c bar_mon bar_hope_full -M -n mon -l -O 2 -A c -l -r -s 0 -p 15 -j 40 -e -v -j -d

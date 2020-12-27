@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 15 -h 30 -a 8 -f 2 -s 10 -p 10 -c bar_bo bar_hope_full -M -n bo -l -j 50 75 -A a -p 7 -j -W o1,ib -p 35 -j 0 -e -u -v -j -d -p 2 -i -j 30 -m of12,oe6,p,P,of6,c:S5cptn,s22,of10,i -p 7 -j -P 25x18 i,s17,o22,lro bar_bo -p 35
