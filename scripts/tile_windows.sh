@@ -33,6 +33,8 @@ new_window_size=150
 declare -A desktops
 get_all_window_ids
 
+blacklist='input,DROPDOWN,image_preview,cover_art_widget'
+
 xprop -spy -root _NET_ACTIVE_WINDOW | \
 	awk '/window id/ {
 			id = sprintf("0x%0*d%s", 10 - length($NF), 0, substr($NF, 3))
@@ -42,18 +44,20 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 				#~/.orw/scripts/notify.sh "NEW $new_window_id $current_window_id $all_window_ids"
 
 				if [[ $new_window_id != $current_window_id ]]; then
-					previous_window_name=$current_window_name
-					#current_window_name=$(xdotool getactivewindow getwindowname)
-					read current_window_type current_window_name <<< \
+					previous_window_title=$current_window_title
+					#current_window_title=$(xdotool getactivewindow getwindowtitle)
+					read current_window_type current_window_title <<< \
 						$(xprop -id $new_window_id _OB_APP_TYPE _OB_APP_TITLE | \
 						awk -F '"' '{ print $(NF - 1) }' | xargs)
 
-					#~/.orw/scripts/notify.sh "nw: $new_window_id $current_window_name"
+					#~/.orw/scripts/notify.sh "nw: $new_window_id $current_window_title"
 
-					if [[ ! $current_window_name =~ ^(input|DROPDOWN|image_preview|cover_art_widget)$ ]]; then
+					if [[ ! $current_window_title =~ ^(${blacklist//,/|})$ ]]; then
 						previous_window_properties="$current_window_properties"
 						previous_window_id=$current_window_id
 						current_window_id=$new_window_id
+
+						#sleep 0.1
 
 						get_all_window_ids
 
@@ -65,9 +69,10 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 						if [[ ${#current_windows} -lt ${#previous_windows} ]]; then
 							#echo pid $previous_window_id
 							#echo pwp $previous_window_properties
-							echo $previous_window_id $previous_window_properties
+							#echo $previous_window_id $previous_window_properties
 							#~/.orw/scripts/notify.sh -t 11 "closing $previous_window_id $previous_window_properties"
 							~/.orw/scripts/windowctl.sh -i $previous_window_id -P "${previous_window_properties//_/ }" -A c
+							#~/.orw/scripts/windowctl.sh -R
 
 							get_all_window_ids
 							#echo ~/.orw/scripts/windowctl.sh -i $previous_window_id -P "${previous_window_properties//_/ }" -A c
@@ -76,9 +81,9 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 						#if [[ ! $new_window_id =~ ^($current_windows)$ ]]; then
 						if [[ ! $new_window_id =~ ^($previous_windows)$ ]]; then
 						#if [[ ${#current_windows} -gt ${#previous_windows} ]]; then
-							mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
+							#mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
-							if [[ $mode != floating ]]; then
+							#if [[ $mode != floating ]]; then
 								if [[ $current_window_type != dialog ]]; then
 									current_desktop=$(xdotool get_desktop)
 									((${desktops[$current_desktop]} == 1)) && id=none || id=$previous_window_id
@@ -96,10 +101,21 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 
 								~/.orw/scripts/set_geometry.sh -c '\\\*' \
 									-x $(((x + w - new_window_size) / 2)) -y $(((y + h - new_window_size) / 2))
-							fi
+							#fi
 						fi
-					elif [[ $current_window_name =~ ^(input|DROPDOWN)$ ]]; then
-						[[ $current_window_name == input ]] && opacity=0 || opacity=90
+					#else
+					elif [[ $current_window_title =~ ^(input|DROPDOWN)$ ]]; then
+						[[ $current_window_title == input ]] && opacity=0 || opacity=90
+
+						#case $current_window_title in
+						#	*input) opacity=0;;
+						#	DROPDOWN) opacity=90;;
+						#	*)
+						#		opacity=100
+						#		#wmctrl -ir $new_window_id -b add,above
+						#esac
+
+						#~/.orw/scripts/notify.sh "$opacity"
 						~/.orw/scripts/set_window_opacity.sh $new_window_id $opacity
 					fi
 				fi
