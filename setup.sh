@@ -98,7 +98,7 @@ function deps() {
 	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
-	if [[ $(which apt 2> $output) ]]; then
+	if [[ $(which apt 2> /dev/null) ]]; then
 		sudo apt update &> $output
 		sudo apt install -y ${common_deps[*]} build-essential ninja-build automake autoconf pkg-config python3-pip xinit gettext \
 			libnotify-dev libreadline-dev libcurl4-gnutls-dev libxft-dev libx11-xcb-dev libxcb-randr0-dev libxcb-xinerama0-dev \
@@ -115,7 +115,7 @@ function deps() {
 		#cleaning
 		echo 'cleaning..'
 		sudo apt clean
-	elif [[ $(which pacman 2> $output) ]]; then
+	elif [[ $(which pacman 2> /dev/null) ]]; then
 		generate_mirrors() {
 			sudo sed -i '/Serbia/,/^$/ { /^#\w/ s/#// }' /etc/pacman.d/mirrorlist
 
@@ -225,14 +225,20 @@ function orw() {
 	[[ ! -d $services_dir ]] && sudo mkdir $services_dir
 	sudo ln -s $destination/dotfiles/services/* $services_dir
 
-	#deoplete - neovim completion plugin
-	#get_app download Shougo deoplete.nvim 'cp -r {autoload,*plugin} ~/.config/nvim' ||
-		#handle_failure 'Failed to install deoplete.'
-	
 	#installing neovim pugins
-	plugin_path=$destination/dotfiles/.config/nvim/pack/plugins/start
-	git clone https://github.com/junegunn/fzf.vim $plugin_path/fzf
-	git clone https://github.com/Shougo/deoplete.nvim $plugin_path/deoplete
+
+	#plugin_path=$destination/dotfiles/.config/nvim/pack/plugins/start
+	#git clone https://github.com/ $plugin_path/fzf
+	#git clone https://github.com/nvim $plugin_path/deoplete
+
+	plugins=( 'junegunn/fzf.vim' 'Shougo/deoplete.nvim' 'voldikss/vim-floaterm' )
+
+	for plugin in ${plugins[*]}; do
+		plugin_name=${plugin##*[/-]}
+		git clone https://github.com/$plugin \
+			$destination/dotfiles/.config/nvim/pack/plugins/start/${plugin_name%.*}
+	done
+
 	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)
