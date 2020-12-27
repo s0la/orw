@@ -15,10 +15,18 @@ done
 mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 
 if [[ ! $mode =~ floating|selection ]]; then
-	~/.orw/scripts/windowctl.sh -A
+	#~/.orw/scripts/windowctl.sh -A
+	#~/.orw/scripts/run.sh sxiv -tb "$@"
+	#~/.orw/scripts/notify.sh "$@"
+	#echo sxiv -tb "$@"
+	#exit
+	eval sxiv -tb "$@"
 else
-	read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -p)
-	geaometry=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} |\
+	id=$(xdotool getactivewindow)
+	read x y <<< $(wmctrl -lG | awk '$1 == sprintf("0x%.8x", "'$id'") { print $3, $4 }')
+	#read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -p)
+	#geaometry=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} |\
+	geaometry=$(~/.orw/scripts/get_display.sh $x $y |\
 		awk '\
 			BEGIN {
 				wp = '${width:-28}'
@@ -28,6 +36,6 @@ else
 				h = int($5 * hp / 100)
 				print " -g " w "x" h
 			}')
-fi
 
-eval sxiv -tb $geaometry "$@"
+	eval sxiv -tb $geaometry "$@"
+fi
