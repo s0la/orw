@@ -15,7 +15,11 @@ set termguicolors
 " set list lcs=tab:\\ 
 " set list lcs=tab:\\ 
 set list lcs=tab:\›\ 
+set list lcs=tab:\▏\ 
+set list lcs=tab:\┃\ 
 set fillchars=vert:┃
 set splitbelow splitright
 
 set completeopt-=preview
+
+set noautoread
