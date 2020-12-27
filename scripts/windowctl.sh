@@ -70,7 +70,7 @@ function generate_printable_properties() {
 
 function save_properties() {
 	#[[ -f $property_log ]] && echo $id $printable_properties >> $property_log
-	echo $id $printable_properties >> $property_log
+	echo ${1:-$id} $printable_properties >> $property_log
 }
 
 function backtrace_properties() {
@@ -254,7 +254,7 @@ function resize() {
 	(( properties[$index + 2] ${sign}= value ))
 	[[ $edge =~ [lt] ]] && (( properties[$index] ${opposite_sign}= value ))
 
-	[[ $adjucent && $edge =~ [rt] ]] && reverse_adjucent=-r
+	[[ $adjacent && $edge =~ [rt] ]] && reverse_adjacent=-r
 }
 
 function resize_to_edge() {
@@ -418,7 +418,7 @@ tile() {
 	fi
 }
 
-align_adjucent() {
+align_adjacent() {
 	((index == 1)) && orientation=h || orientation=v
 
 	old_properties=( ${original_properties[*]} )
@@ -434,7 +434,7 @@ align_adjucent() {
 	#option=tile
 	#set_base_values $orientation
 
-	get_adjucent() {
+	get_adjacent() {
 		local reverse=$2
 		local properties=( $1 )
 
@@ -469,7 +469,7 @@ align_adjucent() {
 			}'
 	}
 
-	add_adjucent_window() {
+	add_adjacent_window() {
 		properties=( $1 )
 		id=${properties[0]}
 		original_properties=( ${properties[*]} )
@@ -485,35 +485,35 @@ align_adjucent() {
 		fi
 
 		#update_properties
-		adjucent_windows+=( "${properties[*]}" )
+		adjacent_windows+=( "${properties[*]}" )
 	}
 
 	find_neighbour() {
 		while read -r c window; do
 			if [[ $c ]]; then
-				add_adjucent_window "$window" $2
+				add_adjacent_window "$window" $2
 
 				[[ $2 ]] && ra='' || ra=-r
 				original_id=${1%% *}
 				find_neighbour "$window" $ra
 			fi
-		done <<< $(get_adjucent "$1" $2)
+		done <<< $(get_adjacent "$1" $2)
 	}
 
 	[[ $sign == - ]] &&
-		adjucent_windows=( "${properties[*]}" ) ||
+		adjacent_windows=( "${properties[*]}" ) ||
 			new_original_properties=( "${properties[*]}" )
 	find_neighbour "${old_properties[*]}" $ra
-	[[ $new_original_properties ]] && adjucent_windows+=( "${new_original_properties[*]}" )
+	[[ $new_original_properties ]] && adjacent_windows+=( "${new_original_properties[*]}" )
 
-	for window in "${adjucent_windows[@]}"; do
+	for window in "${adjacent_windows[@]}"; do
 		read id x y w h <<< "$window"
 		wmctrl -ir $id -e 0,$x,$y,$w,$h
 	done
 
 	exit
 
-	#for window in "${adjucent_windows[@]}"; do
+	#for window in "${adjacent_windows[@]}"; do
 	#	generate_printable_properties "$window"
 	#	apply_new_properties
 	#done
@@ -683,7 +683,7 @@ set_alignment_properties() {
 #					return delta < wc
 #				}
 #
-#				function is_adjucent() {
+#				function is_adjacent() {
 #					return ($(i + 1) < p) ? ($(i + 1) + $(i + 3) + s == p) : (p + d + s == $(i + 1))
 #				}
 #
@@ -701,7 +701,7 @@ set_alignment_properties() {
 #				cp = $(oi + 1)
 #				cd = $(oi + 3)
 #
-#				cp >= op && cp + cd <= op + d && is_adjucent() {
+#				cp >= op && cp + cd <= op + d && is_adjacent() {
 #					
 #				}
 #				
@@ -1136,7 +1136,7 @@ get_alignment() {
 				#print aas, aae, aad, nws, nwd
 
 				set_ratio(naw, ac, mns, aad, aae, "after")
-				if(!bc) nw = "[new]=\"" nws " " nwd "\""
+				if(!c && !bc) nw = "[new]=\"" nws " " nwd "\""
 
 				# format all aligned windows
 				for(aawi in aaw) a = a " " aaw[aawi]
@@ -2152,9 +2152,6 @@ align() {
 	[[ $optarg =~ c$ ]] && window_action=close
 	[[ $optarg && ! $window_action ]] && alignment_direction=${optarg:0:1}
 
-	# getting size of opened window
-	new_window_size=$(awk -F '=' '/^new_window_size/ { print $NF }' ~/.orw/scripts/tile_windows.sh)
-
 	if [[ $mode == selection ]]; then
 		select_window_using_mouse
 
@@ -2185,6 +2182,11 @@ align() {
 			#	read x y w h <<< ${wm_properties[*]}
 			#	~/.orw/scripts/set_geometry.sh -c '\\\*' -x $x -y $y -w $w -h $h
 			#else
+
+			# save all windows before aligning
+			#while read -r window_id printable_properties; do
+			#	save_properties $window_id
+			#done <<< $(list_all_windows)
 
 			# if OPENED window should occupy whole dimension (widthe/height)
 			if [[ $full && $window_action != close ]]; then
@@ -2359,6 +2361,9 @@ read mode part ratio use_ratio alignment_direction reverse full \
 [[ $full == false ]] && unset full
 [[ $reverse == false ]] && unset reverse
 [[ $use_ratio == false ]] && unset use_ratio
+
+# getting default size of opening window
+new_window_size=$(awk -F '=' '/^new_window_size/ { print $NF }' ~/.orw/scripts/tile_windows.sh)
 
 #read display_count {x,y}_offset display_orientation <<< $(awk '\
 #	/^display_[0-9]/ { dc++ } /[xy]_offset/ { offsets = offsets " " $NF } /^orientation/ { o = substr($NF, 1, 1) }
@@ -2840,6 +2845,7 @@ while ((argument_index <= $#)); do
 
 
 							if [[ $mode == tiling ]]; then
+								use_ratio=true
 								# basking up original properties
 								original_properties=( ${properties[*]} )
 
@@ -3012,6 +3018,8 @@ while ((argument_index <= $#)); do
 					fi
 
 					update_properties
+
+					[[ $mode == tiling ]] && align_adjacent
 				fi;;
 			g)
 				set_windows_properties $display_orientation
@@ -3273,7 +3281,7 @@ while ((argument_index <= $#)); do
 				fi
 				exit;;
 			o) overwrite=true;;
-			a) align_adjucent;;
+			a) align_adjacent;;
 			?) continue;;
 		esac
 	fi
