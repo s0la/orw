@@ -1,0 +1,181 @@
+#ob
+mb #1a1a1a
+mtbg #1a1a1a
+mtfg #414246
+mbg #1a1a1a
+mfg #303030
+msbg #202020
+msfg #b17953
+ms #1a1a1a
+bfg #1a1a1a
+bsfg #202020
+b #b17953
+c #b17953
+mabt #9b633d
+mabth #c8906a
+cbt #9b633d
+cbth #c8906a
+mibt #9b633d
+mibth #c8906a
+tb #b17953
+t #b17953
+ib #1f1f1f
+ic #171c1d
+ibth #B39C80
+ibt #272727
+itb #1f1f1f
+it #1f1f1f
+osd #b17953
+osdh #bbbbbb
+osdu #888888
+s #b17953
+
+#dunst
+bg #1a1a1a
+fg #9e9e9e
+fc #d3efeb
+sbg #363636
+pbfg #b17953
+
+#term
+fg #f0f0f0
+bg #ff1a1a1a
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg #1a1a1a
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #b17953
+sfg #f3f3f3
+nbg none
+nfg #202020
+lbg #1d1d1d
+lfg #b17953
+syfg #c0c0c0
+cmfg #24292a
+slbg #1f1f1f
+slfg #313131
+bcbg #b5bc6d
+bdbg #b17953
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #1e1f23
+cfg default
+sfg #b8987e
+tfg #494a4c
+slbg default
+slfg #b17953
+
+#bar
+bbg #0a0a0a
+bfc #0a0a0a
+bg #003a3a3a
+bsbg #0a0a0a
+bsfg #585858
+fc #8e9999
+jfg #585858
+Lpbg #0a0a0a
+Lpfg #bd8854
+Lsbg #0a0a0a
+Lsfg #202020
+mlfg #585858
+mpfg #585858
+msbg #8e9999
+msfg #585858
+pbefg #9faaaa
+pbfg #7d8888
+pbg #3a3a3a
+pfg #585858
+Psbg #3a3a3a
+Psfg #585858
+sbg #3a3a3a
+sfg #585858
+Tafg #585858
+tbefg #585858
+tbfg #585858
+tsfg #585858
+Wpfg #9faaaa
+Wsbg #8e9999
+Wsfg #7d8888
+
+#ncmpcpp
+npp #b17953
+np #b17953
+sip #272727
+sc #272727
+mc #272727
+etc #191e24
+c2 #DBBD7D
+pc #1e1f23
+pec #b17953
+vc #b17953
+
+#tmux
+bg default
+fg #656c1d
+bc #1f1f1f
+mc #3a3a3a
+ibg default
+ifg #2c2c2c
+sfg #2c2c2c
+wbg default
+wfg #2c2c2c
+cbg default
+cfg #b17953
+
+#rofi
+bg #121212
+tbg #00121212
+fg #232323
+bc #121212
+ibg #121212
+ibc #725d43
+abg #191919
+afg #323232
+ebg #121212
+efg #b17953
+sbg #222222
+sfg #979392
+sul #222222
+lpc #202020
+dpc #222222
+btc #121212
+sbtc #121212
+btbc #121212
+
+#bash
+bg default
+fg #363636
+sc #303030
+ic #bcd1d3
+sec #81625c
+gcc #879394
+gdc #8e9999
+vc #87939c
+
+#qb
+bg #1a1a1a
+fg #2c2c2c
+sbg #171717
+sfg #999999
+mfg #b17953
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ffb17953
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #1a1a1a
+fg #b17953

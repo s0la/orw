@@ -15,19 +15,19 @@ let g:fg = '#d0d0d0'
 let g:ifg = '#34393a'
 let g:vfg = '#555a5b'
 let g:cfg = '#c0c0c0'
-let g:ffg = '#b17953'
+let g:ffg = '#8e9999'
 let g:sfg = '#f3f3f3'
 let g:nbg = 'none'
 let g:nfg = '#202020'
 let g:lbg = '#1d1d1d'
-let g:lfg = '#b17953'
+let g:lfg = '#bfa161'
 let g:syfg = '#c0c0c0'
-let g:cmfg = '#292e2f'
+let g:cmfg = '#24292a'
 let g:slbg = '#1f1f1f'
 let g:slfg = '#313131'
 
 let g:bcbg = '#b5bc6d'
-let g:bdbg = '#b17953'
+let g:bdbg = '#807862'
 
 let g:nmbg = '#bcbcbc'
 let g:imbg = '#917c5b'
@@ -39,7 +39,8 @@ exe 'hi ErrorMsg       guibg=none                 guifg='.g:ffg
 exe 'hi Visual         guibg='.g:slbg
 exe 'hi Normal         guifg='.g:fg             .' guibg=none'
 exe 'hi Underlined     guifg='.g:fg
-exe 'hi NonText        guifg='.g:cmfg
+"exe 'hi NonText        guifg='.g:cmfg
+exe 'hi NonText        guifg='.g:lbg
 exe 'hi SpecialKey     guifg='.g:nfg            .' guibg='.g:lbg
 
 exe 'hi LineNr         guifg='.g:nfg            .' guibg='.g:nbg
@@ -123,5 +124,14 @@ exe 'hi! fzf_prompt guifg='.g:slfg
 exe 'hi! fzf_spinner guifg='.g:slfg
 exe 'hi! fzf_pointer guifg='.g:slfg
 exe 'hi! fzf_border guibg='.g:lfg
+
+" exe 'hi! Floaterm guibg='.g:slbg
+" exe 'hi! FloatermBorder guibg=none guifg='.g:lfg
+
+exe 'hi! Floaterm guibg='.g:slbg
+exe 'hi! FloatermBorder guibg=' . g:slbg . '  guifg='.g:slbg
+
+exe 'hi! Floaterm guibg='.g:lbg
+exe 'hi! FloatermBorder guibg=' . g:lbg . '  guifg='.g:lbg
 
 set cursorline

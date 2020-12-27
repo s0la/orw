@@ -8,6 +8,7 @@ allow_bold = false
 #font = Roboto Mono 9
 #font = FiraCode-Regular 9
 font = Iosevka Orw 10
+#font = SFMono Regular 10
 #font = SF Pro Display 9
 #font = Rubik-Regular 9
 #fullscreen = true
@@ -205,6 +206,7 @@ color144 = #db8b34
 color145 = #b17953
 color146 = #272727
 color147 = #ffb760
+color148 = #8e9999
 
 [hints]
 #font = Monospace 12

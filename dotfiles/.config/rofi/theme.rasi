@@ -2,24 +2,24 @@
 
 * {
 	bg: #121212;
-	tbg: #00121212;
-	fg: #202020;
+	tbg: argb:00121212;
+	fg: #232323;
 	bc: #121212;
 
 	ibg: #121212;
 	ibc: #725d43;
 
-	abg: #171717;
+	abg: #191919;
 	afg: #323232;
 
 	ebg: #121212;
-	efg: #b17953;
+	efg: #8e9999;
 	sbg: #222222;
 	sfg: #979392;
-	sul: #222222;
+	sul: #725d43;
 
 	lpc: #202020;
-	dpc: #222222;
+	dpc: #725d43;
 	btc: #121212;
 	sbtc: #121212;
 	btbc: #121212;
@@ -29,6 +29,7 @@
 	font: "Iosevka Orw 8";
 
 	window-border: 2px;
+	input-border:  0 0 2px;
 }
 
 #window {

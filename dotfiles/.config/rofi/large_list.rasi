@@ -10,7 +10,7 @@
 	window-border:   3px;
 	window-padding:  60px 60px;
 
-	input-border:    0 0 2px;
+	/*input-border:    0 0 2px;*/
 	list-padding:    0px 0px;
 	list-spacing:    0px;
 

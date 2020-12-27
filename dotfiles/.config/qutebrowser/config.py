@@ -2,7 +2,7 @@ bg = '#1a1a1a'
 fg = '#2c2c2c'
 sbg = '#171717'
 sfg = '#999999'
-mfg = '#b17953'
+mfg = '#8e9999'
 sbbg = '#1a1b1d'
 
 font_size = 8

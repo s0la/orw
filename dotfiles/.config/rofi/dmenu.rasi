@@ -1,14 +1,16 @@
 /* dmenu config */
 
+@import "theme"
+
 * {
-	window-width:         1520px;
+	window-width:         1920px;
 	window-border:        0px;
-	window-margin:        46px 0 0 0;
+	window-margin:        30px 0 0 0;
 
-	element-padding:      3px 20px;
-	element-border:       0 0 1px;
+	element-padding:      6px 15px;
+	element-border:       0 0 2px;
 
-	input-padding:        3px 3px;
+	input-padding:        @element-padding;
 
 	entry-margin:         0 0 -1px;
 	entry-margin:         0 5px -1px;
@@ -19,8 +21,6 @@
 	colon-margin:         1px 3px -1px;
 	colon-margin:         0 0 0 5px;
 }
-
-@import "theme"
 
 #window {
 	width:      @window-width;
@@ -40,8 +40,8 @@
 
 #listview {
 	layout:      horizontal;
-	spacing:     0;
 	lines:       100;
+	spacing:     0;
 }
 
 #element {
@@ -61,22 +61,22 @@
 }
 
 #entry {
-	width:        10em;
-	expand:       false;
+	width:            10em;
+	expand:           false;
 	background-color: @ibg;
-	margin:       @entry-margin;
+	margin:           @entry-margin;
 }
 
 #prompt {
-	margin:       @prompt-margin;
-	padding:      @prompt-padding;
+	margin:           @prompt-margin;
+	padding:          @prompt-padding;
 	background-color: @ibg;
 }
 
 #textbox-prompt-colon {
-	str:          "›";
-	color:        @dpc;
-	expand:       false;
+	str:              "›";
+	color:            @dpc;
+	expand:           false;
 	background-color: @ibg;
-	margin:       @colon-margin;
+	margin:           @colon-margin;
 }

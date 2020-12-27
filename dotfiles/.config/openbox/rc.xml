@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>15</size>
+      <size>11</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -956,7 +956,7 @@
 
   <applications>
     <application name="*">
-      <decor>no</decor>
+      <decor>yes</decor>
 	  <focus>yes</focus>
       <position force="yes">
         <x>center</x>
@@ -972,8 +972,8 @@
 		  <y>default</y>
       </position>
       <size>
-        <height>350</height>
-        <width>500</width>
+        <height>500</height>
+        <width>900</width>
       </size>
     </application>
 
@@ -1008,8 +1008,8 @@
     <application class="tiling">
       <layer>below</layer>
       <position force="yes">
-        <x>808</x>
-        <y>413</y>
+        <x>858</x>
+        <y>438</y>
       </position>
       <size>
         <width>150</width>
@@ -1029,10 +1029,10 @@
       <focus>yes</focus>
       <layer>above</layer>
       <desktop>all</desktop>
-	  <skip_taskbar>yes</skip_taskbar>
+	  <skip_taskbar>no</skip_taskbar>
       <position force="yes">
         <x>480</x>
-        <y>33</y>
+        <y>35</y>
       </position>
       <size>
         <width>960</width>
@@ -1044,10 +1044,10 @@
       <decor>no</decor>
       <focus>yes</focus>
       <layer>below</layer>
-	  <skip_taskbar>yes</skip_taskbar>
+	  <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>1105</x>
-        <y>497</y>
+        <x>1829</x>
+        <y>-130</y>
       </position>
       <size>
         <width>70</width>
@@ -1058,9 +1058,10 @@
     <application title="image_preview">
       <focus>no</focus>
       <decor>no</decor>
+      <layer>above</layer>
       <position force="yes">
-        <x>849</x>
-        <y>154</y>
+        <x>734</x>
+        <y>488</y>
       </position>
 	  <size>
 		  <width>100</width>

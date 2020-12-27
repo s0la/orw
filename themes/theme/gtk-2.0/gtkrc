@@ -10,7 +10,7 @@ gtk-color-scheme = "base_bg_color:#303030"
 gtk-color-scheme = "base_fg_color:#c0c0c0"
 
 gtk-color-scheme = "mbg_color:#1a1a1a"
-gtk-color-scheme = "mfg_color:#303030"
+gtk-color-scheme = "mfg_color:#2b2b2b"
 gtk-color-scheme = "msbg_color:#202020"
 gtk-color-scheme = "msfg_color:#a6bbbd"
 

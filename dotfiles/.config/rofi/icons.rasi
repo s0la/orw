@@ -21,10 +21,10 @@
 
 	window-location:        west;
 	window-padding:         5px 5px;
-	window-margin:          0 0 0 25px;
+	window-margin:          0 0 0 10px;
 	window-radius:          5px;
-	window-height:          622.2px;
-	window-width:           104.81px;
+	window-height:          390.75px;
+	window-width:           89.81px;
 }
 
 #window {

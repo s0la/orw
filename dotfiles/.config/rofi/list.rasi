@@ -3,19 +3,22 @@
 @import "theme"
 
 * {
-	window-width:      30%;
-	window-padding:    20px 30px;
+	window-width:          33%;
+	window-margin:         30px 0;
+	window-padding:        20px 30px;
+	window-location:       center;
+	window-orientation:    horizontal;
 
-	list-padding:      0px 0px;
+	list-padding:          0px 0px;
 
-	input-border:      0 0 2px;
-	input-margin:      0 0 12px;
-	input-padding:     3px 5px;
+	/*input-border:          0 0 2px;*/
+	input-margin:          0 0 12px;
+	input-padding:         3px 5px;
 
-	entry-margin:      0 3px 0;
-	input-padding:     3px 5px;
+	entry-margin:          0 3px 0;
+	input-padding:         3px 5px;
 
-	element-padding:   3px 5px;
+	element-padding:       3px 5px;
 }
 
 #mainbox {
@@ -26,7 +29,9 @@
 #window {
 	width:          @window-width;
 	border:         @window-border;
+	margin:         @window-margin;
 	padding:        @window-padding;
+	location:       @window-location;
 }
 
 #listview {
