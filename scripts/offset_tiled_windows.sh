@@ -21,10 +21,20 @@ list_windows() {
 	done
 }
 
-sign=$2
-value=$3
+#sign=$2
+#value=$3
+#[[ $2 =~ ^[+-] ]] && sign=${2:0:1} value
 [[ $1 == x ]] && index=3 || index=4
-[[ $sign == + ]] && opposite_sign=- || opposite_sign=+
+
+sign=${2%%[0-9]*}
+value=${2#"$sign"}
+
+if [[ $sign ]]; then
+	[[ $sign == + ]] && opposite_sign=- || opposite_sign=+
+else
+	echo -e "No sign specified, exiting..\nPlease prefix value with the sign next time!"
+	exit
+fi
 
 while read display display_start display_end; do
 	if [[ $1 == y ]]; then
