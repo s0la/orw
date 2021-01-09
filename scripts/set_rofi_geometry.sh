@@ -1,7 +1,7 @@
 #!/bin/bash
 
 getopts :m: flag
-[[ $flag ]] && mode=$OPTARG && shift 2
+[[ $flag == m ]] && mode=$OPTARG && shift 2
 
 id=$(xdotool getactivewindow 2> /dev/null)
 [[ $mode ]] || mode=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
