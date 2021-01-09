@@ -15,6 +15,7 @@ action=$(cat <<- EOF |  rofi -dmenu $active -theme main
 	$stop
 EOF
 )
+
 if [[ $action ]]; then
 	case ${action%% *} in
 		$start)
@@ -25,8 +26,14 @@ if [[ $action ]]; then
 
 				command="read -p 'Enter file name: ' filename && echo \"\$filename\" > $fifo"
 
-				~/.orw/scripts/set_geometry.sh -t input -w 300 -h 100
-				termite -t rec_file_name_input -e "bash -c \"$command\"" &> /dev/null &
+				width=300
+				height=100
+				read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
+				read x y <<< $(~/.orw/scripts/get_display.sh $window_x $window_y | \
+					awk '{ print int(($4 - '$width') / 2), int(($5 - '$height') / 2) }')
+
+				~/.orw/scripts/set_geometry.sh -c input -x $x -y $y -w 300 -h 100
+				termite -t rec_file_name_input --class=input -e "bash -c \"$command\"" &> /dev/null &
 
 				read filename < $fifo
 
@@ -34,6 +41,8 @@ if [[ $action ]]; then
 			else
 				filename=${action#$start}
 			fi
+
+			~/.orw/scripts/set_geometry.sh -c input -w 120 -h 120
 
 			~/.orw/scripts/record_screen.sh "$filename";;
 			#~/.orw/scripts/notify.sh "filename: $filename";;
