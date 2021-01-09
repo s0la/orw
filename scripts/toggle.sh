@@ -490,6 +490,17 @@ wm() {
 		if [[ ! $2 ]]; then
 			[[ $mode == floating ]] && icon= || icon=
 			[[ $mode == floating ]] && icon= || icon=
+			[[ $mode == floating ]] && icon= || icon=
+
+			case $mode in
+				tiling) icon=;;
+				stack) icon=;;
+				auto)
+					id=$(printf '0x%.8x' $(xdotool getactivewindow))
+					icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
+				*) icon=;;
+			esac
+
 			~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "Mode: $mode"
 		fi
 	fi
