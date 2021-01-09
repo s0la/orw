@@ -8,8 +8,8 @@ replace() {
 }
 
 set_offsets() {
-	[[ -f $offsets_file ]] && eval "$(cat $offsets_file | xargs)"
-	[[ -f $offsets_file ]] && eval "$(awk -F '=' '{ print $1 "=" ++$2 }' ~/.config/orw/offsets | xargs)"
+	#[[ -f $offsets_file ]] && eval "$(cat $offsets_file | xargs)"
+	[[ -f $offsets_file ]] && eval "$(awk -F '=' '{ print $1 "=" ++$2 }' $offsets_file | xargs)"
 }
 
 all_arguments="$@"
@@ -19,8 +19,7 @@ win_args="${all_arguments#*-t * }"
 #current_mode=$(awk '/class.*tiling/ { cm = "tiling" } END { print (cm) ? cm : "\\\*" }' ~/.config/openbox/rc.xml)
 #current_mode=$(awk '/class.*(tiling|\*)/ { print (/\*/) ? "tiling" : "\\\*" }' ~/.orw/dotfiles/.config/openbox/rc.xml)
 
-offsets_file=~/.config/orw/offsets
-read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' ~/.config/orw/config | xargs)
+read mode offset <<< $(awk '/^(mode|offset) / { print $NF }' ~/.config/orw/config | xargs)
 #offset=$(awk '/^offset/ { print $NF }' ~/.config/orw/config)
 #current_mode=$(awk '/^mode/ { print $NF }' 
 
@@ -41,7 +40,10 @@ command="$(sed 's/^\(\(\(-. \w*\|-b\) \?\)*\)\(.*\)/\4/' <<< $win_args)"
 #[[ $arguments =~ -[tdxym] ]] && command="${arguments##*-[tdxym] * }"
 #[[ $command ]] && command="&& $command"
 
-[[ $offset == true ]] && set_offsets
+offsets_file=~/.config/orw/offsets
+#[[ $offset == true ]] && set_offsets
+[[ $offset == true && -f $offsets_file ]] &&
+	eval "$(awk -F '=' '{ print $1 "=" ++$2 }' $offsets_file | xargs)"
 
 while read -r name position bar_x bar_y width height adjustile_width border; do
 		current_width=$((bar_y + height + border))
