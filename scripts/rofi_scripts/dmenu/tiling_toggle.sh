@@ -122,7 +122,8 @@ get_state() {
 }
 
 id=$(printf '0x%.8x' $(xdotool getactivewindow))
-orientation=$(wmctrl -lG | awk '$1 == "'$1'" { print ($5 > $6) ? "v" : "h" }')
+#orientation=$(wmctrl -lG | awk '$1 == "'$1'" { print ($5 > $6) ? "v" : "h" }')
+orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
 #reverse=$(awk '/^reverse/ { print ($NF == "true") }' ~/.config/orw/config)
 #read width height <<< $(wmctrl lG | awk '$1 == "'$1'" { print ($5 > $6) ? "h" : "v" }')
 
