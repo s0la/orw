@@ -83,7 +83,7 @@ get_weather() {
 }
 
 get_hidden() {
-	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-all} $label ${lines-false})"
+	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d} $label ${lines-false})"
 }
 
 get_battery() {
@@ -141,7 +141,8 @@ get_display_properties() {
 #}
 
 check_arg() {
-    [[ $2 && ! $2 == -[[:alpha:]] ]] && eval $1=$2
+    #[[ $2 && ! $2 == -[[:alpha:]] ]] && eval $1=$2
+    [[ $2 && $2 != -[[:alpha:]] ]] && eval $1=$2
 }
 
 add_lines() {
@@ -312,7 +313,15 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 			else
 				x_offset=$OPTARG
 			fi;;
-		y) y_offset=$OPTARG;;
+		y)
+			if [[ $OPTARG == b ]]; then
+				bg=$bbg
+				bottom=-b
+
+				check_arg y_offset ${!OPTIND} && shift
+			else
+				y_offset=$OPTARG
+			fi;;
 		w) bar_width=$OPTARG;;
 		h) bar_height=$OPTARG;;
 		p) padding="%{O$OPTARG}";;
@@ -561,7 +570,7 @@ font_offset=$((main_font_offset - 1))
 ((font_size == 9)) && ((main_font_offset++))
 if ((font_size < 10)); then
 	#((remix_offset--))
-	((remix_offset -= 0))
+	((remix_offset -= 1))
 	#((font_size % 2 == 0)) && ((remix_offset--))
 else
 	((font_size % 2 == 1)) && ((remix_offset--))
