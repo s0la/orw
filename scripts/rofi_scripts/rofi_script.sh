@@ -30,8 +30,8 @@ modis+="rec:$path/rec.sh"
 #fi
 
 if [[ $theme == icons ]]; then
-	[[ $1 =~ apps|brightness|playback|power|volume|wallpapers|window_(action|ratio)|workspaces ]] &&
-		${path%/*}/set_rofi_width.sh $1 || theme=list
+	[[ $1 =~ apps|brightness|playback|power|volume|wallpapers|window_action|workspaces ]] &&
+		${path%/*}/set_rofi_geometry.sh $1 || theme=list
 fi
 
 rofi -modi "$modis" -show $1 -theme ${theme-main}
