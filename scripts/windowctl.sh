@@ -419,20 +419,30 @@ tile() {
 }
 
 align_adjacent() {
-	((index == 1)) && orientation=h || orientation=v
+	#((index == 1)) && orientation=h || orientation=v
 
 	old_properties=( ${original_properties[*]} )
 
 	for property_index in {1..4}; do
 		new_property=${properties[property_index]}
 		old_property=${old_properties[property_index]}
-		((new_property != old_property)) && break
+		#((new_property != old_property)) && break
+		((new_property != old_property)) &&
+			value=$((new_property - old_property)) && break
 	done
 
+	#((property_index % 2 == 1)) && index=1 border=$x_border || index=2 border=$y_border
+	((property_index % 2 == 1)) && orientation=h || orientation=v
 	((property_index > 2)) && ra=-r || dual=true
+	value=${value#-}
+
+	#sleep 1
+	#~/.orw/scripts/notify.sh "val: $new_property $old_property $value $sign"
 
 	#option=tile
 	#set_base_values $orientation
+
+	((window_count)) || set_base_values $orientation
 
 	get_adjacent() {
 		local reverse=$2
@@ -450,7 +460,7 @@ align_adjacent() {
 				cwep = '${properties[index]}' + '${properties[index + 2]}'
 				cws = '${properties[start_index]}'
 				cwe = '${properties[start_index]}' + '${properties[start_index + 2]}'
-				
+
 				c = (r) ? cwep + o : cwsp - o
 			} {
 				if($2 ~ "0x" && $2 != "'$original_id'") {
@@ -505,6 +515,8 @@ align_adjacent() {
 			new_original_properties=( "${properties[*]}" )
 	find_neighbour "${old_properties[*]}" $ra
 	[[ $new_original_properties ]] && adjacent_windows+=( "${new_original_properties[*]}" )
+
+	#~/.orw/scripts/notify.sh "$sign ${adjacent_windows[*]} $ra"
 
 	for window in "${adjacent_windows[@]}"; do
 		read id x y w h <<< "$window"
@@ -2642,6 +2654,7 @@ while ((argument_index <= $#)); do
 				step=120
 
 				properties=( $(get_windows $id) )
+				original_properties=( ${properties[*]} )
 				get_display_properties $display_orientation
 				get_bar_properties
 
@@ -2656,10 +2669,12 @@ while ((argument_index <= $#)); do
 
 				set_geometry
 				listen_input
-				properties=( $id $x $y $w $h );;
+				properties=( $id $x $y $w $h )
 				#wmctrl -ir $id -e 0,$x,$y,$w,$h
 
-				#exit;;
+				update_properties
+
+				[[ $mode != floating ]] && align_adjacent;;
 			[hv])
 				set_orientation_properties $argument
 
@@ -3019,7 +3034,7 @@ while ((argument_index <= $#)); do
 
 					update_properties
 
-					[[ $mode == tiling ]] && align_adjacent
+					[[ $mode != floating ]] && align_adjacent
 				fi;;
 			g)
 				set_windows_properties $display_orientation
