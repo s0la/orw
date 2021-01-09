@@ -50,10 +50,13 @@ case $1 in
 			if [[ $mode != floating ]]; then
 				if [[ ! $sign ]]; then
 					#((new_value > value)) && max_value=$new_value || max_value=$value
-					((new_value > value)) && sign=- delta_value=$((new_value - value)) || sign=+ delta_value=$((value - new_value))
+					local sign opposite_sign
+					((new_value > value)) &&
+						sign=- opposite_sign=+ delta_value=$((new_value - value)) ||
+						sign=+ opposite_sign=- delta_value=$((value - new_value))
 				fi
 
-				~/.orw/scripts/offset_tiled_windows.sh ${property:0:1} $sign ${delta_value:-${check_value:-$new_value}}
+				~/.orw/scripts/offset_tiled_windows.sh ${property:0:1} $opposite_sign${delta_value:-${check_value:-$new_value}}
 			fi
 		}
 
@@ -67,10 +70,12 @@ case $1 in
 		if [[ $property =~ offset ]]; then
 			read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
 
-			[[ $offset == true ]] &&
-				offset_tiled_windows &&
-				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value &&
+			if [[ $offset == true ]]; then
+				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
+				offset_tiled_windows
+				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
 				exit
+			fi
 
 			min=0
 		else
@@ -80,7 +85,7 @@ case $1 in
 
 		#[[ $property == part ]] && ratio=$(awk '/^ratio/ { print $NF }' $orw_conf)
 
-		[[ $sign ]] && check_value=$((value $sign $new_value)) || check_value=$new_value
+		[[ $sign ]] && check_value=$((value $sign new_value)) || check_value=$new_value
 
 		#if ((check_value > 0 && (ratio && check_value < ratio || !ratio))); then
 		if ((check_value >= min)); then
@@ -110,8 +115,10 @@ case $1 in
 
 			#[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
 
-			[[ $property =~ offset ]] && offset_tiled_windows ||
-				message+="\nCurrent ratio: <b>($new_ratio)</b>"
+			#[[ $property =~ offset ]] && offset_tiled_windows ||
+			#	message+="\nCurrent ratio: <b>($new_ratio)</b>"
+
+			[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
 
 			sed -i "/$property/ s/$value/$check_value/" $orw_conf
 		else
