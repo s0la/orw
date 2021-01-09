@@ -56,7 +56,8 @@ case $1 in
 						sign=+ opposite_sign=- delta_value=$((value - new_value))
 				fi
 
-				~/.orw/scripts/offset_tiled_windows.sh ${property:0:1} $opposite_sign${delta_value:-${check_value:-$new_value}}
+				~/.orw/scripts/offset_tiled_windows.sh \
+					${property:0:1} ${sign:-$opposite_sign}${delta_value:-${check_value:-$new_value}}
 			fi
 		}
 
@@ -70,12 +71,20 @@ case $1 in
 		if [[ $property =~ offset ]]; then
 			read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
 
-			if [[ $offset == true ]]; then
-				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
-				offset_tiled_windows
+			[[ $offset == true ]] &&
+				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets) &&
 				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
-				exit
-			fi
+
+			[[ $mode != floating ]] && offset_tiled_windows
+
+			[[ $offset ]] && exit
+
+			#if [[ $offset == true ]]; then
+			#	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
+			#	offset_tiled_windows
+			#	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
+			#	exit
+			#fi
 
 			min=0
 		else

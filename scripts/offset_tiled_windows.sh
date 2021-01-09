@@ -11,7 +11,7 @@ orw_config=~/.config/orw/config
 read {x,y}_border offset is_offset <<< \
 	$(awk '/^([xy]_border|('$1'_)?offset)/ { print $NF }' $orw_config | xargs)
 
-[[ $is_offset ]] && offset=$(awk -F '=' '/'$1'_offset/ { print $NF }' ~/.config/orw/offsets)
+[[ $is_offset == true ]] && offset=$(awk -F '=' '/'$1'_offset/ { print $NF }' ~/.config/orw/offsets)
 
 eval windows=( $(wmctrl -lG | awk '$NF != "DROPDOWN" { print "\"" $1, $3, $4, $5, $6 "\"" }') )
 
