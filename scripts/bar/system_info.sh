@@ -142,7 +142,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=20
+		old_mail_count=72
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -223,8 +223,14 @@ case $1 in
 				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] &&
 					state=down fg="\${$pfg}" || state=up fg="\${$sfg}"
 
+				#fg="\${$sfg}"
+				#sec=$(date +'%S')
+				#red=$(awk '$1 == "red" { print $NF }' ~/.config/orw/colorschemes/colors)
+				#((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
+
 				#icon=%{I+3}%{I-}
-				set_icon dropdown_$state
+				#set_icon dropdown_$state
+				set_icon dropdown
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
 			fi
 		}
@@ -232,20 +238,96 @@ case $1 in
 		recorder() {
 			state=rec
 			#[[ $state == stop ]] && icon= fg=\${$pfg} || icon=%{I+n}%{I-} fg=\${$sfg}
-			if [[ $state == stop ]]; then
-				set_icon rec
-				fg="\${$pfg}"
-			else
-				set_icon rec
-				fg="\${$sfg}"
-			fi
+			#if [[ $state == stop ]]; then
+			#	set_icon rec
+			#	fg="\${$pfg}"
+			#else
+			#	set_icon rec
+			#	fg="\${$sfg}"
+			#fi
+
+			set_icon rec
+
+			fg="\${$sfg}"
+
+			#if [[ $state == rec ]]; then
+			#	sec=$(date +'10#%S')
+			#	red=$(awk '$1 == "red" { print $NF }' ~/.config/orw/colorschemes/colors)
+			#	((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
+			#fi
 
 			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
 
 			if [[ $pid ]]; then
-				rec_command="~/.orw/scripts/record_screen.sh"
-				kill_command="kill $pid"
-				rec=$(format ${!1-${state^^}} ":$rec_command:" "2:$kill_command:")
+				#kill_command="kill $pid && sed -i '/state=\w*$/ s/\w*$//' $0"
+
+				sec=$(date +'10#%S')
+				red='#785a5a'
+				#red=$(awk '$1 == "red" { print $NF }' ~/.config/orw/colorschemes/colors)
+				((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
+
+				#kill_command="kill $pid"
+				#rec_command="~/.orw/scripts/record_screen.sh"
+				##rec=$(format ${!1-${state^^}} ":$rec_command:" "2:$kill_command:")
+				#rec=$(format ${!1-${state^^}} ":$kill_command:")
+				rec=$(format ${!1-${state^^}} ":kill $pid:")
+			fi
+		}
+
+		tiling() {
+			pids=( $(pidof -x tile_windows.sh) )
+
+			if ((${#pids[*]})); then
+				#mode=$(awk '$1 == "mode" { print $NF }' ~/.config/orw/config)
+
+				#id=$(printf '0x%.8x' $(xdotool getactivewindow))
+				##orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+				#orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }')
+
+				#read prev next mode icon <<< $(awk '$1 == "mode" { m = $NF }
+				#		END {
+				#			if(m == "tiling") { n = 0; i = "" }
+				#			#else if(m == "auto") { n = 1; i = ("'$orientation'" == "h") ? "" : "" }
+				#			else if(m == "auto") { n = 1; i = "'$orientation'" }
+				#			else { n = 2; i = "" }
+				#			print ((3 + n - 1) % 3), ((3 + n + 1) % 3), m, i
+				#		}' ~/.config/orw/config)
+
+				read prev_index next_index mode <<< $(awk \
+					'$1 == "mode" { 
+						m = $NF
+
+						if(m == "tiling") n = 0
+						else if(m == "auto") n = 1
+						else n = 2
+
+						print ((3 + n - 1) % 3), ((3 + n + 1) % 3), m
+					}' ~/.config/orw/config)
+
+				#case $mode in
+				#	tiling) next_mode=auto;;
+				#	auto) next_mode=stack;;
+				#	*) next_mode=tiling;;
+				#esac
+
+				if [[ $mode == auto ]]; then
+					id=$(printf '0x%.8x' $(xdotool getactivewindow))
+					orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+				fi
+
+				fg="\${$pfg}"
+				set_icon tiling_${mode}_$orientation
+
+				modes=( tiling auto stack )
+
+				#~/.orw/scripts/notify.sh "n: $next ${modes[next]}, p: $prev ${modes[prev]}"
+
+				toggle="~/.orw/scripts/toggle.sh wm"
+				next="$toggle ${modes[prev_index]}"
+				prev="$toggle ${modes[next_index]}"
+				#tiling=$(format ${!1:-${mode^^}} ":$toggle $next_mode:" "2:$toggle floating:")
+				tiling=$(format ${!1:-${mode^^}} ":$toggle floating:" "4:$next:" "5:$prev:")
+				#~/.orw/scripts/notify.sh "$tiling"
 			fi
 		}
 
@@ -253,15 +335,20 @@ case $1 in
 
 		#~/.orw/scripts/notify.sh "3: $3"
 
-		if [[ $3 == all ]]; then
-			dropdown $label
-			recorder $label
-		fi
+		#if [[ $3 == all ]]; then
+		for app in ${3//,/ }; do
+			case $app in
+				d) dropdown $label;;
+				r) recorder $label;;
+				t) tiling $label;;
+			esac
+		done
 
 		#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
 		#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-		[[ $term || $rec ]] && hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
+		[[ $term || $rec || $tiling ]] &&
+			hidden="\${$sbg}\${inner}$tiling$term$rec\$inner ${separator:-\$separator}"
 		format_fading "" "" "none" "$hidden";;
 
 #	if [[ $term || $rec ]]; then

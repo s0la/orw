@@ -1,7 +1,13 @@
 email_icon=%{I+4}%{I-}
+tiling_tiling_icon=%{I+7}%{I-}
+tiling_stack_icon=%{I+7}%{I-}
+tiling_auto_h_icon=%{I+7}%{I-}
+tiling_auto_v_icon=%{I+7}%{I-}
+dropdown_icon=%{I+7}%{I-}
 dropdown_down_icon=%{I+7}%{I-}
 dropdown_up_icon=%{I+7}%{I-}
-rec_icon=%{I+9}%{I-}
+rec_icon=%{I+7}%{I-}
+rec_start_icon=%{I+9}%{I-}
 rec_stop_icon=%{I+9}%{I-}
 Network_wifi_icon=%{I+9}%{I-}
 Network_eth_icon=%{I+9}%{I-}
