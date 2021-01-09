@@ -33,7 +33,7 @@ new_window_size=150
 declare -A desktops
 get_all_window_ids
 
-blacklist='input,DROPDOWN,image_preview,cover_art_widget'
+blacklist='input,get_borders,rec_file_name_input,DROPDOWN,image_preview,cover_art_widget'
 
 xprop -spy -root _NET_ACTIVE_WINDOW | \
 	awk '/window id/ {
@@ -104,8 +104,16 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 							#fi
 						fi
 					#else
-					elif [[ $current_window_title =~ ^(input|DROPDOWN)$ ]]; then
-						[[ $current_window_title == input ]] && opacity=0 || opacity=90
+					elif [[ $current_window_title =~ ^(input|rec_file_name_input|DROPDOWN)$ ]]; then
+						#[[ $current_window_title == input ]] && opacity=0 || opacity=90
+
+						case $current_window_title in
+							input) opacity=0;;
+							DROPDOWN) opacity=90;;
+							*)
+								opacity=100
+								wmctrl -ir $new_window_id -b add,above;;
+						esac
 
 						#case $current_window_title in
 						#	*input) opacity=0;;
