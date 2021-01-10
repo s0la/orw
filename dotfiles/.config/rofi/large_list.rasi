@@ -50,14 +50,14 @@
 
 #entry {
 	margin:           @entry-margin;
-	background-color: @bg;
+	background-color: @ibg;
 	border-color:     @fg;
 }
 
 #prompt {
-	background-color: @bg;
+	background-color: @ibg;
 }
 
 #textbox-prompt-colon {
-	background-color: @bg;
+	background-color: @ibg;
 }
