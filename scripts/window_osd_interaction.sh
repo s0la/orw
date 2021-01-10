@@ -4,24 +4,37 @@ color_bar() {
 	printf "$1%.0s$3" $(seq 1 $2)
 }
 
+calculate() {
+	#printf '%.0f' $(bc <<< "scale=2; $@")
+	local value=$(($1 / $3))
+	local reminder=$(($1 % $3))
+	(($3 - reminder < ($3 / 100 * 20))) && ((value++))
+
+	echo $value
+}
+
 adjust_values() {
-	adjusted_window_x=$((x / step))
-	adjusted_window_y=$((y / step))
-	adjusted_window_w=$((w / step))
-	adjusted_window_h=$((h / step))
+	osd_window_x=$(calculate $x / $step)
+	osd_window_y=$(calculate $y / $step)
+	osd_window_w=$(calculate $w / $step)
+	osd_window_h=$(calculate $h / $step)
 
-	adjusted_x_start=$((x_start / step))
-	adjusted_y_start=$((y_start / step))
-	adjusted_x_end=$((x_end / step))
-	adjusted_y_end=$((y_end / step))
+	osd_x_start=$(calculate $x_start / $step)
+	osd_y_start=$(calculate $y_start / $step)
+	osd_x_end=$(calculate $x_end / $step)
+	osd_y_end=$(calculate $((y_end - y_start)) / $step)
 
-	x_before=$((adjusted_window_x - adjusted_x_start))
-	x_size=$((w / step))
-	x_after=$((adjusted_x_end - (adjusted_window_x + adjusted_window_w)))
+	x_before=$((osd_window_x - osd_x_start))
+	x_size=$(calculate $w / $step)
+	x_after=$((osd_x_end - (osd_window_x + osd_window_w)))
 
-	y_before=$((adjusted_window_y - adjusted_y_start))
-	y_size=$((h / step))
-	y_after=$((adjusted_y_end - (adjusted_window_y + adjusted_window_h)))
+	y_before=$((osd_window_y - osd_y_start))
+	y_size=$(calculate $h / $step)
+	y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
+
+	#echo $w $step $y_start $y_end $h
+	#echo $osd_y_end $osd_window_y $osd_window_h
+	#echo $y_before $y_size $y_after
 
 	local filled_{x,y}
 	#empty_x=$(color_bar ' ' $((x_before + x_size + x_after)))
