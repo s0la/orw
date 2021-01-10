@@ -88,7 +88,7 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 									current_desktop=$(xdotool get_desktop)
 									((${desktops[$current_desktop]} == 1)) && id=none || id=$previous_window_id
 									read x y w h d <<< $(~/.orw/scripts/windowctl.sh -i ${id:-none} -A)
-									echo "$new_window_id: $d" >> ~/.config/orw/window_alignment
+									echo "$new_window_id: $d" >> ~/.config/orw/windows_alignment
 
 									current_window_properties="$x $y $w $h"
 

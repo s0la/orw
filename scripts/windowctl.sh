@@ -2356,7 +2356,7 @@ options='(resize|move|tile)'
 
 config=~/.config/orw/config
 offsets_file=~/.config/orw/offsets
-alignment_file=~/.config/orw/window_alignment
+alignment_file=~/.config/orw/windows_alignment
 property_log=~/.config/orw/windows_properties
 
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
