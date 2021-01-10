@@ -245,7 +245,7 @@ set_base_values() {
 
 function set_sign() {
 	sign=${1:-+}
-	[[ $sign == + ]] && opposite_sign="-" || opposite_sign="+"
+	[[ $sign == + ]] && opposite_sign=- || opposite_sign=+
 }
 
 function resize() {
@@ -437,7 +437,7 @@ align_adjacent() {
 	value=${value#-}
 
 	#sleep 1
-	#~/.orw/scripts/notify.sh "val: $new_property $old_property $value $sign"
+	#~/.orw/scripts/notify.sh -t 11 "val: $new_property $old_property $value $sign"
 
 	#option=tile
 	#set_base_values $orientation
@@ -487,13 +487,22 @@ align_adjacent() {
 		#tile
 
 		if [[ $2 ]]; then
-			[[ $dual ]] || local sign=$opposite_sign opposite_sign=$sign
-			(( properties[index] ${opposite_sign}= value ))
+			#~/.orw/scripts/notify.sh -t 11 "$property_index $old_property ${properties[property_index]}"
+			#[[ $dual ]] || local sign=$opposite_sign opposite_sign=$sign
+			##((${properties[index]} > old_property)) || local sign=$opposite_sign opposite_sign=$sign
+			#(( properties[index] ${opposite_sign}= value ))
+			#(( properties[index + 2] ${sign}= value ))
+
+			set_sign $opposite_sign
+			#echo $id s $sign os $opposite_sign
 			(( properties[index + 2] ${sign}= value ))
+			(( properties[index] ${opposite_sign}= value ))
 		else
 			(( properties[index + 2] ${opposite_sign}= value ))
+			#(( properties[index + 2] ${sign}= value ))
 		fi
 
+		#~/.orw/scripts/notify.sh -t 11 "$id s: $sign, os: $opposite_sign"
 		#update_properties
 		adjacent_windows+=( "${properties[*]}" )
 	}
@@ -510,6 +519,10 @@ align_adjacent() {
 		done <<< $(get_adjacent "$1" $2)
 	}
 
+	#echo s $sign os $opposite_sign
+	set_sign $sign
+	#echo s $sign os $opposite_sign
+	#~/.orw/scripts/notify.sh -t 11 "s: $sign, os: $opposite_sign"
 	[[ $sign == - ]] &&
 		adjacent_windows=( "${properties[*]}" ) ||
 			new_original_properties=( "${properties[*]}" )
@@ -521,6 +534,7 @@ align_adjacent() {
 	for window in "${adjacent_windows[@]}"; do
 		read id x y w h <<< "$window"
 		wmctrl -ir $id -e 0,$x,$y,$w,$h
+		#~/.orw/scripts/notify.sh -t 11 "$window"
 	done
 
 	exit
@@ -2665,16 +2679,20 @@ while ((argument_index <= $#)); do
 
 				read x y w h <<< ${properties[*]:1}
 
-				source ~/.orw/scripts/window_osd_interaction.sh
+				source ~/.orw/scripts/windowctl_by_input.sh windowctl_osd source
 
-				set_geometry
-				listen_input
+				#source ~/.orw/scripts/window_osd_interaction.sh
+				#set_geometry
+				#listen_input
+
+				#~/.orw/scripts/notify.sh -t 11 "${properties[*]}"
+				#exit
+
 				properties=( $id $x $y $w $h )
-				#wmctrl -ir $id -e 0,$x,$y,$w,$h
-
 				update_properties
 
-				[[ $mode != floating ]] && align_adjacent;;
+				#ignore aligning adjacent windows if window was moved
+				[[ $mode != floating && ! $moved ]] && align_adjacent;;
 			[hv])
 				set_orientation_properties $argument
 
