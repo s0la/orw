@@ -86,14 +86,38 @@ get_song_info() {
 
 		#song_info="$currently_visible_portion"
 	elif [[ $show_time ]]; then
-		song_info+="  $tof$time$toe"
+		if [[ $remained ]]; then
+			get_seconds() {
+				read minutes seconds <<< ${1//:/ }
+				echo $((10#$minutes * 60 + 10#$seconds))
+			}
+
+			total_seconds=$(get_seconds ${time#*/})
+			elapsed_seconds=$(get_seconds $elapsed_time)
+			remained_seconds=$((total_seconds - elapsed_seconds))
+			minutes=$(printf '%01d' $((remained_seconds / 60)))
+			seconds=$(printf '%02d' $((remained_seconds % 60)))
+
+			time_info="$minutes:$seconds"
+		else
+			#song_info+="  $tof$time$toe"
+			#song_info+="  $tof%{T5}$elapsed_time%{T1}${time#$elapsed_time}$toe"
+			#time_info="$elapsed_time┃%{T1}${time#*/}"
+			time_info="$elapsed_time|%{T1}${time#*/}"
+		fi
+
+		song_info+="  $tof%{T5}$time_info%{T1}$toe"
 	fi
 
+	#~/.orw/scripts/notify.sh "$song_info"
+
 	if ((song_info_index < artist_length + 1)); then
+	#~/.orw/scripts/notify.sh "$song_info"
 		artist_portion=$(((artist_length + 1) - song_info_index))
 		song_info="%{T5}${song_info:0:$artist_portion}%{T1}${song_info:$artist_portion}"
 	fi
 
+	#~/.orw/scripts/notify.sh "$song_info"
 	echo -e "$commands\${mpfg:-\$pfg}$left_limiter$song_info$right_limiter$commands_end"
 	#echo -e "$commands\${mpfg:-\$pfg}%{T1}$song_info$commands_end"
 }
@@ -240,10 +264,11 @@ for module in ${4//,/ }; do
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "MPD_VOLUME $(get_volume $4)" > $fifo;;
 		P) bg='${mpbg:-$pbg}';;
-		T)
+		T*)
 			show_time=true
 			[[ $of ]] && tof=$of
-			[[ $oe ]] && toe=$oe;;
+			[[ $oe ]] && toe=$oe
+			((${#module} > 1)) && remained=true;;
 		d*) delay=${module#d};;
 		s*)
 			scroll=true
