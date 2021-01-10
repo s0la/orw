@@ -17,22 +17,26 @@ let s:settings .= 'b.b.;'
 "let s:settings .= 'cpi.lfg.● ;'
 let s:settings .= 'cpi.lfg. ● ;'
 " let s:settings .= 'c.imbg. ●.f;'
-let s:settings .= 'e..;'
+let s:settings .= 'e.n.;'
 "let s:settings .= 'ln.fr.  %l:%c  .fr;'
 "let s:settings .= 'ln.fr. line: %l, column: %c .fr;'
-let s:settings .= 'ln.fr. ln: %l, cl: %c .fr;'
+"let s:settings .= 'ln.fr. ln: %l, cl: %c .fr;'
+"let s:settings .= 'ln.fr. %l |┃ %c .fr;'
+"let s:settings .= 'ln.vfg. %l│%c .fr;'
+"let s:settings .= 'ln.vfg. %l|%c .fr;'
+let s:settings .= 'ln.vfg. %l ┃ %c .fr;'
 " let s:settings .= 'ln.m.  line %l, column %c  .fr;'
 let s:settings .= 't.f. %Y .fr;'
 
-let s:swap_colors = 1
+let s:swap_colors = 0
 let g:statusline_state = 'full'
 
 let s:separator = "%#None#"
 
 " let s:active_buffer_modules = 'm.b.s.f.c.e.ln'
 " let s:active_buffer_modules = 'm.s.b.s.f.c.e.ln'
-let s:active_buffer_modules = 'b.f.c.e.t.ln'
-let s:active_buffer_modules = 'f.b.c.e.ln'
+let s:active_buffer_modules = 'b.f.c.e.ln'
+"let s:active_buffer_modules = 'f.b.c.e.ln'
 "let s:active_buffer_modules = 'f.c.e.ln'
 let s:inactive_buffer_modules = 'f.c.e.ln'
 
