@@ -12,10 +12,10 @@ playlist_disable_highlight_delay = 1
 
 now_playing_prefix = "$(131)"
 now_playing_suffix = "$0"
-selected_item_prefix = "$(135)"
-#current_item_prefix = "$(135)"
-current_item_prefix = "$(135)$r"
-browser_playlist_prefix = "$135»$135 "
+selected_item_prefix = "$(77)"
+#current_item_prefix = "$(77)"
+current_item_prefix = "$(77)$r"
+browser_playlist_prefix = "$77»$77 "
 
 colors_enabled = "yes"
 cyclic_scrolling = "yes"
@@ -27,10 +27,10 @@ titles_visibility = "no"
 statusbar_visibility = "yes"
 display_remaining_time = "yes"
 
-volume_color = "135"
-statusbar_color = "135"
-header_window_color = "135"
-main_window_color = "135"
+volume_color = "77"
+statusbar_color = "77"
+header_window_color = "77"
+main_window_color = "77"
 empty_tag_color = "125"
 color2 = "4"
 
@@ -41,7 +41,7 @@ window_border_color = "white"
 active_window_border = "cyan"
 alternative_ui_separator_color = "black"
 
-progressbar_color = "135"
+progressbar_color = "77"
 progressbar_look = "   "
 progressbar_elapsed_color = "131"
 

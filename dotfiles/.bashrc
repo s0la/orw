@@ -491,7 +491,7 @@ generate_ps1() {
 	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="142;153;153;"
+	gdc="107;104;99;"
 	vc="135;147;156;"
 
 	clean="\[$(tput sgr0)\]"
@@ -600,7 +600,7 @@ export FFF_COL4=9
 
 export EDITOR='nvim'
 export TERM=xterm-256color
-export PATH="$PATH:/sbin:~/.orw/scripts"
+export PATH="$PATH:/sbin:/usr/local/go/bin:~/.orw/scripts"
 export XDG_CONFIG_HOME="$HOME/.config"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc-2.0"
 

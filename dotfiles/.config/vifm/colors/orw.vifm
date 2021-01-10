@@ -3,10 +3,10 @@ let $dfg = 76
 let $efg = 5
 let $cbg = 146
 let $cfg = 8
-let $sfg = 66
+let $sfg = 2
 let $tfg = 0
 let $slbg = 'default'
-let $slfg = 148
+let $slfg = 2
 
 highlight clear
 

@@ -287,16 +287,20 @@ style "notebook-button" = "notebook-bg" {
 
 style "notebook-bg"
 {
-    font_name = '8'
+    font_name = '1'
 
 	bg[NORMAL]   = shade(1.0, @base_bg_color)
 	bg[ACTIVE]   = shade(0.95, @base_bg_color)
 
-	fg[NORMAL]   = shade(1.0, @base_fg_color)
-	fg[ACTIVE]   = shade(0.9, @base_fg_color)
-	fg[PRELIGHT] = shade(1.2, @base_fg_color)
-    fg[SELECTED] = shade(1.00, @base_bg_color)
+	#fg[NORMAL]   = shade(1.0, @base_fg_color)
+	#fg[ACTIVE]   = shade(0.9, @base_fg_color)
+	#fg[PRELIGHT] = shade(1.2, @base_fg_color)
+    #fg[SELECTED] = shade(1.00, @base_bg_color)
 
+	fg[NORMAL]   = shade(1.0, @base_bg_color)
+	fg[ACTIVE]   = shade(1.0, @base_bg_color)
+	fg[PRELIGHT] = shade(1.0, @base_bg_color)
+    fg[SELECTED] = shade(1.0, @base_bg_color)
 
 	engine "murrine" {
 		focusstyle        = 0
@@ -417,10 +421,15 @@ style "treeview-header" = "button" {
 	xthickness   = 2
 	ythickness   = 0
 
+	#bg[NORMAL]   = shade(1.0, @base_bg_color)
+	#bg[ACTIVE]   = shade(1.03, @base_bg_color)
+	#bg[PRELIGHT] = shade(0.88, @base_bg_color)
+    #bg[SELECTED] = shade(1.00, @base_bg_color)
+
 	bg[NORMAL]   = shade(1.0, @base_bg_color)
-	bg[ACTIVE]   = shade(1.03, @base_bg_color)
-	bg[PRELIGHT] = shade(0.88, @base_bg_color)
-    bg[SELECTED] = shade(1.00, @base_bg_color)
+	bg[ACTIVE]   = shade(1.0, @base_bg_color)
+	bg[PRELIGHT] = shade(1.0, @base_bg_color)
+    bg[SELECTED] = shade(1.0, @base_bg_color)
 
 	engine "murrine" {
 		roundness       = 0  # This makes treeview progressbars square.
