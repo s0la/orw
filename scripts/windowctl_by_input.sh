@@ -19,28 +19,38 @@ mkfifo $named_pipe
 #read window_x window_y <<< $(~/.orw/scripts/get_window_position.sh)
 input_size=60
 padding=$(awk '/padding/ { print $NF * 2; exit }' ~/.config/gtk-3.0/gtk.css)
-read window_x window_y width height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 
-read size input_x input_y <<< $(awk '\
-	BEGIN {
-		w = '$width'
-		h = '$height'
-		x = '$window_x'
-		y = '$window_y'
-		s = '$input_size' + '$padding'
-	}
+#[[ ! "${BASH_SOURCE[0]}" =~ "$0" ]] &&
+#	read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 
-	/^display/ { 
-		if($1 ~ /xy$/) {
-			dx = $2
-			dy = $3
-		} else if($1 ~ /size$/) {
-			if(dx + $2 > x && dy + $3 > y) {
-				print s, x - dx + int((w - s) / 2), y - dy + int((h - s) / 2)
-				exit
-			}
+if [[ "${BASH_SOURCE[0]}" =~ "$0" ]]; then
+	read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+
+	read size input_x input_y <<< $(awk '\
+		BEGIN {
+			x = '$window_x'
+			y = '$window_y'
+			w = '$window_width'
+			h = '$window_height'
+			s = '$input_size' + '$padding'
 		}
-	}' ~/.config/orw/config)
+
+		/^display/ { 
+			if($1 ~ /xy$/) {
+				dx = $2
+				dy = $3
+			} else if($1 ~ /size$/) {
+				if(dx + $2 > x && dy + $3 > y) {
+					print s, x - dx + int((w - s) / 2), y - dy + int((h - s) / 2)
+					exit
+				}
+			}
+		}' ~/.config/orw/config)
+else
+	size=$((input_size + padding))
+	input_x=$((x - display_x + (w - size) / 2))
+	input_y=$((y - display_y + (h - size) / 2))
+fi
 
 ~/.orw/scripts/set_geometry.sh -c input -x $input_x -y $input_y -w $size -h $size
 
