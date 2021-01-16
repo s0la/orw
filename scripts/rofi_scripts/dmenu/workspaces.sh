@@ -14,6 +14,12 @@ if [[ $theme == icons ]]; then
 		else if($1 - 2 == 4) i = " "
 		else if($1 - 2 == 5) i = " "
 
+		#if($NF == 1) i = " "
+		#else if($1 - 2 == 2) i = " "
+		#else if($1 - 2 == 3) i = " "
+		#else if($1 - 2 == 4) i = " "
+		#else if($1 - 2 == 5) i = ""
+
 		tw = tw " " i
 	} END { print tw }') )
 
@@ -45,7 +51,7 @@ if [[ ! $@ =~ wall ]]; then
 	[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
 fi
 
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh workspaces $((workspace_count + 2))
+[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh workspaces ${#workspaces[*]}
 
 for workspace_index in ${!workspaces[*]}; do
 	((workspace_index)) && all_workspaces+='\n'
@@ -58,9 +64,10 @@ done
 chosen_workspace=$(echo	-e "$all_workspaces" | \
 	rofi -dmenu -selected-row $current_workspace $active -theme main)
 
-echo -e "$all_workspaces"
+#echo -e "$all_workspaces"
 
 [[ $chosen_workspace ]] || exit 0
+[[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r &
 
 if [[ "$chosen_workspace" =~   ]]; then
 	wmctrl -n $((workspace_count - 1))
@@ -100,6 +107,7 @@ else
 
 			[[ $theme == icons && $chosen_workspace !=   ]] &&
 				temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
+				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
 
 			if [[ "$new_workspace_name" =~ $temp_workspace_regex ]]; then
 				[[ $current_workspace_name =~ $temp_workspace_regex ]] || save=-s
@@ -139,6 +147,4 @@ else
 	fi
 
 	wmctrl -s $new_workspace_index
-
-	[[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r
 fi
