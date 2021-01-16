@@ -10,10 +10,10 @@ read bar_min bar_max display <<< \
 			if(!d) d = $NF
 		}
 		if(/^display/) {
-			if(NF == 4) {
-				if(d > $2) bm += $3
+			if($3 == "size") {
+				if(d > $2) bm += $4
 				else {
-					print bm, bm + $3, d
+					print bm, bm + $4, d
 					exit
 				}
 			}

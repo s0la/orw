@@ -8,10 +8,10 @@ set_position() {
 	read display display_x display_y display_width display_height bar_min bar_max x y <<< \
 		$(awk -F '[_ ]' '{ if(/^orientation/) \
 		{ d = '${display:-0}'; cd = 1; wx = '$x'; wy = '$y'; bmin = 0; \
-			if($NF ~ /^h/) { i = 3; p = wx } else { i = 4; p = wy } }; \
+			if($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy } }; \
 				if($1 == "display") \
 					if($3 == "xy") { cd = $2; if((d && d == cd) || !d) { dx = $4; dy = $5 } } \
-					else { if((d && d == cd) || !d) { dw = $3; dh = $4 }; max += $i; \
+					else if($3 == "size") { if((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i; \
 						if(((d && (cd >= d)) || (!d)) && p < max) \
 							{ print (d) ? d : cd, dx, dy, dw, dh, bmin, bmin + $3, wx, wy; exit } else \
 								{ if(d && cd < d || !d) bmin += $3; \

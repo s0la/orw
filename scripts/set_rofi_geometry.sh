@@ -10,7 +10,7 @@ if [[ $id ]]; then
 	read x y <<< $(wmctrl -lG | awk '$1 == sprintf("0x%.8x", "'$id'") { print $3, $4 }')
 	read display width height <<< $(~/.orw/scripts/get_display.sh $x $y | cut -d ' ' -f 1,4,5)
 else
-	read width height <<< $(awk '/^primary/ { p = $NF } p && $1 == p { print $2, $3 }' ~/.config/orw/config)
+	read width height <<< $(awk '/^primary/ { p = $NF } p && $1 == p "_size" { print $2, $3 }' ~/.config/orw/config)
 fi
 
 if [[ $mode == icons ]]; then
@@ -60,7 +60,7 @@ if [[ $mode == icons ]]; then
 
 			if(/window-width:/) {
 				if(o == "vertical") {
-					fw = fs *1.37
+					fw = fs *1.39
 					tw = hp[2] + hp[1] + fw + wm
 				} else {
 					#for three consecutive different font sizes

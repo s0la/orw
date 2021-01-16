@@ -28,36 +28,33 @@ wm() {
 }
 
 display() {
-	full_resolution=$(xrandr -q | awk -F '[x, ]' '/current/ { print "full_resolution " $10 " " $13 }')
-	no_primary=$(xrandr -q | awk '/primary/ { print $2 == "disconnected" }')
-
-	local width height
-
-	while read -r is_primary x y width height display_name; do
+	while read -r name primary width height x y; do
 		((index++))
-		((x_sum += x))
+		((last_x += x))
+		((last_y += y))
+		last_width=$width
+		last_height=$height
 
-		display=$display_name
+		displays+="display_${index}_name $name\n"
 		displays+="display_${index}_xy $x $y\n"
-		displays+="display_$index $width $height\n"
+		displays+="display_${index}_size $width $height\n"
 
-		if ((no_primary && index == 1)); then
-			xrandr --output $display --primary
-			is_primary=true
-		fi
+		((index == 1)) && first_display_name=$name first_display_index=$index
+		((primary)) && primary_display_name=$name primary_display_index=$index
+	done <<< $(xrandr | awk -F '[ x+]' '$2 == "connected" {
+											p = $3 == "primary"
+											i = 3 + p
+											print $1, p, $i, $(i + 1), $(i + 2), $(i + 3) }')
 
-		((is_primary)) && primary=$display primary_index=$index primary_width=$width primary_height=$height
-	done <<< $(xrandr --listmonitors | awk -F '[x/+ ]' 'NR > 1 { print $4 ~ /^*/, $9, $10, $5, $7, $NF }')
+	((primary_display_index)) || xrandr --output $first_display_name --primary
 
-	primary_display="primary display_${primary_index:-$index}"
+	primary_display="primary display_${primary_display_index:-$first_display_index}"
 
-	if ((index > 1)); then
-		((x_sum)) && orientation=horizontal || orientation=vertical
-	else
-		((primary_width > primary_height)) && orientation=horizontal || orientation=vertical
-	fi
+	x_size=$((last_x + last_width))
+	y_size=$((last_y + last_height))
+	((x_size > y_size)) && orientation=horizontal || orientation=vertical
 
-	echo "#display\n$full_resolution\norientation $orientation\n$primary_display\n${displays%\\*}\n"
+	echo "#display\norientation $orientation\n$primary_display\n${displays%\\*}\n"
 }
 
 wallpapers() {

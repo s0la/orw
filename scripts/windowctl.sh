@@ -148,10 +148,10 @@ get_display_properties() {
 			wy = '${properties[2]}'
 
 			if($NF ~ /^h/) {
-				i = 3
+				i = 4
 				p = wx
 			} else {
-				i = 4
+				i = 5
 				p = wy
 			}
 		} {
@@ -164,11 +164,11 @@ get_display_properties() {
 						dy = $5
 						minp = $(mi + 1)
 					}
-				} else {
+				} else if($3 == "size") {
 					if((d && d == cd) || !d) {
-						dw = $3
-						dh = $4
-						maxp = minp + $mi
+						dw = $4
+						dh = $5
+						maxp = minp + $(mi + 1)
 					}
 
 					max += $i
@@ -177,14 +177,14 @@ get_display_properties() {
 						print (d) ? d : cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
 						exit
 					} else {
-						if(d && cd < d || !d) bmin += $3
-						if(p > max) if(i == 3) wx -= $i
+						if(d && cd < d || !d) bmin += $4
+						if(p > max) if(i == 4) wx -= $i
 						else wy -= $i
 					}
 				}
 			}
 		}
-	}' ~/.config/orw/config)
+	}' $config)
 }
 
 get_bar_properties() {
@@ -2319,7 +2319,7 @@ align() {
 		else
 			# if there is no windows opened
 			get_bar_properties
-			read width height <<< $(awk '/^display_'${display:-1}' / { print $2, $3 }' $config)
+			read width height <<< $(awk '/^display_'${display:-1}'_size/ { print $2, $3 }' $config)
 
 			# set window properties to occupy all space between offsets
 			x=$x_offset
@@ -2380,7 +2380,7 @@ property_log=~/.config/orw/windows_properties
 read mode part ratio use_ratio alignment_direction reverse full \
 	{x,y}_border {x,y}_offset display_count display_orientation <<< $(awk '\
 		/^(mode|part|ratio|full|use_ratio|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
-		/^display_[0-9] / { dc++ }
+		/^display_[0-9]_name/ { dc++ }
 		/^orientation / { o = substr($NF, 1, 1) }
 		END { print p, dc, o }' $config)
 
@@ -2415,23 +2415,27 @@ while ((argument_index <= $#)); do
 
 			if [[ ! $orientations ]]; then
 				window_x=$(wmctrl -lG | awk '$1 == "'$id'" { print $3 }')
-				width=$(awk '/^display/ { width += $2; if ('$window_x' < width) { print $2; exit } }' $config)
+				width=$(awk '/^display_'$display'_size/ { print $2; exit }' $config)
+				#width=$(awk '/^display.*size/ { w += $2; if ('$window_x' < w) { print $2; exit } }' $config)
 
 				orientations=$(list_all_windows | sort -nk 2,4 -uk 2 | \
-					awk '$1 ~ /^0x/ && $1 != "'$id'" {
-						xo = '$x_offset'
-						xb = '$x_border'
-						m = '${margin:-$x_offset}'
-						if(!x) x = '$display_x' + xo
-
-						if($2 >= x) {
-							x = $2 + $4 + xb + m
-							w += $4; c++
+					awk '
+						BEGIN {
+							xo = '$x_offset'
+							xb = '$x_border'
+							x = '$display_x' + xo
+							m = '${margin:-$x_offset}'
 						}
-					} END {
-						mw = '$width' - ((2 * xo) + (c * xb) + (c - 1) * m)
-						if(mw - 1 > w && mw > w) print "h v"; else print "v h"
-					}')
+
+						$1 ~ /^0x/ && $1 != "'$id'" {
+							if($2 >= x) {
+								x = $2 + $4 + xb + m
+								w += $4; c++
+							}
+						} END {
+							mw = '$width' - ((2 * xo) + (c * xb) + (c - 1) * m)
+							if(mw - 1 > w && mw > w) print "h v"; else print "v h"
+						}')
 			fi
 
 			for orientation in $orientations; do

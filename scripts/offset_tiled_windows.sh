@@ -78,6 +78,7 @@ while read display display_start display_end; do
 			#system("~/.orw/scripts/notify.sh -t 22 \"" ws " " ds " " $0 "\"")
 			system("wmctrl -ir " $1 " -e 0," $2 "," $3 "," $4 "," $5)
 		}'
-done <<< $(awk -F '[_ ]' '/^display_[0-9]+/ {
+#done <<< $(awk -F '[_ ]' '/^display_[0-9]+/ && $3 != "name" {
+done <<< $(awk -F '[_ ]' '/^display_[0-9]+_(xy|size)/ {
 	if($3 == "xy") s = $('$index' + 1)
-	else print $2, s, $('$index') }' $orw_config)
+	else print $2, s, $('$index' + 1) }' $orw_config)

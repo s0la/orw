@@ -30,7 +30,7 @@ read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
 sbg='#363636'
-pbfg='#8e9999'
+pbfg='#807E60'
 
 type=$(ps -C dunst -o args=)
 
@@ -97,7 +97,7 @@ if [[ $style =~ ^(osd|vert) ]]; then
 				/^x_offset/ { x = $NF }
 				/^offset/ { if($NF == "true") x = '$x_offset' }
 				/^primary/ { p = $NF }
-				p && $1 == p {
+				p && $1 == p "_size" {
 					dw = $2
 					dh = $3
 

@@ -109,11 +109,16 @@ id=$(xdotool getactivewindow)
 read window_x window_y <<< $(wmctrl -lG | awk '$1 == "'$id'" { print $3, $4 }')
 
 display_width=$(awk '\
-	BEGIN { id = "'$id'"; wx = '${window_x:-0}'; wy = '${window_y:-0}' }
+	BEGIN {
+		id = "'$id'"
+		wx = '${window_x:-0}'
+		wy = '${window_y:-0}'
+	}
+
 	{
 		if(!id) {
 			if($1 == "primary") p = $NF
-			if(p && $1 == p) {
+			if(p && $1 == p "_size") {
 				print $2
 				exit
 			}
@@ -122,7 +127,7 @@ display_width=$(awk '\
 				if($1 ~ /xy$/) {
 					x = $2
 					y = $3
-				} else {
+				} else if(/size$/) {
 					if(wx < x + $2 && wy < y + $3) {
 						print $2
 						exit

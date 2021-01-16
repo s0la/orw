@@ -11,9 +11,15 @@ done
 
 [[ ! -f ~/.config/orw/config ]] && ~/.orw/scripts/generate_orw_config.sh
 
+#read resolution position <<< $(awk '\
+#	/^'${display:-full_resolution}'/ {
+#		if(/^full/ || xy) print $2 "x" $3, xy
+#		else xy = "+" $2 "," $3 }' ~/.config/orw/config)
+
 read resolution position <<< $(awk '\
-	/^'${display:-full_resolution}'/ {
-		if(/^full/ || xy) print $2 "x" $3, xy
+	$1 == "primary" { d = ("'$display'") ? "'$display'" : $NF }
+	$1 ~ d "_(xy|size)" {
+		if(/size/) print $2 "x" $3, xy
 		else xy = "+" $2 "," $3 }' ~/.config/orw/config)
 
 shift $((arg_count * 2))

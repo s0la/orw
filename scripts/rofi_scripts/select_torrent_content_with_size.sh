@@ -124,11 +124,16 @@ id=$(xdotool getactivewindow)
 read window_x window_y <<< $(wmctrl -lG | awk '$1 == "'$id'" { print $3, $4 }')
 
 display_width=$(awk '\
-	BEGIN { id = "'$id'"; wx = '${window_x:-0}'; wy = '${window_y:-0}' }
+	BEGIN {
+		id = "'$id'"
+		wx = '${window_x:-0}'
+		wy = '${window_y:-0}'
+	}
+
 	{
 		if(!id) {
 			if($1 == "primary") p = $NF
-			if(p && $1 == p) {
+			if(p && $1 == p "_size") {
 				print $2
 				exit
 			}
@@ -137,7 +142,7 @@ display_width=$(awk '\
 				if($1 ~ /xy$/) {
 					x = $2
 					y = $3
-				} else {
+				} else if($1 ~ /size$/) {
 					if(wx < x + $2 && wy < y + $3) {
 						print $2
 						exit
@@ -157,12 +162,12 @@ offset=$(awk '
 	/window-padding:/ { p = get_value() }
 	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' ~/.config/rofi/large_list.rasi)
 
-torrent_id=""
+torrent_id="43"
 current=""
-full_path=""
+full_path="Vale Of Pnath - Discography"
 
-depth=""
-final_depth=""
+depth="2"
+final_depth="0"
 
 [[ $@ =~ ^set_torrent_id ]] && $@
 

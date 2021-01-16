@@ -255,8 +255,12 @@ current_desktop=$(xdotool get_desktop)
 
 read depth directory <<< $(awk '\
 	/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
-read orientation display_count <<< $(awk -F '[_ ]' '\
-	/^orientation/ { o = $NF } /^display_[0-9]/ { dc++ } END { print o, dc / 2 }' $config)
+#read orientation display_count <<< $(awk -F '[_ ]' '\
+#	/^orientation/ { o = $NF } /^display_[0-9]_name/ { dc++ } END { print o, dc }' $config)
+read orientation all_displays <<< $(awk -F '[_ ]' '\
+	/^orientation/ { o = $NF } /^display_[0-9]_name/ { ad = ad " " $NF } END { print o, ad }' $config)
+displays=( $all_displays )
+display_count=${#displays[*]}
 
 [[ "$@" =~ -U ]] && unsplash=true
 
@@ -699,7 +703,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 					a)
 						read -rsn 1 -p 'Select minimum resolution allowed (my screen resolution/custom): [M/c]' atleast
 						[[ $atleast == c ]] && read -p 'Enter minimum resolution allowed: ' minimum_resolution ||
-							minimum_resolution=$(awk '$1 == "primary" { p = $NF } p && $1 == p { print $2 "x" $3 }' ~/.config/orw/config)
+							minimum_resolution=$(awk '$1 == "primary" { p = $NF }
+												p && $1 == p "_size" { print $2 "x" $3 }' ~/.config/orw/config)
 
 						atleast="&atleast=$minimum_resolution"
 

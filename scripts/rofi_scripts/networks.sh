@@ -7,18 +7,22 @@ if [[ -z $@ ]]; then
 	read window_x window_y <<< $(wmctrl -lG | awk '$1 == "'$id'" { print $3, $4 }')
 
 	display_width=$(awk '\
-		BEGIN { wx = '$window_x'; wy = '$window_y' }
-		/^display/ {
-		if($1 ~ /xy$/) {
-			x = $2
-			y = $3
-		} else {
-			if(wx < x + $2 && wy < y + $3) {
-				print $2
-				exit
-			}
+		BEGIN {
+			wx = '$window_x'
+			wy = '$window_y'
 		}
-	}' ~/.config/orw/config)
+
+		/^display/ {
+			if($1 ~ /xy$/) {
+				x = $2
+				y = $3
+			} else if($1 ~ /size$/) {
+				if(wx < x + $2 && wy < y + $3) {
+					print $2
+					exit
+				}
+			}
+		}' ~/.config/orw/config)
 
 	offset=$(awk '
 		function get_value() {

@@ -36,13 +36,18 @@ adjust_values() {
 	#echo $osd_y_end $osd_window_y $osd_window_h
 	#echo $y_before $y_size $y_after
 
+	icon=' '
+	icon=''
+	icon='█▊'
+	icon=' '
+	icon='▆▆ '
 	local filled_{x,y}
 	#empty_x=$(color_bar ' ' $((x_before + x_size + x_after)))
-	empty_x="<span foreground='\$sbg'>$(color_bar ' ' $((x_before + x_size + x_after)))</span>"
+	empty_x="<span foreground='\$sbg'>$(color_bar "$icon" $((x_before + x_size + x_after)))</span>"
 
-	((x_before)) && filled_x="<span foreground='\$sbg'>$(color_bar ' ' $x_before)</span>"
-	filled_x+="<span foreground='\$pbfg'>$(color_bar ' ' $x_size)</span>"
-	((x_after)) && filled_x+="<span foreground='\$sbg'>$(color_bar ' ' $x_after)</span>"
+	((x_before)) && filled_x="<span foreground='\$sbg'>$(color_bar "$icon" $x_before)</span>"
+	filled_x+="<span foreground='\$pbfg'>$(color_bar "$icon" $x_size)</span>"
+	((x_after)) && filled_x+="<span foreground='\$sbg'>$(color_bar "$icon" $x_after)</span>"
 
 	((y_before)) && filled_y="$(color_bar "$empty_x\n" $y_before)\n"
 	filled_y+="$(color_bar "$filled_x\n" $y_size)"
@@ -124,7 +129,8 @@ set_geometry() {
 
 		/^\s*geometry/ {
 			replace(3, '$osd_x')
-			replace(1, '$osd_width' * 2.5)
+			replace(1, '$osd_width' * 3)
+			#replace(1, '$osd_width' * 2.5)
 		} { print }' ~/.config/dunst/windows_osd_dunstrc
 
 	adjust_values
@@ -140,8 +146,7 @@ font_size=8
 if [[ ! $source ]]; then
 	id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
-	config=~/.config/orw/config
-	read {x,y}_border {x,y}_offset offset <<< $(awk '/^([xy]_|offset)/ { print $NF }' $config | xargs)
+	read {x,y}_border {x,y}_offset offset <<< $(awk '/^([xy]_|offset)/ { print $NF }' ~/.config/orw/config | xargs)
 	real_y_border=$y_border
 	y_border=$(((y_border - x_border / 2) * 2))
 

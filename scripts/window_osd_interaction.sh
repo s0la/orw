@@ -150,8 +150,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
 
 	id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
-	config=~/.config/orw/config
-	read {x,y}_border {x,y}_offset offset <<< $(awk '/^([xy]_|offset)/ { print $NF }' $config | xargs)
+	read {x,y}_border {x,y}_offset offset <<< $(awk '/^([xy]_|offset)/ { print $NF }' ~/.config/orw/config | xargs)
 	real_y_border=$y_border
 	y_border=$(((y_border - x_border / 2) * 2))
 

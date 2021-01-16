@@ -9,10 +9,10 @@ awk -F '[_ ]' '{ if(/^orientation/) {
 		wy = '$2'
 
 		if($NF ~ /^h/) {
-			i = 3
+			i = 4
 			p = wx
 		} else {
-			i = 4
+			i = 5
 			p = wy
 		}
 	} {
@@ -23,10 +23,10 @@ awk -F '[_ ]' '{ if(/^orientation/) {
 				dx = $4
 				dy = $5
 				minp = $(mi + 1)
-			} else {
-				dw = $3
-				dh = $4
-				maxp = minp + $mi
+			} else if($3 == "size") {
+				dw = $4
+				dh = $5
+				maxp = minp + $(mi + 1)
 
 				max += $i
 
@@ -34,8 +34,8 @@ awk -F '[_ ]' '{ if(/^orientation/) {
 					print cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
 					exit
 				} else {
-					bmin += $3
-					if(p > max) if(i == 3) wx -= $i
+					bmin += $4
+					if(p > max) if(i == 4) wx -= $i
 					else wy -= $i
 				}
 			}

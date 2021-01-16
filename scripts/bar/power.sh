@@ -52,13 +52,13 @@ read geometry separator <<< $(awk -F '[_ ]' '{
 				x = 0
 			}
 
-			if($1 == "display" && NF == 4) {
+			if($1 == "display" && $3 == "xy") {
 				if($2 < d) {
-					x += $3
+					x += $4
 
 					if(v) {
-						rx += $3
-						ry += $4
+						rx += $4
+						ry += $5
 					}
 				} else {
 					w = int($3 * '${width_ratio:-$equal_ratio}' / 100)

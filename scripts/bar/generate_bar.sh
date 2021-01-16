@@ -117,16 +117,17 @@ get_display_properties() {
 						d = (s) ? s : $NF
 						x = 0
 					}
-					if($1 == "display" && NF == 4) {
+					#if($1 == "display" && $3 == "size") {
+					if(/^display.*size/) {
 						if($2 < d) {
-							x += $3
+							x += $4
 
 							if(v) {
-								rx += $3
-								ry += $4
+								rx += $4
+								ry += $5
 							}
 						} else {
-							print x, 0, $3, $4, rx, ry
+							print x, 0, $4, $5, rx, ry
 							exit
 						}
 					}
@@ -601,7 +602,7 @@ font5="Iosevka Orw:style=Heavy:size=$font_size"
 #~/.orw/scripts/notify.sh "i: $icomoon_offset f: $font_offset m: $main_font_offset"
 
 font1="Iosevka Orw:style=Semibold:size=$font_size"
-font5="Iosevka Orw:style=Extrabold:size=$font_size"
+font5="Iosevka Orw:style=Heavy:size=$font_size"
 
 #font1="SF Mono:style=Medium:size=$font_size"
 #font5="SF Mono:style=Heavy:size=$font_size"

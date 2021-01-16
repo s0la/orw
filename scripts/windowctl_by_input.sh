@@ -16,25 +16,33 @@ named_pipe=/tmp/keyboard_input
 [[ -p $named_pipe ]] && rm $named_pipe
 mkfifo $named_pipe
 
-read window_x window_y <<< $(~/.orw/scripts/get_window_position.sh)
+#read window_x window_y <<< $(~/.orw/scripts/get_window_position.sh)
+input_size=60
+padding=$(awk '/padding/ { print $NF * 2; exit }' ~/.config/gtk-3.0/gtk.css)
+read window_x window_y width height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 
-read input_x input_y <<< $(awk '/^display/ { \
-	if(!(x && y)) {
-		x = '$window_x' - 30
-		y = '$window_y' - 30
+read size input_x input_y <<< $(awk '\
+	BEGIN {
+		w = '$width'
+		h = '$height'
+		x = '$window_x'
+		y = '$window_y'
+		s = '$input_size' + '$padding'
 	}
-	if($1 ~ /xy/) {
-		dx = $2
-		dy = $3
-	} else {
-		if(dx + $2 > x && dy + $3 > y) {
-			print x - dx, y - dy
-			exit
+
+	/^display/ { 
+		if($1 ~ /xy$/) {
+			dx = $2
+			dy = $3
+		} else if($1 ~ /size$/) {
+			if(dx + $2 > x && dy + $3 > y) {
+				print s, x - dx + int((w - s) / 2), y - dy + int((h - s) / 2)
+				exit
+			}
 		}
-	}
-}' ~/.config/orw/config)
+	}' ~/.config/orw/config)
 
-~/.orw/scripts/set_geometry.sh -c input -x $input_x -y $input_y -w 70 -h 70
+~/.orw/scripts/set_geometry.sh -c input -x $input_x -y $input_y -w $size -h $size
 
 source ~/.orw/scripts/${1}_input_template.sh "${@:2}"
 
