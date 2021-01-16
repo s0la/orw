@@ -10,8 +10,8 @@ case $1 in
 		[[ ! $1 =~ ^set ]] &&
 			flag=M modify=${1%%_*}
 
-		~/.orw/scripts/wallctl.sh -${flag-d} $modify "$tails";;
+		~/.orw/scripts/xwallctl.sh -${flag-d} $modify "$tails";;
 	*wall|*color)
 		[[ $1 =~ color ]] && flag=c
-		~/.orw/scripts/wallctl.sh -${flag}s "${@:2}"
+		~/.orw/scripts/xwallctl.sh -${flag}s "${@:2}"
 esac

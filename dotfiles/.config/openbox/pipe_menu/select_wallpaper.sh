@@ -28,4 +28,4 @@ done <<< "$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)
 					print i "_" w ":" r "/" w
 				}')"
 
-~/.config/openbox/pipe_menu/generate_menu.sh -c '~/.orw/scripts/wallctl.sh -s' -i "${walls[@]}"
+~/.config/openbox/pipe_menu/generate_menu.sh -c '~/.orw/scripts/xwallctl.sh -s' -i "${walls[@]}"

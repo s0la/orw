@@ -10,7 +10,7 @@ picom -b
 mpd &
 
 path=~/.orw/scripts
-$path/wallctl.sh -r &
+$path/xwallctl.sh -r &
 $path/mpd_notifier.sh &
 $path/barctl.sh
 

@@ -630,7 +630,7 @@ function firefox() {
 }
 
 function wall() {
-	~/.orw/scripts/wallctl.sh -s "$color"
+	~/.orw/scripts/xwallctl.sh -s "$color"
 }
 
 function sxiv() {

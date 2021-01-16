@@ -58,6 +58,7 @@ if [[ -z $@ || $@ =~ (move|wall)$ ]]; then
 	#[[ $move ]] && echo "   tmp"
 else
 	killall rofi
+	[[ $@ =~ wall ]] && ~/.orw/scripts/xwallctl.sh -c -r &
 
 	window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 
@@ -153,5 +154,4 @@ else
 	wmctrl -s $new_workspace_index
 
 	#[[ $(wmctrl -l | awk '$NF == "ncmpcpp_with_cover_art" && $2 == '$new_workspace_index'') ]] && ~/.orw/scripts/ncmpcpp.sh -R
-	[[ $@ =~ wall ]] && ~/.orw/scripts/wallctl.sh -c -r
 fi

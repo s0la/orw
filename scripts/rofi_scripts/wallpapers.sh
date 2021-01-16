@@ -23,7 +23,7 @@ fi
 if [[ -z $@ ]]; then
 	echo -e "$prev\n$next\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
 else
-	wallctl=~/.orw/scripts/wallctl.sh
+	wallctl=~/.orw/scripts/xwallctl.sh
 
 	if [[ $@ =~ select ]]; then
 		indicator='●'

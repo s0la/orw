@@ -61,7 +61,7 @@ list_actions() {
 	)
 }
 
-wallctl=~/.orw/scripts/wallctl.sh
+wallctl=~/.orw/scripts/xwallctl.sh
 
 #if [[ $action == $select ]]; then
 #else

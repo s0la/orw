@@ -57,7 +57,7 @@ for workspace_index in $(seq $workspace_count); do
 	[[ $fbg ]] || fbg=$bg
 
 	command="wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k \&"
-	[[ $flags ]] && command+=" ~/.orw/scripts/wallctl.sh -$flags \&"
+	[[ $flags ]] && command+=" ~/.orw/scripts/xwallctl.sh -$flags \&"
 	workspace="%{A:$command:}$bg$fg$label%{A}"
 
 	if [[ $single_line == true && $separator =~ ^% && $current == p ]]; then

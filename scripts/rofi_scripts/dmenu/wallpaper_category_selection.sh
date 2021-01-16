@@ -6,7 +6,7 @@ function set() {
 }
 
 set_root() {
-	~/.orw/scripts/wallctl.sh -d "$arg"
+	~/.orw/scripts/xwallctl.sh -d "$arg"
 	root="$(awk '/^directory/ { print gensub("'\''", "", "g", $NF) }' ~/.config/orw/config)"
 	set root
 }
@@ -27,7 +27,7 @@ set_category() {
 		flag=-d
 	fi
 
-	~/.orw/scripts/wallctl.sh $flag $modify "$root/$arg"
+	~/.orw/scripts/xwallctl.sh $flag $modify "$root/$arg"
 }
 
 list_categories() {
