@@ -26,7 +26,9 @@ current_window_id=$(printf '0x%.8x' $(xdotool getactivewindow))
 read {x,y}_border <<< \
 	$(awk '/^[xy]_border/ { if(/^x/) x = $NF; else { print x, ($NF - x / 2) * 2 } }' ~/.config/orw/config)
 
-new_window_size=150
+new_window_size=60
+padding=$(awk '/padding/ { print $NF * 2; exit }' ~/.config/gtk-3.0/gtk.css)
+((new_window_size += padding))
 #read {x,y}_border <<< $(awk '/^[xy]_border/ { print $NF }' ~/.config/orw/config | xargs)
 #y_border=$(((y_border - x_border / 2) * 2))
 
