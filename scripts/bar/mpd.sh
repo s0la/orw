@@ -103,7 +103,7 @@ get_song_info() {
 			#song_info+="  $tof$time$toe"
 			#song_info+="  $tof%{T5}$elapsed_time%{T1}${time#$elapsed_time}$toe"
 			#time_info="$elapsed_time┃%{T1}${time#*/}"
-			time_info="$elapsed_time|%{T1}${time#*/}"
+			time_info="$elapsed_time%{T1}|${time#*/}"
 		fi
 
 		song_info+="  $tof%{T5}$time_info%{T1}$toe"
