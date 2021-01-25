@@ -38,8 +38,12 @@ fi
 
 while read display display_start display_end; do
 	if [[ $1 == y ]]; then
-		while read name position bar_x bar_y bar_widht bar_height rest; do
-			current_bar_height=$((bar_y + bar_height))
+		while read name position bar_x bar_y bar_widht bar_height adjustable_width frame; do
+			if ((adjustable_width)); then
+				read bar_width bar_height bar_x bar_y < ~/.config/orw/bar/geometries/$bar_name
+			fi
+
+			current_bar_height=$((bar_y + bar_height + frame))
 
 			if ((position)); then
 				((current_bar_height > top_offset)) && top_offset=$current_bar_height
