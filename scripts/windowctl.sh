@@ -74,13 +74,23 @@ function save_properties() {
 }
 
 function backtrace_properties() {
-	read line_number properties <<< $(awk '/^'$id'/ { nr = NR; p = substr($0, 12) } END { print nr, p }' $property_log)
-	sed -i "${line_number}d" $property_log
-	echo "$properties"
+	read line_number properties <<< $(awk '/^'$id'/ {
+			nr = NR; p = gensub($1 " (.*) ?" $6, "\\1", 1)
+		} END { print nr, p }' $property_log)
+		sed -i "${line_number}d" $property_log
+		echo "$properties"
+
+	#awk '{
+	#		if($1 == "'$id'") p = gensub($1 " (.*) ?" $6, "\\1", 1)
+	#		else ap = ap "\n" $0
+	#	} END {
+	#		print p
+	#		print substr(ap, 2)
+	#	}' $property_log | { read -r ap; { echo "$ap" >&1; cat > $property_log; } }
 }
 
 function restore_properties() {
-	[[ -f $property_log ]] && properties=( $(grep "^$id" $property_log) )
+	[[ -f $property_log ]] && properties=( $(grep "^$id" $property_log | cut -d ' ' -f -5) )
 }
 
 function apply_new_properties() {
@@ -436,6 +446,23 @@ align_adjacent() {
 	((property_index > 2)) && ra=-r || dual=true
 	value=${value#-}
 
+	set_sign $sign
+
+	set_main_side() {
+		echo main $sign $opposite_sign
+		(( properties[index + 2] ${sign}= value ))
+		[[ $dual ]] && (( properties[index] ${opposite_sign}= value ))
+	}
+
+	set_opposite_side() {
+		echo opposite $sign $opposite_sign
+		(( properties[index + 2] ${opposite_sign}= value ))
+		[[ $dual ]] || (( properties[index] ${sign}= value ))
+	}
+
+	[[ $ra ]] &&
+		main_function=set_main_side opposite_function=set_opposite_side || main_function=set_opposite_side opposite_function=set_main_side
+
 	#sleep 1
 	#~/.orw/scripts/notify.sh -t 11 "val: $new_property $old_property $value $sign"
 
@@ -484,23 +511,28 @@ align_adjacent() {
 		id=${properties[0]}
 		original_properties=( ${properties[*]} )
 
+		#echo ${properties[*]}
 		#tile
 
-		if [[ $2 ]]; then
-			#~/.orw/scripts/notify.sh -t 11 "$property_index $old_property ${properties[property_index]}"
-			#[[ $dual ]] || local sign=$opposite_sign opposite_sign=$sign
-			##((${properties[index]} > old_property)) || local sign=$opposite_sign opposite_sign=$sign
-			#(( properties[index] ${opposite_sign}= value ))
-			#(( properties[index + 2] ${sign}= value ))
+		[[ $2 ]] && $opposite_function || $main_function
+		#[[ $2 ]] && set_opposite_side || set_main_side
+		#if [[ $2 ]]; then
+		#	#~/.orw/scripts/notify.sh -t 11 "$property_index $old_property ${properties[property_index]}"
+		#	#[[ $dual ]] || local sign=$opposite_sign opposite_sign=$sign
+		#	##((${properties[index]} > old_property)) || local sign=$opposite_sign opposite_sign=$sign
+		#	#(( properties[index] ${opposite_sign}= value ))
+		#	#(( properties[index + 2] ${sign}= value ))
 
-			set_sign $opposite_sign
-			#echo $id s $sign os $opposite_sign
-			(( properties[index + 2] ${sign}= value ))
-			(( properties[index] ${opposite_sign}= value ))
-		else
-			(( properties[index + 2] ${opposite_sign}= value ))
-			#(( properties[index + 2] ${sign}= value ))
-		fi
+		#	#set_sign $opposite_sign
+		#	#echo $id s $sign os $opposite_sign
+		#	(( properties[index + 2] ${sign}= value ))
+		#	(( properties[index] ${opposite_sign}= value ))
+		#else
+		#	#(( properties[index + 2] ${opposite_sign}= value ))
+		#	(( properties[index + 2] ${sign}= value ))
+		#fi
+
+		#echo $sign ${properties[*]}
 
 		#~/.orw/scripts/notify.sh -t 11 "$id s: $sign, os: $opposite_sign"
 		#update_properties
@@ -508,10 +540,34 @@ align_adjacent() {
 	}
 
 	find_neighbour() {
+		#local reverse_align=$2
+		#local sign opposite_sign
+		##set_sign $opposite_sign
+
+		#if [[ $2 != $previous_ra ]]; then
+		#	echo here $2
+		#	#local sign opposite_sign
+		#	[[ $sign == - ]] &&
+		#		sign=+ opposite_sign=- || sign=- opposite_sign=+
+		#fi
+
+		#echo $sign $2 $ra $previous_ra
+
+		#[[ $2 ]] && set_sign $opposite_sign
+
 		while read -r c window; do
 			if [[ $c ]]; then
+				#if [[ $2 != $previous_ra ]]; then
+				#if [[ $reverse_align ]]; then
+				#	#local sign opposite_sign
+				#	[[ $sign == - ]] &&
+				#		locl sign=+ opposite_sign=- || local sign=- opposite_sign=+
+				#	echo here $2 $sign
+				#fi
+
 				add_adjacent_window "$window" $2
 
+				#previous_ra=$2
 				[[ $2 ]] && ra='' || ra=-r
 				original_id=${1%% *}
 				find_neighbour "$window" $ra
@@ -519,8 +575,16 @@ align_adjacent() {
 		done <<< $(get_adjacent "$1" $2)
 	}
 
+	#echo bs: $sign
 	#echo s $sign os $opposite_sign
-	set_sign $sign
+	#set_sign $opposite_sign
+	#[[ $sign == + ]] && set_sign - || set_sign +
+
+	#if [[ $dual ]]; then
+	#	[[ $sign == + ]] && set_sign - || set_sign +
+	#fi
+
+	#echo as: $sign
 	#echo s $sign os $opposite_sign
 	#~/.orw/scripts/notify.sh -t 11 "s: $sign, os: $opposite_sign"
 	[[ $sign == - ]] &&
@@ -528,6 +592,8 @@ align_adjacent() {
 			new_original_properties=( "${properties[*]}" )
 	find_neighbour "${old_properties[*]}" $ra
 	[[ $new_original_properties ]] && adjacent_windows+=( "${new_original_properties[*]}" )
+
+	#exit
 
 	#~/.orw/scripts/notify.sh "$sign ${adjacent_windows[*]} $ra"
 
@@ -774,8 +840,10 @@ get_alignment() {
 
 					#if this is a first window, assign a min point
 					if(!min) min = cws
-					#if window end point is greater then max, assigh new max
+					#if window end point is greater then max, assign new max
 					if(cws + cwd > max) max = cws + cwd
+
+						#print min, max
 
 					if(cwod == wod) {
 						#if window opposite dimension is full (same as original), add window to fdw 
@@ -792,8 +860,8 @@ get_alignment() {
 						#if this is the last piece of the surface (last window), add all windows belonging to this surface as one full window
 						if(csf == tsf) {
 							fdw[++fdwi] = substr(pdw, 2)
-							pds = ""
-							tsf = 0
+							tsf = csf = 0
+							pdw = ""
 						}
 
 						#if(pdwc) {
@@ -901,15 +969,15 @@ get_alignment() {
 					((cwos >= wos && cwos + cwod <= wos + wod &&
 					(cws + cwd < ws || cws > ws + wd)) &&
 					!($4 == nws && $5 == nws))) {
-					if(cws < ws) bw[++bwi] = $0
-					else if(cws > ws) aw[++awi] = $0
-					else {
-						if(!c) {
-							#system("~/.orw/scripts/notify.sh \"r: '$reverse'\"")
-							if(r) aw[++awi] = $0
-							else bw[++bwi] = $0
+						if(cws < ws) bw[++bwi] = $0
+						else if(cws > ws) aw[++awi] = $0
+						else {
+							if(!c) {
+								#system("~/.orw/scripts/notify.sh \"r: '$reverse'\"")
+								if(r) aw[++awi] = $0
+								else bw[++bwi] = $0
+							}
 						}
-					}
 				}
 			}
 
@@ -1090,7 +1158,7 @@ get_alignment() {
 						#nwd = int(td / (twc + 1))
 						#nwd = int((td + np - p) / (twc + 1))
 						# set alignment ratio if it is enforced, otherwise devide it evenly
-						nwdp = (ar) ? ar : twc + 1
+						nwdp = (ar) ? ar * twc : twc + 1
 						# set new window dimension by deviding total dimension with alignment ratio
 						nwd = int((td + np - (twc * s)) / nwdp)
 						# calculate new dimension by applying ratio computed earlier
@@ -1133,6 +1201,10 @@ get_alignment() {
 				set_array(aw, naw)
 				ac = length(naw)
 				aas = min; aae = max; aad = max - min
+
+				#for(i in nbw) print nbw[i]
+				#for(i in naw) print naw[i]
+				#exit
 
 				# total window dimension and total window count
 				ba = (bc && ac)
@@ -1322,7 +1394,10 @@ align_windows() {
 
 	#reversing stored alignment in case this is the only window
 	local aligned_window_count=${#aligned_windows[*]}
-	([[ $action == close ]] && ((aligned_window_count == 1))) ||
+	#~/.orw/scripts/notify.sh "$action $aligned_window_count ${!aligned_windows[*]}"
+	#this line ignores expected behaviour in case of moving windows
+	#([[ $action == close ]] && ((aligned_window_count == 1))) ||
+	([[ $action ]] && ((aligned_window_count == 1))) ||
 		([[ ! $action ]] && ((aligned_window_count == 2))) && awk -i inplace -F '[: ]' '\
 			BEGIN {
 				awc = '$aligned_window_count'
@@ -2176,6 +2251,7 @@ align() {
 	# checking optional arguments
 	[[ $optarg =~ m$ ]] && window_action=move
 	[[ $optarg =~ c$ ]] && window_action=close
+	[[ $optarg =~ ^[0-9.]+$ ]] && align_ratio=$optarg
 	[[ $optarg && ! $window_action ]] && alignment_direction=${optarg:0:1}
 
 	if [[ $mode == selection ]]; then
@@ -2268,8 +2344,12 @@ align() {
 					#align_ratio=$(echo "$ratio / $part" | bc -l)
 
 					# if mode is equal to auto, select opposite of larger dimension
-					((${properties[3]} > ${properties[4]})) &&
-						alignment_direction=h || alignment_direction=v
+					if [[ $tiling ]]; then
+						alignment_direction=$(awk '$1 == "'${original_properties[0]}':" { print $NF == "h" ? "v" : "h" }' $alignment_file)
+					else
+						((${properties[3]} > ${properties[4]})) &&
+							alignment_direction=h || alignment_direction=v
+					fi
 				elif [[ $mode == stack && $window_action != close ]]; then
 					# if windows are already splited into main and stack, align it with stack windows 
 					if ((window_count > 2)); then
@@ -2454,6 +2534,8 @@ while ((argument_index <= $#)); do
 			C) select_window_using_mouse;;
 			A)
 				((${#all_aligned_windows[*]})) || declare -A all_aligned_windows
+				[[ ${!argument_index} =~ ^[1-9.]+$ ]] &&
+					align_ratio=${!argument_index} && shift
 				align;;
 			[TRBLHD])
 				if [[ ! $option ]]; then
@@ -2869,6 +2951,10 @@ while ((argument_index <= $#)); do
 
 							# assigning optional alignment argument
 							[[ $optarg == [hv] ]] && alignment_direction=$optarg
+							#[[ $optarg == [hv] ]] && alignment_direction=$optarg ||
+							#	alignment_direction=$(awk '$1 == "'$id':" { print $NF == "h" ? "v" : "h" }' $alignment_file)
+
+								#alignment_direction=$(awk '/^direction/ { print $NF == "h" ? "v" : "h" }' $config)
 
 							#optind=${!argument_index}
 							#[[ $optind == [hv] ]] && alignment_direction=$optind
@@ -2881,8 +2967,11 @@ while ((argument_index <= $#)); do
 #									} END { print m, d, r }' $config)
 
 
-							if [[ $mode == tiling ]]; then
-								use_ratio=true
+							if [[ $mode != floating ]]; then
+								#use_ratio=true
+								#((100 / ratio * part != 50)) && echo yes || echo NO
+								#exit
+								#((100 / ratio * part != 50)) && use_ratio=true
 								# basking up original properties
 								original_properties=( ${properties[*]} )
 
@@ -2933,6 +3022,21 @@ while ((argument_index <= $#)); do
 									id=none
 								fi
 
+
+								for aligned_window_id in ${!all_aligned_windows[*]}; do
+									read aligned_window_width aligned_window_height <<< ${all_aligned_windows[$aligned_window_id]#* * }
+									((index == 1)) &&
+										(( aligned_dimension += aligned_window_width )) || (( aligned_dimension += aligned_window_height ))
+								done
+
+								(( aligned_dimension -= border + ${margin:-$offset} ))
+								moved_window_dimension=${original_properties[index + 2]}
+								align_ratio=$(echo "$aligned_dimension / $moved_window_dimension" | bc -l)
+								#echo $moved_window_ratio
+								#aligned_window_count=${#all_aligned_windows[*]}
+								#moved_window_ratio=$((align_dimension - aligned_window_count * (border + ${margin:-$offset})
+
+
 								#~/.orw/scripts/notify.sh "id: $id, ${properties[*]}"
 								#exit
 
@@ -2940,8 +3044,11 @@ while ((argument_index <= $#)); do
 								#exit
 
 								#[[ $new_desktop ]] || align_windows move
+								#awk '$1 == "'$id':"' $alignment_file
+								#alignment_direction=$(awk '$1 == "'$id':" { print $NF == "h" ? "v" : "h" }' $alignment_file)
 
 								align
+
 								#for i in ${!all_aligned_windows[*]}; do echo ${all_aligned_windows[$i]}; done
 								#exit
 								continue
@@ -3312,9 +3419,11 @@ while ((argument_index <= $#)); do
 						(( properties[1] -= display_y ))
 					fi
 
-					echo -n "$x_border $y_border "
-					[[ $properties ]] && echo ${properties[*]} ||
-						get_windows ${id:-$name} | cut -d ' ' -f 2-
+					[[ $properties ]] || properties=( $(get_windows ${id:-$name}) )
+					echo "$x_border $y_border ${properties[*]:1}"
+					#echo -n "$x_border $y_border "
+					#[[ $properties ]] && echo ${properties[*]} ||
+					#	get_windows ${id:-$name} | cut -d ' ' -f 2-
 				fi
 				exit;;
 			o) overwrite=true;;
