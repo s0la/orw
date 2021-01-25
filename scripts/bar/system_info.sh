@@ -142,7 +142,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=72
+		old_mail_count=80
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -232,6 +232,8 @@ case $1 in
 				#set_icon dropdown_$state
 				set_icon dropdown
 				term=$(format ${!1-TERM} ":~/.orw/scripts/dropdown.sh:")
+				#echo "term: $term" >> ~/Desktop/term_out
+				#~/.orw/scripts/notify.sh "term: $term"
 			fi
 		}
 
@@ -275,9 +277,10 @@ case $1 in
 		}
 
 		tiling() {
-			pids=( $(pidof -x tile_windows.sh) )
+			#pids=( $(pidof -x tile_windows.sh) )
 
-			if ((${#pids[*]})); then
+			#if ((${#pids[*]})); then
+			if pidof -x tile_windows.sh &> /dev/null; then
 				#mode=$(awk '$1 == "mode" { print $NF }' ~/.config/orw/config)
 
 				#id=$(printf '0x%.8x' $(xdotool getactivewindow))
@@ -317,6 +320,7 @@ case $1 in
 
 				fg="\${$pfg}"
 				set_icon tiling_${mode}_$orientation
+				#set_icon tiling_${mode}_${orientation:-h}
 
 				modes=( tiling auto stack )
 
