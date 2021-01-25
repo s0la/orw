@@ -137,16 +137,31 @@ display_width=$(awk '\
 		}
 	}' ~/.config/orw/config)
 
+#offset=$(awk '
+#	function get_value() {
+#		return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
+#	}
+#
+#	/window/ { nr = NR }
+#	/font/ { f = get_value() }
+#	/width/ && NR < nr + 5 { w = get_value() }
+#	/padding/ && NR < nr + 5 { p = get_value() }
+#	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' .config/rofi/large_list.rasi)
+
 offset=$(awk '
 	function get_value() {
-		return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
+		return gensub(".* ([0-9]+).*", "\\1", 1)
 	}
 
-	/window/ { nr = NR }
-	/font/ { f = get_value() }
-	/width/ && NR < nr + 5 { w = get_value() }
-	/padding/ && NR < nr + 5 { p = get_value() }
-	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' .config/rofi/large_list.rasi)
+	/^\s*font/ { f = get_value() }
+	/^\s*window-width/ { ww = get_value() }
+	/^\s*window-padding/ { wp = get_value() }
+	/^\s*element-padding/ { ep = get_value() }
+	END {
+		rw = int('$display_width' * ww / 100)
+		iw = rw - 2 * (wp + ep)
+		print int(iw / (f - 2))
+	}' ~/.config/rofi/list.rasi)
 
 torrent_id="15"
 current=""

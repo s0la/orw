@@ -152,19 +152,34 @@ display_width=$(awk '\
 		}
 	}' ~/.config/orw/config)
 
+#offset=$(awk '
+#	function get_value() {
+#		return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
+#	}
+#
+#	/font/ { f = get_value() }
+#	/window-width:/ { w = get_value() }
+#	/window-padding:/ { p = get_value() }
+#	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' ~/.config/rofi/large_list.rasi)
+
 offset=$(awk '
 	function get_value() {
-		return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
+		return gensub(".* ([0-9]+).*", "\\1", 1)
 	}
 
-	/font/ { f = get_value() }
-	/window-width:/ { w = get_value() }
-	/window-padding:/ { p = get_value() }
-	END { print int((('$display_width' / 100) * w - 2 * p) / (f - 2) - 7) }' ~/.config/rofi/large_list.rasi)
+	/^\s*font/ { f = get_value() }
+	/^\s*window-width/ { ww = get_value() }
+	/^\s*window-padding/ { wp = get_value() }
+	/^\s*element-padding/ { ep = get_value() }
+	END {
+		rw = int('$display_width' * ww / 100)
+		iw = rw - 2 * (wp + ep)
+		print int(iw / (f - 2))
+	}' ~/.config/rofi/list.rasi)
 
-torrent_id="43"
+torrent_id="47"
 current=""
-full_path="Vale Of Pnath - Discography"
+full_path="Depths Above - 2018 - Ex Nihilo"
 
 depth="2"
 final_depth="0"
