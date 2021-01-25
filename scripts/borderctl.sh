@@ -72,12 +72,12 @@ case $1 in
 			read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
 
 			[[ $offset == true ]] &&
-				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets) &&
-				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
+				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
 
 			[[ $mode != floating ]] && offset_tiled_windows
 
-			[[ $offset ]] && exit
+			[[ $offset == true ]] &&
+				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value && exit
 
 			#if [[ $offset == true ]]; then
 			#	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
@@ -510,10 +510,15 @@ if [[ $1 == [bcp][hwp] ]]; then
 	read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
 	awk -i inplace '/^[xy]_border/ { sub($NF, (/^x/) ? '$x_border' : '$y_border') } { print }' $orw_conf
 
-	pids="$(pidof -x tile_windows.sh)"
-
-	if [[ $pids ]]; then
-		kill "$pids"
-		~/.orw/scripts/tile_window.sh &
+	if pidof -x tile_windows.sh &> /dev/null; then
+		killall tile_windows.sh
+		~/.orw/scripts/tile_windows.sh &> /dev/null &
 	fi
+
+	#pids=( $(pidof -x tile_windows.sh) )
+
+	#if ((${#pids[*]})); then
+	#	kill ${pids[*]}
+	#	~/.orw/scripts/tile_windows.sh &
+	#fi
 fi &
