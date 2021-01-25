@@ -283,6 +283,11 @@ tmux() {
 }
 
 restart_tiling() {
+	#if pidof -x tile_windows.sh &> /dev/null; then
+	#	[[ ${1:-$mode} == floating ]] && killall tile_windows.sh ||
+	#		~/.orw/scripts/tile_windows.sh &> /dev/null &
+	#fi
+
 	pid=( $(pidof -x tile_windows.sh) )
 
 	if [[ ${1:-$mode} == floating ]]; then
@@ -416,19 +421,21 @@ shadow() {
 
 wm() {
 	if [[ $1 =~ full|offset|reverse|direction ]]; then
-		read mode state <<< $(awk '/^'$1'/ {
-			if("'$2'") {
-				m = "'$2'"
-			} else {
-				if("'$1'" == "direction") m = ($NF == "h") ? "v" : "h"
-				else m = ($NF == "true") ? "false" : "true"
-			}
+		read wm_mode mode state <<< $(awk '
+			/^mode/ { wmm = $NF }
+			/^'$1'/ {
+				if("'$2'") {
+					m = "'$2'"
+				} else {
+					if("'$1'" == "direction") m = ($NF == "h") ? "v" : "h"
+					else m = ($NF == "true") ? "false" : "true"
+				}
 
-			if(length(m) > 1) s = (m == "true") ? "ON" : "OFF"
-			else s = (m == "h") ? "horizontal" : "vertical"
+				if(length(m) > 1) s = (m == "true") ? "ON" : "OFF"
+				else s = (m == "h") ? "horizontal" : "vertical"
 
-			print m, s
-		}' $orw_conf)
+				print wmm, m, s
+			}' $orw_conf)
 
 		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
 		#case $1 in
@@ -441,7 +448,25 @@ wm() {
 		case $1 in
 			direction) [[ $mode == h ]] && icon=  || icon=;;
 			#offset) [[ $mode == true ]] && icon=  || icon=;;
-			offset) icon=;;
+			offset)
+				icon=
+
+				if [[ $wm_mode != floating ]]; then
+					#[[ $mode == true ]] && offset_config=${orw_conf%/*}/offsets
+					#eval $(awk '/_offset/ { print gensub(" ", "=", 1) }' ${offset_config:-$orw_conf} | xargs)
+					offset_file=${orw_conf%/*}/offsets
+					[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
+						{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
+					read default_{x,y}_offset <<< $(awk '/_offset/ { print $NF }' $orw_conf | xargs)
+
+					delta_x=$((x_offset - default_x_offset))
+					delta_y=$((y_offset - default_y_offset))
+
+					[[ $mode == true ]] && sign=+ || sign=-
+
+					~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
+					~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
+				fi;;
 			full) icon=;;
 			*) icon=;;
 		esac
