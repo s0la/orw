@@ -8,33 +8,39 @@ calculate() {
 	#printf '%.0f' $(bc <<< "scale=2; $@")
 	local value=$(($1 / step))
 	local reminder=$(($1 % step))
-	((step - reminder < (step / 100 * 20))) && ((value++))
+	((step - reminder < (step * 30 / 100))) && ((value++))
 
 	echo $value
 }
 
 adjust_values() {
 	osd_window_x=$(calculate $x)
+	osd_window_x_end=$(calculate $((x + w)))
 	osd_window_y=$(calculate $y)
+	osd_window_y_end=$(calculate $((y + h)))
 	osd_window_w=$(calculate $w)
 	osd_window_h=$(calculate $h)
 
 	osd_x_start=$(calculate $x_start)
 	osd_y_start=$(calculate $y_start)
 	osd_x_end=$(calculate $x_end)
-	osd_y_end=$(calculate $((y_end - y_start)))
+	osd_y_end=$(calculate $y_end)
+	#osd_y_end=$(calculate $((y_end - y_start)))
 
 	x_before=$((osd_window_x - osd_x_start))
-	x_size=$(calculate $w)
-	x_after=$((osd_x_end - (osd_window_x + osd_window_w)))
+	#x_size=$(calculate $w)
+	x_size=$((osd_window_x_end - osd_window_x))
+	x_after=$((osd_x_end - osd_window_x_end))
+	#x_after=$((osd_x_end - (osd_window_x + osd_window_w)))
 
 	y_before=$((osd_window_y - osd_y_start))
-	y_size=$(calculate $h)
-	y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
+	#y_size=$(calculate $h)
+	y_size=$((osd_window_y_end - osd_window_y))
+	y_after=$((osd_y_end - osd_window_y_end))
+	#y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
 
-	#echo $w $step $y_start $y_end $h
-	#echo $osd_y_end $osd_window_y $osd_window_h
-	#echo $y_before $y_size $y_after
+	#echo $y_before $y_size $y_after $h
+	#echo $osd_window_y $osd_y_start $osd_y_end
 
 	icon=' '
 	icon=''
@@ -73,6 +79,7 @@ evaluate() {
 				option=resize
 				[[ $input == "<" ]] && sign=- || sign=+;;
 			[A-Z])
+				local default_step=$step
 				local step sign
 
 				case $input in
@@ -84,27 +91,29 @@ evaluate() {
 
 				sign=+
 				input=${input,};;
-			*)
-				if [[ $option == move ]]; then
-					case $input in
-						k) ((y -= step));;
-						l) ((x += step));;
-						j) ((y += step));;
-						h) ((x -= step));;
-					esac
-				else
-					case $input in
-						j) ((h $sign= step));;
-						l) ((w $sign= step));;
-						[hk])
-							[[ $input == h ]] && properties='w x' || properties='h y'
-							[[ $sign == - ]] && opposite_sign=+ || opposite_sign=-
-
-							((${properties% *} $sign= step))
-							((${properties#* } $opposite_sign= step))
-					esac
-				fi
 		esac
+
+		if [[ $option == move ]]; then
+			case $input in
+				k) ((y -= step));;
+				l) ((x += step));;
+				j) ((y += step));;
+				h) ((x -= step));;
+			esac
+		else
+			case $input in
+				j) ((h $sign= step));;
+				l) ((w $sign= step));;
+				[hk])
+					[[ $input == h ]] && properties='w x' || properties='h y'
+					[[ $sign == - ]] && opposite_sign=+ || opposite_sign=-
+
+					((${properties% *} $sign= step))
+					((${properties#* } $opposite_sign= step))
+			esac
+
+			((default_step)) && step=$default_step
+		fi
 
 		adjust_values
 	fi
