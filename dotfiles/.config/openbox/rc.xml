@@ -186,7 +186,7 @@
     </keybind>
     <keybind key="A-Tab">
       <action name="Execute">
-        <command>rofi -show window -theme list</command>
+	    <command>~/.orw/scripts/rofi_scripts/dmenu/switch_windows.sh</command>
       </action>
     </keybind>
     <keybind key="A-e">
@@ -1008,8 +1008,8 @@
     <application class="*">
       <layer>below</layer>
       <position force="yes">
-        <x>726</x>
-        <y>354</y>
+        <x>306</x>
+        <y>412</y>
       </position>
       <size>
         <width>150</width>
@@ -1046,12 +1046,12 @@
       <layer>below</layer>
 	  <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>1414</x>
-        <y>536</y>
+        <x>918</x>
+        <y>477</y>
       </position>
       <size>
-        <width>70</width>
-        <height>70</height>
+        <width>130</width>
+        <height>130</height>
       </size>
     </application>
 

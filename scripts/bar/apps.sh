@@ -63,9 +63,10 @@ get_window() {
 		bg="\${A${current}bg:-\${Asbg:-\$${current}bg}}"
 		fg="\${A${current}fg:-\${Asfg:-\$${current}fg}}"
 
-		[[ $current == s ]] &&
-			left_command="wmctrl -ia $window_id" ||
-			left_command="xdotool getactivewindow windowminimize"
+		#[[ $current == s ]] &&
+		#	left_command="wmctrl -ia $window_id" ||
+		#	left_command="xdotool getactivewindow windowminimize"
+		left_command="~/.orw/scripts/minimize_window.sh $window_id"
 		[[ $mode != tiling ]] &&
 			middle_command="wmctrl -ic $window_id" ||
 			middle_command="~/.orw/scripts/get_window_neighbours.sh"
