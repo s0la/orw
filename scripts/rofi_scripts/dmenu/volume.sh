@@ -11,6 +11,22 @@ icon_up=
 icon_down=
 icon_mute=
 
+icon_up=
+icon_down=
+icon_mute=
+
+icon_up=
+icon_down=
+icon_mute=
+
+icon_up=
+icon_down=
+icon_mute=
+
+icon_up=
+icon_down=
+icon_mute=
+
 while
 	active=$(amixer -D pulse get Master | awk '/Playback.*%/ { if($NF ~ "off") print "-a 1" }')
 

@@ -420,8 +420,8 @@ shadow() {
 }
 
 wm() {
-	if [[ $1 =~ full|offset|reverse|direction ]]; then
-		read wm_mode mode state <<< $(awk '
+	if [[ $1 =~ full|ratio|offset|reverse|direction ]]; then
+		read wm_mode mode state icon <<< $(awk '
 			/^mode/ { wmm = $NF }
 			/^'$1'/ {
 				if("'$2'") {
@@ -434,8 +434,37 @@ wm() {
 				if(length(m) > 1) s = (m == "true") ? "ON" : "OFF"
 				else s = (m == "h") ? "horizontal" : "vertical"
 
-				print wmm, m, s
-			}' $orw_conf)
+				$NF = m
+			}
+			/^part/ { p = $NF }
+			/^ratio/ { r = 100 / $NF * p }
+			/^use_ratio/ {
+				if($1 ~ "'$1'") {
+					if(r < 13) i = ""
+					else if(r <= 25) i = ""
+					else if(r < 38) i = ""
+					else if(r <= 50) i = ""
+					else if(r < 63) i = ""
+					else if(r <= 75) i = ""
+					else i = ""
+				}
+			}
+			/^direction/ {
+				if($1 == "'$1'") i = ($NF == "h") ? "" : ""
+				else d = $NF
+			}
+			/^reverse/ {
+				if($1 == "'$1'") i = ""
+				rv = ($NF == "true")
+			}
+			/^full/ {
+				if($1 == "'$1'") {
+					if(d = "h") i = (rv) ? "" : ""
+					else i = (rv) ? "" : ""
+				}
+			}
+
+			END { print wmm, m, s, i }' $orw_conf)
 
 		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
 		#case $1 in
@@ -445,31 +474,33 @@ wm() {
 		#	*) icon=
 		#esac
 
-		case $1 in
-			direction) [[ $mode == h ]] && icon=  || icon=;;
-			#offset) [[ $mode == true ]] && icon=  || icon=;;
-			offset)
-				icon=
+		#case $1 in
+		#	direction) [[ $mode == h ]] && icon=  || icon=;;
+		#	#offset) [[ $mode == true ]] && icon=  || icon=;;
+		#	offset)
+		if [[ $1 == offset ]]; then
+			icon=
 
-				if [[ $wm_mode != floating ]]; then
-					#[[ $mode == true ]] && offset_config=${orw_conf%/*}/offsets
-					#eval $(awk '/_offset/ { print gensub(" ", "=", 1) }' ${offset_config:-$orw_conf} | xargs)
-					offset_file=${orw_conf%/*}/offsets
-					[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
-						{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
-					read default_{x,y}_offset <<< $(awk '/_offset/ { print $NF }' $orw_conf | xargs)
+			if [[ $wm_mode != floating ]]; then
+				#[[ $mode == true ]] && offset_config=${orw_conf%/*}/offsets
+				#eval $(awk '/_offset/ { print gensub(" ", "=", 1) }' ${offset_config:-$orw_conf} | xargs)
+				offset_file=${orw_conf%/*}/offsets
+				[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
+					{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
+				read default_{x,y}_offset <<< $(awk '/_offset/ { print $NF }' $orw_conf | xargs)
 
-					delta_x=$((x_offset - default_x_offset))
-					delta_y=$((y_offset - default_y_offset))
+				delta_x=$((x_offset - default_x_offset))
+				delta_y=$((y_offset - default_y_offset))
 
-					[[ $mode == true ]] && sign=+ || sign=-
+				[[ $mode == true ]] && sign=+ || sign=-
 
-					~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
-					~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
-				fi;;
-			full) icon=;;
-			*) icon=;;
-		esac
+				~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
+				~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
+			fi
+		fi
+		#	full) icon=;;
+		#	*) icon=;;
+		#esac
 
 		~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "$1: $mode"
 
@@ -513,17 +544,26 @@ wm() {
 		fi
 
 		if [[ ! $2 ]]; then
-			[[ $mode == floating ]] && icon= || icon=
-			[[ $mode == floating ]] && icon= || icon=
-			[[ $mode == floating ]] && icon= || icon=
+			#[[ $mode == floating ]] && icon= || icon=
+			#[[ $mode == floating ]] && icon= || icon=
+			#[[ $mode == floating ]] && icon= || icon=
+
+			#case $mode in
+			#	tiling) icon=;;
+			#	stack) icon=;;
+			#	auto)
+			#		id=$(printf '0x%.8x' $(xdotool getactivewindow))
+			#		icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
+			#	*) icon=;;
+			#esac
 
 			case $mode in
-				tiling) icon=;;
-				stack) icon=;;
-				auto)
-					id=$(printf '0x%.8x' $(xdotool getactivewindow))
-					icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
-				*) icon=;;
+				tiling) icon=;;
+				stack) icon=%;;
+				auto) icon=;;
+					#id=$(printf '0x%.8x' $(xdotool getactivewindow))
+					#icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
+				*) icon=;;
 			esac
 
 			~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "Mode: $mode"

@@ -31,6 +31,13 @@ if [[ $theme == icons ]]; then
 	prev= next= rand= restore= select= categories= view= auto=
 	prev= next= rand= restore= select= categories= view= auto=
 	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
+	prev= next= rand= restore= select= categories= view= auto=
 else
 	next=next prev=prev rand=rand restore=restore select=select categories=categories view=view auto=autochange nl=\n
 fi

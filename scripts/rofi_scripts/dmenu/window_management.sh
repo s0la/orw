@@ -6,7 +6,8 @@ theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 [[ $theme == icons ]] &&
 	#tile=  left= right= center= fullscreen=  save=  restore=  ||
 	#tile=  left= right= center= fullscreen=  save=  restore=  ||
-	tile=  left=  right=  center= fullscreen=  save=  restore=  ||
+	#tile=  left=  right=  center= fullscreen=  save=  restore=  ||
+	tile=  left=  right=  center= fullscreen=  save=  restore=  ||
 	tile=tile left=left right=right center=center fullscreen=fullscreen save=save restore=restore
 
 id=$(printf "0x%.8x" $(xdotool getactivewindow))

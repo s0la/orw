@@ -72,16 +72,25 @@ get_state() {
 				#wm = ($NF == "floating") ? "" : ""
 				m = $NF
 
-				if(m == "tiling") { wm = ""; wma = 1 }
-				else if(m == "auto") { wm = ("'$orientation'" == "h") ? "" : ""; wma = 2 }
-				else if(m == "stack") { wm = ""; wma = 3 }
-				else if(m == "floating") { wm = ""; wma = 0 }
-				else if(m == "floating") { wm = ""; wma = 0 }
-				else { wm = ""; wma = 4 }
+				#if(m == "tiling") { wm = ""; wma = 1 }
+				#else if(m == "auto") { wm = ("'$orientation'" == "h") ? "" : ""; wma = 2 }
+				#else if(m == "stack") { wm = ""; wma = 3 }
+				#else if(m == "floating") { wm = ""; wma = 0 }
+				#else if(m == "floating") { wm = ""; wma = 0 }
+				#else { wm = ""; wma = 4 }
+				if(m == "tiling") { wm = ""; wma = 1 }
+				else if(m == "auto") { wm = ""; wma = 2 }
+				#else if(m == "auto") { wm = "'$orientation'"; wma = 2 }
+				else if(m == "stack") { wm = ""; wma = 3 }
+				else if(m == "floating") { wm = ""; wma = 0 }
+				else { wm = ""; wma = 4 }
 			}
+			else if(/^part/) { p = $NF }
+			else if(/^ratio/) { r = 100 / $NF * p }
 			else if(/^direction/) {
 				dir = $NF
-				d = (dir == "h") ? "" : ""
+				d = (dir == "h") ? "" : ""
+				d = (dir == "h") ? "" : ""
 			} else if(/^full/) {
 				f = "  "
 				f = ""
@@ -90,9 +99,10 @@ get_state() {
 				if(dir == "h") {
 					f = (rev) ? "" : ""
 					f = (rev) ? "" : ""
+					f = (rev) ? "" : ""
 				} else {
 					f = (rev) ? "" : ""
-					f = (rev) ? "" : ""
+					f = (rev) ? "" : ""
 				}
 
 				if($NF == "true") a = a ",1"
@@ -103,14 +113,25 @@ get_state() {
 				ur = ""
 				ur = ""
 				ur = ""
+
+				if(r < 13) ur = ""
+				else if(r <= 25) ur = ""
+				else if(r < 38) ur = ""
+				else if(r <= 50) ur = ""
+				else if(r < 63) ur = ""
+				else if(r <= 75) ur = ""
+				else ur = ""
 				if($NF == "true") a = a ",2"
 			} else if(/^offset/) {
 				o = ""
+				o = ""
 				if($NF == "true") a = a ",3"
 			} else if(/^reverse/) {
 				r = ""
 				r = ""
 				r = ""
+				r = ""
+				r = ""
 				rev = ($NF == "true")
 				if(rev) a = a ",4"
 			}
@@ -123,7 +144,8 @@ get_state() {
 
 id=$(printf '0x%.8x' $(xdotool getactivewindow))
 #orientation=$(wmctrl -lG | awk '$1 == "'$1'" { print ($5 > $6) ? "v" : "h" }')
-orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+#orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+#orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }')
 #reverse=$(awk '/^reverse/ { print ($NF == "true") }' ~/.config/orw/config)
 #read width height <<< $(wmctrl lG | awk '$1 == "'$1'" { print ($5 > $6) ? "h" : "v" }')
 
@@ -162,7 +184,14 @@ if [[ $action ]]; then
 			#	floating=floating tiling=tiling auto=auto stack=stack selection=selection
 
 			[[ $theme == icons ]] &&
-				wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
+				#wm_mode_icons=(     $orientation     ) &&
+				wm_mode_icons=(           ) &&
+				wm_mode_icons=(           ) &&
 				~/.orw/scripts/set_rofi_geometry.sh tiling_toggle 5
 
 			wm_modes=( floating tiling auto stack selection )

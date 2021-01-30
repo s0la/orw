@@ -12,6 +12,16 @@ icon_x_up=
 icon_y_up=
 icon_y_down=
 
+icon_x_down=
+icon_x_up=
+icon_y_up=
+icon_y_down=
+
+icon_x_down=
+icon_x_up=
+icon_y_up=
+icon_y_down=
+
 list_options() {
 	cat <<- EOF
 		$icon_x_down$sep$x_down

@@ -24,7 +24,7 @@ list_torrents() {
 			i = index($0, "Name")
 		}
 		$2 ~ "[0-9]+%" {
-			s = ("'$selection'") ? ($1 ~ "^('${multiple_torrents//,/|}')\\*?$") ? " " : " " : $2
+			s = ("'$selection'") ? ($1 ~ "^('${multiple_torrents//,/|}')\\*?$") ? " " : " " : $2
 			printf("%-*s%s\n", (s ~ "%$") ? 6 : 0, s, substr($0, i))
 		}'
 }

@@ -8,6 +8,18 @@ icon_max=
 icon_min=
 icon_close=
 
+icon_max=
+icon_min=
+icon_close=
+
+icon_max=
+icon_min=
+icon_close=
+
+icon_max=
+icon_min=
+icon_close=
+
 #id=$(printf "0x%.8x" $(xdotool getactivewindow))
 config=~/.config/orw/config
 offsets=~/.config/orw/offsets

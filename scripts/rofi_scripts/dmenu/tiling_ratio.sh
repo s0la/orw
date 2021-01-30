@@ -11,6 +11,16 @@ icon_part_up=
 icon_ratio_up=
 icon_ratio_down=
 
+icon_part_down=
+icon_part_up=
+icon_ratio_up=
+icon_ratio_down=
+
+icon_part_down=
+icon_part_up=
+icon_ratio_up=
+icon_ratio_down=
+
 list_options() {
 	cat <<- EOF
 		$icon_part_down$sep$part_down

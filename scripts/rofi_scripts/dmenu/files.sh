@@ -57,7 +57,8 @@ function create_archive() {
 	pid=$((COPROC_PID + 1))
 	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-	echo -e  
+	#echo -e  
+	echo -e $refresh_icon
 
 	un_set archive
 }
@@ -66,7 +67,7 @@ function list_archive() {
 	format=${current##*.}
 
 	case $format in
-		*[bgx]z*) tar tf "$current" | awk '{ if("'$selection'") s = (/^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
+		*[bgx]z*) tar tf "$current" | awk '{ if("'$selection'") s = (/^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
 			print s $0 }';;
 		zip) nr=2 flag=-l;;
 		rar) nr=7 flag=l;;
@@ -75,7 +76,7 @@ function list_archive() {
 	[[ $format =~ zip|rar ]] && un$format $flag $password "$current" | awk 'NR == '$nr' { i = index($0, "Name") } \
 		/[0-9]{4}-[0-9]{2}-[0-9]{2}/ {
 			f = substr($0, i) 
-			if("'$selection'") s = (f ~ /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
+			if("'$selection'") s = (f ~ /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
 			print s f
 		}'
 }
@@ -115,7 +116,8 @@ function extract_archive() {
 	pid=$((COPROC_PID + 1))
 	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-	echo -e  
+	#echo -e  
+	echo -e $refresh_icon
 
 	un_set archive archive_single password
 }
@@ -164,7 +166,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current=""
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
@@ -185,6 +187,15 @@ bookmarks=${0%/*}/bookmarks
 
 [[ $options ]] && back_icon= || back_icon=
 back_icon=
+back_icon=
+refresh_icon=
+options_icon=
+file_icon=
+bookmarks_icon=
+directory_icon=
+open_directory_icon=
+checkbox_icon=
+checkbox_checked_icon=
 echo -e $back_icon
 
 #~/.orw/scripts/notify.sh "o: $back_icon $options"
@@ -303,14 +314,14 @@ if [[ ${option% *} ]]; then
 			killall rofi
 			termite -e "bash -c \"cd '$current'\";bash"
 			exit;;
-		) set options options;;
+		$options_icon) set options options;;
 		 );;
 		 );;
 		 );;
-		 )
+		$bookmarks_icon)
 			awk '{ print $1 }' $bookmarks
 			set options bookmarks;;
-		 )
+		$directory_icon)
 			killall rofi
 
 			if [[ ! $file ]]; then
@@ -407,7 +418,8 @@ if [[ ${option% *} ]]; then
 					pid=$((COPROC_PID + 1))
 					coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-					echo -e  ;;
+					#echo -e  ;;
+					echo -e $refresh_icon;;
 				add_to_bookmarks) echo "${arg:-${current##*/}} $current" >> $bookmarks;;
 				by_*|reverse|alpha*)
 					case ${option#*_} in
@@ -573,9 +585,12 @@ else
 fi
 
 if [[ -d "$current" && ! $options ]]; then
-	echo -e 
-	echo -e 
-	echo -e 
+	#echo -e 
+	#echo -e 
+	#echo -e 
+	echo -e $options_icon
+	echo -e $bookmarks_icon
+	echo -e $open_directory_icon
 
 	if [[ $git ]]; then
 		print_git_files() {
@@ -592,13 +607,18 @@ if [[ -d "$current" && ! $options ]]; then
 		while read -r s file; do
 			if [[ $file ]]; then
 				if [[ $selection ]]; then
-					((s)) && icon= || icon=
+					#((s)) && icon= || icon=
+					((s)) && icon=  || icon=
 				else
 					if [[ -d "$current/$file" ]]; then
 						icon=
+						icon=
+						icon=$directory_icon
 					else
 						#icon=
 						icon=
+						icon=
+						icon=$file_icon
 					fi
 				fi
 

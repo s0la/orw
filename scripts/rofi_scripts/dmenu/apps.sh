@@ -38,6 +38,9 @@ if [[ $theme == icons ]]; then
 	tile=  vifm=  term=  dropdown=${state:-} qb=
 	tile=  vifm=  vifm=  term=  dropdown=${state:-} qb=
 	tile=  vifm=  term=  dropdown=${state:-} qb=
+	tile=  vifm= term=  dropdown=${state:-} qb=
+	tile=  vifm= term=  dropdown=${state:-} qb=
+	tile=  vifm= term=  dropdown=${state:-} qb=
 else
 	[[ $running ]] && eval "$running empty='  '"
 	tile=tile vifm=vifm term=termite dropdown=dropdown qb=qutebrowser

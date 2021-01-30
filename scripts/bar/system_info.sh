@@ -34,14 +34,15 @@ function format() {
 
 		case $style in
 			hidden)
-				hidden="\$padding${fg}$icon_width$1%{I-}%{F-}\$padding"
+				hidden="\$inner${fg}$icon_width$1%{I-}%{F-}\$inner"
 
 				for (( arg=$#; arg > 1; arg-- )); do
 					hidden="%{A${!arg}}$hidden%{A}"
 				done
 
 				echo -e $hidden;;
-			mono) echo -e "\${${mono_bg:-$pbg}}$padding\${$pfg}$icon_width$mono_fg$1%{I-}$padding$2 ${separator:-\$separator}";;
+			#mono) echo -e "\${${mono_bg:-$pbg}}$padding\${$pfg}$icon_width$mono_fg$1%{I-}$padding$2 ${separator:-\$separator}";;
+			mono) echo -e "\${${mono_bg:-$pbg}}$padding\${${mono_fg:-$pfg}}$icon_width$1%{I-}$padding$2 ${separator:-\$separator}";;
 			trim) echo -e "$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2$padding$3 \$separator";;
 			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width%{T5}$1%{T1}%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
 		esac
@@ -142,7 +143,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=80
+		old_mail_count=10
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -206,11 +207,49 @@ case $1 in
 	date*)
 		padding=$2
 		separator="$3"
-		date="$(date +"$(([[ $4 ]] && echo "${4//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
+		format=$(sed 's/_/ /g; s/\w/%&/g' <<< ${5:-I:M})
+		date="$(date +"$format")"
+		#date="$(date +"$(([[ $5 ]] && echo "${5//_/ }" || echo I:M) | sed 's/\w/%&/g')")"
 
 		[[ $date =~ .*\ .*:.* ]] && time="${date##* }" date="${date% *}" || style=mono
 
-		format "$date" $time;;
+		#if [[ ${@: -1} == icon ]]; then
+		if [[ $4 == icon ]]; then
+			get_num_icon() {
+				local var=${!1}
+
+				for char_index in $(seq ${#var}); do
+					char=${var:char_index - 1:1}
+
+					if [[ $char == [0-9] ]]; then
+						case $char in
+							0) num_icon=zero;;
+							1) num_icon=one;;
+							2) num_icon=two;;
+							3) num_icon=three;;
+							4) num_icon=four;;
+							5) num_icon=five;;
+							6) num_icon=six;;
+							7) num_icon=seven;;
+							8) num_icon=eight;;
+							9) num_icon=nine;;
+						esac
+
+						set_icon num_$num_icon
+						eval "${1}_icon+=$icon"
+					else
+						eval "${1}_icon+=$char"
+					fi
+				done
+			}
+
+			mono_bg="$sbg"
+			mono_fg="$sfg"
+			get_num_icon date
+			[[ $time ]] && get_num_icon time
+		fi
+
+		format "${date_icon:-$date}" ${time_icon:-$time};;
 	Hidden*)
 		style=hidden
 		separator="$2"
@@ -296,7 +335,7 @@ case $1 in
 				#			print ((3 + n - 1) % 3), ((3 + n + 1) % 3), m, i
 				#		}' ~/.config/orw/config)
 
-				read prev_index next_index mode <<< $(awk \
+				read prev_index next_index mode direction <<< $(awk \
 					'$1 == "mode" { 
 						m = $NF
 
@@ -304,7 +343,15 @@ case $1 in
 						else if(m == "auto") n = 1
 						else n = 2
 
-						print ((3 + n - 1) % 3), ((3 + n + 1) % 3), m
+						pi = ((3 + n - 1) % 3)
+						ni = ((3 + n + 1) % 3)
+					}
+					$1 == "direction" { d = $NF }
+					$1 == "reverse" { if($NF == "true") r = "_" $1 }
+					$1 == "full" {
+						if($NF == "true") f = "_" $1
+
+						print pi, ni, m, d f r
 					}' ~/.config/orw/config)
 
 				#case $mode in
@@ -313,13 +360,17 @@ case $1 in
 				#	*) next_mode=tiling;;
 				#esac
 
-				if [[ $mode == auto ]]; then
+				if [[ $mode == auto && ! $direction =~ full ]]; then
 					id=$(printf '0x%.8x' $(xdotool getactivewindow))
-					orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+					direction=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
 				fi
 
+				#id=$(printf '0x%.8x' $(xdotool getactivewindow))
+				#orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
+
 				fg="\${$pfg}"
-				set_icon tiling_${mode}_$orientation
+				#~/.orw/scripts/notify.sh "dir: $direction"
+				set_icon tile_${direction}
 				#set_icon tiling_${mode}_${orientation:-h}
 
 				modes=( tiling auto stack )
@@ -352,7 +403,7 @@ case $1 in
 		#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
 		[[ $term || $rec || $tiling ]] &&
-			hidden="\${$sbg}\${inner}$tiling$term$rec\$inner ${separator:-\$separator}"
+			hidden="\${$sbg}\${padding}$tiling$term$rec\$padding ${separator:-\$separator}"
 		format_fading "" "" "none" "$hidden";;
 
 #	if [[ $term || $rec ]]; then
@@ -375,6 +426,10 @@ case $1 in
 
 		if [[ $type == eth ]]; then
 			style=mono
+			mono_bg="$sbg"
+			#mono_fg="\${$sfg}"
+			mono_fg="$sfg"
+			#~/.orw/scripts/notify.sh "mg: $mono_bg"
 			format $icon
 		else
 			ssid=$(nmcli dev wifi | awk ' \
@@ -481,7 +536,7 @@ case $1 in
 
 		#[[ $@ =~ trim ]] && style=trim
 
-		style=trim
+		[[ $@ =~ trim ]] && style=trim
 
 		while read -r dev usage location; do
 			unmount="~/.orw/scripts/mount.sh $dev $dev"

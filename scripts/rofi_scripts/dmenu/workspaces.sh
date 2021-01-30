@@ -6,13 +6,29 @@ mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
 if [[ $theme == icons ]]; then
-	workspaces=( '' '' '' )
+	#workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
+	workspaces=( '' '' '' )
 	workspaces+=( $(wmctrl -d | awk '$NF ~ "^[0-9]$" {
-		if($NF == 1) i = " "
-		else if($1 - 2 == 2) i = " "
-		else if($1 - 2 == 3) i = " "
-		else if($1 - 2 == 4) i = " "
-		else if($1 - 2 == 5) i = " "
+		#if($NF == 1) i = " "
+		#else if($1 - 2 == 2) i = " "
+		#else if($1 - 2 == 3) i = " "
+		#else if($1 - 2 == 4) i = " "
+		#else if($1 - 2 == 5) i = " "
+
+		if($NF == 1) i = " "
+		else if($1 - 2 == 2) i = " "
+		else if($1 - 2 == 3) i = " "
+		else if($1 - 2 == 4) i = " "
+		else if($1 - 2 == 5) i = " "
+
+		if($NF == 1) i = " "
+		else if($1 - 2 == 2) i = " "
+		else if($1 - 2 == 3) i = " "
+		else if($1 - 2 == 4) i = " "
+		else if($1 - 2 == 5) i = " "
 
 		#if($NF == 1) i = " "
 		#else if($1 - 2 == 2) i = " "
@@ -48,7 +64,9 @@ window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 [[ $1 == move ]] && move=true
 
 if [[ ! $@ =~ wall ]]; then
-	[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
+	#[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
+	[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
+	#[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
 fi
 
 [[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh workspaces ${#workspaces[*]}
@@ -69,10 +87,10 @@ chosen_workspace=$(echo	-e "$all_workspaces" | \
 [[ $chosen_workspace ]] || exit 0
 [[ $1 == wall ]] && ~/.orw/scripts/xwallctl.sh -c -r &
 
-if [[ "$chosen_workspace" =~   ]]; then
+if [[ "$chosen_workspace" =~   ]]; then
 	wmctrl -n $((workspace_count - 1))
 else
-	if [[ "$chosen_workspace" =~   ]]; then
+	if [[ "$chosen_workspace" =~   ]]; then
 		new_workspace_name='tmp'
 		new_workspace_index=$workspace_count
 
@@ -105,8 +123,10 @@ else
 			wmctrl -i -r $window_id -t $new_workspace_index
 			#exit
 
-			[[ $theme == icons && $chosen_workspace !=   ]] &&
-				temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
+			[[ $theme == icons && $chosen_workspace !=   ]] &&
+				temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
+				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
+				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
 				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
 
 			if [[ "$new_workspace_name" =~ $temp_workspace_regex ]]; then

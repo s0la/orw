@@ -18,6 +18,9 @@ function set_line() {
 
 [[ $single_line == false ]] && format_delimiter=' '
 
+workspace_labels=( $(wmctrl -d | awk '{
+	print ($NF ~ /^[0-9]+$/) ? ($NF > 1) ? "tmp_" $NF - 1 : "tmp" : $NF }') )
+
 for workspace_index in $(seq $workspace_count); do
 	[ $workspace_index -eq $current_workspace ] && current=p || current=s
 
@@ -33,21 +36,37 @@ for workspace_index in $(seq $workspace_count); do
 				fi;;
 			[cr]) [[ ! $flags =~ $arg ]] && flags+=$arg;;
 			s*) workspace_separator="\$jbg%{O${arg:1}}";;
-			l) label="${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
-				{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')${padding}";;
+			#l) label="${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
+			#	{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')${padding}";;
+			l) label="${padding}${workspace_labels[workspace_index - 1]}${padding}";;
 			n) label="$offset$workspace_index$offset";;
 			b*) ((${#arg} > 1)) && label=%{O${arg:1}} || label=$offset;;
 			*)
-				case ${arg:1} in
-					d) icon_type=dot;;
-					h) icon_type=half;;
-					e) icon_type=empty;;
-					b) icon_type=block;;
-					be) icon_type=block_empty;;
-					*) icon_type=default;;
-				esac
+				#case ${arg:1} in
+				#	d) icon_type=dot;;
+				#	h) icon_type=half;;
+				#	e) icon_type=empty;;
+				#	b) icon_type=block;;
+				#	be) icon_type=block_empty;;
+				#	*) icon_type=default;;
+				#esac
 
-				icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
+				((${#arg} == 1)) &&
+					icon_type="${workspace_labels[workspace_index - 1]}" ||
+					icon_type=$(sed 's/\w/&\.\*_/g' <<< ${arg:1})$current
+				#~/.orw/scripts/notify.sh "it: $icon_type"
+				icon="$(sed -n "s/Workspace_${icon_type}_icon=//p" ${0%/*}/icons)"
+				[[ ${arg:1:1} == s ]] && icon=%{T4}$icon%{T-}
+
+				#if [[ $icon_type ]]; then
+				#	#icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
+				#	icon="$(sed -n "s/Workspace_${icon_type}${current}_icon=//p" ${0%/*}/icons)"
+				#	[[ ${arg:1:1} == s ]] && icon=%{T4}$icon%{T-}
+				#else
+				#	icon=${workspace_icons[workspace_index]}
+				#fi
+				#icon=${workspace_icons[workspace_index - 1]}
+
 				label="$offset$icon$offset";;
 		esac
 	done

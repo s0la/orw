@@ -7,16 +7,18 @@ if [[ $theme != icons ]]; then
 	default='default' up='brightness up' down='brightness down' sep=' '
 fi
 
-icon_up=
-icon_down=
-icon_default=
+icon_up=
+icon_down=
+icon_default=
+
+icon_up=
+icon_down=
+icon_default=
 
 while
 	active=$(awk '/^[^#].*[0-9]+%/ {
 		l = gensub(/.* ([0-9]+)%.*/, "\\1", 1)
 		if(l == 50) print "-a 1" }' ~/.orw/scripts/system_notification.sh)
-
-	echo A: $active
 
 	read row brightness <<< $(cat <<- EOF | rofi -dmenu -i -format 'i s' -selected-row ${row:-0} $active -theme main
 		$icon_up$sep$up

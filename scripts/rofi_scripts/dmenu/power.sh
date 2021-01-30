@@ -15,6 +15,12 @@ icon_logout=
 icon_reboot=
 icon_off=
 
+icon_lock=
+icon_logout=
+icon_reboot=
+icon_off=
+icon_off=
+
 action=$(cat <<- EOF | rofi -dmenu -theme main
 	$icon_lock$sep$lock
 	$icon_logout$sep$loggout

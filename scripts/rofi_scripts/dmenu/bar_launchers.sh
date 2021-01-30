@@ -25,9 +25,9 @@ set() {
 }
 
 list_launchers() {
-	[[ $move ]] && move_state=  
-	[[ $resize ]] && resize_state=  || resize_state=
-	[[ $toggle ]] && toggle_state=  || toggle_state=
+	[[ $move ]] && move_state=  
+	[[ $resize ]] && resize_state=  || resize_state=
+	[[ $toggle ]] && toggle_state=  || toggle_state=
 
 	awk -F '"' '\
 		BEGIN {
@@ -38,13 +38,13 @@ list_launchers() {
 			print "━━━━━━━━━━"
 
 			if("'$toggle'") {
-				print " all"
-				print " none"
+				print " all"
+				print " none"
 				print "━━━━━━━━"
 			}
 
 			if("'$resize'") {
-				print " all"
+				print " all"
 				print "━━━━━━"
 			}
 		}
@@ -52,7 +52,7 @@ list_launchers() {
 		/^#?icon/ {
 			nr = NR + 1
 			i = gensub(/[\0-\177]/, "", "g", $2)
-			if("'$toggle'") s = /^#/ ? " " : " "
+			if("'$toggle'") s = /^#/ ? " " : " "
 		} NR == nr { print s i, $2 }' $launchers
 }
 
@@ -102,34 +102,34 @@ else
 		for bar in ${bars[*]}; do
 			echo $bar
 		done
-	elif [[ $@ =~ ^(( | )([an]|$)|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
-		if [[ $@ == ' ' ]]; then
+	elif [[ $@ =~ ^(( | )([an]|$)|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
+		if [[ $@ == ' ' ]]; then
 			continue
-		elif [[ $@ =~ ( | ) ]]; then
+		elif [[ $@ =~ ( | ) ]]; then
 			if [[ $toggle ]]; then
 				toggle_launchers ${@##* }
 			else
 				unset current
 				set current
 
-				echo -e ' \n \n '
+				echo -e ' \n \n '
 				exit
 			fi
-		elif [[ $@ =~ ( | ) ]]; then
+		elif [[ $@ =~ ( | ) ]]; then
 			if [[ $resize ]]; then
-				[[ $@ =~   ]] && sign=- || sign=+
+				[[ $@ =~   ]] && sign=- || sign=+
 				value=${@#* }
 
 				resize_launchers
 
-				echo -e ' \n \n '
+				echo -e ' \n \n '
 				exit
 			else
 				move_whole=$(sed -n "/^#$move/,/^$/p" $launchers)
 
 				sed -i "/^#$move/,/^$/d" $launchers
 
-				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\\n'
+				[[ $@ =~   ]] && direction=sl after_line='\n' || direction=el before_line='\\n'
 				line=$(awk '/^#'"${current#* }"'/ { sl = NR } sl && /^$/ { el = NR; exit } END { print '$direction' }' $launchers)
 
 				((!line)) && echo -e "\n$move_whole" >> $launchers ||
@@ -168,9 +168,9 @@ else
 				set current
 
 				if [[ $resize || $move ]]; then
-					echo -e ' \n '
+					echo -e ' \n '
 
-					[[ $resize ]] && echo -e ' '
+					[[ $resize ]] && echo -e ' '
 				else
 					move="${current#* }"
 					set move

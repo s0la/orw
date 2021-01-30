@@ -6,19 +6,35 @@ theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 [[ $theme != icons ]] &&
 	toggle=play stop=stop next=next prev=prev rand=random up=volume_up down=volume_down controls=controls pl=playlist sep=' '
 
-icon_prev=
-icon_prev=
-icon_toggle=$(mpc | awk -F '[][]' 'NR == 2 { s = $2 } END { print (s == "playing") ? "" : "" }')
-icon_stop=
-icon_next=
-icon_next=
-icon_rand=
-icon_up=
-icon_down=
+icon_prev=
+icon_prev=
+icon_toggle=$(mpc | awk -F '[][]' 'NR == 2 { s = $2 } END { print (s == "playing") ? "" : "" }')
+icon_stop=
+icon_next=
+icon_next=
+icon_rand=
+icon_up=
+icon_up=
+icon_down=
+icon_down=
 icon_controls=
 icon_pl=
 icon_pl=
-icon_pl= 
+icon_pl=
+
+#icon_prev=
+#icon_prev=
+#icon_toggle=$(mpc | awk -F '[][]' 'NR == 2 { s = $2 } END { print (s == "playing") ? "" : "" }')
+#icon_stop=
+#icon_next=
+#icon_next=
+#icon_rand=
+#icon_up=
+#icon_down=
+#icon_controls=
+#icon_pl=
+#icon_pl=
+#icon_pl= 
 
 handle_volume() {
 	volume="$action"

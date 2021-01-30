@@ -47,6 +47,7 @@ adjust_values() {
 	icon='█▊'
 	icon=' '
 	icon='▆▆ '
+	icon=' '
 	local filled_{x,y}
 	#empty_x=$(color_bar ' ' $((x_before + x_size + x_after)))
 	empty_x="<span foreground='\$sbg'>$(color_bar "$icon" $((x_before + x_size + x_after)))</span>"

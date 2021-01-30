@@ -45,7 +45,8 @@ if [[ $theme == icons ]]; then
 	#default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 	default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 	default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
-else
+		default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
+	else
 	indicator='●'
 	[[ $running ]] && eval "$running empty='  '"
 	default_label=default vertical_label=vertical split_label=split cover_label=cover visualizer_label=visualizer dual_h_label='dual horizontal' dual_v_label='dual vertical'

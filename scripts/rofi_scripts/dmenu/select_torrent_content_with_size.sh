@@ -21,12 +21,12 @@ agregate() {
 			if(file) {
 				s = sv
 				cfn = n
-				cfs = (st == "Yes") ? " " : " "
+				cfs = (st == "Yes") ? " " : " "
 			} else {
 				s = ts
 				cfn = pfn
 				#cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
-				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
+				cfs = (sc > 0) ? (sc == tc) ? " " : " " : " "
 			}
 
 			tc = 0; sc = 0; ts = 0;

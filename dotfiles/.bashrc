@@ -232,6 +232,7 @@ get_branch_info() {
 					i = ($f ~ /^ ?a/) ? "  " : "  "
 					i = ($f ~ /^ ?a/) ? " ↑ " : " ↓ "
 					i = ($f ~ /^ ?a/) ? "  " : "  "
+					i = ($f ~ /^ ?a/) ? "  " : "  "
 					s = s gensub(/ ?.* /, i, 1, $f)
 				}
 			}
@@ -291,13 +292,21 @@ get_branch_info() {
 				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
 				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
 
-				if(gm ~ "m" && m) o = o" m=\"  "m"\""
-				if(gm ~ "i" && i) o = o" i=\"  "i"\""
-				if(gm ~ "i" && i) o = o" i=\"  "i"\""
-				if(gm ~ "d" && d) o = o" d=\"  "d"\""
-				if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				#if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				#if(gm ~ "a" && a) o = o" a=\"  "a"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+				#if(gm ~ "u" && u) o = o" u=\"  "u"\""
+
+				if(gm ~ "m" && m) o = o" m=\"  "m"\""
+				if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				if(gm ~ "i" && i) o = o" i=\"  "i"\""
+				if(gm ~ "d" && d) o = o" d=\"  "d"\""
+				if(gm ~ "a" && a) o = o" a=\"  "a"\""
 				if(gm ~ "u" && u) o = o" u=\"  "u"\""
-				if(gm ~ "u" && u) o = o" u=\"  "u"\""
+				if(gm ~ "u" && u) o = o" u=\"  "u"\""
 				print o }')
 
 	if [[ $1 ]]; then
@@ -330,7 +339,7 @@ get_virtual_env() {
 			all_modules+="$end_bracket"
 			(( content_length += 2 ))
 		else
-			format_module -b $vc -c "   ${VIRTUAL_ENV##*/}"
+			format_module -b $vc -c "   ${VIRTUAL_ENV##*/}"
 		fi
 	fi
 }
@@ -525,7 +534,8 @@ generate_ps1() {
 
 			format_module -f $fg -b $bg
 			color_modules
-			format_module -f $sc -c ' ›'
+			format_module -f $sc -c '›'
+			#format_module -f $sc -c ' '
 		else
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
@@ -549,6 +559,7 @@ generate_ps1() {
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
 			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//  ›  /g") "
+			working_directory=" $(pwd | sed "s/${HOME//\//\\\/}/ /; s/\//    /g") "
 
 			format_module -f $sc -c "$symbol_start"
 			format_module -f $bg

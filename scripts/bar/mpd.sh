@@ -66,11 +66,13 @@ get_song_info() {
 		((song_info_index = song_info_index > delay ? song_info_index - delay : 0))
 		[[ $song_info_index -gt $final_index ]] && song_info_index=$final_index
 
-		set_icon left_limiter
-		set_icon right_limiter
+		#set_icon left_arrow_limiter
+		#set_icon right_arrow_limiter
+		set_icon left_dot_limiter
+		set_icon right_dot_limiter
 
-		left_limiter="\${mlfg:-\${msfg:-\$sfg}}$mpd_left_limiter_icon \${mpfg:-\$pfg}"
-		right_limiter="\${mlfg:-\${msfg:-\$sfg}} $mpd_right_limiter_icon\${mpfg:-\$pfg}"
+		left_limiter="%{T4}\${mlfg:-\${msfg:-\$sfg}}$mpd_left_dot_limiter_icon \${mpfg:-\$pfg}%{T-}"
+		right_limiter="%{T4}\${mlfg:-\${msfg:-\$sfg}} $mpd_right_dot_limiter_icon\${mpfg:-\$pfg}%{T-}"
 
 		#currently_visible_portion="${song_info:$song_info_index:$scrollable_area}"
 		song_info="${song_info:$song_info_index:$scrollable_area}"
