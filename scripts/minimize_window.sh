@@ -60,8 +60,8 @@ if ((minimized || restore)); then
 							#if($NF == "true") print o
 							#else if($1 ~ op) o = $NF
 
-			original_dimension=$(awk '$1 == "'$id'" {
-				print $('$opposite_index' + 4) }' $orw/windows_properties)
+			original_dimension=$(awk '$1 == "'$id'" { od = $('$opposite_index' + 4) }
+										END { print od }' $orw/windows_properties)
 
 			#[[ $offset == true ]] && separator=$(awk -F '=' '/margin/ { print $NF }' ~/.config/orw/offsets)
 			[[ $offset == true ]] && separator=$(sed -n 's/margin=//p' $orw/offsets)
