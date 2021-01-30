@@ -140,7 +140,7 @@ if [[ $status == playing ]]; then
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}█%{I-}%{A}\"
-				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}■%{I-}%{A}\"
+				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}$bar_icon%{I-}%{A}\"
 			done
 		}
 
@@ -210,7 +210,10 @@ for module in ${4//,/ }; do
 		t) modules+="$toggle";;
 		p*)
 			modules+='$progressbar'
-			((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
+			#((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
+			((${#module} == 1)) && progression_step=5 || progression_step=${module//[^0-9]/}
+			#bar_style=${module//[0-9p]/}
+			[[ $module =~ s ]] && bar_icon=■ || bar_icon=━
 
 			[[ $status == playing && $current_mode == controls ]] &&
 				echo -e "PROGRESSBAR $(get_progressbar)" > $fifo;;
