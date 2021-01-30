@@ -969,7 +969,8 @@ get_alignment() {
 					((cwos >= wos && cwos + cwod <= wos + wod &&
 					(cws + cwd < ws || cws > ws + wd)) &&
 					!($4 == nws && $5 == nws))) {
-						if(cws < ws) bw[++bwi] = $0
+						if(f && $1 == "'$original_id'") next
+						else if(cws < ws) bw[++bwi] = $0
 						else if(cws > ws) aw[++awi] = $0
 						else {
 							if(!c) {
@@ -2324,6 +2325,11 @@ align() {
 
 				#original_properties=( ${properties[*]} )
 				#update_properties remove
+
+				original_id=$(printf '0x%.8x' $(xdotool getactivewindow))
+				#echo $original_id
+				#echo ${properties[*]}
+				#exit
 
 				id=none
 				properties[0]=$id
