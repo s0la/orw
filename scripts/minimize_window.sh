@@ -78,8 +78,9 @@ if ((minimized || restore)); then
 					oi = '$opposite_index' + 3
 					wp = '${properties[index]}'
 					wd = '${properties[index + 2]}'
-					wod = '${properties[opposite_index + 2]}'
-					orgd = '$original_dimension'
+					#wod = '${properties[opposite_index + 2]}'
+					wod = '${original_dimension:-${properties[opposite_index + 2]}}'
+					#orgd = '$original_dimension'
 
 					if(!'${restore:-0}') m = "'$maxed'"
 				}
@@ -110,6 +111,7 @@ if ((minimized || restore)); then
 							mdd = dd
 							d = cwd
 						}
+
 						fod += cwod - (s + b)
 					}
 
