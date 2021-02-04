@@ -16,7 +16,13 @@ elif [[ $1 =~ term|dunst ]]; then
 	[[ $1 == term ]] && pattern='^background' || pattern='^\s*transparency'
 else
 	conf=picom_conf
-	[[ $1 == rofi ]] && pattern="opacity-rule.*Rofi" || pattern="^\s*${1:0:1}\w*(-|_)${1:1}\w* "
+	if [[ $1 == shadow[-_]radius ]]; then
+		pattern="shadow-(radius|offset)"
+	else
+		[[ $1 == rofi ]] &&
+			pattern="opacity-rule.*Rofi" ||
+			pattern="^\s*${1:0:1}\w*[-_]${1:1}\w* "
+	fi
 fi
 
 sign=${2%%[0-9]*}
@@ -34,7 +40,7 @@ awk -i inplace '{ \
 				#$NF = 100 - (("'$sign'") ? 100 - $NF '$sign' v : v)
 				sub(/[0-9]+/, 100 - (("'$sign'") ? 100 - $NF '$sign' v : v))
 			} else {
-				if("'$1'" == "rofi") {
+				if("'$1'" == "rofi" || "'$1'" ~ "shadow[-_]radius") {
 					cv = gensub("[^0-9]*([0-9]+).*", "\\1", 1)
 					f = "%d"
 				} else {
