@@ -143,7 +143,7 @@ case $1 in
 		separator="$2"
 		lines=${@: -1}
 
-		old_mail_count=10
+		old_mail_count=36
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -261,6 +261,7 @@ case $1 in
 			if [[ $id ]]; then
 				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] &&
 					state=down fg="\${$pfg}" || state=up fg="\${$sfg}"
+				fg="\${$pfg}"
 
 				#fg="\${$sfg}"
 				#sec=$(date +'%S')
@@ -288,7 +289,9 @@ case $1 in
 			#fi
 
 			set_icon rec
+			set_icon rec_new
 
+			fg="\${$pfg}"
 			fg="\${$sfg}"
 
 			#if [[ $state == rec ]]; then
@@ -305,7 +308,8 @@ case $1 in
 				sec=$(date +'10#%S')
 				red='#785a5a'
 				#red=$(awk '$1 == "red" { print $NF }' ~/.config/orw/colorschemes/colors)
-				((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
+				#((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
+				((sec % 2 == 0)) && fg="\${Hpfg:-\${$pfg}}"
 
 				#kill_command="kill $pid"
 				#rec_command="~/.orw/scripts/record_screen.sh"
@@ -349,7 +353,7 @@ case $1 in
 					$1 == "direction" { d = $NF }
 					$1 == "reverse" { if($NF == "true") r = "_" $1 }
 					$1 == "full" {
-						if($NF == "true") f = "_" $1
+						#if($NF == "true") f = "_" $1
 
 						print pi, ni, m, d f r
 					}' ~/.config/orw/config)
@@ -368,9 +372,12 @@ case $1 in
 				#id=$(printf '0x%.8x' $(xdotool getactivewindow))
 				#orientation=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "h" : "v" }')
 
-				fg="\${$pfg}"
+				#fg="\${$sfg}"
 				#~/.orw/scripts/notify.sh "dir: $direction"
-				set_icon tile_${direction}
+				set_icon tile_${direction}_full
+				#set_icon tile_${direction}
+				#icon="%{T4}$icon%{T-}"
+
 				#set_icon tiling_${mode}_${orientation:-h}
 
 				modes=( tiling auto stack )
@@ -387,7 +394,7 @@ case $1 in
 		}
 
 		[[ $4 ]] && label=icon
-
+		fg="\${$pfg}"
 		#~/.orw/scripts/notify.sh "3: $3"
 
 		#if [[ $3 == all ]]; then
