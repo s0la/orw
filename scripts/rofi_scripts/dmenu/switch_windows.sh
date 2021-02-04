@@ -4,7 +4,7 @@ if [[ $1 ]]; then
 	desktop=$(xdotool get_desktop)
 else
 	read workspace_lenght workspaces <<< $(wmctrl -d | awk '{
-			wn = ($NF ~ "^[0-9]+$") ? ($NF > 1) ? "tmp_" $NF : "tmp" : $NF 
+			wn = ($NF ~ "^[0-9]+$") ? ($NF > 1) ? "tmp_" $NF - 1 : "tmp" : $NF 
 			wl = length(wn)
 			if(wl > mwl) mwl = wl
 			aw = aw " " wn
@@ -29,8 +29,11 @@ read current_window_index x y windows <<< \
 	$(wmctrl -lG | awk '$2 ~ "'$desktop'" {
 			if(!ti) ti = index($0, $8)
 			if($1 == "'$id'") { cwi = NR; x = $3; y = $4 }
-			at = at " \"" $2 " " $1 " " substr($0, ti) "\"" 
-		} END { print cwi, x, y, at }')
+			aw = aw " \"" $2 " " $1 " " substr($0, ti) "\"" 
+		} END {
+			if(!cwi) cwi = x = y = 0
+			print cwi, x, y, aw
+		}')
 
 eval "windows=( $windows )"
 
