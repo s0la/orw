@@ -15,6 +15,7 @@ icon_logout=
 icon_reboot=
 icon_off=
 
+icon_lock=
 icon_lock=
 icon_logout=
 icon_reboot=
@@ -32,6 +33,8 @@ EOF
 if [[ $action ]]; then
 	yes_icon=
 	no_icon=
+	yes_icon=
+	no_icon=
 
 	[[ $theme != icons ]] &&
 		yes_label=yes no_label=no ||

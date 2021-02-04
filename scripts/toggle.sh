@@ -506,12 +506,16 @@ wm() {
 
 		sed -i "/^$1/ s/\w*$/$mode/" $orw_conf
 	else
-		read mode pattern monitor <<< $(awk '/^mode/ {
-			nm = ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating"
-			m = (nm == "selection") ? "Mouse" : "Active"
-			p = (nm == "floating") ? "tiling" : "\*"
-			print nm, p, m
-		}' $orw_conf)
+		read mode direction pattern monitor <<< $(awk '
+			/^mode/ {
+				nm = ("'$1'") ? "'$1'" : (/floating/) ? "tiling" : "floating"
+				m = (nm == "selection") ? "Mouse" : "Active"
+				p = (nm == "floating") ? "tiling" : "\*"
+			}
+
+			/^direction/ {
+				print nm, $NF, p, m
+			}' $orw_conf)
 
 		sed -i "/^mode/ s/\w*$/$mode/" $orw_conf
 		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
@@ -558,8 +562,11 @@ wm() {
 			#esac
 
 			case $mode in
-				tiling) icon=;;
-				stack) icon=%;;
+				tiling)
+					icon=
+					[[ $direction == "h" ]] && icon= || icon=;;
+				stack) icon=;;
+				stack) icon=;;
 				auto) icon=;;
 					#id=$(printf '0x%.8x' $(xdotool getactivewindow))
 					#icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;

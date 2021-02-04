@@ -5,6 +5,8 @@ theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 [[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh rec
 [[ $theme == icons ]] && start= stop=  || start=start stop=stop
 [[ $theme == icons ]] && start= stop=  || start=start stop=stop
+[[ $theme == icons ]] && start= stop=  || start=start stop=stop
+[[ $theme == icons ]] && start= stop=  || start=start stop=stop
 #action=$(echo -e 'stop\nstart' | rofi -dmenu $active)
 
 pid=$(pidof ffmpeg)
@@ -50,7 +52,8 @@ if [[ $action ]]; then
 			#~/.orw/scripts/record_screen.sh ${action#start};;
 		$stop)
 			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
-			~/.orw/scripts/notify.sh -s osd -i   'recording stoped'
+			#~/.orw/scripts/notify.sh -s osd -i   'recording stoped'
+			~/.orw/scripts/notify.sh -s osd -i   'recording stoped'
 			kill $pid;;
 	esac
 fi

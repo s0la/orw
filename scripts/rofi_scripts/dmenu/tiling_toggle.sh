@@ -66,7 +66,7 @@ theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 #[[ $active ]] && active="-a ${active#,}"
 
 get_state() {
-	read wm_icon wm_active full_icon use_ratio_icon offset_icon reverse_icon direction_icon active <<< \
+	read wm_icon twm_icon wm_active full_icon use_ratio_icon offset_icon reverse_icon direction_icon active <<< \
 		$(awk '{
 			if(/^mode/) {
 				#wm = ($NF == "floating") ? "" : ""
@@ -81,6 +81,7 @@ get_state() {
 				if(m == "tiling") { wm = ""; wma = 1 }
 				else if(m == "auto") { wm = ""; wma = 2 }
 				#else if(m == "auto") { wm = "'$orientation'"; wma = 2 }
+				else if(m == "stack") { wm = ""; wma = 3 }
 				else if(m == "stack") { wm = ""; wma = 3 }
 				else if(m == "floating") { wm = ""; wma = 0 }
 				else { wm = ""; wma = 4 }
@@ -91,6 +92,8 @@ get_state() {
 				dir = $NF
 				d = (dir == "h") ? "" : ""
 				d = (dir == "h") ? "" : ""
+				twm = (dir == "h") ? "" : ""
+				if(m == "tiling") wm = twm
 			} else if(/^full/) {
 				f = "  "
 				f = ""
@@ -136,7 +139,7 @@ get_state() {
 				if(rev) a = a ",4"
 			}
 		} END {
-			print wm, wma, f, ur, o, r, d, a
+			print wm, twm, wma, f, ur, o, r, d, a
 		}' ~/.config/orw/config)
 
 	[[ $active ]] && active="-a ${active#,}"
@@ -190,8 +193,10 @@ if [[ $action ]]; then
 				#wm_mode_icons=(           ) &&
 				#wm_mode_icons=(           ) &&
 				#wm_mode_icons=(     $orientation     ) &&
-				wm_mode_icons=(           ) &&
+				#wm_mode_icons=(           ) &&
 				wm_mode_icons=(           ) &&
+				wm_mode_icons=(   $twm_icon       ) &&
+				wm_mode_icons=(   $twm_icon       ) &&
 				~/.orw/scripts/set_rofi_geometry.sh tiling_toggle 5
 
 			wm_modes=( floating tiling auto stack selection )
