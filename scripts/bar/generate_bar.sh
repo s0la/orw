@@ -83,7 +83,7 @@ get_weather() {
 }
 
 get_hidden() {
-	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d} $label ${lines-false})"
+	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d,r} $label ${lines-false})"
 }
 
 get_battery() {
@@ -607,7 +607,7 @@ font1="Iosevka Orw:style=Semibold:size=$font_size"
 #font3="material_new_0:size=$((font_size + 4))"
 #font4="material_new_0:size=$((font_size + 1))"
 font3="material:size=$((font_size + 4))"
-font4="material:size=$((font_size + 1))"
+font4="material:size=$((font_size + 2))"
 font5="Iosevka Orw:style=Heavy:size=$font_size"
 
 #font1="SF Mono:style=Medium:size=$font_size"
@@ -800,7 +800,7 @@ done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
 	-f "$font2" -o $((main_font_offset - ${remix_offset:-$((${font_offset:-$main_font_offset} + 0))})) \
 	-f "$font3" -o $((${font_offset:-$main_font_offset} + 1)) \
-	-f "$font4" -o $((${font_offset:-$main_font_offset} - 1)) \
+	-f "$font4" -o $((${font_offset:-$main_font_offset} - 0)) \
 	-f "$font5" -o $main_font_offset \
 	-a 150 -u ${frame_width-0} $bar_frame $bottom -g $geometry -n "$bar_name" | bash &
 

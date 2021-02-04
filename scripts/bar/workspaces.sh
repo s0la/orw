@@ -56,7 +56,8 @@ for workspace_index in $(seq $workspace_count); do
 					icon_type=$(sed 's/\w/&\.\*_/g' <<< ${arg:1})$current
 				#~/.orw/scripts/notify.sh "it: $icon_type"
 				icon="$(sed -n "s/Workspace_${icon_type}_icon=//p" ${0%/*}/icons)"
-				[[ ${arg:1:1} == s ]] && icon=%{T4}$icon%{T-}
+				#[[ ${arg:1:1} == s ]] && icon=%{T4}$icon%{T-}
+				icon=%{T4}$icon%{T-}
 
 				#if [[ $icon_type ]]; then
 				#	#icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
