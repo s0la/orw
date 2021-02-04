@@ -232,16 +232,16 @@ if [[ $style ]]; then
 
 			if [[ $bar ]]; then
 				#[[ $dashes ]] && bar_icon= || bar_icon=
-				[[ $dashes ]] && bar_icon= || bar_icon=
+				[[ $dashes ]] && bar_icon= || bar_icon=━
 
 				level=$(color_bar $bar_icon $level_value)
 				empty=$(color_bar $bar_icon $empty_value)
 
-				empty_bar="<span font='$font 9' foreground='$sbg'>$empty</span>"
-				level_bar="<span font='$font 9' foreground='$pbfg'>$level</span>"
+				empty_bar="<span font='$font 15' foreground='$sbg'>$empty</span>"
+				level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
 			fi
 
-			icon="<span font='$font 10' foreground='$fg'>$font_icon</span>"
+			icon="<span font='$font 12' foreground='$fg'>$font_icon</span>"
 			message="$icon    $level_bar$empty_bar "
 
 			padding='\n' padding_height=8 offset_count=6
