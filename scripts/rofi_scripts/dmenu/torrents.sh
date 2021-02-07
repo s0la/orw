@@ -33,7 +33,7 @@ get_current_torrent_id() {
 	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current="  Enblood - 2018 - Cast to Exile"
+current=" Ulcerate"
 selection=""
 multiple_torrents=""
 
@@ -108,7 +108,7 @@ else
 
 		if [[ $selection ]]; then
 			multiple_torrents=$(list | awk '\
-				/'"$current"'$/ {
+				$0 ~ "'"$current"'$" {
 					mt = "'$multiple_torrents'"
 					id = gensub("([0-9]*)\\*?", "\\1", 1, $1)
 

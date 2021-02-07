@@ -108,7 +108,7 @@ else
 
 		if [[ $selection ]]; then
 			multiple_torrents=$(list | awk '\
-				/'"$current"'$/ {
+				$0 ~ "'"$current"'$" {
 					mt = "'$multiple_torrents'"
 					id = gensub("([0-9]*)\\*?", "\\1", 1, $1)
 
