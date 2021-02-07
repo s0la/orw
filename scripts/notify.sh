@@ -120,7 +120,7 @@ if [[ $style =~ ^(osd|vert) ]]; then
 						w = 3 * bs
 						y = int((dh - h) / 2)
 
-						if(f) x = int(x / 3)
+						if(f) x = int(x / 2)
 						else if(x > w) x -= w
 
 						o = "-"
