@@ -13,7 +13,7 @@ bar_height=16
 main_font_offset=0
 bar_name='main_bar'
 
-bg="#101115"
+bg="#202020"
 fc="#101115"
 bfc="#fe608985"
 bbg="#101115"
@@ -62,16 +62,14 @@ get_ram_usage() {
 	echo -e "RAM $($path/system_info.sh Ram $label $1)"
 }
 
-get_disk_usage() {
-	echo -e "DISK $($path/system_info.sh Disk $label $1)"
-}
-
 get_network() {
-	echo -e "NETWORK $($path/system_info.sh Network $padding $label)"
+	#echo -e "NETWORK $($path/system_info.sh Network $padding $label ${lines-false})"
+	echo -e "NETWORK $($path/system_info.sh Network $padding ${lines-false} $label)"
 }
 
 get_email() {
-	echo -e "EMAIL $($path/system_info.sh email $tweener $label ${lines-false})"
+	#echo -e "EMAIL $($path/system_info.sh email $tweener $label ${lines-false})"
+	echo -e "EMAIL $($path/system_info.sh email $tweener ${lines-false} $label)"
 }
 
 get_volume() {
@@ -79,11 +77,13 @@ get_volume() {
 }
 
 get_weather() {
-	echo -e "WEATHER $($path/system_info.sh Weather $tweener ${weather_args-t,s} $label $location ${lines-false})"
+	#echo -e "WEATHER $($path/system_info.sh Weather $tweener ${weather_args-t,s} $label $location ${lines-false})"
+	echo -e "WEATHER $($path/system_info.sh Weather $tweener ${weather_args-t,s} ${lines-false} $location $label)"
 }
 
 get_hidden() {
-	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d,r} $label ${lines-false})"
+	#echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d,r} $label ${lines-false})"
+	echo -e "HIDDEN $($path/system_info.sh Hidden $tweener ${apps-t,d,r} ${lines-false} $label)"
 }
 
 get_battery() {
@@ -91,15 +91,22 @@ get_battery() {
 }
 
 get_torrents() {
-	echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} $label ${lines-false})"
+	#echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} $label ${lines-false})"
+	echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} ${lines-false} $label)"
 }
 
 get_date() {
-	echo -e "DATE $($path/system_info.sh date $padding $tweener "$label" $date_format)"
+	#echo -e "DATE $($path/system_info.sh date $padding $tweener "$label" $date_format)"
+	echo -e "DATE $($path/system_info.sh date $padding $tweener $label $date_format)"
 }
 
 get_updates() {
-	echo -e "UPDATES $($path/system_info.sh updates $tweener "$label" ${lines-false})"
+	#echo -e "UPDATES $($path/system_info.sh updates $tweener "$label" ${lines-false})"
+	echo -e "UPDATES $($path/system_info.sh updates $tweener ${lines-false} $label)"
+}
+
+get_feed() {
+	echo -e "FEED $($path/system_info.sh feed $tweener ${lines-false} $label)"
 }
 
 config=~/.config/orw/config
@@ -157,7 +164,7 @@ set_frame_color() {
 
 	if [[ $all_lines && ! $left_side_frame ]]; then
 		[[ $frame_color == $bg ]] && side_width=$frame_width
-		left_side_frame=%{O${side_width:-0}}
+		#left_side_frame=%{O${side_width:-0}}
 	fi
 
 	[[ $frame_color == $bg ]] && eval "$module_frame_width=0"
@@ -240,7 +247,7 @@ run_function() {
 
 all_arguments="$@"
 
-while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
+while getopts :bcrx:y:w:h:p:flIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 	tweener="${joiner_start:-$joiner_end}$joiner_end_frame${joiner:-$separator}"
 
 	if [[ $joiner_start ]]; then
@@ -258,6 +265,7 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			if [[ $label_type ]]; then
 				label=$label_type
+				unset label_type
 			else
 				[[ ! $label ]] && label=icon || unset label
 			fi;;
@@ -326,10 +334,13 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		w) bar_width=$OPTARG;;
 		h) bar_height=$OPTARG;;
 		p) padding="%{O$OPTARG}";;
-		f)
-			frame_width=$OPTARG
-			check_arg frame_style ${!OPTIND} && shift;;
+		#f)
+		#	frame_width=$OPTARG
+		#	check_arg frame_style ${!OPTIND} && shift;;
 		l)
+			check_arg frame_width ${!OPTIND} && shift
+			check_arg frame_style ${!OPTIND} && shift
+
 			[[ $lines ]] && unset lines all_lines single_line {start,end}_line {left,right}_frame || set_lines;;
 		M) [[ $use_colorscheme ]] || source $path/module_colors;;
         F)
@@ -470,7 +481,10 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 
 			run_function get_workspaces 1;;
         N)
-			format network
+			#format network
+			set_frame_color
+			modules+='$network'
+
 			run_function get_network 100;;
         e)
 			set_frame_color
@@ -509,6 +523,11 @@ while getopts :bcrx:y:w:h:p:f:lIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
             #check_arg city ${!OPTIND} && shift
 
             run_function get_weather 1000;;
+		f)
+			set_frame_color
+			modules+='$feed'
+
+			run_function get_feed 300;;
 		U)
 			format usage
 			check_arg usage_args ${!OPTIND} && shift
@@ -603,12 +622,16 @@ font5="Iosevka Orw:style=Heavy:size=$font_size"
 
 (( main_font_offset-- ))
 
-font1="Iosevka Orw:style=Semibold:size=$font_size"
 #font3="material_new_0:size=$((font_size + 4))"
 #font4="material_new_0:size=$((font_size + 1))"
+font1="Fira Mono:style=Medium:size=$font_size"
+font5="Fira Mono:style=Bold:size=$font_size"
+font1="SF Mono:style=Medium:size=$font_size"
+font5="SF Mono:style=Heavy:size=$font_size"
+font1="Iosevka Orw:style=Semibold:size=$font_size"
+font5="Iosevka Orw:style=Heavy:size=$font_size"
 font3="material:size=$((font_size + 4))"
 font4="material:size=$((font_size + 2))"
-font5="Iosevka Orw:style=Heavy:size=$font_size"
 
 #font1="SF Mono:style=Medium:size=$font_size"
 #font5="SF Mono:style=Heavy:size=$font_size"
@@ -770,6 +793,7 @@ while read -r module; do
 		DISK*) disk=$(eval "echo -e \"${module:5}\"");;
 		USAGE*) usage=$(eval "echo -e \"${module:6}\"");;
 		EMAIL*) email=$(eval "echo -e \"${module:6}\"");;
+		FEED*) feed=$(eval "echo -e \"${module:5}\"");;
 		VOLUME*) volume=$(eval "echo -e \"${module:7}\"");;
 		NETWORK*) network=$(eval "echo -e \"${module:8}\"");;
 		WEATHER*) weather=$(eval "echo -e \"${module:8}\"");;

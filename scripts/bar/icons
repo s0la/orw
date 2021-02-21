@@ -1,4 +1,5 @@
 email_icon=%{I+4}%{I-}
+feed_icon=%{I+4}%{I-}
 tiling_tiling_icon=%{I+7}%{I-}
 tiling_stack_icon=%{I+7}%{I-}
 tiling_auto_icon=%{I+7}%{I-}
@@ -19,7 +20,10 @@ rec_icon=%{I+7}%{I-}
 rec_new_icon=%{I+7}%{I-}
 rec_start_icon=%{I+9}%{I-}
 rec_stop_icon=%{I+9}%{I-}
-Network_wifi_icon=%{I+9}%{I-}
+Network_wifi_full_icon=%{I+9}%{I-}
+Network_wifi_high_icon=%{I+9}%{I-}
+Network_wifi_mid_icon=%{I+9}%{I-}
+Network_wifi_low_icon=%{I+9}%{I-}
 Network_eth_icon=%{I+9}%{I-}
 num_zero_icon=%{I+7}%{I-}
 num_one_icon=%{I+7}%{I-}

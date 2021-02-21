@@ -30,6 +30,7 @@ function format() {
 	if [[ ! $1 == fading ]]; then
 		[[ "$1" == *[![:ascii:]]* && ! "$1" =~ I- ]] && icon_width=%{I-n}
 
+		local all_args="$@"
 		local padding=${padding:-\$padding}
 
 		case $style in
@@ -49,6 +50,7 @@ function format() {
 	else
 		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
 		#[[ $module == H ]] && ~/.orw/scripts/notify.sh "${count:-$content}"
+		#[[ $module == N ]] && ~/.orw/scripts/notify.sh "ARGS ${@:2}"
 		[[ $style == hidden ]] && formated="${@:2}" || formated="$(format "${@:2}")"
 
 		#if [[ $lines != true ]]; then
@@ -84,6 +86,13 @@ function format() {
 		fi
 
 			#~/.orw/scripts/notify.sh "s: $module $separator"
+		#[[ $module == N ]] && ~/.orw/scripts/notify.sh -t 22 "sep: $separator, s: $start, e: $end"
+		#[[ $module == N ]] && ~/.orw/scripts/notify.sh -t 22 "f: ${formated% *}$end"
+		#[[ $module == N ]] && echo "f: ${formated% *}$end" >> ~/Desktop/net_log
+		#[[ $module == N ]] && echo "f: $start$format$end$separator" >> ~/Desktop/net_log
+
+		#[[ $module == N ]] && echo "a: $start$formated$end$separator" >> ~/Desktop/net_log
+		#[[ $module == N ]] && echo "f: $start${formated% *}$end$separator" >> ~/Desktop/net_log
 
 			#latest changes
 			#case $separator in
@@ -94,7 +103,12 @@ function format() {
 			#	*) echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
 			#esac
 
-			echo -e "$start${formated% *}$end$separator"
+		#[[ $module == N ]] && ~/.orw/scripts/notify.sh -t 22 "f: $start${formated% *}$end$separator"
+		#[[ $module == E ]] && ~/.orw/scripts/notify.sh -t 22 "f: $start${formated% *}$end$separator"
+		[[ $module == E ]] && echo -e "f: $start${formated% *}$end$separator" >> ~/Desktop/weather_log
+
+		#echo -e "$start${formated% *}$end$separator"
+		echo -e "$start${formated% *}$end$separator"
 
 			#echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
 		#fi
@@ -112,6 +126,7 @@ format_fading() {
 	[[ $left_command ]] && local left_command="%{A1:$left_command:}" left_command_end="%{A}"
 	[[ $right_command ]] && local right_command="%{A3:$right_command:}" right_command_end="%{A}"
 
+	#[[ $module == N ]] && ~/.orw/scripts/notify.sh "c: $content"
 	#if ((count)); then
 	if [[ ${count:-$content} ]]; then
 		if [[ $icon_type == only ]]; then
@@ -125,6 +140,9 @@ format_fading() {
 			[[ ! $label ]] &&
 				format fading "$content" ||
 				format fading "$left_command$right_command${!icon_type:-$label}$left_command_end$right_command_end" "${content:-$count}"
+
+			#[[ $module == N ]] && #~/.orw/scripts/notify.sh "it: $icon_type 3, ${!icon_type}"
+			#	~/.orw/scripts/notify.sh "$left_command$right_command${!icon_type:-$label}$left_command_end$right_command_end ${content:-$count}"
 		fi
 	else
 		if [[ $separator =~ ^s ]]; then
@@ -141,9 +159,10 @@ case $1 in
 		#icon= 
 		set_icon $1
 		separator="$2"
-		lines=${@: -1}
+		#lines=${@: -1}
+		lines=$3
 
-		old_mail_count=36
+		old_mail_count=81
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -187,7 +206,7 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading MAIL "$mail_count" "${3-none}";;
+		format_fading MAIL "$mail_count" "${4-none}";;
 	volume*)
 		separator="$2"
         current_system_volume_mode=duo
@@ -253,7 +272,8 @@ case $1 in
 	Hidden*)
 		style=hidden
 		separator="$2"
-		lines=${@: -1}
+		#lines=${@: -1}
+		lines=$4
 
 		dropdown() {
 			id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
@@ -261,7 +281,8 @@ case $1 in
 			if [[ $id ]]; then
 				[[ $(xwininfo -id $id | awk '/Map/ {print $NF}') =~ Viewable ]] &&
 					state=down fg="\${$pfg}" || state=up fg="\${$sfg}"
-				fg="\${$pfg}"
+				#fg="\${$pfg}"
+				#fg="\${$sfg}"
 
 				#fg="\${$sfg}"
 				#sec=$(date +'%S')
@@ -393,8 +414,9 @@ case $1 in
 			fi
 		}
 
-		[[ $4 ]] && label=icon
+		[[ $5 ]] && label=icon
 		fg="\${$pfg}"
+		fg="\${$sfg}"
 		#~/.orw/scripts/notify.sh "3: $3"
 
 		#if [[ $3 == all ]]; then
@@ -427,28 +449,83 @@ case $1 in
 	Network)
 		#icon=
 		padding=$2
+		#lines=${@: -1}
+		lines=$3
 
-		type=$(ip a | awk '/^[0-9]/ && $2 ~ "^enp" { eth = 1 } END { print (eth) ? "eth" : "wifi" }')
-		set_icon $1_$type
+		#type=$(ip a | awk '/^[0-9]/ && $2 ~ "^enp" { eth = 1 } END { print (eth) ? "eth" : "wifi" }')
+		#set_icon $1_$type
 
-		if [[ $type == eth ]]; then
+		network_type='e'
+		#interface=$(ip -o link show | awk -F '[: ]' '/state UP/ { print $3 }')
+		interface=$(ip -o link show | awk -F '[: ]' '/state UP/ { print substr($3, 0, 1) }')
+
+		#[[ $network_type != ${interface:0:1} ]] && sed -i "/^\s*network_type/ s/'.*'/'${interface:0:1}'/" $0
+		#set_icon $1_${interface:0:3}
+
+		#~/.orw/scripts/notify.sh "3: $3, 4: $4"
+
+		#if [[ $type == eth ]]; then
+		if [[ $interface == e ]]; then
 			style=mono
 			mono_bg="$sbg"
 			#mono_fg="\${$sfg}"
-			mono_fg="$sfg"
+			mono_fg="$pfg"
 			#~/.orw/scripts/notify.sh "mg: $mono_bg"
-			format $icon
-		else
-			ssid=$(nmcli dev wifi | awk ' \
-				NR == 1 {
-					si = index($0, " SSID")
-					mi = index($0, " MODE")
-				}
-				/^*/ { nn = substr($0, si, mi - si)
-				print gensub(" {2,}", "", 1, nn) }')
 
-			format_fading NET "" "${3-none}" "$ssid"
+			#[[ $3 ]] && #icon_type=only && mono_fg="$sfg"
+			#	set_icon $1_eth && icon_type=only && mono_fg="$sfg"
+
+			[[ $4 ]] && icon_type=only mono_fg="$sfg" && set_icon $1_eth
+
+			#format_fading ${icon:-ETH} "" "${icon_type:-none}"
+			#~/.orw/scripts/notify.sh "i: $icon, $3"
+			format_fading "" "" "" "${!4:-ETH}"
+		else
+			#~/.orw/scripts/notify.sh "i: ^$interface^"
+
+			#ssid=$(nmcli dev wifi | awk ' \
+			read signal ssid <<< $(nmcli dev wifi | awk ' \
+				NR == 1 {
+					mi = index($0, " MODE")
+					si = index($0, " SIGNAL")
+					ssidi = index($0, " SSID")
+				}
+				/^*/ {
+					s = substr($0, si, 3)
+					ssid = substr($0, ssidi, mi - ssidi)
+					print s, gensub("^\\s*", "", 1, ssid)
+				}')
+				#print gensub(" {2,}", "", 1, nn) }')
+
+			case $signal in
+				100) strength=full;;
+				[7-9]*) strength=high;;
+				[4-6]*) strength=mid;;
+				*) strength=low;;
+			esac
+
+			set_icon $1_wifi_$strength
+			#set_icon $1_${interface}_$strength
+			#format ${!3} "$ssid"
+			format_fading NET "" "${4:-none}" "$ssid"
+			#format_fading NET "" "${3:-none}" "${ssid// /_}"
+			#format ${!3} "$ssid"
+		fi
+
+		if [[ $network_type != ${interface:0:1} ]]; then
+			#[[ $interface ]] && network_icon=${icon//[[:ascii:]]/} || network_icon=  diss=diss
+			#~/.orw/scripts/notify.sh -s osd -i ${icon//[[:ascii:]]/} "connected"
+			if [[ $interface ]]; then
+				network_icon=${icon//[[:ascii:]]/}
+			else
+				[[ $network_type == w ]] && network_icon= || network_icon=
+				diss=diss
+			fi
+
+			~/.orw/scripts/notify.sh -s osd -i $network_icon "${diss}connected"
+			sed -i "/^\s*network_type/ s/'.*'/'${interface:0:1}'/" $0
 		fi;;
+		#format_fading NET "" "${icon_type:-${3:-none}}" "$ssid";;
 
 		#if [[ $2 == only ]]; then
 		#	style=mono
@@ -462,15 +539,22 @@ case $1 in
 		#format_fading NET "" "${3-none}" "$ssid";;
 	Weather*)
 		separator="$2"
-		lines=${@: -1}
+		#lines=${@: -1}
+		lines=$4
 		info="${3//,/ }"
 
-		if (($# > 4)); then
-			if [[ $4 =~ ^(icon|only)$ ]]; then
-				(($# > 5)) && location=$5
-			else
-				location=$4
-			fi
+		#if (($# > 4)); then
+		#	if [[ $5 =~ ^(icon|only)$ ]]; then
+		#		(($# > 5)) && location=$5
+		#	else
+		#		location=$4
+		#	fi
+		#fi
+
+		if [[ $@ =~ (icon|only)$ ]]; then
+			(($# == 6)) && location=$5
+		else
+			location=$5
 		fi
 
 		[[ $info =~ s ]] && nr=6
@@ -494,23 +578,29 @@ case $1 in
 			weather+="${!i}\${padding}"
 		done
 
-		if [[ $4 =~ ^(no|only)$ ]]; then
+		if [[ $6 =~ ^(no|only)$ ]]; then
 			style=mono
 
-			if [[ $4 == no ]]; then
-				mono_fg="\${$pfg}"
+			if [[ $6 == no ]]; then
+				#mono_fg="\${$pfg}"
+				mono_fg="$pfg"
 			else
 				label=$icon
 				mono_bg="$sbg"
-				mono_fg="\${$sfg}"
+				#mono_fg="\${$sfg}"
+				mono_fg="$sfg"
 				unset weather
 			fi
 		else
-			label=${!4:-${w^^}}
+			label=${!6:-${w^^}}
 		fi
 
 		#format_fading "${w^^}" "" "${4-none}" "$(sed 's/[^[:print:]]\([^m]*\)m*//g' <<< "${weather%\$}")";;
 		if [[ $w ]]; then
+		#~/.orw/scripts/notify.sh "l $label, w $w"
+			#~/.orw/scripts/notify.sh "$label, ${weather%\$*}"
+
+			#format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g'
 			format fading $label "${weather%\$*}" | sed 's/[^[:print:]]\([^m]*\)m*//g'
 		else
 			if [[ $separator =~ ^s ]]; then
@@ -652,7 +742,8 @@ case $1 in
 		fi;;
 	torrents)
 		separator="$2"
-		lines=${@: -1}
+		#lines=${@: -1}
+		lines=$4
 		#icon=%{I+n}%{I-}
 		#icon=%{I+n}%{I-}
 		set_icon $1
@@ -703,16 +794,18 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading TORR "$c" "${4-none}" "${torrents%\$*}";;
+		format_fading TORR "$c" "${5-none}" "${torrents%\$*}";;
 	updates)
 		separator="$2"
-		lines=${@: -1}
+		#lines=${@: -1}
+		lines=$3
 		#icon=%{I-4}%{I-}
 		set_icon $1
 
 		if which pacman &> /dev/null; then
 			sudo pacman -Syy &> /dev/null
-			updates_count=$(pacman -Qu | wc -l)
+			#updates_count=$(pacman -Qu | wc -l)
+			updates_count=$(pacman -Qu | awk 'END { if(NR) print NR }')
 		else
 			updates_count=$(apt list --upgradable 2> /dev/null | wc -l)
 		fi
@@ -729,7 +822,40 @@ case $1 in
 		#	[[ $separator =~ ^e ]] && echo -e "${separator:1}"
 		#fi;;
 
-		format_fading UPD "$updates_count" "${3:-none}";;
+		format_fading UPD "$updates_count" "${4:-none}";;
+	feed)
+		separator=$2
+		lines=$3
+
+		last_feed_count=
+		#feed_count=$(newsboat -x reload print-unread | cut -d ' ' -f 1)
+		feed_count=$(newsboat -x reload print-unread | awk '$1 { print $1 }')
+		#feed_count=3
+
+		#~/.orw/scripts/notify.sh "rss: $feed_count"
+
+		set_icon $1
+		left_command='termite -e newsboat $> /dev/null &'
+		format_fading RSS "$feed_count" "${4-none}"
+
+		if ((feed_count != last_feed_count)); then
+			feed_icon=${icon//[[:ascii:]]/}
+			((feed_count)) && ~/.orw/scripts/notify.sh -s osd -i $feed_icon "New feeds: $feed_count"
+			sed -i "/^\s*last_feed_count/ s/[0-9]\+/$feed_count/" $0
+		fi;;
+
+		#if ((feed_count)); then
+		#	set_icon $1
+		#	format_fading RSS "$count" "${4-none}"
+
+		#	~/.orw/scripts/notify.sh "fc: $feed_count"
+
+		#	if ((feed_count != last_feed_count)); then
+		#		rss_icon=${icon//[[:ascii:]]/}
+		#		~/.orw/scripts/notify.sh -s osd -i $rss_icon "New feeds: <b>$feed_count</b>"
+		#		sed -i "/^\s*last_feed_count/ s/[0-9]\+/$feed_count/" $0
+		#	fi
+		#fi;;
 	Temp)
 		#temp=$(awk '{ printf("%d°C", $NF / 1000) }' /sys/class/thermal/thermal_zone*/temp)
 		temp=$(awk '{ tt += $NF / 1000; tc++ } END { print $NF / 1000 "°C" }' /sys/class/thermal/thermal_zone*/temp)
