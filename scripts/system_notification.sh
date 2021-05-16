@@ -9,7 +9,7 @@ theme=default
 [[ $1 =~ mpd ]] && theme=vertical
 
 [[ $1 == brightness ]] &&
-	command='echo 60%' replace_id=104 theme=osd ||
+	command='echo 50%' replace_id=104 theme=osd ||
 	command=$([[ $1 =~ mpd ]] && echo mpc volume || echo amixer -D pulse get Master) replace_id=102
 
 	#awk '"'$2'" == "mpd" || /^ *Front/ {
@@ -31,6 +31,7 @@ read value level_value empty_value icon <<< $($command | \
 			else if(v < 35) i = (b) ? "" : ""
 			else if(v < 65) i = (b) ? "" : ""
 			else i = (b) ? "" : ""
+			if(b) i = ""
 
 			#if(!v || $NF ~ "off") i = ""
 			#else if(v < 35) i = (b) ? "" : ""
