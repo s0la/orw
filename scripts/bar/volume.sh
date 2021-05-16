@@ -1,8 +1,8 @@
 #!/bin/bash
 
-icon=
-icon=
-icon=
+#icon=
+#icon=
+#icon=
 path=~/.orw/bar
 
 file="${0%/*}/$1*.sh"
@@ -15,11 +15,14 @@ function set_icon() {
 	eval volume_${1}_icon=$icon
 }
 
-set_icon up
-set_icon down
-set_icon mute
+[[ $2 =~ icon|only ]] && icon=true
 
-[[ $2 ]] && set_icon default
+if [[ $icon ]]; then
+	set_icon up
+	set_icon down
+	set_icon mute
+	set_icon default
+fi
 
 #~/.orw/scripts/notify.sh "$volume_default_icon"
 
@@ -31,7 +34,7 @@ if [[ $1 == system ]]; then
 		#'/Front.*Playback/ {
 	read label vol <<< $(amixer -D pulse get Master toggle | awk -F '[][]' \
 		'/Playback.*%/ {
-			if($4 == "on") o = ("'$2'") ? "'$volume_default_icon' " $2 : "VOL " $2
+			if($4 == "on") o = ("'$icon'") ? "'$volume_default_icon' " $2 : "VOL " $2
 			else o = ("'$2'") ? "'$volume_mute_icon' 0%" : "VOL MUTE"
 			print o }')
 			#print ($4 == "on") ? "'$volume_default_icon' " $2 : ("'$2'") ? " 0%" : " MUTE" }')
