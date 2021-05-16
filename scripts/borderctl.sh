@@ -47,7 +47,7 @@ case $1 in
 		#[[ ${1: -1} == [xy] ]] && pattern=${1: -1}_offset || pattern=ratio
 
 		offset_tiled_windows() {
-			if [[ $mode != floating ]]; then
+			#if [[ $mode != floating ]]; then
 				if [[ ! $sign ]]; then
 					#((new_value > value)) && max_value=$new_value || max_value=$value
 					local sign opposite_sign
@@ -57,8 +57,9 @@ case $1 in
 				fi
 
 				~/.orw/scripts/offset_tiled_windows.sh \
-					${property:0:1} ${sign:-$opposite_sign}${delta_value:-${check_value:-$new_value}}
-			fi
+					${property:0:1} ${opposite_sign:-$sign}${delta_value:-${check_value:-$new_value}}
+					#${property:0:1} ${sign:-$opposite_sign}${delta_value:-${check_value:-$new_value}}
+			#fi
 		}
 
 		property="${1: -1}"
@@ -74,7 +75,8 @@ case $1 in
 			[[ $offset == true ]] &&
 				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
 
-			[[ $mode != floating ]] && offset_tiled_windows
+			#[[ $mode != floating ]] && offset_tiled_windows
+			offset_tiled_windows
 
 			[[ $offset == true ]] &&
 				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value && exit
@@ -289,8 +291,10 @@ case $1 in
 					sub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv)
 				}
 
-				$1 ~ "'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
+				#$1 ~ "'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
+				$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
 					#if($1 ~ "(window-border|.*-(padding|radius))") {
+					#if($1 ~ "^'${1:1:1}'.*-padding") {
 					if($1 ~ ".*-padding") {
 						#fv = '$new_value' / (h / 100)
 						#sv = '${second_arg-0}' / (w / 100)
