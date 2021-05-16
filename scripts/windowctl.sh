@@ -3,17 +3,6 @@
 theme=~/.orw/themes/theme/openbox-3/themerc
 blacklist="Keyboard Status Monitor,DROPDOWN"
 
-set_window_id() {
-	id=$1
-
-	#client_width=$(awk '/client.*width/ { print $NF }' $theme)
-	#read x_border y_border <<< $([[ $id =~ ^0x ]] && xwininfo -id $id | awk '\
-	#	/Relative/ { if(/X/) x = $NF; else y = $NF + x } END { print 2 * x, y }')
-	#read x_border y_border <<< $([[ $id =~ ^0x ]] && xwininfo -id $id | awk '/Relative/ { print $NF * 2 }' | xargs)
-		#/Relative/ { if(/X/) x = $NF; else y = $NF + x } END { print 2 * x, y }')
-		#/Relative/ { if(/X/) x = $NF; else y = $NF + x - '$client_width' } END { print 2 * x, y }')
-}
-
 function get_windows() {
 	#[[ $1 ]] || local desktop=$current_desktop
 	if [[ $1 =~ ^0x ]]; then
@@ -2482,7 +2471,7 @@ new_window_size=$(awk -F '=' '/^new_window_size/ { print $NF }' ~/.orw/scripts/t
 #	END { print dc / 2, offsets, o }' $config)
 
 [[ -f $offsets_file && $(awk '/^offset/ { print $NF }' $config) == true ]] && eval $(cat $offsets_file | xargs)
-[[ ! $arguments =~ -[in] ]] && set_window_id $(printf "0x%.8x" $(xdotool getactivewindow))
+[[ ! $arguments =~ -[in] ]] && id=$(printf "0x%.8x" $(xdotool getactivewindow))
 
 while ((argument_index <= $#)); do
 	argument=${!argument_index#-}
@@ -2830,7 +2819,7 @@ while ((argument_index <= $#)); do
 				done
 
 				update_properties;;
-			i) set_window_id $optarg;;
+			i) id=$optarg;;
 			P)
 				closing_properties=true
 				properties=( $id $optarg )
@@ -2842,7 +2831,7 @@ while ((argument_index <= $#)); do
 				id=$(wmctrl -lG | awk '$NF ~ "'$name'" { print $1 }')
 
 				if [[ $id ]]; then
-					set_window_id $id
+					id=$id
 					properties=( $(get_windows $id) )
 				else
 					#set_windows_properties $display_orientation
