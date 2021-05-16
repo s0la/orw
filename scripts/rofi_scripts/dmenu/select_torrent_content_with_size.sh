@@ -105,7 +105,7 @@ agregate() {
 		}'
 }
 
-id=$(xdotool getactivewindow)
+id=$(printf '0x%.8x' $(xdotool getactivewindow))
 read window_x window_y <<< $(wmctrl -lG | awk '$1 == "'$id'" { print $3, $4 }')
 
 display_width=$(awk '\
@@ -127,7 +127,7 @@ display_width=$(awk '\
 				if($1 ~ /xy$/) {
 					x = $2
 					y = $3
-				} else if(/size$/) {
+				} else if($1 ~ /size$/) {
 					if(wx < x + $2 && wy < y + $3) {
 						print $2
 						exit
@@ -151,21 +151,28 @@ display_width=$(awk '\
 offset=$(awk '
 	function get_value() {
 		return gensub(".* ([0-9]+).*", "\\1", 1)
+		#return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
 	}
 
-	/^\s*font/ { f = get_value() }
-	/^\s*window-width/ { ww = get_value() }
-	/^\s*window-padding/ { wp = get_value() }
-	/^\s*element-padding/ { ep = get_value() }
+	#/^\s*font/ { f = get_value() }
+	#/^\s*window-width/ { ww = get_value() }
+	#/^\s*window-padding/ { wp = get_value() }
+	#/^\s*element-padding/ { ep = get_value() }
+
+	$1 == "font:" { f = get_value() }
+	$1 == "window-width:" { ww = get_value() }
+	$1 == "window-padding:" { wp = get_value() }
+	$1 == "element-padding:" { ep = get_value() }
 	END {
 		rw = int('$display_width' * ww / 100)
 		iw = rw - 2 * (wp + ep)
-		print int(iw / (f - 2))
-	}' ~/.config/rofi/list.rasi)
+		print int(iw / (f - 2) - 5)
+	}' ~/.config/rofi/large_list.rasi)
 
+#~/.orw/scripts/notify.sh "of: $offset"
 torrent_id="15"
 current=""
-full_path="Enblood - 2018 - Cast to Exile"
+full_path="Psicosfera - Beta \\\\(2018\\\\)"
 
 depth="2"
 final_depth="0"

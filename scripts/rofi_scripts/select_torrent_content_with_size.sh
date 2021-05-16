@@ -167,23 +167,29 @@ display_width=$(awk '\
 offset=$(awk '
 	function get_value() {
 		return gensub(".* ([0-9]+).*", "\\1", 1)
+		#return gensub("[^0-9]*([0-9]+).*", "\\1", 1)
 	}
 
-	/^\s*font/ { f = get_value() }
-	/^\s*window-width/ { ww = get_value() }
-	/^\s*window-padding/ { wp = get_value() }
-	/^\s*element-padding/ { ep = get_value() }
+	#/^\s*font/ { f = get_value() }
+	#/^\s*window-width/ { ww = get_value() }
+	#/^\s*window-padding/ { wp = get_value() }
+	#/^\s*element-padding/ { ep = get_value() }
+
+	$1 == "font:" { f = get_value() }
+	$1 == "window-width:" { ww = get_value() }
+	$1 == "window-padding:" { wp = get_value() }
+	$1 == "element-padding:" { ep = get_value() }
 	END {
 		rw = int('$display_width' * ww / 100)
 		iw = rw - 2 * (wp + ep)
-		print int(iw / (f - 2))
-	}' ~/.config/rofi/list.rasi)
+		print int(iw / (f - 2) - 5)
+	}' ~/.config/rofi/large_list.rasi)
 
-torrent_id="47"
-current=""
-full_path="Depths Above - 2018 - Ex Nihilo"
+torrent_id="65"
+current="done"
+full_path="Budgie - Discography/Albums"
 
-depth="2"
+depth="3"
 final_depth="0"
 
 [[ $@ =~ ^set_torrent_id ]] && $@
