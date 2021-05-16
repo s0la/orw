@@ -21,7 +21,8 @@ running_pid=$(pidof -o %PPID -x $0)
 	echo "Script is already running ($running_pid), exiting" && exit
 
 current_desktop=$(xdotool get_desktop)
-current_window_id=$(printf '0x%.8x' $(xdotool getactivewindow))
+current_window_id=$(printf '0x%.8x' $(xdotool getwindowfocus))
+#current_window_id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
 read {x,y}_border <<< \
 	$(awk '/^[xy]_border/ { if(/^x/) x = $NF; else { print x, ($NF - x / 2) * 2 } }' ~/.config/orw/config)
@@ -37,6 +38,32 @@ get_all_window_ids
 
 blacklist='input,get_borders,rec_file_name_input,DROPDOWN,image_preview,cover_art_widget'
 
+#xprop -spy -root _NET_ACTIVE_WINDOW _NET_SHOWING_DESKTOP | \
+#	awk '/window id/ {
+#			id = sprintf("0x%0*d%s", 10 - length($NF), 0, substr($NF, 3))
+#			if(id !~ "^0x0+$") print id
+#			fflush()
+#		}' | while read -r new_window_id; do
+#				echo c $current_window_id n $new_window_id
+#
+#				if [[ $new_window_id != $current_window_id ]]; then
+#					previous_window_id=$current_window_id
+#					current_window_id=$new_window_id
+#					killall xev &> /dev/null
+#				fi
+#
+#				xev -id $current_window_id -1 -event structure | \
+#					while read change; do
+#						echo $current_window_id changed
+#					done &
+#			done
+#exit
+
+#trap "~/.orw/scripts/notify.sh 'resized'" SIGWINCH
+#trap "echo killed && exit" SIGTERM
+
+shm=/dev/shm/latest_window_properties
+
 xprop -spy -root _NET_ACTIVE_WINDOW | \
 	awk '/window id/ {
 			id = sprintf("0x%0*d%s", 10 - length($NF), 0, substr($NF, 3))
@@ -46,6 +73,21 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 				#~/.orw/scripts/notify.sh "NEW $new_window_id $current_window_id $all_window_ids"
 
 				if [[ $new_window_id != $current_window_id ]]; then
+					#killall xev &> /dev/null
+					#if ((size_listening_pid)); then
+					#	kill $size_listening_pid
+					#	read latest_id latest_window_properties < $shm
+					#	[[ $latest_window_properties ]] && current_window_properties=$latest_window_properties && echo "lwp: $latest_window_properties"
+					#	echo killing_pid $size_listening_pid
+					#	#~/.orw/scripts/notify.sh "lwp: $latest_window_properties"
+					#	#~/.orw/scripts/notify.sh "lwp: $(cat $shm)"
+					#	#current_window_properties="$(cat $shm)"
+					#	unset size_listening_pid latest_window_properties
+					#	echo '' > $shm
+					#fi
+
+					#echo latest properties: $current_window_properties
+
 					previous_window_title=$current_window_title
 					#current_window_title=$(xdotool getactivewindow getwindowtitle)
 					read current_window_type current_window_title <<< \
@@ -55,13 +97,33 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 					#~/.orw/scripts/notify.sh "nw: $new_window_id $current_window_title"
 
 					if [[ ! $current_window_title =~ ^(${blacklist//,/|})$ ]]; then
+						#if ((size_listening_pid)); then
+							#kill $size_listening_pid
+
+						xev_pid=$(pidof xev 2> /dev/null)
+
+						if [[ $xev_pid ]]; then
+							kill "$xev_pid"
+							read latest_window_properties < $shm
+							[[ $latest_window_properties ]] && current_window_properties=$latest_window_properties
+
+							unset size_listening_pid latest_window_properties
+							echo '' > $shm
+						fi
+
+						#~/.orw/scripts/notify.sh -t 10 "cwp: $current_window_properties"
 						previous_window_properties="$current_window_properties"
 						previous_window_id=$current_window_id
 						current_window_id=$new_window_id
+						#~/.orw/scripts/notify.sh -t 10 "pwp: $previous_window_properties"
 
 						#sleep 0.1
 
+						#~/.orw/scripts/notify.sh "pwp pre: $previous_window_properties"
+						#~/.orw/scripts/notify.sh "lwp pre: $current_window_properties"
 						get_all_window_ids
+						#~/.orw/scripts/notify.sh "lwp post: $current_window_properties"
+						#~/.orw/scripts/notify.sh -t 10 "npwp: $previous_window_properties"
 
 						#echo $new_window_id "^($current_windows)$"
 						#echo pw $previous_windows
@@ -73,7 +135,9 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 							#echo pwp $previous_window_properties
 							#echo $previous_window_id $previous_window_properties
 							#~/.orw/scripts/notify.sh -t 11 "closing $previous_window_id $previous_window_properties"
-							~/.orw/scripts/windowctl.sh -i $previous_window_id -P "${previous_window_properties//_/ }" -A c
+							#~/.orw/scripts/notify.sh -t 10 "closing: $previous_window_properties"
+							#~/.orw/scripts/notify.sh "closing: $previous_window_properties"
+							~/Desktop/win_test.sh -i $previous_window_id -P "${previous_window_properties//_/ }" -A c
 							#~/.orw/scripts/windowctl.sh -R
 
 							get_all_window_ids
@@ -89,7 +153,8 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 								if [[ $current_window_type != dialog ]]; then
 									current_desktop=$(xdotool get_desktop)
 									((${desktops[$current_desktop]} == 1)) && id=none || id=$previous_window_id
-									read x y w h d <<< $(~/.orw/scripts/windowctl.sh -i ${id:-none} -A)
+									read x y w h d <<< $(~/Desktop/win_test.sh -i ${id:-none} -A)
+									#~/.orw/scripts/windowctl.sh -i ${id:-none} -A
 									echo "$new_window_id: $d" >> ~/.config/orw/windows_alignment
 
 									current_window_properties="$x $y $w $h"
@@ -105,6 +170,54 @@ xprop -spy -root _NET_ACTIVE_WINDOW | \
 									-x $(((x + w - new_window_size) / 2)) -y $(((y + h - new_window_size) / 2))
 							#fi
 						fi
+
+						#~/.orw/scripts/notify.sh "listening"
+						xev -id $new_window_id -1 -event structure | \
+							while read change; do
+								#echo $new_window_id changed $current_window_properties
+								#read x y w h <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+								#~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3- > $shm
+								#latest_window_properties=$(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+
+								#latest_window_properties=$(wmctrl -lG | \
+								#	awk '$1 == "0x01400003" { print $3, $4, $5 - '$x_border', $6 - '$y_border' }')
+								#latest_window_properties=$(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+								#echo "$latest_window_properties" > $shm
+
+								#wmctrl -lG | awk '$1 == "'$new_window_id'" {
+								#	print $3, $4, $5 - '$x_border', $6 - '$y_border' }' > $shm
+
+								#latest_window_properties=$(wmctrl -lG | awk '$1 == "'$new_window_id'" {
+								#	print $3 - '$x_border', $4 - '$y_border', $5, $6 }')
+								#echo "$latest_window_properties" > $shm
+
+								#latest_window_properties=$(~/.orw/scripts/windowctl.sh -i $new_window_id -p | cut -d ' ' -f 3-)
+								#echo "$latest_window_properties" > $shm
+
+								#cwid=$(printf '0x%.8x' $(xdotool getwindowfocus))
+
+								latest_window_properties="$(wmctrl -lG | awk '$1 == "'$new_window_id'" {
+									print $3 - '$x_border', $4 - '$y_border', $5, $6 }')"
+								[[ $latest_window_properties ]] && echo "$latest_window_properties" > $shm
+							done &
+
+						#size_listening_pid=$!
+						#echo latest_pid: $size_listening_pid
+
+							#while read change; do
+							#	echo $new_window_id changed $current_window_properties
+							#	read x y w h <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+							#	current_window_properties="$x $y $w $h"
+							#done <<< $(xev -id $new_window_id -1 -event structure) &
+							#size_listening_pid=$!
+
+						#xev -id $new_window_id -1 -event structure | \
+						#	while read change; do
+						#		echo $new_window_id changed $current_window_properties
+						#		read x y w h <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+						#		current_window_properties="$x $y $w $h"
+						#	done &
+
 					#else
 					elif [[ $current_window_title =~ ^(input|rec_file_name_input|DROPDOWN)$ ]]; then
 						#[[ $current_window_title == input ]] && opacity=0 || opacity=90
