@@ -5,8 +5,8 @@ padding=$2
 separator=$3
 bg='${msbg:-${mpbg:-$sbg}}'
 
-current_mode=controls
-[[ $current_mode == song_info ]] && mode=controls || mode=song_info
+current_mode=buttons
+[[ $current_mode == song_info ]] && mode=buttons || mode=song_info
 
 function set_icon() {
 	local icon="$(sed -n "s/mpd_${1}_icon=//p" ${0%/*}/icons)"
@@ -117,6 +117,9 @@ get_song_info() {
 	#~/.orw/scripts/notify.sh "$song_info"
 		artist_portion=$(((artist_length + 1) - song_info_index))
 		song_info="%{T5}${song_info:0:$artist_portion}%{T1}${song_info:$artist_portion}"
+		song_info="${song_info// / }"
+		#echo -e "$song_info" >> ~/Desktop/bar_log
+		#~/.orw/scripts/notify.sh "ap: ${#song_info}"
 	fi
 
 	#~/.orw/scripts/notify.sh "$song_info"
@@ -130,7 +133,6 @@ if [[ $status == playing ]]; then
 			local var=$1_percentage
 
 			for p in $(seq ${!var}); do
-				((percentage += progression_step))
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}━%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}█%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
@@ -140,7 +142,10 @@ if [[ $status == playing ]]; then
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}▇%{I-}%{A}\"
 				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}█%{I-}%{A}\"
-				eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}$bar_icon%{I-}%{A}\"
+				#eval $1+=\"%{A:mpc -q seek $percentage%:}\%{I-0}$bar_icon%{I-}%{A}\"
+				[[ $1 == remaining ]] && ((percentage += progression_step))
+				eval $1+=\"%{A:mpc -q seek ${percentage:-0}%:}\%{I-0}$bar_icon%{I-}%{A}\"
+				[[ $1 == elapsed ]] && ((percentage += progression_step))
 			done
 		}
 
@@ -168,7 +173,7 @@ if [[ $status == playing ]]; then
 	}
 fi
 
-#get_controls() {
+#get_buttons() {
 #	set_icon prev
 #	set_icon next
 #	set_icon play
@@ -180,29 +185,29 @@ fi
 #	#stop+="echo 'SONG_INFO not playing' > $fifo;"
 #	#stop+="echo 'MPD_VOLUME' > $fifo:}%{I-n}%{I-}%{A}"
 #
-#	#controls="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
-#	#controls+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
-#	#controls+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
+#	#buttons="%{T3}%{A:mpc -q prev:}%{I-n}%{I-}%{A}"
+#	#buttons+="\$inner%{A:mpc -q toggle:}%{I-n}$toggle_icon%{I-}%{A}"
+#	#buttons+="\$inner$stop\$inner%{A:mpc -q next:}%{I-n}%{I-}%{A}%{T-}"
 #
-#	#controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
-#	#controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
-#	#controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
+#	#buttons="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}\$inner"
+#	#buttons+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}\$inner"
+#	#buttons+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}\$inner"
 #
-#	controls="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}"
-#	controls+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}"
-#	controls+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}"
+#	buttons="%{T3}%{A:mpc -q prev:}$mpd_prev_icon%{A}"
+#	buttons+="\$inner%{A:mpc -q toggle:}$toggle_icon%{A}"
+#	buttons+="\$inner%{A:mpc -q next:}$mpd_next_icon%{A}%{T-}"
 #
-#	echo -e "$bg$of\$inner\${msfg:-\$sfg}$controls\${inner}$oe"
+#	echo -e "$bg$of\$inner\${msfg:-\$sfg}$buttons\${inner}$oe"
 #}
 
-get_controls() {
-	local icon=mpd_${control}${circle}_icon
-	set_icon $control$circle
-	#controls+="%{A:mpc -q $control:} ${!icon}%{A}${control_separator}"
-	controls+="%{A:mpc -q $control:}${!icon}%{A}%{O${control_separator:-0}}"
-	#controls+="%{A:~/.orw/scripts/notify.sh '$control':} ${!icon}%{A}"
-	#controls+="%{A:~/.orw/scripts/notify.sh 'mpc -q $control':}${!icon}%{A}"
-	#~/.orw/scripts/notify.sh "c: $controls"
+get_buttons() {
+	local icon=mpd_${button}${circle}_icon
+	set_icon $button$circle
+	#buttons+="%{A:mpc -q $button:} ${!icon}%{A}${button_separator}"
+	buttons+="%{A:mpc -q $button:}${!icon}%{A}%{O${button_separator:-0}}"
+	#buttons+="%{A:~/.orw/scripts/notify.sh '$button':} ${!icon}%{A}"
+	#buttons+="%{A:~/.orw/scripts/notify.sh 'mpc -q $button':}${!icon}%{A}"
+	#~/.orw/scripts/notify.sh "c: $buttons"
 }
 
 for module in ${4//,/ }; do
@@ -213,51 +218,55 @@ for module in ${4//,/ }; do
 			#((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
 			((${#module} == 1)) && progression_step=5 || progression_step=${module//[^0-9]/}
 			#bar_style=${module//[0-9p]/}
-			[[ $module =~ s ]] && bar_icon=■ || bar_icon=━
+			[[ $module =~ d ]] && bar_icon=■ || bar_icon=━
 
-			[[ $status == playing && $current_mode == controls ]] &&
+			[[ $status == playing && $current_mode == buttons ]] &&
 				echo -e "PROGRESSBAR $(get_progressbar)" > $fifo;;
-		c*)
-			modules+='$controls'
+		b*)
+			modules+='$buttons'
 
-			if [[ $current_mode == controls ]]; then
-				((${#module} > 1)) && selected_controls="${module#*:}" || selected_controls="pstn"
+			if [[ $current_mode == buttons ]]; then
+				((${#module} > 1)) && selected_buttons="${module#*:}" || selected_buttons="pstn"
+				#((${#module} > 1)) && selected_buttons="${module:1}" || selected_buttons="pstn"
 
-				for control_index in $(seq 1 ${#selected_controls}); do
-					current_control=${selected_controls:control_index - 1:1}
+				for button_index in $(seq 1 ${#selected_buttons}); do
+					current_button=${selected_buttons:button_index - 1:1}
 
-					case $current_control in
-						p) control=prev;;
-						n) control=next;;
-						s) control=stop;;
-						#S*) control_separator="%{O${current_control:1}}";;
-						S*) control_separator=${selected_controls//[^0-9]/};;
-						#S*) control_separator=${current_control:1};;
-							#separator_value=${current_control:1}
-							#control_separator="%{O$separator_value}";;
-						t) [[ $status == playing ]] && control=pause || control=play;;
+					case $current_button in
+						p) button=prev;;
+						n) button=next;;
+						s) button=stop;;
+						#S*) button_separator="%{O${current_button:1}}";;
+						#S*) button_separator=${selected_buttons//[^0-9]/};;
+						S)
+							button_separator=${selected_buttons//[^0-9]/}
+							(( button_index += ${#button_separator} ));;
+						#S*) button_separator=${current_button:1};;
+							#separator_value=${current_button:1}
+							#button_separator="%{O$separator_value}";;
+						t) [[ $status == playing ]] && button=pause || button=play;;
 						c) [[ $circle ]] && unset circle || circle=_circle;;
 					esac
 
-					if [[ $current_control != [co0-9] ]]; then
-						#((control_index > 1)) && controls+='${inner}'
+					if [[ $current_button != [co0-9] ]]; then
+						#((button_index > 1)) && buttons+='${inner}'
 
-						# add offset between control buttons, commented because space was added before each button, so the click action would respond on the right location
-						#[[ $control_index -eq 1 || $control_index -eq 2 &&
-						#	${selected_controls:control_index - 2:1} == c ]] || controls+='${inner}'
-						get_controls $control
+						# add offset between button buttons, commented because space was added before each button, so the click action would respond on the right location
+						#[[ $button_index -eq 1 || $button_index -eq 2 &&
+						#	${selected_buttons:button_index - 2:1} == c ]] || buttons+='${inner}'
+						get_buttons $button
 					fi
 				done
 
-				controls="${controls%\%*}"
-				echo -e "CONTROLS $bg\${msfg:-\$sfg}$of%{T3}${controls}%{T-}$oe" > $fifo
+				buttons="${buttons%\%*}"
+				echo -e "BUTTONS $bg\${msfg:-\$sfg}$of%{T3}${buttons}%{T-}$oe" > $fifo
 			fi;;
 
-			#echo $controls
+			#echo $buttons
 			#exit
 
-			#[[ $current_mode == controls ]] &&
-			#	echo -e "CONTROLS $(get_controls)" > $fifo;;
+			#[[ $current_mode == buttons ]] &&
+			#	echo -e "BUTTONS $(get_buttons)" > $fifo;;
 		i)
 			modules+="$bg$of$info$oe"
 
@@ -266,7 +275,7 @@ for module in ${4//,/ }; do
 		v)
 			modules+='$mpd_volume'
 
-			[[ $status == playing && $current_mode == controls ]] &&
+			[[ $status == playing && $current_mode == buttons ]] &&
 				echo -e "MPD_VOLUME $(get_volume $4)" > $fifo;;
 		P) bg='${mpbg:-$pbg}';;
 		T*)
