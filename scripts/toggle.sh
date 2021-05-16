@@ -93,10 +93,10 @@ rofi() {
 	elif [[ $1 =~ ^(or|loc) ]]; then
 		option=$1 && shift
 
-		last_v_margin=30px
-		last_h_margin=60px
+		last_v_margin=9px
+		last_h_margin=76px
 		last_v_location=west
-		last_h_location=center
+		last_h_location=south
 
 		getopts c: config
 		[[ $config ]] && mode=$OPTARG && shift 2
@@ -105,12 +105,12 @@ rofi() {
 		eval $(awk -F '[ ;]' '\
 			/window-orientation:/ {
 				co = $(NF - 1)
-				o = ("'${1:0:1}'" == "o")
+				o = ("'${option:0:1}'" == "o")
 
 				if(o) {
 					no = ("'$1'") ? "'$1'" : \
 						(co == "vertical") ? "horizontal" : "vertical"
-					 sub(co, no)
+					sub(co, no)
 				 }
 			}
 
@@ -481,22 +481,23 @@ wm() {
 		if [[ $1 == offset ]]; then
 			icon=
 
-			if [[ $wm_mode != floating ]]; then
+			#if [[ $wm_mode != floating ]]; then
 				#[[ $mode == true ]] && offset_config=${orw_conf%/*}/offsets
 				#eval $(awk '/_offset/ { print gensub(" ", "=", 1) }' ${offset_config:-$orw_conf} | xargs)
 				offset_file=${orw_conf%/*}/offsets
 				[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
 					{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
-				read default_{x,y}_offset <<< $(awk '/_offset/ { print $NF }' $orw_conf | xargs)
+				read default_{x,y}_offset <<< $(awk '/[xy]_offset/ { print $NF }' $orw_conf | xargs)
 
 				delta_x=$((x_offset - default_x_offset))
 				delta_y=$((y_offset - default_y_offset))
 
 				[[ $mode == true ]] && sign=+ || sign=-
 
-				~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
-				~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
-			fi
+				~/.orw/scripts/offset_tiled_windows.sh -x $sign$delta_x -y $sign$delta_y
+				#~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
+				#~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
+			#fi
 		fi
 		#	full) icon=;;
 		#	*) icon=;;
@@ -544,7 +545,7 @@ wm() {
 
 			while read id; do
 				set_opacity 100
-			done <<< $(wmctrl -l | awk '{ print $1 }')
+			done <<< $(wmctrl -l | awk '$NF != "DROPDOWN" { print $1 }')
 		fi
 
 		if [[ ! $2 ]]; then
