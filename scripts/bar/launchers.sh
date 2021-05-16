@@ -87,11 +87,22 @@ else
 				property=${argument:0:1}
 
 				[[ $5 == true ]] && separator_color='%{B${Lfc:-$fc}}'
+				#~/.orw/scripts/notify.sh "sc: $5"
 
 				if [[ $property == s ]]; then
 					#~/.orw/scripts/notify.sh "sc: $value"
-					launcher_separator="${separator_color:-\$bsbg}%{O$value}"
+					#launcher_separator="${separator_color:-\$bsbg}%{O$value}"
+
+					#launcher_separator="${separator_color:-\$Lsc}%{O$value}"
+					#[[ $value == s ]] && separator_value=\$separator || separator_value="%{O$value}"
+					#((value)) && separator_value="%{O$value}" || separator_value=\$separator
+					((value)) && separator_value="%{O$value}" ||
+						separator_value="%{O\${separator##*O}"
+					launcher_separator="${separator_color:-%{B\$Lsc:-\$bg}}$separator_value"
+
 					#~/.orw/scripts/notify.sh "sc: $launcher_separator"
+				elif [[ $property == p ]]; then
+					module_padding=true
 				else
 					if [[ $value =~ [0-9] ]]; then
 						offset="%{O$value}"
@@ -108,10 +119,14 @@ function set_line() {
 	fc="\${Lfc:-\$fc}"
 	frame_width="%{O\${Lfw:-\${frame_width-0}}\}"
 
-	frame="%{B$fc\}$frame_width"
-	left_frame="%{+u\}%{+o\}$frame"
-	remove_frame="%{-o\}%{-u\}"
-	right_frame="$frame$remove_frame"
+	if [[ $lines == [ou] ]]; then
+		left_frame="%{+$lines}" right_frame="%{-$lines}"
+	else
+		frame="%{B$fc\}$frame_width"
+		left_frame="%{+u\}%{+o\}$frame"
+		remove_frame="%{-o\}%{-u\}"
+		right_frame="$frame$remove_frame"
+	fi
 }
 
 [[ $lines != false ]] && set_line
@@ -228,7 +243,7 @@ done <<< $(awk '{ if(/^$/) {
 
 #[[ $launcher_separator ]] && ~/.orw/scripts/notify.sh "le: ${launchers##*%}"
 [[ $launcher_separator ]] && launchers="${launchers%\%*}\${Lsbg:-\$sbg}"
-launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
+[[ $module_padding ]] && launchers="\${Lsbg:-\$sbg}$padding$launchers$padding"
 #[[ $separator =~ ^% ]] && launchers="$remove_frame$launchers"
 	#~/.orw/scripts/notify.sh "s: $separator"
 
@@ -248,7 +263,8 @@ else
 		s*) launchers="%{U$fc}\${start_line:-$left_frame}$launchers\$start_line${separator:2}\$start_line";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
-		*) [[ $lines == true ]] &&
+		#*) [[ $lines == true ]] &&
+		*) [[ $lines == a ]] &&
 			launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator";;
 			#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}%{B\$bg}$separator" || launchers+="%{B\$bg}$separator";;
 	esac

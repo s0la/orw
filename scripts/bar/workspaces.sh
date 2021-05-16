@@ -11,9 +11,18 @@ single_line=${@: -1}
 function set_line() {
 	fc="\${Wfc:-\$fc}"
 	frame="%{B$fc\}$frame_width"
-	left_frame="%{+u\}%{+o\}$frame"
-	remove_frame="%{-o\}%{-u\}"
-	right_frame="$frame$remove_frame"
+
+	if [[ $lines == [ou] ]]; then
+		left_frame="%{+$lines}" right_frame="%{-$lines}"
+	else
+		left_frame="%{+u\}%{+o\}$frame"
+		remove_frame="%{-o\}%{-u\}"
+		right_frame="$frame$remove_frame"
+	fi
+
+	#left_frame="%{+u\}%{+o\}$frame"
+	#remove_frame="%{-o\}%{-u\}"
+	#right_frame="$frame$remove_frame"
 }
 
 [[ $single_line == false ]] && format_delimiter=' '
@@ -77,7 +86,7 @@ for workspace_index in $(seq $workspace_count); do
 	[[ $fbg ]] || fbg=$bg
 
 	command="wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k \&"
-	[[ $flags ]] && command+=" ~/.orw/scripts/xwallctl.sh -$flags \&"
+	[[ $flags ]] && command+=" ~/.orw/scripts/wallctl.sh -$flags \&"
 	workspace="%{A:$command:}$bg$fg$label%{A}"
 
 	if [[ $single_line == true && $separator =~ ^% && $current == p ]]; then

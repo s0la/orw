@@ -19,11 +19,20 @@ function set_line() {
 	fc="\${${module}fc:-\$fc}"
 	frame_width="%{O\${${module}fw:-\${frame_width-0}}\}"
 
+	#[[ $lines == [ou] ]] && local start_line_position="%{+$lines}" end_line_position="%{-$lines}"
+
 	#~/.orw/scripts/notify.sh "s: $separator"
 
-	frame="%{B$fc\}$frame_width"
-	left_frame="%{+u\}%{+o\}$frame"
-	right_frame="$frame%{-o\}%{-u\}"
+	if [[ $lines == [ou] ]]; then
+		left_frame="%{+$lines\}" right_frame="%{-$lines\}"
+	else
+		frame="%{B$fc\}$frame_width"
+		left_frame="%{+u\}%{+o\}$frame"
+		right_frame="$frame%{-o\}%{-u\}"
+	fi
+
+	#left_frame="${start_line_position:-%{+u\}%{+o\}}$frame"
+	#right_frame="$frame${end_line_position:-%{-o\}%{-u\}}"
 }
 
 function format() {
@@ -43,9 +52,10 @@ function format() {
 
 				echo -e $hidden;;
 			#mono) echo -e "\${${mono_bg:-$pbg}}$padding\${$pfg}$icon_width$mono_fg$1%{I-}$padding$2 ${separator:-\$separator}";;
-			mono) echo -e "\${${mono_bg:-$pbg}}$padding\${${mono_fg:-$pfg}}$icon_width$1%{I-}$padding$2 ${separator:-\$separator}";;
+			#mono) echo -e "\${${mono_bg:-$pbg}}$padding\${${mono_fg:-$pfg}}$icon_width$1%{I-}$padding$2 ${separator:-\$separator}";;
+			mono) echo -e "\${${mono_bg:-$pbg}}$padding${mono_fg:-\${$pfg\}}$icon_width%{T5}$1%{T1}%{I-}$padding$2 ${separator:-\$separator}";;
 			trim) echo -e "$padding\${$sfg}$icon_width$1%{I-}\$inner\${$pfg}$2$padding$3 \$separator";;
-			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width%{T5}$1%{T1}%{I-}\$inner\${$pbg}\$inner\${$pfg}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
+			*) echo -e "\${$sbg}$padding\${$sfg}$icon_width%{T5}$1%{T1}%{I-}\$inner\${$pbg}\$inner\${$pfg}%{T5}${@:2}%{F-}%{T1}${padding} %{B\$bg}${separator:-\$separator}";;
 		esac
 	else
 		#~/.orw/scripts/notify.sh "f: $2 a ${@:2}"
@@ -62,13 +72,34 @@ function format() {
 		#	echo -e "$formated"
 		#else
 
+		#~/.orw/scripts/notify.sh "l: $lines"
+		#~/.orw/scripts/notify.sh "$module: $lines"
+
 		#if [[ $lines == false ]]; then
 		if [[ $lines != false ]]; then
 		#	echo -e "${formated% *}$separator"
 		#	#echo -e "${formated% *} %{B\$bg}$separator"
 		#else
 		#if [[ $lines != true ]]; then
+
+			#[[ $lines == true ]] && set_line ||
+			#	start_line=+$lines end_line=-$lines
+
+			#set_line
+			#lines=u
 			set_line
+
+			#~/.orw/scripts/notify.sh -t 22 "$module - l: $left_frame, r: $right_frame"
+
+			#if [[ $lines == true ]]; then
+			#	set_line
+			#	left_frame="%{+u}" right_frame="%{-u}"
+			#	start_line="%{+u}" end_line="%{-u}"
+			#else
+			#	#fc="%{U\${${module}fc:-\$fc}}"
+			#	left_frame="%{+u}" right_frame="%{-u}"
+			#	#~/.orw/scripts/notify.sh -t 22 "l: $left_frame, r: $right_frame"
+			#fi
 
 			case $separator in
 				[ej]*) separator=${separator:1};;
@@ -77,12 +108,15 @@ function format() {
 						separator=${separator:2}
 					else
 						separator=${separator:-\$separator}
-						local end="%{U$fc}\${end_line:-$right_frame}"
+						#local end="%{U$fc}\${end_line:-$right_frame}"
+						local end="%{U$fc}$right_frame"
 					fi
 
-					local start="%{U$fc}\${start_line:-$left_frame}"
+					#local start="%{U$fc}\${start_line:-$left_frame}"
+					local start="%{U$fc}$left_frame"
 			esac
 				#e*) echo -e "${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
+				#~/.orw/scripts/notify.sh "$module: l $start, r $end"
 		fi
 
 			#~/.orw/scripts/notify.sh "s: $module $separator"
@@ -105,9 +139,12 @@ function format() {
 
 		#[[ $module == N ]] && ~/.orw/scripts/notify.sh -t 22 "f: $start${formated% *}$end$separator"
 		#[[ $module == E ]] && ~/.orw/scripts/notify.sh -t 22 "f: $start${formated% *}$end$separator"
-		[[ $module == E ]] && echo -e "f: $start${formated% *}$end$separator" >> ~/Desktop/weather_log
+		#[[ $module == E ]] && echo -e "f: $start${formated% *}$end$separator" >> ~/Desktop/weather_log
 
+		#[[ $module == N ]] && ~/.orw/scripts/notify.sh "f: $start${formated%: *}$end$separator"
 		#echo -e "$start${formated% *}$end$separator"
+		#~/.orw/scripts/notify.sh -t 22 "format $module: $start${formated% *}$end$separator"
+		#[[ $module == R ]] && ~/.orw/scripts/notify.sh "sep: $separator"
 		echo -e "$start${formated% *}$end$separator"
 
 			#echo -e "%{U$fc}\${start_line:-$left_frame}${formated% *}\${end_line:-$right_frame}%{B\$bg}${separator:-\$separator}"
@@ -134,6 +171,7 @@ format_fading() {
 			mono_bg="$sbg"
 			mono_fg="\${$sfg}"
 			#format fading "%{A:$left_command:}%{A3:$right_command:}$icon%{A}%{A}"
+			#[[ $module == N ]] && ~/.orw/scripts/notify.sh "$left_command$right_command$icon$left_command_end$right_command_end"
 			format fading "$left_command$right_command$icon$left_command_end$right_command_end"
 		else
 			#format fading "%{A:$left_command:}%{A3:$right_command:}${!icon_type-$label}%{A}%{A}" "$content"
@@ -147,7 +185,8 @@ format_fading() {
 	else
 		if [[ $separator =~ ^s ]]; then
 			set_line
-			echo -e "%{U$fc}\${start_line:-$left_frame}"
+			echo -e "%{U$fc}$left_frame"
+			#echo -e "%{U$fc}\${start_line:-$left_frame}"
 		fi
 		
 		[[ $separator =~ ^e ]] && echo -e "${separator:1}"
@@ -162,7 +201,7 @@ case $1 in
 		#lines=${@: -1}
 		lines=$3
 
-		old_mail_count=81
+		old_mail_count=55
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -215,6 +254,7 @@ case $1 in
         eval args=( $(${0%/*}/volume.sh system $3) )
 
 		#~/.orw/scripts/notify.sh "arg1 ${args[1]}"
+		#~/.orw/scripts/notify.sh "3: $3"
 		if [[ $3 == only ]]; then
 			style=mono
 			mono_bg="$sbg"
@@ -263,7 +303,7 @@ case $1 in
 			}
 
 			mono_bg="$sbg"
-			mono_fg="$sfg"
+			mono_fg="\${$sfg}"
 			get_num_icon date
 			[[ $time ]] && get_num_icon time
 		fi
@@ -309,7 +349,7 @@ case $1 in
 			#	fg="\${$sfg}"
 			#fi
 
-			set_icon rec
+			#set_icon rec
 			set_icon rec_new
 
 			fg="\${$pfg}"
@@ -321,9 +361,12 @@ case $1 in
 			#	((sec % 2 == 0)) && fg="%{F\${Hpfg:-$red}}"
 			#fi
 
-			pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
+			#pid=$(ps -ef | awk '/ffmpeg.*(mp4|mkv)/ && !/awk/ { print $2 }')
+			pid=$(ps -C ffmpeg -o pid=)
 
-			if [[ $pid ]]; then
+			#if [[ $pid ]]; then
+			if ((pid)); then
+				#~/.orw/scripts/notify.sh "p: $pid"
 				#kill_command="kill $pid && sed -i '/state=\w*$/ s/\w*$//' $0"
 
 				sec=$(date +'10#%S')
@@ -414,25 +457,37 @@ case $1 in
 			fi
 		}
 
+		screenkey() {
+			pid=$(ps -C screenkey -o pid=)
+
+			if ((pid)); then
+				fg="\${$sfg}"
+				set_icon screenkey
+				screenkey=$(format ${!1:-SKEY} ":kill $pid:")
+			fi
+		}
+
 		[[ $5 ]] && label=icon
 		fg="\${$pfg}"
 		fg="\${$sfg}"
 		#~/.orw/scripts/notify.sh "3: $3"
 
 		#if [[ $3 == all ]]; then
+		#~/.orw/scripts/notify.sh "args: $3"
 		for app in ${3//,/ }; do
 			case $app in
+				t) tiling $label;;
 				d) dropdown $label;;
 				r) recorder $label;;
-				t) tiling $label;;
+				s) screenkey $label;;
 			esac
 		done
 
 		#hidden="\${$sbg}\${inner}$term$separator$rec\$inner ${separator:-\$separator}"
 		#hidden="\${$sbg}\${inner}$term$rec\$inner ${separator:-\$separator}"
 
-		[[ $term || $rec || $tiling ]] &&
-			hidden="\${$sbg}\${padding}$tiling$term$rec\$padding ${separator:-\$separator}"
+		[[ $term || $rec || $tiling || $screenkey ]] &&
+			hidden="\${$sbg}\${padding}$tiling$term$screenkey$rec\$padding ${separator:-\$separator}"
 		format_fading "" "" "none" "$hidden";;
 
 #	if [[ $term || $rec ]]; then
@@ -477,9 +532,11 @@ case $1 in
 
 			[[ $4 ]] && icon_type=only mono_fg="$sfg" && set_icon $1_eth
 
+			#~/.orw/scripts/notify.sh "it: $icon_type, $icon, ${!4}"
+
 			#format_fading ${icon:-ETH} "" "${icon_type:-none}"
 			#~/.orw/scripts/notify.sh "i: $icon, $3"
-			format_fading "" "" "" "${!4:-ETH}"
+			format_fading "" "" "$icon_type" "${!4:-ETH}"
 		else
 			#~/.orw/scripts/notify.sh "i: ^$interface^"
 
@@ -618,7 +675,7 @@ case $1 in
 		[[ $@ =~ trim ]] && style=trim
 
 		format "%{A1:~/.orw/scripts/show_top_usage.sh cpu:}${!2-CPU}%{A}" ${usage%.*}%;;
-	Ram*)
+	Mem*)
 		#icon=%{I-b}%{I-}
 		set_icon $1
 
@@ -771,7 +828,7 @@ case $1 in
 				s = '${step:-5}'
 				pd = sprintf("%.0f", ap / s); pr = 100 / s - pd
 				if(c) print substr(i, 2), ns, c,
-					ap "%", "${tbefg:-${pbfg:-${'$pfg'}}}" make_progressbar(pd) "${tbfg:-${'$sfg'}}" make_progressbar(pr)
+					ap "%", "${tbefg:-${pbefg:-${'$pfg'}}}" make_progressbar(pd) "${tbfg:-${'$sfg'}}" make_progressbar(pr)
 			}' 2> /dev/null)
 
 		((c)) &&
@@ -823,25 +880,28 @@ case $1 in
 		#fi;;
 
 		format_fading UPD "$updates_count" "${4:-none}";;
-	feed)
-		separator=$2
+	Rss)
+		separator="$2"
 		lines=$3
 
-		last_feed_count=
+		last_feed_count=6
 		#feed_count=$(newsboat -x reload print-unread | cut -d ' ' -f 1)
-		feed_count=$(newsboat -x reload print-unread | awk '$1 { print $1 }')
+		pid=$(pidof newsboat)
+		((pid)) &&
+			feed_count=$last_feed_count ||
+			feed_count=$(newsboat -x reload print-unread | awk '$1 { print $1 }')
 		#feed_count=3
 
 		#~/.orw/scripts/notify.sh "rss: $feed_count"
 
 		set_icon $1
-		left_command='termite -e newsboat $> /dev/null &'
-		format_fading RSS "$feed_count" "${4-none}"
+		left_command='termite -t newsboat -e newsboat &> /dev/null &'
+		format_fading RSS "$feed_count" "${4:-none}"
 
 		if ((feed_count != last_feed_count)); then
 			feed_icon=${icon//[[:ascii:]]/}
-			((feed_count)) && ~/.orw/scripts/notify.sh -s osd -i $feed_icon "New feeds: $feed_count"
-			sed -i "/^\s*last_feed_count/ s/[0-9]\+/$feed_count/" $0
+			((feed_count)) && ~/.orw/scripts/notify.sh -r 501 -s osd -i $feed_icon "New feeds: $feed_count"
+			sed -i "/^\s*last_feed_count/ s/[0-9]\+/${feed_count:-0}/" $0
 		fi;;
 
 		#if ((feed_count)); then
@@ -886,7 +946,7 @@ case $1 in
 		#padding="$2"
 		#separator="$3"
 		#[[ $5 == icon ]] && set_icon Power
-		set_icon Power
+		set_icon power_power_off
 
 		[[ $6 =~ icon|only ]] && label=$icon
 		#~/.orw/scripts/notify.sh "$3 ${!3:-LOG}"

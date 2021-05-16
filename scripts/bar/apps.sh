@@ -38,9 +38,19 @@ function set_line() {
 	fc="\${Afc:-\$fc}"
 	frame_width="%{O\${Afw:-\${frame_width-0}}\}"
 
-	frame="%{B$fc\}$frame_width"
-	left_frame="%{+u\}%{+o\}$frame"
-	right_frame="$frame%{-o\}%{-u\}"
+	if [[ $lines == [ou] ]]; then
+		left_frame="%{+$lines\}" right_frame="%{-$lines\}"
+	else
+		frame="%{B$fc\}$frame_width"
+		#left_frame="\${start_line:-%{+u\}%{+o\}$frame}"
+		#right_frame="\${end_line:-$frame%{-o\}%{-u\}}"
+		left_frame="%{+u\}%{+o\}$frame"
+		right_frame="$frame%{-o\}%{-u\}"
+	fi
+
+	#frame="%{B$fc\}$frame_width"
+	#left_frame="%{+u\}%{+o\}$frame"
+	#right_frame="$frame%{-o\}%{-u\}"
 }
 
 [[ $lines != false ]] && set_line
@@ -75,8 +85,14 @@ get_window() {
 
 		window="$commands$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}%{A}%{A}"
 
-		[[ $lines == single && $separator =~ ^% && $current == p ]] &&
-				window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+		[[ $app_separator || ($lines == [ou] && $separator =~ ^% && $current == p) ]] &&
+			window="%{U$fc}$left_frame$window$right_frame"
+		#[[ $app_separator ]] &&
+			#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+
+		#[[ $lines == [ou] && $separator =~ ^% && $current == p ]] &&
+		#		window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
+				#window="%{U$fc}$left_frame$window$right_frame"
 	fi
 }
 
@@ -118,8 +134,13 @@ if [[ $lines != false ]]; then
 			#[[ $apps ]] && apps="%{U$fc}\${start_line:-$left_frame}$apps\$start_line${separator:2}";;
 		#e*) launchers+="\${end_line:-$right_frame}%{B\$bg}${separator:1}";;
 		#e*) launchers+="${separator:1}";;
-		*) [[ $lines == true ]] &&
-			apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
+		*) [[ $app_separator ]] ||
+				apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
+
+			#[[ $lines == true ]] &&
+			#[[ $lines == a ]] &&
+			#apps="%{U$fc}\${start_line:-$left_frame}$apps\${end_line:-$right_frame}%{B\$bg}$separator";;
+			#apps="%{U$fc}$left_frame$apps$right_frame%{B\$bg}$separator";;
 	esac
 
 	#launchers="%{U$fc}\${start_line:-$left_frame}$launchers\${end_line:-$right_frame}"
