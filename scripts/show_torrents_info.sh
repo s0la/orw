@@ -1,6 +1,10 @@
 #!/bin/bash
 
-icon=
+icon='  '
+icon=''
+icon=''
+icon=''
+icon=''
 length=$1
 
 read level empty ft <<< $(transmission-remote -l | awk '\
@@ -39,4 +43,4 @@ read level empty ft <<< $(transmission-remote -l | awk '\
 		print pd, pr, ft
 	}' 2> /dev/null)
 
-~/.orw/scripts/notify.sh -s default -b $level/$empty -i "$ft"
+~/.orw/scripts/notify.sh -s default -b $level/$empty -f 9 -i "$ft"
