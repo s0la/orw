@@ -95,7 +95,7 @@ handle_failure() {
 function deps() {
 	echo 'installing dependencies..'
 
-	common_deps=( openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep )
+	common_deps=( git openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep newsboat )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
 
 	if [[ $(which apt 2> /dev/null) ]]; then
@@ -187,6 +187,15 @@ function apps() {
 	#i3lock-color installation
 	get_app install PandorasFox i3lock-color "autoreconf --force --install" \
 		"rm -rf build/" "mkdir -p build" "cd build/" "../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers"
+
+	#fseed installation
+	#get_app git clone git://git.codemadness.org/sfeed
+	get_app install dxwc sfeed
+
+	#git clone git://git.codemadness.org/sfeed ~/Downloads/sfeed
+	#cd ~/Downloads/sfeed
+	#make && sudo make install
+	#cd && rm -rf ~/Downloads/sfeed
 }
 
 function backup() {
