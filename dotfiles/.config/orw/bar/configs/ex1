@@ -1,0 +1,1 @@
+~/.orw/scripts/bar/generate_bar.sh -n ex1 -x r 10 -w 300

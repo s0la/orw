@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 24 -a 8 -f 3 -c bar_moun bar_mon -M -n moun -A c -c -W o3,ih -r -s 0 -p 25 -l -m s22,of20,T,oe40,i -i -H -i -e -v -d -O 2
+~/.orw/scripts/bar/generate_bar.sh -x o0 -y o0 -h 24 -a 8 -c bar_moun,bar_mon -n moun -f 3,u -A c -f -c -W o2,icf -O 50 -r -s 0 -p 15 -f 3,a -i only -p 25 -m oe10,p:s7,b:t,s22,of10,T,oe20,i -H -N -R -i none -e -v -i -d -P 25x18 i,s17,o22,a:lro bar_bo -p 35
