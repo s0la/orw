@@ -85,7 +85,7 @@ chosen_workspace=$(echo	-e "$all_workspaces" | \
 #echo -e "$all_workspaces"
 
 [[ $chosen_workspace ]] || exit 0
-[[ $1 == wall ]] && ~/.orw/scripts/xwallctl.sh -c -r &
+[[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r &
 
 if [[ "$chosen_workspace" =~   ]]; then
 	wmctrl -n $((workspace_count - 1))
