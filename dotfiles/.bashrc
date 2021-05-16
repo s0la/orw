@@ -496,13 +496,13 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="54;54;54;"
-	sc="48;48;48;"
+	fg="67;71;74;"
+	sc="67;71;74;"
 	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="139;137;107;"
-	vc="135;147;156;"
+	gdc="255;171;163;"
+	vc="180;138;113;"
 
 	clean="\[$(tput sgr0)\]"
 	#separator="$clean $clean"
@@ -657,9 +657,6 @@ alias ncmpcpp="$scripts/ncmpcpp.sh"
 alias toggle_rice="source $scripts/toggle.sh"
 alias toggle_bash="source $scripts/toggle.sh bash"
 alias toggle_tmux="$scripts/toggle.sh tmux"
-
-#tiling
-alias hat="$scripts/half_and_tile.sh"
 
 #source bashrc
 alias sb="source ~/.bashrc"

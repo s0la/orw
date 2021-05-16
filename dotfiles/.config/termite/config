@@ -54,8 +54,8 @@ cursor_shape = block
 #highlight = #2f2f2f
 
 #colors
-foreground = #f0f0f0
-background = rgba(26,26,26,1.00)
+foreground = #ddcfc6
+background = rgba(17,26,31,1.00)
 
 #palette
 color0 = #494a4c
@@ -207,6 +207,44 @@ color145 = #b17953
 color146 = #272727
 color147 = #ffb760
 color148 = #8e9999
+color149 = #649864
+color150 = #987c5a
+color151 = #7ba978
+color152 = #65414b
+color153 = #739988
+color154 = #c59b88
+color155 = #704a4f
+color156 = #6d99a6
+color157 = #8c535e
+color158 = #95554e
+color159 = #665253
+color160 = #756d67
+color161 = #83867d
+color162 = #AE8D67
+color163 = #968E88
+color164 = #4C6667
+color165 = #62655C
+color166 = #7ea0a6
+color167 = #ba635d
+color168 = #725246
+color169 = #504c48
+color170 = #86695b
+color171 = #7dbab4
+color172 = #ba8b71
+color173 = #794b50
+color174 = #667d75
+color175 = #665463
+color176 = #7b575f
+color177 = #738581
+color178 = #69856f
+color179 = #81a39e
+color180 = #7c9c93
+color181 = #87a79e
+color182 = #d9b16c
+color183 = #80535d
+color184 = #f3dcb4
+color185 = #232c31
+color186 = #fc9e96
 
 [hints]
 #font = Monospace 12

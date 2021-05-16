@@ -10,24 +10,25 @@ let s:dd = '#BF616A'
 let s:dd = '#a66c6c'
 let s:dc = '#EBCB8B'
 
-let g:bg = '#1a1a1a'
-let g:fg = '#d0d0d0'
-let g:ifg = '#34393a'
-let g:vfg = '#555a5b'
+let g:bg = 'none'
+let g:fg = '#adb7af'
+let g:ifg = '#323b40'
+let g:vfg = '#5e676c'
 let g:cfg = '#c0c0c0'
-let g:ffg = '#807E60'
-let g:sfg = '#f3f3f3'
+let g:ffg = '#fc9e96'
+let g:sfg = '#e6d5b8'
 let g:nbg = 'none'
-let g:nfg = '#202020'
-let g:lbg = '#1d1d1d'
-let g:lfg = '#707173'
+let g:nfg = '#1c252a'
+let g:lbg = '#141d22'
+let g:lfg = '#f1938b'
 let g:syfg = '#c0c0c0'
-let g:cmfg = '#24292a'
-let g:slbg = '#1f1f1f'
-let g:slfg = '#313131'
+let g:cmfg = '#1c252a'
+let g:slbg = '#182126'
+let g:slfg = '#2e373c'
+let g:fzfhl = '#97a199'
 
 let g:bcbg = '#b5bc6d'
-let g:bdbg = '#605d58'
+let g:bdbg = '#81a39e'
 
 let g:nmbg = '#bcbcbc'
 let g:imbg = '#917c5b'
@@ -114,16 +115,39 @@ exe 'hi CursorLineNr   guifg='.g:lfg            .' guibg='.g:lbg
 "exe 'hi! fzf_spinner guifg='.g:fg
 "exe 'hi! fzf_pointer guifg='.g:fg
 
+"exe 'hi! fzf_bg guibg='.g:slbg
+"exe 'hi! fzf_fg guifg='.g:slfg
+"exe 'hi! fzf_bgp guibg='.g:lbg
+"exe 'hi! fzf_fgp guifg='.g:ifg
+"exe 'hi! fzf_hl guifg='.g:lfg
+"exe 'hi! fzf_hlp guifg='.g:lfg
+"exe 'hi! fzf_info guifg='.g:slbg
+"exe 'hi! fzf_prompt guifg='.g:slfg
+"exe 'hi! fzf_spinner guifg='.g:slfg
+"exe 'hi! fzf_pointer guifg='.g:slfg
+"exe 'hi! fzf_border guibg='.g:lfg
+
 exe 'hi! fzf_bg guibg='.g:slbg
 exe 'hi! fzf_fg guifg='.g:slfg
-exe 'hi! fzf_fgp guifg='.g:fg
-exe 'hi! fzf_hl guifg='.g:lfg
-exe 'hi! fzf_hlp guifg='.g:lfg
-exe 'hi! fzf_info guifg='.g:slbg
-exe 'hi! fzf_prompt guifg='.g:slfg
-exe 'hi! fzf_spinner guifg='.g:slfg
-exe 'hi! fzf_pointer guifg='.g:slfg
-exe 'hi! fzf_border guibg='.g:lfg
+exe 'hi! fzf_bgp guibg='.g:lbg
+exe 'hi! fzf_fgp guifg='.g:fzfhl
+exe 'hi! fzf_pfg guifg='.g:ffg
+exe 'hi! fzf_mfg guifg='.g:lfg
+
+"exe 'hi! fzf_hl guifg='.g:mfg
+"exe 'hi! fzf_hlp guifg='.g:mpfg
+"exe 'hi! fzf_border guibg='.g:lfg
+
+"exe 'hi! fzf_bg guibg='.g:lbg
+"exe 'hi! fzf_fg guifg='.g:cmfg
+"exe 'hi! fzf_fgp guifg='.g:ifg
+"exe 'hi! fzf_hl guifg='.g:lfg
+"exe 'hi! fzf_hlp guifg='.g:lfg
+"exe 'hi! fzf_info guifg='.g:lbg
+"exe 'hi! fzf_prompt guifg='.g:cmfg
+"exe 'hi! fzf_spinner guifg='.g:cmfg
+"exe 'hi! fzf_pointer guifg='.g:cmfg
+"exe 'hi! fzf_border guibg='.g:lfg
 
 " exe 'hi! Floaterm guibg='.g:slbg
 " exe 'hi! FloatermBorder guibg=none guifg='.g:lfg

@@ -9,7 +9,7 @@
 
 	window-orientation:     vertical;
 
-	list-spacing:           5px;
+	spacing:                5px;
 
 	input-margin:           0 0 5px;
 
@@ -21,22 +21,22 @@
 
 	window-location:        west;
 	window-padding:         5px 5px;
-	window-margin:          0 0 0 10px;
+	window-margin:          0 0 0 9px;
 	window-radius:          5px;
 	window-height:          390.75px;
-	window-width:           89.81px;
+	window-width:           89.07px;
 }
 
 #window {
-	width:       @window-width;
-	height:      @window-height;
-	margin:      @window-margin;
-	anchor:      @window-location;
-	location:    @window-location;
-	border:      0;
-	padding:     @window-padding;
-	children:    [ horibox ];
-	border-radius:       @window-radius;
+	border:           0;
+	width:            @window-width;
+	height:           @window-height;
+	margin:           @window-margin;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @window-padding;
+	border-radius:    @window-radius;
+	children:         [ horibox ];
 }
 
 #horibox {
@@ -46,7 +46,7 @@
 
 #listview {
 	layout:      @window-orientation;
-	spacing:     @list-spacing;
+	spacing:     @spacing;
 	lines:       0.260417;
 }
 
@@ -81,4 +81,5 @@
 
 #element.selected.active {
 	text-color:       @efg;
+	border:           @element-border;
 }

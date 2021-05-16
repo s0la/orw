@@ -7,7 +7,7 @@
 
 	window-width:    45%;
 	window-height:   43%;
-	window-border:   3px;
+	window-border:   0px;
 	window-padding:  60px 60px;
 
 	/*input-border:    0 0 2px;*/
@@ -42,6 +42,7 @@
 	margin:         @input-margin;
 	padding:        @input-padding;
 	children:       [ prompt, entry ];
+	background-color: @bg;
 }
 
 #element {
@@ -50,12 +51,12 @@
 
 #entry {
 	margin:           @entry-margin;
-	background-color: @ibg;
+	background-color: @bg;
 	border-color:     @fg;
 }
 
 #prompt {
-	background-color: @ibg;
+	background-color: @bg;
 }
 
 #textbox-prompt-colon {

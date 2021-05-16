@@ -1,28 +1,28 @@
 /* color definition */
 
 * {
-	bg: #121212;
-	tbg: argb:00121212;
-	fg: #232323;
-	bc: #121212;
+	bg: #0e171c;
+	tbg: argb:000e171c;
+	fg: #262f34;
+	bc: #273035;
 
-	ibg: #121212;
-	ibc: #725d43;
+	ibg: #273035;
+	ibc: #273035;
 
-	abg: #191919;
-	afg: #323232;
+	abg: #0c151a;
+	afg: #293237;
 
-	ebg: #121212;
-	efg: #807E60;
-	sbg: #222222;
-	sfg: #979392;
-	sul: #725d43;
+	ebg: #060f14;
+	efg: #e8d1a9;
+	sbg: #131c21;
+	sfg: #e8d1a9;
+	sul: #87a79e;
 
-	lpc: #202020;
+	lpc: #081116;
 	dpc: #725d43;
-	btc: #121212;
-	sbtc: #121212;
-	btbc: #121212;
+	btc: #0e171c;
+	sbtc: #0e171c;
+	btbc: #0e171c;
 
 	background-color: @bg;
 
@@ -57,6 +57,7 @@
 
 #element.selected.active {
 	text-color:       @sfg;
+	border-color:     @sul;
 	background-color: @abg;
 }
 
