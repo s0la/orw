@@ -80,23 +80,20 @@ slbg #B4938A
 slfg #494a4c
 
 #bar
-bg #202020
-fc #101115
-bfc #fe608985
-bbg #101115
-jbg #101115
-jfg #cecece
-pbg #1E2329
-pfg #999999
-sbg #1E2329
-sfg #5c5d5f
-pbefg #fe608985
-msfg #47484a
-mlfg #7a8d90
-pbfg #494643
-mpfg #999999
-mfc #fe608985
-Tafg #785A5A
+bg #2e2e2e
+fc #2e2e2e
+bfc #2e2e2e
+bbg #2e2e2e
+bsbg #3a3a3a
+bsfg #303030
+pbg #3a3a3a
+pfg #abaeb2
+sbg #3a3a3a
+sfg #5f6266
+Wsbg #2e2e2e
+pbefg #b8987e
+tbfg #B4938A
+tsfg #585b5f
 
 #ncmpcpp
 npp #B4938A

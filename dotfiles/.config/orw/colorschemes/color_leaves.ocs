@@ -1,0 +1,170 @@
+#ob
+mb #1a1a1a
+mtbg #1a1a1a
+mtfg #414246
+mbg #1a1a1a
+mfg #2b2b2b
+msbg #202020
+msfg #807E60
+ms #1a1a1a
+bfg #1a1a1a
+bsfg #202020
+b #874342
+c #874342
+mabt #474545
+mabth #9ea9a9
+cbt #785A5A
+cbth #9ea9a9
+mibt #615954
+mibth #9ea9a9
+tb #1f1f1f
+t #1f1f1f
+ib #1f1f1f
+ic #171c1d
+ibth #B39C80
+ibt #272727
+itb #1f1f1f
+it #1f1f1f
+osd #874342
+osdh #bbbbbb
+osdu #888888
+s #874342
+
+#dunst
+bg #121212
+fg #9e9e9e
+fc #d3efeb
+sbg #363636
+pbfg #807E60
+
+#term
+fg #f0f0f0
+bg #ff1a1a1a
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg #1a1a1a
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #807E60
+sfg #f3f3f3
+nbg none
+nfg #202020
+lbg #1d1d1d
+lfg #707173
+mfg #707173
+syfg #c0c0c0
+cmfg #24292a
+slbg #1e1e1e
+slfg #313131
+bcbg #b5bc6d
+bdbg #605d58
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #272727
+cfg #707070
+sfg #807E60
+tfg #494a4c
+slbg default
+slfg #807E60
+
+#bar
+Apbg #343434
+Asbg #2d2d2d
+bbg #2e2e2e
+bfc #2d2d2d
+bg #2d2d2d
+bsbg #3a3a3a
+bsfg #313131
+fc #2d2d2d
+mlfg #98a0ab
+pbefg #807E60
+pbg #202020
+pfg #817b8c
+Ppbg #bf9e95
+Ppfg #997b3b
+sbg #202020
+sfg #424242
+tbefg #B4938A
+tbfg #4f4f4f
+Wsbg #2d2d2d
+
+#ncmpcpp
+npp #807773
+np #807773
+sip #2e2f31
+sc #2e2f31
+mc #2e2f31
+etc #191e24
+c2 #DBBD7D
+pc #2e2f31
+pec #807773
+vc #807773
+
+#tmux
+bg default
+fg #656c1d
+bc #1f1f1f
+mc #3a3a3a
+ibg default
+ifg #2c2c2c
+sfg #2c2c2c
+wbg default
+wfg #2c2c2c
+cbg default
+cfg #b48a71
+
+#rofi
+bg #121212
+fg #232323
+bc #121212
+ibg #121212
+ibc #725d43
+abg #191919
+afg #323232
+ebg #121212
+efg #807E60
+sbg #222222
+sfg #979392
+sul #725d43
+lpc #202020
+dpc #725d43
+btc #121212
+sbtc #121212
+btbc #121212
+
+#bash
+bg default
+fg #373737
+sc #303030
+ic #bcd1d3
+sec #81625c
+gcc #879394
+gdc #73a4a1
+vc #87939c
+
+#qb
+bg #1a1a1a
+fg #2c2c2c
+sbg #171717
+sfg #999999
+mfg #807E60
+sbbg #1a1b1d
+
+#lock
+tc #ffb0b0b0
+rc #ff807E60
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #1a1a1a
+fg #807E60

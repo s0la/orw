@@ -1,0 +1,77 @@
+#ob
+mb #1a1a1a
+mtbg #1a1a1a
+mtfg #414246
+mbg #1a1a1a
+mfg #2b2b2b
+msbg #202020
+msfg #807E60
+ms #1a1a1a
+bfg #1a1a1a
+bsfg #202020
+b #212121
+c #212121
+mabt #2c2c2c
+mabth #9ea9a9
+cbt #2c2c2c
+cbth #9ea9a9
+mibt #2c2c2c
+mibth #9ea9a9
+tb #212121
+t #212121
+ib #212121
+ic #171c1d
+ibth #B39C80
+ibt #272727
+itb #212121
+it #212121
+osd #212121
+osdh #bbbbbb
+osdu #888888
+s #5f5d3f
+
+#dunst
+bg #121212
+fg #9e9e9e
+fc #d3efeb
+sbg #363636
+pbfg #807E60
+
+#term
+fg #f0f0f0
+bg #ff1a1a1a
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg #1a1a1a
+fg #d0d0d0
+ifg #34393a
+vfg #555a5b
+cfg #c0c0c0
+ffg #807E60
+sfg #f3f3f3
+nbg none
+nfg #202020
+lbg #1d1d1d
+lfg #707173
+syfg #c0c0c0
+cmfg #24292a
+slbg #1e1e1e
+slfg #313131
+bcbg #b5bc6d
+bdbg #605d58
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #2e2f31
+efg #8C7681
+cbg #272727
+cfg #707070
+sfg #807E60
+tfg #494a4c
+slbg default
+slfg #807E60
+

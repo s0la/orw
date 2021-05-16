@@ -1,0 +1,184 @@
+#ob
+mb #1a1a1a
+mtbg #1a1a1a
+mtfg #414246
+mbg #1a1a1a
+mfg #2b2b2b
+msbg #202020
+msfg #87a79e
+ms #1a1a1a
+bfg #1a1a1a
+bsfg #202020
+b #273035
+c #273035
+mabt #474545
+mabth #9ea9a9
+cbt #785A5A
+cbth #9ea9a9
+mibt #615954
+mibth #9ea9a9
+tb #273035
+t #273035
+ib #111a1f
+ic #171c1d
+ibth #B39C80
+ibt #272727
+itb #111a1f
+it #111a1f
+osd #273035
+osdh #bbbbbb
+osdu #888888
+s #ae7f65
+
+#dunst
+bg #111a1f
+fg #9e9e9e
+fc #d3efeb
+sbg #060f14
+pbfg #81a39e
+
+#term
+fg #d2c4bb
+bg #ff111a1f
+colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
+
+#vim
+bg none
+fg #adb7af
+ifg #323b40
+vfg #5e676c
+cfg #c0c0c0
+ffg #fc9e96
+sfg #e6d5b8
+nbg none
+nfg #1c252a
+lbg #141d22
+lfg #f1938b
+syfg #c0c0c0
+cmfg #1c252a
+slbg #182126
+slfg #2e373c
+fzfhl #97a199
+bcbg #b5bc6d
+bdbg #81a39e
+nmbg #bcbcbc
+imbg #917c5b
+vmbg #C8935F
+
+#vifm
+fg default
+dfg #232c31
+efg default
+cbg #232c31
+cfg #81a39e
+sfg #232c31
+tfg #494a4c
+slbg default
+slfg #d9b16c
+
+#bar
+Afc #7d7652
+Apbg #3d3d3d
+Asbg #2d2d2d
+bbg #00111a1f
+bfc #2d2d2d
+bg #002d2d2d
+bsbg #3a3a3a
+bsfg #313131
+fc #232c31
+Lfc #4a5956
+Lpbg #272727
+Lpfg #535353
+Lsc #00111a1f
+Lsfg #323232
+mlfg #98a0ab
+pbefg #f3dcb4
+pbg #111a1f
+Pbg #35282d
+Pfc #fc555c
+pfg #97a199
+Ppbg #fc9e96
+Ppfg #ff676e
+Psbg #111a1f
+Psfg #343d42
+sbg #111a1f
+sfg #343d42
+
+#ncmpcpp
+npp #fc9e96
+np #fc9e96
+sip #232c31
+sc #232c31
+mc #232c31
+etc #191e24
+c2 #DBBD7D
+pc #232c31
+pec #f3dcb4
+vc #f3dcb4
+
+#tmux
+bg terminal
+fg #656c1d
+bc #1f1f1f
+mc #3a3a3a
+ibg default
+ifg #20292e
+sfg #20292e
+wbg default
+wfg #20292e
+cbg default
+cfg #97a199
+
+#rofi
+bg #0e171c
+fg #293237
+bc #96968e
+ibg #96968e
+ibc #96968e
+abg #0c151a
+afg #293237
+ebg #060f14
+efg #96968e
+sbg #131c21
+sfg #f3dcb4
+sul #87a79e
+lpc #293237
+dpc #725d43
+btc #0e171c
+sbtc #0e171c
+btbc #0e171c
+
+#bash
+bg default
+fg #43474a
+sc #43474a
+ic #bcd1d3
+sec #81625c
+gcc #879394
+gdc #9ec0bb
+vc #b48a71
+
+#qb
+bg #1a1a1a
+fg #383838
+sbg #171717
+sfg #737373
+mfg #87a79e
+sbbg #1a1b1d
+
+#nb
+fg #232c31
+sfg #f3dcb4
+sbg default
+ifg #81a39e
+ibg #232c31
+
+#lock
+tc #ffb0b0b0
+rc #ff87a79e
+ic #dc121315
+wc #ff6D4E48
+
+#sxiv
+bg #1a1a1a
+fg #87a79e
