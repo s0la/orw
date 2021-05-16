@@ -29,8 +29,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg='#363636'
-pbfg='#807E60'
+sbg='#060f14'
+pbfg='#81a39e'
 
 type=$(ps -C dunst -o args=)
 
@@ -57,7 +57,7 @@ restore_default_config() {
 	#echo '' "running ${running_pids[*]}" >> ~/Desktop/not_log
 	sleep $((time + 1))
 
-	killall dunst
+	killall dunst &> /dev/null
 	#echo '' "closing ${running_pids[*]}" >> ~/Desktop/not_log
 	dunst &> /dev/null &) &
 	#echo '' "closing ${running_pids[*]}" >> ~/Desktop/not_log) &
@@ -93,7 +93,7 @@ if [[ $style =~ ^(osd|vert) ]]; then
 		read info_size icon_size geometry <<< \
 			$(awk '\
 				BEGIN { s = "'$style'" }
-				/^mode/ { f = ($NF = "floating") }
+				/^mode/ { f = ($NF == "floating") }
 				/^x_offset/ { x = $NF }
 				/^offset/ { if($NF == "true") x = '$x_offset' }
 				/^primary/ { p = $NF }
@@ -104,12 +104,20 @@ if [[ $style =~ ^(osd|vert) ]]; then
 					if(s == "osd") {
 						h = s = int(dw * 0.1)
 
-						bs = sprintf("%.0f", s * 0.05)
-						is = int(s * 0.25)
-						w = int(bs * 20)
+						if("'$bar'") {
+							bs = sprintf("%.0f", s * 0.025)
+							w = int(bs * 40)
+							#bs = sprintf("%.0f", s * 0.03)
+							#w = int(bs * 35)
+						} else {
+							bs = sprintf("%.0f", s * 0.05)
+							w = int(bs * 20)
+						}
+
+						is = int(s * 0.3)
 						x = int((dw - w) / 2)
-						y = int((dh + h) / 2)
-						#y = int(dh / 3 * 2)
+						#y = int((dh + h) / 2)
+						y = int(dh / 3 * 2)
 
 						o = "+"
 					} else {
@@ -120,8 +128,10 @@ if [[ $style =~ ^(osd|vert) ]]; then
 						w = 3 * bs
 						y = int((dh - h) / 2)
 
-						if(f) x = int(x / 2)
-						else if(x > w) x -= w
+						#if(f) x = int(x / 2)
+						##else if(x > w) x -= w
+						#else if(x > w) x = int((x - w) / 2)
+						x = (x > w) ? int((x - w) / 2) : int(x / 2)
 
 						o = "-"
 					}
@@ -139,9 +149,11 @@ if [[ $style =~ ^(osd|vert) ]]; then
 		fi
 	fi
 else
-	pid=$(pidof dunst)
+	#pid=$(pidof dunst)
+	pid=( $(pidof dunst) )
 
-	if ((pid)); then
+	#if ((pid)); then
+	if ((${#pid[*]})); then
 		if [[ ! "$type" =~ (dunst|/$style_config)$ ]]; then
 			killall dunst
 			dunst &> /dev/null &
@@ -174,13 +186,28 @@ if [[ $style ]]; then
 
 	case $style in
 		osd)
-			((icon_size)) || icon_size=48
+			((icon_size)) || icon_size=57
 			((info_size)) || info_size=10
 			icon="<span font='Iosevka Orw $icon_size' foreground='$fg'>$font_icon</span>"
 
 			if [[ $bar ]]; then
+				#remove for vertical bars
+				#((level_value /= 2))
+				#empty_value=$((10 - level_value))
+				#((level_value -= 2))
+				#empty_value=$((16 - level_value))
+
 				level=$(color_bar '▖' $level_value)
 				empty=$(color_bar '▖' $empty_value)
+
+				level=$(color_bar '➖' $level_value)
+				empty=$(color_bar '➖' $empty_value)
+
+				level=$(color_bar '' $level_value)
+				empty=$(color_bar '' $empty_value)
+
+				#level=$(color_bar '▂' $level_value)
+				#empty=$(color_bar '▂' $empty_value)
 
 				bar="<span font='Iosevka Orw $info_size' foreground='$pbfg'>$level<span foreground='$sbg'>$empty</span></span>"
 			else
@@ -227,6 +254,7 @@ if [[ $style ]]; then
 			font='Iosevka Orw'
 			font='Roboto Mono'
 			font='DejaVu Sans Mono'
+			font='Iosevka Orw'
 
 			#dashes=true
 
@@ -241,7 +269,7 @@ if [[ $style ]]; then
 				level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
 			fi
 
-			icon="<span font='$font 12' foreground='$fg'>$font_icon</span>"
+			icon="<span font='$font ${font_size:-12}' foreground='$fg'>$font_icon</span>"
 			message="$icon    $level_bar$empty_bar "
 
 			padding='\n' padding_height=8 offset_count=6
@@ -249,10 +277,16 @@ if [[ $style ]]; then
 
 	[[ $style != default ]] && restore_default_config
 
-	[[ "$type" =~ /$style_config$ ]] || killall dunst
+	if [[ ! "$type" =~ /$style_config$ ]]; then
+		killed=killed
+		killall dunst
+	fi
 
 	pid=$(pidof dunst)
-	((pid)) || dunst -conf ~/.config/dunst/$style_config &> /dev/null &
+	echo "$killed $pid: $type ~ $style_config" >> ~/Desktop/dunst_log
+	((pid)) && ps aux | awk '$2 == "'$pid'"' >> ~/Desktop/dunst_log
+	#((pid)) || dunst -conf ~/.config/dunst/$style_config &> /dev/null &
+	[[ $pid ]] || dunst -conf ~/.config/dunst/$style_config &> /dev/null &
 fi
 
 [[ $message ]] || message="$(sed "s/\$fg/$fg/g; s/\$pbfg/$pbfg/g; s/\$sbg/$sbg/g" <<< "${@: -1}")"
