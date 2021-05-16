@@ -14,39 +14,56 @@ calculate() {
 }
 
 adjust_values() {
-	osd_window_x=$(calculate $x)
-	osd_window_x_end=$(calculate $((x + w)))
-	osd_window_y=$(calculate $y)
-	osd_window_y_end=$(calculate $((y + h)))
-	osd_window_w=$(calculate $w)
-	osd_window_h=$(calculate $h)
+	x_start=$((display_x + x_offset))
+	y_start=$((display_y + bar_top_offset + y_offset))
+	x_end=$((display_x + width - x_offset))
+	y_end=$((display_y + height - (bar_top_offset + y_offset)))
 
-	osd_x_start=$(calculate $x_start)
-	osd_y_start=$(calculate $y_start)
-	osd_x_end=$(calculate $x_end)
-	osd_y_end=$(calculate $y_end)
-	#osd_y_end=$(calculate $((y_end - y_start)))
+	#osd_window_x=$(calculate $x)
+	#osd_window_x_end=$(calculate $((x + w)))
+	#osd_window_y=$(calculate $y)
+	#osd_window_y_end=$(calculate $((y + h)))
+	#osd_window_w=$(calculate $w)
+	#osd_window_h=$(calculate $h)
 
-	x_before=$((osd_window_x - osd_x_start))
-	#x_size=$(calculate $w)
-	x_size=$((osd_window_x_end - osd_window_x))
-	x_after=$((osd_x_end - osd_window_x_end))
-	#x_after=$((osd_x_end - (osd_window_x + osd_window_w)))
+	#osd_x_start=$(calculate $x_start)
+	#osd_y_start=$(calculate $y_start)
+	#osd_x_end=$(calculate $x_end)
+	#osd_y_end=$(calculate $y_end)
+	##osd_y_end=$(calculate $((y_end - y_start)))
 
-	y_before=$((osd_window_y - osd_y_start))
-	#y_size=$(calculate $h)
-	y_size=$((osd_window_y_end - osd_window_y))
-	y_after=$((osd_y_end - osd_window_y_end))
-	#y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
+	#x_before=$((osd_window_x - osd_x_start))
+	##x_size=$(calculate $w)
+	#x_size=$((osd_window_x_end - osd_window_x))
+	#x_after=$((osd_x_end - osd_window_x_end))
+	##x_after=$((osd_x_end - (osd_window_x + osd_window_w)))
+
+	x_before=$(calculate $((x - x_start)))
+	x_size=$(calculate $w)
+	x_after=$(calculate $((x_end - (x + w))))
+
+	#y_before=$((osd_window_y - osd_y_start))
+	##y_size=$(calculate $h)
+	#y_size=$((osd_window_y_end - osd_window_y))
+	#y_after=$((osd_y_end - osd_window_y_end))
+	##y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
+
+	y_before=$(calculate $((y - y_start)))
+	y_size=$(calculate $h)
+	y_after=$(calculate $((y_end - (y + h))))
 
 	#echo $y_before $y_size $y_after $h
 	#echo $osd_window_y $osd_y_start $osd_y_end
+
+	#echo $x_start $x_end $x $w
+	#echo $x_before $x_size $x_after $h
+	#echo $osd_window_x $osd_x_start $osd_x_end
 
 	icon=' '
 	icon=''
 	icon='█▊'
 	icon=' '
-	icon='▆▆ '
+	icon='▆▆'
 	icon=' '
 	local filled_{x,y}
 	#empty_x=$(color_bar ' ' $((x_before + x_size + x_after)))
