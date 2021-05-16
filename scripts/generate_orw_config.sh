@@ -38,6 +38,7 @@ display() {
 		displays+="display_${index}_name $name\n"
 		displays+="display_${index}_xy $x $y\n"
 		displays+="display_${index}_size $width $height\n"
+		displays+="display_offset 0 0\n"
 
 		((index == 1)) && first_display_name=$name first_display_index=$index
 		((primary)) && primary_display_name=$name primary_display_index=$index
