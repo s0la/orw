@@ -71,7 +71,7 @@ list_actions() {
 	)
 }
 
-wallctl=~/.orw/scripts/xwallctl.sh
+wallctl=~/.orw/scripts/wallctl.sh
 
 #if [[ $action == $select ]]; then
 #else
@@ -95,8 +95,8 @@ list_actions
 #exit
 
 if [[ $action == $select ]]; then
-	indicator='●'
 	indicator=''
+	indicator='●'
 
 	get_directory
 
@@ -106,10 +106,10 @@ if [[ $action == $select ]]; then
 	((depth)) && maxdepth="-maxdepth $depth"
 
 	selected_wallpaper=$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
-		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : "  "
-			sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -theme large_list)
+		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+			sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -i -theme large_list)
 
-	[[ $selected_wallpaper ]] && eval $wallctl -s "$root/${selected_wallpaper:2}"
+	[[ $selected_wallpaper ]] &&  eval $wallctl -s "$root/'${selected_wallpaper:2}'"
 else
 	while
 		if [[ $action ]]; then

@@ -166,7 +166,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current=""
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
@@ -504,10 +504,10 @@ if [[ ${option% *} ]]; then
 					set_multiple_files "$current/"
 					[[ $files ]] && files="${files//\'/}"
 
-					~/.orw/scripts/xwallctl.sh -${flag:-d} $modify "${files:-$current}";;
+					~/.orw/scripts/wallctl.sh -${flag:-d} $modify "${files:-$current}";;
 				set_as_wallpaper)
 					set_multiple_files "$current/"
-					eval ~/.orw/scripts/xwallctl.sh -s "${files:-'$current'}";;
+					eval ~/.orw/scripts/wallctl.sh -s "${files:-'$current'}";;
 				*)
 					if [[ $options == bookmarks ]]; then
 						current=$(awk '/^'$option' / { print gensub("^\\w* ", "", 1) }' $bookmarks)

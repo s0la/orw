@@ -51,7 +51,7 @@ else
 			fi
 
 			[[ $@ == set ]] && flag="-d" || flag="-M" modify="$@"
-			~/.orw/scripts/xwallctl.sh $flag $modify "$root/${categories:-$category}"
+			~/.orw/scripts/wallctl.sh $flag $modify "$root/${categories:-$category}"
 
 			unset category multi_categories selection
 			list_categories
