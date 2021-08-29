@@ -120,15 +120,13 @@
 
        use obconf if you want to change these without having to log out
        and back in -->
-    <number>3</number>
-    <firstdesk>1</firstdesk>
+    <number>4</number>
+    <firstdesk>2</firstdesk>
     <names>
       <name>web</name>
       <name>development</name>
       <name>media</name>
-      <name>1</name>
-      <name>2</name>
-      <name>3</name>
+      <name>upwork</name>
     </names>
     <popupTime>500</popupTime>
     <!-- The number of milliseconds to show the popup for when switching
@@ -186,137 +184,149 @@
     </keybind>
     <keybind key="A-Tab">
       <action name="Execute">
-	    <command>~/.orw/scripts/rofi_scripts/dmenu/switch_windows.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/switch_windows.sh</command>
       </action>
     </keybind>
     <keybind key="A-e">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh execute</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh execute</command>
       </action>
     </keybind>
     <keybind key="A-z">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/playback.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/playback.sh</command>
       </action>
     </keybind>
-	<keybind key="A-S-z">
+    <keybind key="A-S-z">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/ncmpcpp.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/ncmpcpp.sh</command>
       </action>
     </keybind>
     <keybind key="A-S-l">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh bar_launchers</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh bar_launchers</command>
       </action>
     </keybind>
     <keybind key="A-t">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/toggle_dmenu.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/toggle_dmenu.sh</command>
       </action>
     </keybind>
-	<keybind key="A-S-t">
+    <keybind key="A-S-t">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/torrents_group.sh torrents</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/torrents_group.sh torrents</command>
       </action>
     </keybind>
     <keybind key="A-c">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/color_group.sh colors</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/color_group.sh colors</command>
       </action>
     </keybind>
     <keybind key="A-v">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/volume.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/volume.sh</command>
       </action>
     </keybind>
-	<keybind key="A-b">
+    <keybind key="A-b">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/brightness.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/brightness.sh</command>
       </action>
     </keybind>
     <keybind key="A-a">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/apps.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/apps.sh</command>
       </action>
     </keybind>
     <keybind key="A-f">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh files large_list</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh files large_list</command>
       </action>
     </keybind>
-	<keybind key="A-r">
+    <keybind key="A-S-f">
       <action name="Execute">
-		<command>rofi -show run -theme list</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/feeds.sh</command>
+      </action>
+    </keybind>
+    <keybind key="A-r">
+      <action name="Execute">
+        <command>rofi -show run -theme list</command>
       </action>
     </keybind>
     <keybind key="A-S-r">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/rec.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rec.sh</command>
       </action>
     </keybind>
     <keybind key="A-s">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/wallpapers.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/wallpapers.sh</command>
       </action>
     </keybind>
     <keybind key="A-w">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/window_actions.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/window_actions.sh</command>
       </action>
     </keybind>
-	<keybind key="A-S-w">
+    <keybind key="A-S-w">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/window_management.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/window_management.sh</command>
       </action>
     </keybind>
-	<keybind key="A-o">
+    <keybind key="A-o">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/tiling_group.sh offset</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_group.sh offset</command>
       </action>
     </keybind>
-	<keybind key="A-S-o">
+    <keybind key="A-S-o">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/tiling_toggle.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_toggle.sh</command>
       </action>
     </keybind>
     <keybind key="A-d">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh</command>
       </action>
     </keybind>
-	<keybind key="A-S-d">
+    <keybind key="A-S-d">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move</command>
       </action>
     </keybind>
     <keybind key="A-q">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/power.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/power.sh</command>
       </action>
     </keybind>
     <keybind key="A-n">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/networks.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/networks.sh</command>
       </action>
     </keybind>
     <keybind key="A-m">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/mount_dmenu.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/mount_dmenu.sh</command>
       </action>
     </keybind>
+    <!--
     <keybind key="A-l">
       <action name="Execute">
 		<command>~/.orw/scripts/rofi_scripts/dmenu/mpd_songs_group.sh library large_list</command>
       </action>
     </keybind>
-	<keybind key="A-i">
+		-->
+    <keybind key="A-i">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh bar_icons</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh bar_icons</command>
       </action>
     </keybind>
     <keybind key="A-p">
       <action name="Execute">
-		<command>~/.orw/scripts/rofi_scripts/dmenu/mpd_playlist.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/mpd_playlist.sh</command>
+      </action>
+    </keybind>
+    <keybind key="A-S-p">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/dmenu/mpd_songs_group.sh library</command>
       </action>
     </keybind>
     <keybind key="W-h">
@@ -953,11 +963,11 @@
     <manageDesktops>yes</manageDesktops>
     <!-- show the manage desktops section in the client-list-(combined-)menu -->
   </menu>
-
   <applications>
     <application name="*">
       <decor>yes</decor>
-	  <focus>yes</focus>
+      <focus>yes</focus>
+      <layer>above</layer>
       <position force="yes">
         <x>center</x>
         <y>center</y>
@@ -966,14 +976,14 @@
 
     <application class="custom_size">
       <focus>yes</focus>
-	  <monitor>Active</monitor>
+      <monitor>Active</monitor>
       <position force="yes">
-		  <x>default</x>
-		  <y>default</y>
+        <x>default</x>
+        <y>default</y>
       </position>
       <size>
-        <height>130</height>
-        <width>100</width>
+        <height>133</height>
+        <width>101</width>
       </size>
     </application>
 
@@ -995,20 +1005,10 @@
       <layer>below</layer>
     </application>
 
-    <application title="*_input">
-      <focus>yes</focus>
-      <decor>no</decor>
-      <layer>above</layer>
-      <size>
-        <width>300</width>
-        <height>100</height>
-      </size>
-    </application>
-
     <application class="*">
       <layer>below</layer>
       <position force="yes">
-        <x>306</x>
+        <x>843</x>
         <y>412</y>
       </position>
       <size>
@@ -1022,17 +1022,17 @@
         <x>center</x>
         <y>center</y>
       </position>
-	</application>
+    </application>
 
     <application class="dropdown">
       <decor>no</decor>
       <focus>yes</focus>
       <layer>above</layer>
       <desktop>all</desktop>
-	  <skip_taskbar>no</skip_taskbar>
+      <skip_taskbar>no</skip_taskbar>
       <position force="yes">
         <x>480</x>
-        <y>35</y>
+        <y>37</y>
       </position>
       <size>
         <width>960</width>
@@ -1044,14 +1044,24 @@
       <decor>no</decor>
       <focus>yes</focus>
       <layer>below</layer>
-	  <skip_taskbar>no</skip_taskbar>
+      <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>918</x>
-        <y>477</y>
+        <x>942</x>
+        <y>552</y>
       </position>
       <size>
         <width>130</width>
         <height>130</height>
+      </size>
+    </application>
+
+    <application title="*_input">
+      <focus>yes</focus>
+      <decor>no</decor>
+      <layer>above</layer>
+      <size>
+        <width>300</width>
+        <height>100</height>
       </size>
     </application>
 
@@ -1060,13 +1070,13 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>1566</x>
-        <y>694</y>
+        <x>1041</x>
+        <y>154</y>
       </position>
-	  <size>
-		  <width>100</width>
-		  <height>100</height>
-	  </size>
+      <size>
+        <width>100</width>
+        <height>100</height>
+      </size>
     </application>
 
     <!--

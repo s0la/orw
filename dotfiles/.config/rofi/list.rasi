@@ -5,24 +5,24 @@
 * {
 	font:                  "Iosevka Orw 9";
 
-	lines:                 6;
+	lines:                 10;
 
 	window-width:          33%;
 	window-margin:         30px 0;
-	window-padding:        0px 0px;
+	window-padding:        30px 30px;
 	window-location:       center;
 	window-orientation:    horizontal;
 
-	list-padding:          13px 13px;
+	list-padding:          0px 0px;
+	list-margin:           10px 0;
 
 	/*input-border:          0 0 2px;*/
-	input-margin:          0 0 0px;
-	input-padding:         15px 15px;
+	input-margin:          0 0 10px;
+	input-padding:         5px 5px;
 
 	entry-margin:          0 3px 0;
-	input-padding:         15px 15px;
 
-	element-padding:       13px 13px;
+	element-padding:       5px 5px;
 }
 
 #mainbox {
@@ -38,15 +38,20 @@
 }
 
 #listview {
+	//margin:         @list-margin;
 	scrollbar:      false;
+	dynamic:        true;
 	vertical-align: 0.5;
+	spacing:        0;
 }
 
 #inputbar {
 	border:           @input-border;
+	// margin:           @element-padding;
 	margin:           @input-margin;
 	padding:          @input-padding;
 	children:         [ prompt, entry ];
+	transparency:                   "real";
 }
 
 #entry {

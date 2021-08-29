@@ -13,9 +13,10 @@
 	/*input-border:    0 0 2px;*/
 	list-padding:    0px 0px;
 	list-spacing:    0px;
+	list-margin:     10px 0;
 
 	input-margin:    0 0 10px;
-	input-padding:   2px 5px;
+	input-padding:   3px 0px;
 
 	entry-margin:      0 3px 0;
 
@@ -30,6 +31,7 @@
 }
 
 #listview {
+	margin:         @list-margin;
 	padding:        @list-padding;
 	spacing:        @list-spacing;
 	scrollbar:      false;
@@ -39,7 +41,10 @@
 #inputbar {
 	background:     @bg;
 	border:         @input-border;
-	margin:         @input-margin;
+	// margin:         @input-margin;
+	// padding:        @input-padding;
+	// margin:         @input-padding;
+	margin:         @element-padding;
 	padding:        @input-padding;
 	children:       [ prompt, entry ];
 	background-color: @bg;

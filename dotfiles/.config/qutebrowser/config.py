@@ -1,8 +1,8 @@
-bg = '#1a1a1a'
-fg = '#383838'
-sbg = '#171717'
-sfg = '#737373'
-mfg = '#87a79e'
+bg = '#111a1f'
+fg = '#222b30'
+sbg = '#0c151a'
+sfg = '#ddcfc6'
+mfg = '#fc9e96'
 sbbg = '#1a1b1d'
 
 font_size = 8
@@ -10,6 +10,8 @@ v_padding = 3
 h_padding = 20
 
 config.load_autoconfig()
+
+c.backend = 'webengine'
 
 c.hints.border = f'2px solid {mfg}'
 c.fonts.hints = f'{font_size + 2}pt Roboto'

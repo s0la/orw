@@ -4,10 +4,10 @@
 	bg: #0e171c;
 	tbg: argb:000e171c;
 	fg: #262f34;
-	bc: #273035;
+	bc: #0e171c;
 
-	ibg: #273035;
-	ibc: #273035;
+	ibg: #0e171c;
+	ibc: #d0958f;
 
 	abg: #0c151a;
 	afg: #293237;
@@ -18,7 +18,7 @@
 	sfg: #e8d1a9;
 	sul: #87a79e;
 
-	lpc: #081116;
+	lpc: #262f34;
 	dpc: #725d43;
 	btc: #0e171c;
 	sbtc: #0e171c;

@@ -9,7 +9,7 @@
 
 	window-orientation:     vertical;
 
-	spacing:                5px;
+	list-spacing:                5px;
 
 	input-margin:           0 0 5px;
 
@@ -23,7 +23,7 @@
 	window-padding:         5px 5px;
 	window-margin:          0 0 0 9px;
 	window-radius:          5px;
-	window-height:          390.75px;
+	window-height:          313.6px;
 	window-width:           89.07px;
 }
 
@@ -46,7 +46,7 @@
 
 #listview {
 	layout:      @window-orientation;
-	spacing:     @spacing;
+	spacing:     @list-spacing;
 	lines:       0.260417;
 }
 
