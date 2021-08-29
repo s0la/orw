@@ -277,14 +277,18 @@ if [[ $style ]]; then
 
 	[[ $style != default ]] && restore_default_config
 
-	if [[ ! "$type" =~ /$style_config$ ]]; then
-		killed=killed
-		killall dunst
-	fi
+	#if [[ ! "$type" =~ /$style_config$ ]]; then
+	#	echo "$type is not $style_config, thus killing all" >> ~/Desktop/dunst_log
+	#	killed=killed
+	#	#killall dunst
+	#	kill -9 $(pidof dunst)
+	#fi
+
+	[[ ! "$type" =~ /$style_config$ ]] && kill -9 $(pidof dunst)
 
 	pid=$(pidof dunst)
-	echo "$killed $pid: $type ~ $style_config" >> ~/Desktop/dunst_log
-	((pid)) && ps aux | awk '$2 == "'$pid'"' >> ~/Desktop/dunst_log
+	#echo "$killed $pid: $type ~ $style_config" >> ~/Desktop/dunst_log
+	#((pid)) && ps aux | awk '$2 == "'$pid'"' >> ~/Desktop/dunst_log
 	#((pid)) || dunst -conf ~/.config/dunst/$style_config &> /dev/null &
 	[[ $pid ]] || dunst -conf ~/.config/dunst/$style_config &> /dev/null &
 fi
