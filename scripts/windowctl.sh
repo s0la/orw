@@ -1185,12 +1185,12 @@ get_alignment() {
 				# setting before windows array and its properties
 				set_array(bw, nbw)
 				bc = length(nbw)
-				bas = min; bae = max; bad = max - min
+				if(bc) { bas = min; bae = max; bad = max - min }
 
 				# setting after windows array and its properties
 				set_array(aw, naw)
 				ac = length(naw)
-				aas = min; aae = max; aad = max - min
+				if(ac) { aas = min; aae = max; aad = max - min }
 
 				#for(i in nbw) print nbw[i]
 				#for(i in naw) print naw[i]
@@ -1366,6 +1366,7 @@ align_windows() {
 	fi
 
 	#storing new window properties after alignment
+
 	eval aligned_windows=( $(get_alignment $action) )
 
 	#[[ $action == close ]] || set_alignment new
@@ -1391,7 +1392,8 @@ align_windows() {
 		([[ ! $action ]] && ((aligned_window_count == 2))) && awk -i inplace -F '[: ]' '\
 			BEGIN {
 				awc = '$aligned_window_count'
-				p = gensub(/ /, "|", 1, "'"${!aligned_windows[*]}"'")
+				p = gensub(/ /, "|", "g", "'"${!aligned_windows[*]}"'")
+				#p = gensub(/ /, "|", 1, "'"${!aligned_windows[*]}"'")
 			}
 			$1 ~ "^(" p ")" {
 				d = $NF
