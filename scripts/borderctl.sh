@@ -46,6 +46,23 @@ case $1 in
 		#[[ ${1:1:1} == [xy] ]] && pattern=${1:0:1}_offset || pattern=ratio
 		#[[ ${1: -1} == [xy] ]] && pattern=${1: -1}_offset || pattern=ratio
 
+		get_icon() {
+			icon=$(awk '
+				/^part/ { p = $NF }
+				/^ratio/ { r = 100 / $NF * p }
+				/^use_ratio/ {
+					if(r < 13) i = ""
+					else if(r <= 25) i = ""
+					else if(r < 38) i = ""
+					else if(r <= 50) i = ""
+					else if(r < 63) i = ""
+					else if(r <= 75) i = ""
+					else i = ""
+
+					print i
+				}' ~/.config/orw/config)
+		}
+
 		offset_tiled_windows() {
 			#if [[ $mode != floating ]]; then
 				if [[ ! $sign ]]; then
@@ -98,6 +115,7 @@ case $1 in
 
 		[[ $sign ]] && check_value=$((value $sign new_value)) || check_value=$new_value
 
+		style='-s osd'
 		#if ((check_value > 0 && (ratio && check_value < ratio || !ratio))); then
 		if ((check_value >= min)); then
 			#[[ $property == part && $check_value -ge $ratio ]] &&
@@ -105,11 +123,12 @@ case $1 in
 			#[[ $property == ratio && $check_value -le $part ]] && $0 wp $((ratio / 2))
 
 			message="<b>${property/_/ }</b> changed to <b>$check_value</b>"
+			message="${property^^}: $check_value"
 
 			if [[ $property == part ]]; then
 				[[ $check_value -lt $ratio ]] &&
 					new_ratio="$check_value/$ratio" ||
-					check_value=$part new_ratio="$part/$ratio" \
+					check_value=$part new_ratio="$part/$ratio" style='' \
 					message="<b>${property^}</b> must be lower then ratio (<b>$ratio</b>)"
 			fi
 
@@ -129,9 +148,11 @@ case $1 in
 			#[[ $property =~ offset ]] && offset_tiled_windows ||
 			#	message+="\nCurrent ratio: <b>($new_ratio)</b>"
 
-			[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
+			#[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
+				#message+="\nCurrent ratio: <b>($new_ratio)</b>"
 
 			sed -i "/$property/ s/$value/$check_value/" $orw_conf
+			[[ ! $property =~ offset ]] && get_icon && message="RATIO: $new_ratio"
 		else
 			#message="<b>${property^} cannot be changed further!"
 			#message="<b>$check_value</b> is out of range <b>(1..$((ratio - 1)))</b>!"
@@ -139,7 +160,7 @@ case $1 in
 		fi
 
 		#ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $orw_conf)
-		[[ ! $3 ]] && ~/.orw/scripts/notify.sh -pr 22 "$message"
+		[[ ! $3 ]] && ~/.orw/scripts/notify.sh -pr 22 $style -i ${icon:-} "$message"
 		exit
 		#checking_value=$((value $sign $new_value))
 
