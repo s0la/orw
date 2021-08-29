@@ -201,7 +201,7 @@ case $1 in
 		#lines=${@: -1}
 		lines=$3
 
-		old_mail_count=55
+		old_mail_count=145
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -884,7 +884,7 @@ case $1 in
 		separator="$2"
 		lines=$3
 
-		last_feed_count=6
+		last_feed_count=1
 		#feed_count=$(newsboat -x reload print-unread | cut -d ' ' -f 1)
 		pid=$(pidof newsboat)
 		((pid)) &&
@@ -894,7 +894,7 @@ case $1 in
 
 		#~/.orw/scripts/notify.sh "rss: $feed_count"
 
-		set_icon $1
+		icon="$(sed -n "s/${1}_icon=//p" ${0%/*}/icons)"
 		left_command='termite -t newsboat -e newsboat &> /dev/null &'
 		format_fading RSS "$feed_count" "${4:-none}"
 
