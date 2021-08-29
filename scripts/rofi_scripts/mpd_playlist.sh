@@ -47,7 +47,7 @@ else
 			fi;;
 	esac
 
-	[[ $@ != load ]] && ~/.orw/scripts/notify.sh -p "<b>$playlist</b> playlist ${action//ee/e}."
+	[[ $action && $action != load ]] && ~/.orw/scripts/notify.sh -p "<b>$playlist</b> playlist ${action//ee/e}."
 	[[ $options ]] || list_songs
 fi
 
