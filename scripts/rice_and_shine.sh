@@ -41,7 +41,8 @@ bar_conf=$colorschemes/orw_default.ocs
 
 update_colors=~/.orw/scripts/update_colors.sh
 pick_color=~/.orw/scripts/pick_color.sh
-colorctl=~/.orw/scripts/colorctl.sh
+#colorctl=~/.orw/scripts/colorctl.sh
+colorctl=~/.orw/scripts/convert_colors.sh
 
 #                  
 #       
@@ -94,7 +95,8 @@ save_color() {
 }
 
 function offset_color() {
-	$colorctl -o ${2:-$offset} -h ${1:-$color}
+	#$colorctl -o ${2:-$offset} -h ${1:-$color}
+	$colorctl -hv ${2:-$offset} ${1:-$color}
 }
 
 function get_color() {
@@ -241,7 +243,8 @@ function ob() {
 		osdh) local pattern='osd.hilight';;
 		osdu) local pattern='osd.unhilight';;
 		s)
-			read red green blue <<< $($colorctl -cps ' ' -h ${new_color:-$color})
+			#read red green blue <<< $($colorctl -cps ' ' -h ${new_color:-$color})
+			read red green blue <<< $($colorctl -chd ' ' ${new_color:-$color})
 
 			awk -i inplace \
 				'/shadow-(red|green|blue)/ {
@@ -366,7 +369,8 @@ function term() {
 					}' <<< ${color:1:2})
 			fi
 
-			rgb=$($colorctl -c -h "#${color: -6}")
+			#rgb=$($colorctl -c -h "#${color: -6}")
+			rgb=$($colorctl -ch "#${color: -6}")
 			sed -i "/^background/ s/\([0-9,]\+\),$term_pattern/$rgb$term_transparency/" $term_conf;;
 			#sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf;;
 		fg) sed -i "/^foreground/ s/#.*/#${color: -6}/" $term_conf;;
@@ -1011,38 +1015,48 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 					feh -g 100x100 --title 'image_preview' $preview &
 				}
 
-				echo "Pick a color:"
-				color=$($pick_color | awk '{ print tolower($0) }')
-				#color=${color,,}
+			#	echo "Pick a color:"
+			#	color=$($pick_color | awk '{ print tolower($0) }')
+			#	#color=${color,,}
 
-				read -srn 1 -p $'Offset color? [y/N]\n' offset_color
+			#	read -srn 1 -p $'Offset color? [y/N]\n' offset_color
 
-				if [[ $offset_color == y ]]; then
-					preview=/tmp/color_preview.png
+			#	if [[ $offset_color == y ]]; then
+			#		preview=/tmp/color_preview.png
 
-					read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
-					~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
-					display_color_preview
+			#		read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+			#		~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
+			#		display_color_preview
 
-					while
-						read -rsn 1 -p $'Whole/properties/done? [w/p/D]\n' offset_type
-						[[ $offset_type == w ]]
-					do
-						read -p 'Enter offset: ' offset
-						color=$($colorctl -o $offset -h $color)
+			#		while
+			#			read -rsn 1 -p $'Whole/properties/done? [w/p/D]\n' offset_type
+			#			[[ $offset_type == w ]]
+			#		do
+			#			read -p 'Enter offset: ' offset
+			#			#color=$($colorctl -o $offset -h $color)
+			#			color=$($colorctl -hv $offset $color)
 
-						kill $!
-						display_color_preview
-					done
+			#			kill $!
+			#			display_color_preview
+			#		done
 
-					kill $!
+			#		kill $!
 
-					[[ $offset_type == p ]] && $colorctl -P $color
+			#		[[ $offset_type == p ]] && $colorctl -P $color
 
-					fifo=/tmp/color_preview.fifo
-					read color < $fifo
-					unset offset
-				fi
+			#		fifo=/tmp/color_preview.fifo
+			#		read color < $fifo
+			#		unset offset
+			#	fi
+			#fi
+
+				fifo=/tmp/color_preview.fifo
+				[[ -e $fifo ]] || mkfifo $fifo
+				~/.orw/scripts/pick_color.sh -af $fifo
+
+				read color < $fifo
+				[[ -e $fifo ]] && rm $fifo
+				#echo $color
 			fi
 
 			get_color $color $pick_offset
@@ -1377,8 +1391,10 @@ if [[ $replace_color ]]; then
 
 				case $replace_module in
 					bash)
-						rgb_color=$($colorctl -c -s ';' -h $color)
-						new_rgb_color=$($colorctl -c -s ';' -h $new_color)
+						#rgb_color=$($colorctl -c -s ';' -h $color)
+						#new_rgb_color=$($colorctl -c -s ';' -h $new_color)
+						rgb_color=$($colorctl -chd ';' $color)
+						new_rgb_color=$($colorctl -chd ';' $new_color)
 						sed -i "s/$rgb_color/$new_rgb_color/" $bash_conf;;
 					tmux)
 						[[ $new_color =~ ^# && ${#new_color} -gt 8 ]] && new_color="#${new_color: -6}"
