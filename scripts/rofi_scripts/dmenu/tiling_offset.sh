@@ -32,6 +32,8 @@ list_options() {
 }
 
 if [[ -z $@ ]]; then
+	#~/.orw/scripts/notify.sh -r 303 -s osd -i   OFFSET &
+
 	list_options
 else
 	[[ $@ =~ [0-9]+ ]] && value=${@##* }

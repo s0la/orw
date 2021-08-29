@@ -21,7 +21,27 @@ icon_part_up=
 icon_ratio_up=
 icon_ratio_down=
 
+get_icon() {
+	icon=$(awk '
+		/^part/ { p = $NF }
+		/^ratio/ { r = 100 / $NF * p }
+		/^use_ratio/ {
+			if(r < 13) i = ""
+			else if(r <= 25) i = ""
+			else if(r < 38) i = ""
+			else if(r <= 50) i = ""
+			else if(r < 63) i = ""
+			else if(r <= 75) i = ""
+			else i = ""
+
+			print i
+		}' ~/.config/orw/config)
+}
+
 list_options() {
+	#get_icon
+	#~/.orw/scripts/notify.sh -r 303 -s osd -i $icon RATIO &
+
 	cat <<- EOF
 		$icon_part_down$sep$part_down
 		$icon_part_up$sep$part_up
