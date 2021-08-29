@@ -94,42 +94,94 @@ list_actions
 #~/.orw/scripts/notify.sh "a: ^$action^ ^$categories^"
 #exit
 
-if [[ $action == $select ]]; then
-	indicator=''
-	indicator='●'
+#if [[ $action == $select ]]; then
+#	indicator=''
+#	indicator='●'
+#
+#	get_directory
+#
+#	current_desktop=$(xdotool get_desktop)
+#	current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+#	current_wallpaper=$(sed -n "/^desktop_$current_desktop/ { s/[()]/\\\&/g; s/[^\"]*.\([^\"]*\).*/\1/p }" $config)
+#
+#	((depth)) && maxdepth="-maxdepth $depth"
+#	read row wallpapers <<< $(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+#		sort -t '/' -k 1 | \
+#		awk '{
+#				if(/'"${current_wallpaper##*/}"'$/) {
+#					r = NR - 1
+#					i = "'$indicator'"
+#				} else i = " "
+#
+#				sub("'"${root//\'}"'/?", "")
+#				aw = aw "\\\\n" i " " $0
+#			} END { print r, substr(aw, 2) }')
+#
+#	#~/.orw/scripts/notify.sh "here: $current_wallpaper"
+#	#exit
+#	selected_wallpaper=$(echo -e "$wallpapers" | rofi -dmenu -selected-row $row -i -theme large_list)
+#	[[ $selected_wallpaper ]] && eval $wallctl -s "$root/'${selected_wallpaper:2}'"
+#	exit
+#
+#	selected_wallpaper=$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
+#		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+#			sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -i -theme large_list)
+#
+#	[[ $selected_wallpaper ]] &&  eval $wallctl -s "$root/'${selected_wallpaper:2}'"
+#else
+while
+	if [[ $action ]]; then
+		case "$action" in
+			$select)
+				indicator=''
+				indicator='●'
 
-	get_directory
+				get_directory
 
-	current_desktop=$(xdotool get_desktop)
-	current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+				current_desktop=$(xdotool get_desktop)
+				current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+				current_wallpaper=$(sed -n "/^desktop_$current_desktop/ { s/[()]/\\\&/g; s/[^\"]*.\([^\"]*\).*/\1/p }" $config)
 
-	((depth)) && maxdepth="-maxdepth $depth"
+				((depth)) && maxdepth="-maxdepth $depth"
+				read row wallpapers <<< $(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+					sort -t '/' -k 1 | \
+					awk '{
+							if(/'"${current_wallpaper##*/}"'$/) {
+								r = NR - 1
+								i = "'$indicator'"
+							} else i = " "
 
-	selected_wallpaper=$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
-		awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
-			sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -i -theme large_list)
+							sub("'"${root//\'}"'/?", "")
+							aw = aw "\\\\n" i " " $0
+						} END { print r, substr(aw, 2) }')
 
-	[[ $selected_wallpaper ]] &&  eval $wallctl -s "$root/'${selected_wallpaper:2}'"
-else
-	while
-		if [[ $action ]]; then
-			case "$action" in
-				$next*) $wallctl -o next ${action#*$next } &;;
-				$prev*) $wallctl -o prev ${action#*$prev } &;;
-				$rand*) $wallctl -o rand ${action#*$rand } &;;
-				$restore*) $wallctl -r;;
-				$auto*) $wallctl -A;;
-				$view*) $wallctl -v;;
-				$categories*)
-					killall rofi
-					rofi -modi "categories:${0%/*}/wallpaper_category_selection.sh" -show categories -theme large_list;;
-				$index*) $wallctl -i ${action##* };;
-				*) $wallctl -o $action;;
-			esac
-		fi
+				#~/.orw/scripts/notify.sh "here: $current_wallpaper"
+				#exit
+				selected_wallpaper=$(echo -e "$wallpapers" | rofi -dmenu -selected-row $row -i -theme large_list)
+				[[ $selected_wallpaper ]] && eval $wallctl -s "$root/'${selected_wallpaper:2}'";;
+				#exit
 
-		[[ $action =~ $prev|$next|$rand ]]
-	do
-		list_actions
-	done
-fi
+				#selected_wallpaper=$(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
+				#	awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
+				#		sub("'"${root//\'}"'/?", ""); print i, $0 }' | rofi -dmenu -i -theme large_list)
+
+				#[[ $selected_wallpaper ]] &&  eval $wallctl -s "$root/'${selected_wallpaper:2}'";;
+			$next*) $wallctl -o next ${action#*$next } &;;
+			$prev*) $wallctl -o prev ${action#*$prev } &;;
+			$rand*) $wallctl -o rand ${action#*$rand } &;;
+			$restore*) $wallctl -r;;
+			$auto*) $wallctl -A;;
+			$view*) $wallctl -v;;
+			$categories*)
+				killall rofi
+				rofi -modi "categories:${0%/*}/wallpaper_category_selection.sh" -show categories -theme large_list;;
+			$index*) $wallctl -i ${action##* };;
+			*) $wallctl -o $action;;
+		esac
+	fi
+
+	[[ $action =~ $select|$prev|$next|$rand ]]
+do
+	list_actions
+done
+#fi
