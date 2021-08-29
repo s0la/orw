@@ -101,8 +101,9 @@ else
 					launcher_separator="${separator_color:-%{B\$Lsc:-\$bg}}$separator_value"
 
 					#~/.orw/scripts/notify.sh "sc: $launcher_separator"
-				elif [[ $property == p ]]; then
+				elif [[ $property =~ p([0-9]+)? ]]; then
 					module_padding=true
+					((${#argument} > 1)) && padding=%{O${argument:1}}
 				else
 					if [[ $value =~ [0-9] ]]; then
 						offset="%{O$value}"
