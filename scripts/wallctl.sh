@@ -1250,7 +1250,8 @@ else
 		if [[ ${wallpaper//\"/} =~ ^# ]]; then
 			((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
 		else
-			wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
+			#wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
+			wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
 			set_aspect "$wallpaper_path"
 
 			wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
