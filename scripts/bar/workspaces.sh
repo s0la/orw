@@ -27,11 +27,31 @@ function set_line() {
 
 [[ $single_line == false ]] && format_delimiter=' '
 
-workspace_labels=( $(wmctrl -d | awk '{
-	print ($NF ~ /^[0-9]+$/) ? ($NF > 1) ? "tmp_" $NF - 1 : "tmp" : $NF }') )
+manage=
+
+#workspace_labels=( $(wmctrl -d | awk '{
+#	print ($NF ~ /^[0-9]+$/) ? ($NF > 1) ? "tmp_" $NF - 1 : "tmp" : $NF }
+#	END { if("'$manage'") print "add remove" }') )
+
+workspace_labels=( $(
+	awk '
+		/<\/?names>/ { wn = (wn + 1) % 2 }
+
+		wn && /<name>/ {
+			print gensub("[^>]*>([^<]*).*", "\\1", 1)
+		}' ~/.config/openbox/rc.xml | xargs ) )
+workspace_count=${#workspace_labels[*]}
+
+#~/.orw/scripts/notify.sh "wl: ${#workspace_labels[*]}"
 
 for workspace_index in $(seq $workspace_count); do
-	[ $workspace_index -eq $current_workspace ] && current=p || current=s
+	workspace_label=${workspace_labels[workspace_index - 1]}
+
+	if [[ $workspace_label =~ add|remove ]]; then
+		current=$workspace_label
+	else
+		[ $workspace_index -eq $current_workspace ] && current=p || current=s
+	fi
 
 	for arg in ${4//,/ }; do
 		case $arg in
@@ -44,6 +64,10 @@ for workspace_index in $(seq $workspace_count); do
 					[[ $value == p ]] && offset=$padding || offset='$inner'
 				fi;;
 			[cr]) [[ ! $flags =~ $arg ]] && flags+=$arg;;
+			p*)
+				module_padding=true
+				((${#arg} > 1)) && padding=%{O${arg:1}};;
+			s*) workspace_separator="%{B\$bg}%{O${arg:1}}";;
 			s*) workspace_separator="\$jbg%{O${arg:1}}";;
 			#l) label="${padding}$(wmctrl -d | awk '$1 == '$((workspace_index - 1))' \
 			#	{ wn = $NF; if(wn ~ /^[0-9]+$/) { if(wn > 1) tc = wn - 1; wn = "tmp" tc }; print wn }')${padding}";;
@@ -61,12 +85,19 @@ for workspace_index in $(seq $workspace_count); do
 				#esac
 
 				((${#arg} == 1)) &&
-					icon_type="${workspace_labels[workspace_index - 1]}" ||
+					icon_type="$workspace_label" ||
 					icon_type=$(sed 's/\w/&\.\*_/g' <<< ${arg:1})$current
 				#~/.orw/scripts/notify.sh "it: $icon_type"
-				icon="$(sed -n "s/Workspace_${icon_type}_icon=//p" ${0%/*}/icons)"
+
+				icon="$(sed -n "s/Workspace_${icon_type}_icon=\(.*\)/%{T4}\1%{T-}/p" ${0%/*}/icons)"
+
+				#case ${workspace_labels[workspace_index - 1]} in
+				#	add) icon=${icon/[^[:ascii:]]/};;
+				#	remove) icon=${icon/[^[:ascii:]]/};;
+				#esac
+
 				#[[ ${arg:1:1} == s ]] && icon=%{T4}$icon%{T-}
-				icon=%{T4}$icon%{T-}
+				#icon=%{T4}$icon%{T-}
 
 				#if [[ $icon_type ]]; then
 				#	#icon="$(sed -n "s/Workspace_${icon_type}_${current}_icon=//p" ${0%/*}/icons)"
@@ -85,7 +116,9 @@ for workspace_index in $(seq $workspace_count); do
 	fg="\${W${current}fg:-\${Wsfg:-\$${current}fg}}"
 	[[ $fbg ]] || fbg=$bg
 
-	command="wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k \&"
+	[[ $workspace_label =~ add|remove ]] &&
+		command="~/.orw/scripts/manage_workspaces.sh $workspace_label" ||
+		command="wmctrl -s $((workspace_index - 1)) \&\& ~/.orw/scripts/barctl.sh -b wss -k \&"
 	[[ $flags ]] && command+=" ~/.orw/scripts/wallctl.sh -$flags \&"
 	workspace="%{A:$command:}$bg$fg$label%{A}"
 
@@ -98,13 +131,19 @@ for workspace_index in $(seq $workspace_count); do
 	workspaces+="$workspace"
 done
 
-[[ $4 =~ i ]] && workspaces="$fbg${padding}$workspaces${padding}"
+[[ $4 =~ i || $module_padding ]] && workspaces="$fbg${padding}$workspaces${padding}"
 #[[ $4 =~ i[^b] ]] && workspaces="$fbg${padding}$workspaces${padding}"
 #[[ $separator =~ ^% ]] && workspaces="$remove_frame$workspaces"
 
+#%{A3:~/.orw/scripts/notify.sh \\\\$(sed -i '/^manage/ s/\w*$/"$opposite_value"/' $0):}\
+#%{A3:~/.orw/scripts/notify.sh \\\"$(sed -n '/^manage/ s/\w*$/$opposite_value/p' $0)\\\":}\
+#%{A3:sed -i '/^manage/ s/\w*$//' $0:}\
+[[ $manage ]] &&
+	opposite_value='' || opposite_value=true
 workspaces="%{A2:~/.orw/scripts/barctl.sh -b wss:}\
+%{A3:sed -i \'/^manage/ s/=.*/=$opposite_value/\' $0:}\
 %{A4:wmctrl -s $((((current_workspace + workspace_count - 2) % workspace_count))):}\
-%{A5:wmctrl -s $((current_workspace % workspace_count)):}$workspaces%{A}%{A}%{A}"
+%{A5:wmctrl -s $((current_workspace % workspace_count)):}$workspaces%{A}%{A}%{A}%{A}"
 
 if [[ $single_line == true ]]; then
 	#~/.orw/scripts/notify.sh "s: $separator"
@@ -125,6 +164,7 @@ else
 	workspaces+="$format_delimiter%{B\$bg}$separator"
 fi
 
+#echo -e "$workspaces" >> ~/Desktop/ws_log
 echo -e "$workspaces"
 
 #case $separator in
