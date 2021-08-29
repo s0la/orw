@@ -501,8 +501,9 @@ generate_ps1() {
 	ic="188;209;211;"
 	sec="129;98;92;"
 	gcc="135;147;148;"
-	gdc="255;171;163;"
+	gdc="208;149;143;"
 	vc="180;138;113;"
+	dc="28;37;42;"
 
 	clean="\[$(tput sgr0)\]"
 	#separator="$clean $clean"
@@ -527,11 +528,17 @@ generate_ps1() {
 		#modules="i,w,v,r,g"
 		modules="w,v,g"
 
+		half_length=$(echo $(tput cols) / 2 - 2 | bc)
+		dashed_separator=$(printf '━ %.0s' $(eval echo {0..$half_length}))
+		#dashed="$(color_content 3 $fg)$(color_content 4 default)$dashed_separator\n"
+		dashed="$(color_content 3 $dc)$default$dashed_separator\n"
+		#format_module -f $fg -b default -c "$dashed_separator\n"
+
 		if [[ $mode == simple ]]; then
 			start_bracket="$(color_content 3 $fg)("
 			end_bracket="$(color_content 3 $fg))"
 
-			working_directory=' \W'
+			working_directory='\W'
 
 			format_module -f $fg -b $bg
 			color_modules
@@ -569,7 +576,9 @@ generate_ps1() {
 			format_module -f $sc -c "$symbol_end"
 		fi
 
+		all_modules="$dashed$all_modules"
 		all_modules+=$default
+		#all_modules+=$(color_content 4 $dc)
 
 		echo -e "$all_modules "
 	fi
