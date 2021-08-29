@@ -34,8 +34,11 @@ if [[ $action ]]; then
 				read x y <<< $(~/.orw/scripts/get_display.sh $window_x $window_y | \
 					awk '{ print int(($4 - '$width') / 2), int(($5 - '$height') / 2) }')
 
-				~/.orw/scripts/set_geometry.sh -c input -x $x -y $y -w 300 -h 100
-				termite -t rec_file_name_input --class=input -e "bash -c \"$command\"" &> /dev/null &
+				#~/.orw/scripts/set_geometry.sh -c input -x $x -y $y -w 300 -h 100
+				#termite -t rec_file_name_input --class=input -e "bash -c \"$command\"" &> /dev/null &
+				~/.orw/scripts/set_geometry.sh -t input -x $x -y $y -w 300 -h 100
+				termite -t rec_file_name_input -e "bash -c \"$command\"" &> /dev/null &
+
 
 				read filename < $fifo
 
