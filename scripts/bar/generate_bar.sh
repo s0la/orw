@@ -165,7 +165,7 @@ set_frame_color() {
 
 	if [[ $all_lines && ! $left_side_frame ]]; then
 		[[ $frame_color == $bg ]] && side_width=$frame_width
-		#left_side_frame=%{O${side_width:-0}}
+		left_side_frame=%{O${side_width:-0}}
 	fi
 
 	[[ $frame_color == $bg ]] && eval "$module_frame_width=0"
@@ -179,6 +179,7 @@ format() {
 
 	if [[ ${joiner_end:-$joiner} ]]; then
 		if [[ $joiner_start ]]; then
+			#~/.orw/scripts/notify.sh "$joiner_start $joiner %{U$frame_color}$left_line"
 			#local left_line=$(eval echo -e "${start_line:-$left_frame}")
 			modules+="%{U$frame_color}$left_line\${$1% *}${joiner:1}"
 			#eval joiner_end_frame="$bar_side_frame%{-o}%{-u}"
