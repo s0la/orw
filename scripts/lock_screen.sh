@@ -27,4 +27,4 @@ i3lock --blur $blur \
 	   --bshlcolor=${bshl#\#} \
 	   --verifcolor=$tc --wrongcolor=$tc \
 	   --ringvercolor=${rvc:-$rc} --ringwrongcolor=$wc \
-	   --insidevercolor=$ic --insidewrongcolor=$ic \
+	   --insidevercolor=$ic --insidewrongcolor=$ic &
