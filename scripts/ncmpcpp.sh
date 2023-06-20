@@ -186,7 +186,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				print p * 2; exit }' ~/.config/gtk-3.0/gtk.css)
 
 			#[[ $@ =~ -i ]] && width=${width-630} height=${height-250}
-			[[ $@ =~ -i ]] && width=${width-$((600 + padding))} height=${height-$((200 + padding))}
+			[[ $@ =~ -i ]] && width=${width-$((600 + padding))} height=${height-$((180 + padding))}
 			title=ncmpcpp_with_cover_art
 
 			#get_cover_properties
@@ -250,23 +250,58 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				[[ $title ]] || show_status yes
 
 				#mode=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+				workspace=$(xdotool get_desktop)
 				mode=$(awk '/class.*(selection|\*)/ {
 					print (/\*/) ? "tiling" : "selection" }' ~/.config/openbox/rc.xml)
 
-				if [[ $mode ]]; then
-					unset pre
-
-					if [[ $mode == selection ]]; then
-						class=selection
-						~/.orw/scripts/set_window_geometry.sh $mode
+				if [[ $mode == tiling ]]; then
+					#tiling_workspace=$(grep "^tiling.*\b$workspace\b" ~/.orw/scripts/spy_windows.sh)
+					#if [[ $tiling_workspace ]]; then
+					if grep "^tiling.*\b$workspace\b" ~/.orw/scripts/spy_windows.sh; then
+						[[ $title == visualizer ]] &&
+							width=100 height=100 || width=350 height=250
+						unset pre
 					fi
-				else
-					~/.orw/scripts/set_geometry.sh -c custom_size -w $width -h $height
 				fi
 
+				#if [[ $mode ]]; then
+				#	unset pre
+
+				#	if [[ $mode == selection ]]; then
+				#		class=selection
+				#		~/.orw/scripts/set_window_geometry.sh $mode
+				#	fi
+				#else
+				#	~/.orw/scripts/set_geometry.sh -c custom_size -w $width -h $height
+				#fi
+
+				#[[ $mode == tiling ]] &&
+				#	class='*' && unset pre ||
+				#	~/.orw/scripts/set_geometry.sh -c custom_size -w $width -h $height
+
+				#if [[ $mode == tiling ]]; then
+				#	[[ $title != visualizer ]] &&
+				#		width=350 height=250
+				#	unset pre
+				#fi
+
+				~/.orw/scripts/set_geometry.sh -c custom_size -w $width -h $height
+
+				#echo "-e \"bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
+				#	\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\";$close'"
+				#exit
+				#termite -t ${title:=ncmpcpp} --class=${class:-custom_size}
+				#exit
+
 				termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
-					-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
-					\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\";$close'" &> /dev/null &
+					-e "bash -c '${pre:-$0 -P ${progressbar-yes}} && \
+					$base_command ${command-new -s $title ncmpcpp}'"
+
+				#termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
+				#	-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
+				#	\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\"'" &> /dev/null &
+
+					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\";$close'" &> /dev/null &
 					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s $title ncmpcpp}\"'" &> /dev/null &
 					#\"${pre:-$0 -P ${progressbar-yes}} && $base_command ${command-new -s ncmpcpp ncmpcpp}\";$close'" &> /dev/null &
 				exit
