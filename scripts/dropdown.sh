@@ -51,6 +51,10 @@ set_position() {
 			else wx = int(dw / 2 - ww / 2); \
 				print dx + wx, dy + yo, ww, wh }')
 
+		y=$(awk '
+				$1 == "display_'${display:-1}'_offset" { print $(NF - 1) + 10 }
+			' ~/.config/orw/config)
+
 		~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 

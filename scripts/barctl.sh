@@ -39,22 +39,24 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=moun_sep
+last_running=new_join
 
 #[[ $@ =~ -b ]] || get_bars
 
 #while getopts :ds:I:gb:m:E:e:r:R:klLnc: flag; do
-while getopts :dI:gb:M:E:eriamsR:klLnc: flag; do
+while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
 			kill_bar
 
 			[[ -f $configs/$bar ]] && overwrite=-o
-			~/.orw/scripts/bar/generate_bar.sh ${@:2} $overwrite
+			~/bar_new/run.sh ${@:2} $overwrite
+			#~/.orw/scripts/bar/generate_bar.sh ${@:2} $overwrite
 
 			add_bar
-			exit;;
+			exit
+			;;
 		I) check_interval=$OPTARG;;
 		b)
 			bar_expr=$OPTARG
@@ -318,31 +320,40 @@ while getopts :dI:gb:M:E:eriamsR:klLnc: flag; do
 					#fi
 				done
 
-				#[[ $recalculate_offsets ]] && ~/.orw/scripts/assign_bars_to_displays.sh &
+				#sws_pid=$(ps aux |
+				#	awk '/bash.*sws.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
+				#kill -SIGCONT $sws_pid
+				#exit
 
-				#offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
-				#										END { print gensub("\\<0\\>", "", "g", wo) }')
+				##[[ $recalculate_offsets ]] && ~/.orw/scripts/assign_bars_to_displays.sh &
 
-				#offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
-				offsets=$(~/.orw/scripts/get_bar_offset.sh -d | awk '{ wo = wo " " $0 }
-					END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
-					#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
+				##offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
+				##										END { print gensub("\\<0\\>", "", "g", wo) }')
 
-				#[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "+${offsets#,}"
-				[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
-				exit
-				echo top delta: $max_top_delta
-				echo bottom delta: $max_bottom_delta
-				exit
+				##offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
+				#offsets=$(~/.orw/scripts/get_bar_offset.sh -d | awk '{ wo = wo " " $0 }
+				#	END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
+				#	#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
+
+				##[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "+${offsets#,}"
+				#[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
+				#exit
+				#echo top delta: $max_top_delta
+				#echo bottom delta: $max_bottom_delta
+				#exit
 			else
 				#ps -C barctl.sh o pid= --sort=-start_time | awk 'NR > 1' | xargs kill &> /dev/null
-				kill_running_script
-				sleep 0.1
-				killall generate_bar.sh lemonbar
+				#kill_running_script
+				#sleep 0.1
+				killall run.sh lemonbar
+				bars=( ${last_running//,/ } )
+				#killall generate_bar.sh lemonbar
 			fi
 
+			killed=true;;
+
 			#~/.orw/scripts/assign_bars_to_displays.sh
-			exit;;
+			#exit;;
 		l)
 			get_bars
 			lower_bars
@@ -404,21 +415,192 @@ while getopts :dI:gb:M:E:eriamsR:klLnc: flag; do
 			bar=$clone_config
 			bars=( $bar )
 			add_bar
+			;;
+		u)
+			while read pid; do
+				kill -10 $pid
+			done <<< $(ps -C run.sh -o pid=,ppid= |
+				awk '{
+						p[$1] = $2
+						if ($2 in p) pc[$2]++
+					} END {
+						for (pi in pc) if (pc[pi] > 1) print pi
+					}')
+			exit
 	esac
 done
 
 [[ -z $@ ]] && bars=( ${last_running//,/ } )
 [[ $move ]] && bars+=( ${inherit_config##*/} )
 
+check_new_bars() {
+	declare -A displays
+	local current_bars="${current_running//,/ }"
+
+	#echo BARS: ${bars[@]:-$current_bars}
+	#exit
+
+	#read default_{x,y}_offset <<< $(awk '/^[xy]_offset/ { print $NF }' ~/.config/orw/config)
+	read default_y_offset <<< $(awk '/^y_offset/ { print $NF }' ~/.config/orw/config)
+
+	#for bar in ${bars[*]}; do
+	#for bar in $current_bars; do
+	for bar in ${current_bars:-${bars[@]}}; do
+	#for bar in ${bars[@]:-$current_bars}; do
+		#if [[ ! $last_running =~ (^|,)$bar(,|$) ]]; then
+			read display bottom offset <<< $(awk '
+				function get_flag(flag) {
+					if(match($0, "-" flag "[^-]*")) return substr($0, RSTART + 3, RLENGTH - 3)
+				}
+
+				function get_value(flag) {
+					gsub("[^0-9]", "", flag)
+				}
+
+				/^[^#]/ {
+					y = get_flag("y")
+					#b = (y ~ "b")
+					b = (y ~ "b")
+					if (y) {
+						#get_value(y)
+						gsub("[^0-9]", "", y)
+						#print y
+					} else y = '$default_y_offset'
+
+					h = get_flag("h")
+					if (h) get_value(h)
+
+					f = get_flag("f")
+					if (f) {
+						m = (f ~ "[ou]") ? 1 : 2
+						get_value(f)
+						f *= m
+					}
+
+					F = get_flag("F")
+					if (F) {
+						get_value(F)
+						F *= 2
+					}
+
+					s = get_flag("S")
+					if (!s) s = 1
+
+					#print b, y + h + f + F, y, h, f, F
+					print s, b, y + h + f + F
+				}' ~/.config/orw/bar/configs/$bar)
+		#fi
+
+		#((offset)) || offset=$default_y_offset
+		#echo $display, $bottom, $offset
+
+		((!${#displays[$display]})) &&
+			display_offsets=( 0 0 ) ||
+			read -a display_offsets <<< ${displays[$display]}
+
+		#echo ${displays[$display]}, ${display_offsets[bottom]}
+
+		if [[ ! $killed || ($killed && ! ${bars[*]} =~ $bar) ]]; then
+			#((offset > ${display_offsets[bottom]:-0})) && display_offsets[bottom]=$offset
+			((offset > ${display_offsets[bottom]:-0})) && display_offsets[bottom]=$offset
+		fi
+
+		displays[$display]="${display_offsets[*]}"
+		#echo $display, ${display_offsets[*]}, ${displays[$display]}
+
+		#echo $bar, ${display_offsets[*]}, ${displays[*]}
+	done
+
+	#for d in ${!displays[*]}; do
+	#	echo $d, ${displays[$d]}
+	#done
+	#exit
+
+	#awk -F '[_ ]' '
+	#	{
+	#		if (NR == FNR) { d[$1] = $2 " " $3; next }
+	#		else if ($1 == "display" && $3 == "offset" && $2 in d &&
+	#			$(NF - 1) " " $NF != d[$2]) {
+	#			printf "display_%d_offset %s\n", $2, d[$2]
+	#			uv = 1
+	#			next
+	#		}
+
+	#		print
+	#	} END { print uv }' <(
+	#		for d in ${!displays[*]}; do
+	#			echo $d ${displays[$d]}
+	#		done
+	#	) ~/.config/orw/config 2> /dev/null
+	#exit
+
+	update_values=$(awk -i inplace -F '[_ ]' '
+		{
+			if (NR == FNR) d[$1] = $2 " " $3
+			else {
+				if ($1 == "display" && $3 == "offset" && $2 in d &&
+					$(NF - 1) " " $NF != d[$2]) {
+						printf "display_%d_offset %s\n", $2, d[$2]
+						uv = 1
+						next
+					}
+
+				print
+			}
+		} END { print uv }' <(
+			for d in ${!displays[*]}; do
+				echo $d ${displays[$d]}
+			done
+		) ~/.config/orw/config 2> /dev/null)
+
+	#((diff)) && ~/sws_test.sh update && exit
+	((update_values)) && ~/.orw/scripts/signal_windows_event.sh update
+
+	[[ $killed ]] && exit
+	return
+
+
+
+	awk -i inplace -F '[_ ]' '{
+			if (NR == FNR) d[$1] = $2 " " $3
+			#else if ($1 == "display" && $3 == "offset") {
+			#	print $(NF - 1), $NF
+			#	print d[$2]
+			#	#&& $2 in d &&
+			#	#$(NF - 1) " " $NF != d[$2]) {
+			else if ($1 == "display" && $3 == "offset" && $2 in d &&
+				$(NF - 1) " " $NF != d[$2]) {
+				#print
+				#print $(NF - 1), $NF ", " d[$2]
+				printf "display_%d_offset %s\n", $2, d[$2]
+				next
+			} print
+		}' <(
+			for d in ${!displays[*]};do
+				echo $d ${displays[$d]}
+			done
+		) ~/.config/orw/config &> /dev/null
+
+		#sw_pid=$(ps aux |
+		#	awk '/bash.*sw.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
+		#kill -SIGCONT $sw_pid
+		~/.orw/scripts/signal_windows_event.sh update
+
+		[[ $killed ]] && exit
+}
+
+check_new_bars
+#exit
+
 if [[ ! $no_reload ]]; then
 	current_pid=$$
 	#ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
 	kill_running_script
 
-	while true; do
-		monitor_memory_consumption
-		sleep ${check_interval:-100}
-	done &
+	#while true; do
+	#	monitor_memory_consumption
+	#	sleep ${check_interval:-100}
+	#done &
 
 	[[ ! $bars ]] && get_bars
 
@@ -427,13 +609,31 @@ if [[ ! $no_reload ]]; then
 		bash $configs/$bar &
 	done
 
-	#sleep 1
-	#last_bar_pid=$!
-	[[ $recalculate_offsets ]] &&
-		#offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -dc ${#bars[*]} | \
-		offsets=$(~/.orw/scripts/get_bar_offset.sh -dc ${#bars[*]} | \
-			awk '{ wo = wo " " $0 } END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
-			#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
+	##sleep 1
+	##last_bar_pid=$!
+	#[[ $recalculate_offsets ]] &&
+	#	#offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -dc ${#bars[*]} | \
+	#	offsets=$(~/.orw/scripts/get_bar_offset.sh -dc ${#bars[*]} | \
+	#		awk '{ wo = wo " " $0 } END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
+	#		#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
 
-	[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
+	exit
+
+	if [[ $recalculate_offsets ]]; then
+		bars+=( ${last_running//,/ } )
+		until (($(ps -C lemonbar -o pid= | wc -l) == ${#bars[*]})); do
+			sleep 0.1
+		done
+
+		#ps -C lemonbar -o pid=
+		#xwininfo -name ocsgen_dock
+		#exit
+
+		~/.orw/scripts/signal_windows_event.sh update
+		#sws_pid=$(ps aux |
+		#	awk '/bash.*sws.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
+		#kill -SIGCONT $sws_pid
+	fi
+
+	#[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
 fi
