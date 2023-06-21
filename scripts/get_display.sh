@@ -4,10 +4,10 @@ awk -F '[_ ]' '{
 	if (/^orientation/) {
 		cd = 1
 		bmin = 0
-		i = '$1'; mi = i + 2
+		#i = '$1'; mi = i + 2
 
-		wx = '$1'
-		wy = '$2'
+		wx = '${1:-0}'
+		wy = '${2:-0}'
 
 		if ($NF ~ /^h/) {
 			i = 4
@@ -16,7 +16,14 @@ awk -F '[_ ]' '{
 			i = 5
 			p = wy
 		}
-	} {
+	}
+
+	if (/^primary/ && !(wx + wy)) {
+		cd = $NF
+		e = 1
+	}
+
+	{
 		if ($1 == "display") {
 			if ($3 == "xy") {
 				cd = $2
@@ -31,16 +38,21 @@ awk -F '[_ ]' '{
 
 				max += $i
 
-				if (p < max) {
-					print cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
-					exit
-				} else {
+				#if (p < max) {
+				#	print cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
+				#	exit
+				#} else {
+
+				if (p > max) {
 					bmin += $4
 					if(p > max) if(i == 4) wx -= $i
 					else wy -= $i
 				}
 			} else if ($3 == "offset") {
-				print $4, $5
+				if (p < max || e) {
+					print cd, dx, dy, dw, dh, $4, $5, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
+					exit
+				}
 			}
 		}
 	}
