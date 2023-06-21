@@ -12,9 +12,16 @@ preview=/tmp/color_preview.png
 #colorctl=~/.orw/scripts/colorctl.sh
 colorctl=~/.orw/scripts/convert_colors.sh
 
-border=$(awk '/^x_border/ { print $NF }' ~/.config/orw/config)
-read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '\
-		{ print $3 + ($5 - 100) - '$border', $4 + ($2 - $1) + '$border' }')
+#border=$(awk '/^x_border/ { print $NF }' ~/.config/orw/config)
+#read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '\
+#		{ print $3 + ($5 - 100) - '$border', $4 + ($2 - $1) + '$border' }')
+
+read x y <<< $(xwininfo -int -id $(xdotool getactivewindow) | awk '
+		/Absolute/ { if(/X/) x = $NF; else y = $NF }
+		/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+		/Width/ { w = $NF }
+		/Height/ { print x - 2 * xb + w - 100, y }')
+
 		#BEGIN { b = '$border' } { print $3 + ($5 - 100) - b, $4 + ($2 - $1) - b }')
 
 ~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
