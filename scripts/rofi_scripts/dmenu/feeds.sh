@@ -36,6 +36,11 @@ article_index=$(list_articles | rofi -dmenu -format 'i' -theme large_list)
 if [[ $article_index ]]; then
 	if ((article_index)); then
 		article_url=${articles[article_index - 2]##* }
+		pids=( $(pidof firefox) )
+		firefox $article_url &
+		((${#pids[*]})) && wmctrl -a firefox
+		exit
+
 		output=$(qutebrowser $article_url 2>&1)
 
 		if [[ $output =~ existing ]]; then
