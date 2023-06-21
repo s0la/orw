@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
 
 running="$(wmctrl -lG | awk '\
 	{
@@ -52,6 +52,13 @@ if [[ $theme == icons ]]; then
 	default_label=default vertical_label=vertical split_label=split cover_label=cover visualizer_label=visualizer dual_h_label='dual horizontal' dual_v_label='dual vertical'
 fi
 
+toggle_rofi() {
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
+
 mode=$(cat <<- EOF | rofi -dmenu $active -theme main
 	${default-$empty}${default_label}
 	${vertical-$empty}${vertical_label}
@@ -86,19 +93,19 @@ if [[ $mode ]]; then
 		*$vertical_label*) flags+=' -w 450 -h 600 -i';;
 	esac
 
-	wm=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
+	#wm=$(awk '/class.*\*/ { print "tiling" }' ~/.config/openbox/rc.xml)
 
-	if [[ $wm == tiling ]]; then
-		desktop=$(xdotool get_desktop)
-		window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
+	#if [[ $wm == tiling ]]; then
+	#	desktop=$(xdotool get_desktop)
+	#	window_count=$(wmctrl -l | awk '$2 == '$desktop' { wc++ } END { print wc }')
 
-		if ((window_count)); then
-			~/.orw/scripts/tile_window.sh
-		else
-			~/.orw/scripts/tile_terminal.sh -t ${title:=ncmpcpp} "$ncmpcpp ${flags/ -i/}"
-			exit
-		fi
-	fi
+	#	if ((window_count)); then
+	#		~/.orw/scripts/tile_window.sh
+	#	else
+	#		~/.orw/scripts/tile_terminal.sh -t ${title:=ncmpcpp} "$ncmpcpp ${flags/ -i/}"
+	#		exit
+	#	fi
+	#fi
 
-	eval $ncmpcpp "$flags"
+	eval $ncmpcpp "$flags" &
 fi

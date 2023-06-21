@@ -3,14 +3,15 @@
 current_workspace=$(xdotool get_desktop)
 
 mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 declare -A workspace_icons
 workspace_icons=( [web]=  [development]=  [media]=  [upwork]=$ )
 
 if [[ $theme == icons ]]; then
 	icons=~/.orw/scripts/bar/icons
-	active="-a $current_workspace"
+	#active="-a $current_workspace"
+	active="-a ${2:-$current_workspace}"
 else
 	indicator=''
 	indicator='●  '
@@ -159,7 +160,7 @@ fi
 #	#[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
 #fi
 
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh workspaces ${#workspaces[*]}
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh workspaces ${#workspaces[*]}
 
 for workspace_index in ${!workspaces[*]}; do
 	((workspace_index)) && all_workspaces+='\n'
@@ -167,6 +168,16 @@ for workspace_index in ${!workspaces[*]}; do
 	((workspace_index == ${#workspaces[*]} - 1)) && unset prefix
 	all_workspaces+="$prefix${workspaces[workspace_index]}"
 done
+
+toggle_rofi() {
+	#~/.orw/scripts/notify.sh "SIG" &
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+if [[ ! $move ]]; then
+	toggle_rofi
+	trap toggle_rofi EXIT
+fi
 
 #chosen_workspace=$(echo -e "$all_workspaces" | rofi -dmenu $active -theme main)
 chosen_workspace=$(echo	-e "$all_workspaces" | \
@@ -204,6 +215,8 @@ else
 		#[[ $tile ]] && $windowctl -D $new_workspace_index -t ||
 
 		if [[ $mode != floating ]]; then
+			echo $new_workspace_index
+			exit
 			$windowctl -D $new_workspace_index -t
 		else
 			#echo $current_workspace_index $current_workspace_name

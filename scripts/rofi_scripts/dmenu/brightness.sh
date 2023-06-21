@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh brightness
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh brightness
 
 if [[ $theme != icons ]]; then
 	default='default' up='brightness up' down='brightness down' sep=' '
@@ -14,6 +14,14 @@ icon_default=
 icon_up=
 icon_down=
 icon_default=
+
+toggle_rofi() {
+	#~/.orw/scripts/notify.sh "SIG" &
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
 
 while
 	active=$(awk '/^[^#].*[0-9]+%/ {

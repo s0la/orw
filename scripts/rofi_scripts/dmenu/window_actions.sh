@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh volume
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh volume
 [[ $theme != icons ]] && close=close min=min max=max sep=' '
 
 icon_max=
@@ -25,7 +25,8 @@ config=~/.config/orw/config
 offsets=~/.config/orw/offsets
 properties=~/.config/orw/windows_properties
 
-id=$(printf "0x%.8x" $(xdotool getactivewindow))
+#id=$(printf "0x%.8x" $(xdotool getactivewindow))
+id=$(printf "0x%x" $(xdotool getactivewindow))
 title=$(wmctrl -l | awk '$1 == "'$id'" { print $NF }')
 maxed=$(awk '$1 == "'$id'" { m = ($NF == "maxed") } END { if(m) print "-a 1" }' $properties)
 
@@ -76,6 +77,14 @@ maxed=$(awk '$1 == "'$id'" { m = ($NF == "maxed") } END { if(m) print "-a 1" }' 
 #((x == x_start && y == y_start && x + w + x_border == x_end && y + h + y_border == y_end)) && maxed='-a 1'
 ##maxed=$(awk '$1 == "'$id'" { print "-a 1" }' ~/.config/orw/windows_properties)
 
+toggle_rofi() {
+	#~/.orw/scripts/notify.sh "SIG" &
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
+
 action=$(cat <<- EOF | rofi -dmenu $maxed -theme main
 	$icon_close$sep$close
 	$icon_max$sep$max
@@ -86,6 +95,8 @@ EOF
 if [[ $action ]]; then
 	case "$action" in
 		#$icon_min*) xdotool getactivewindow windowminimize;;
+		$icon_min*) ~/.orw/scripts/signal_windows_event.sh min;;
+		$icon_max*) ~/.orw/scripts/signal_windows_event.sh max;;
 		$icon_min*) ~/.orw/scripts/minimize_window.sh $id;;
 		$icon_max*)
 			[[ $theme == icons ]] || args="${action#*$sep$max}"

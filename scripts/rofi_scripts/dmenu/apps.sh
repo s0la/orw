@@ -3,8 +3,8 @@
 indicator='●'
 
 config=~/.config/orw/config
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh apps
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh apps
 
 running="$(wmctrl -l | awk '\
 	{
@@ -46,6 +46,17 @@ else
 	tile=tile vifm=vifm term=termite dropdown=dropdown qb=qutebrowser
 fi
 
+#~/.orw/scripts/notify.sh "OPENS" &
+#~/.orw/scripts/signal_windows_event.sh test
+
+toggle_rofi() {
+	#~/.orw/scripts/notify.sh "SIG" &
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
+
 app=$(cat <<- EOF | rofi -dmenu -i $running -theme main
 	${term_label-$empty}$term
 	${empty}$tile
@@ -54,6 +65,8 @@ app=$(cat <<- EOF | rofi -dmenu -i $running -theme main
 	${qb_label-$empty}$qb
 EOF
 )
+
+#trap '~/.orw/scripts/signal_windows_event.sh test' EXIT
 
 run=~/.orw/scripts/run.sh
 mode=$(awk '/^mode/ { print $NF }' $config)
@@ -91,7 +104,8 @@ run_term() {
 	#fi
 
 	#$run -t $title termite $class -t $title $command
-	eval termite $class -t $title "$command"
+	#eval termite $class -t $title "$command" &
+	eval alacritty $class -t $title "$command" &
 
 	#~/.orw/scripts/run.sh $title termite -t $title
 }
@@ -104,16 +118,31 @@ case "$app" in
 	*$term*)
 		get_title termite
 		get_command "${app#*$term}"
+		#echo termite $class -t $title "$command"
 		run_term;;
 	*$vifm*)
 		get_title vifm
-		get_command "sleep 0.5 \&\& vifm.sh ${app#*$vifm}"
+		#get_command "sleep 0.5 \&\& vifm.sh ${app#*$vifm}"
 
-		if [[ $mode == floating ]]; then
-			class="--class=custom_size"
-			~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
-		fi
+		#if [[ $mode == floating ]]; then
+		#	class="--class=custom_size"
+		#	~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
+		#fi
 
+		spy_windows=~/.orw/scripts/spy_windows.sh
+		workspace=$(xdotool get_desktop)
+		#is_tiling_workspace=$(sed -n '
+		class="--class=custom_size"
+		[[ $mode == tiling ]] &&
+			grep "^tiling_workspace.*\b$workspace\b" $spy_windows &> /dev/null &&
+			width=250 height=150
+
+		~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
+
+		command="-e ~/.orw/scripts/vifm.sh"
+
+		#echo "termite $class -t $title '$command'"
+		#exit
 		run_term;;
 	*$qb*)
 		get_title qutebrowser

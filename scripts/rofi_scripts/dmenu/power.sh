@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh power
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh power
 [[ $theme != icons ]] && lock=lock loggout=loggout reboot=reboot off=poweroff sep=' '
 
 icon_lock=
@@ -22,6 +22,13 @@ icon_reboot=
 icon_off=
 icon_off=
 
+toggle_rofi() {
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
+
 action=$(cat <<- EOF | rofi -dmenu -theme main
 	$icon_lock$sep$lock
 	$icon_logout$sep$loggout
@@ -38,7 +45,7 @@ if [[ $action ]]; then
 
 	[[ $theme != icons ]] &&
 		yes_label=yes no_label=no ||
-		~/.orw/scripts/set_rofi_geometry.sh power 2
+#		~/.orw/scripts/set_rofi_geometry.sh power 2
 
 	if [[ $action =~ $icon_lock ]]; then
 		sleep 0.1

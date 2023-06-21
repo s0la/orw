@@ -1,8 +1,8 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh playback
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh playback
 [[ $theme != icons ]] &&
 	toggle=play stop=stop next=next prev=prev rand=random up=volume_up down=volume_down controls=controls pl=playlist sep=' '
 
@@ -44,6 +44,13 @@ handle_volume() {
 	mpc -q volume $direction$((${multiplier:-1} * 5))
 	~/.orw/scripts/system_notification.sh mpd_volume &
 }
+
+toggle_rofi() {
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
 
 while
 	active=$(mpc | awk 'END { if($6 == "on") print "-a 4" }')

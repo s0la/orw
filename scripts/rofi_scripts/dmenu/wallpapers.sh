@@ -1,8 +1,8 @@
 #!/bin/bash
 
 config=~/.config/orw/config
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
 
 get_directory() {
 	read depth directory <<< $(awk '\
@@ -88,6 +88,15 @@ wallctl=~/.orw/scripts/wallctl.sh
 #	esac
 #fi
 #fi
+
+
+toggle_rofi() {
+	#~/.orw/scripts/notify.sh "SIG" &
+	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+}
+
+toggle_rofi
+trap toggle_rofi EXIT
 
 list_actions
 
