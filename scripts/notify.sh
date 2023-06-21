@@ -17,7 +17,10 @@ while getopts :i:F:f:o:r:c:t:P:ps:b:v: flag; do
 			level_value=${OPTARG%/*}
 			empty_value=${OPTARG#*/};;
 		#t) time=$((OPTARG * 1000));;
-		t) time=$OPTARG;;
+		t)
+			[[ $OPTARG =~ m$ ]] &&
+				miliseconds=true sleep_time=2
+			time=${OPTARG%m};;
 		s)
 			style=$OPTARG
 			[[ $style == default ]] &&
@@ -29,10 +32,11 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg='#060f14'
-pbfg='#81a39e'
+sbg="#101314"
+pbfg="#c8a789"
 
 type=$(ps -C dunst -o args=)
+[[ $style_config ]] || style_config=dunstrc
 
 color_bar() {
 	printf "$1%.0s$3" $(seq 1 $2)
@@ -55,11 +59,12 @@ restore_default_config() {
 
 	(
 	#echo '' "running ${running_pids[*]}" >> ~/Desktop/not_log
-	sleep $((time + 1))
+	sleep $((${sleep_time:-$time} + 1))
 
-	killall dunst &> /dev/null
+	#killall dunst &> /dev/null
+	pidof dunst | xargs kill -9 &> /dev/null
 	#echo '' "closing ${running_pids[*]}" >> ~/Desktop/not_log
-	dunst &> /dev/null &) &
+	dunst &> /dev/null &) &> /dev/null &
 	#echo '' "closing ${running_pids[*]}" >> ~/Desktop/not_log) &
 	#[[ $running_pid ]] && kill ${running_pid[*]}
 
@@ -80,13 +85,14 @@ restore_default_config() {
 running_pids=( $(pidof -o %PPID -x $0) )
 running_count=${#running_pids[*]}
 #((running_count)) && echo "killing ${running_pids[*]}" >> ~/Desktop/not_log
-((running_count)) && kill ${running_pids[*]}
+((running_count)) && kill -9 ${running_pids[*]} &> /dev/null
 
 if [[ $style =~ ^(osd|vert) ]]; then
 	restore_default_config_pid=
 
 	#read {x,y}_offset <<< $(grep offset ~/.config/orw/offsets | xargs eval)
-	eval $(grep offset ~/.config/orw/offsets | xargs)
+	#read {x,y}_offset <<< $(grep offset ~/.config/orw/offsets | xargs eval)
+	#eval $(grep offset ~/.config/orw/offsets | xargs)
 
 	#if ((!restore_default_config_pid)); then
 	if ((!running_count)); then
@@ -95,7 +101,6 @@ if [[ $style =~ ^(osd|vert) ]]; then
 				BEGIN { s = "'$style'" }
 				/^mode/ { f = ($NF == "floating") }
 				/^x_offset/ { x = $NF }
-				/^offset/ { if($NF == "true") x = '$x_offset' }
 				/^primary/ { p = $NF }
 				p && $1 == p "_size" {
 					dw = $2
@@ -154,28 +159,50 @@ else
 
 	#if ((pid)); then
 	if ((${#pid[*]})); then
-		if [[ ! "$type" =~ (dunst|/$style_config)$ ]]; then
-			killall dunst
-			dunst &> /dev/null &
-		fi
-	else
-		read x_offset y_offset <<< \
+		[[ ! "$type" =~ (dunst|/$style_config)$ ]] && kill -9 ${pid[*]} &> /dev/null
+		#if [[ ! "$type" =~ (dunst|/$style_config)$ ]]; then
+		#	killall dunst
+		#	dunst &> /dev/null &
+		#fi
+	fi
+	#else
+		read {x,y}_offset <<< \
 			$(awk '/^[xy]_offset/ { print $NF * 2 }' ~/.config/orw/config | xargs)
 
-		while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
-			if ((position)); then
-				current_bar_height=$((bar_y + bar_height + frame))
-				((current_bar_height > max_bar_height)) && max_bar_height=$current_bar_height
-			fi
-		done <<< $(~/.orw/scripts/get_bar_info.sh)
+		#while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
+		#	if ((position)); then
+		#		current_bar_height=$((bar_y + bar_height + frame))
+		#		((current_bar_height > max_bar_height)) && max_bar_height=$current_bar_height
+		#	fi
+		#done <<< $(~/.orw/scripts/get_bar_info.sh)
 
-		dmenu_height=$(~/.orw/scripts/get_dmenu_height.sh)
+
+		max_bar_height=$(awk '
+				/y_offset/ { yo = $NF }
+				/primary/ { d = $NF }
+				$1 ~ d "_xy" { y = $NF }
+				d && $1 ~ d "_offset" { print y + yo + $2; exit }
+			' ~/.config/orw/config)
+
+		dmenu=$(awk -F '"' 'END { print $(NF - 1) == "dmenu" }' ~/.config/rofi/main.rasi)
+		((dmenu)) &&
+			dmenu_height=$(awk '
+				function get_value(position) {
+					pattern = (position == "f") ? "[^0-9]" : "."
+					return gensub(pattern "*([0-9]+).*", "\\1", 1)
+				}
+
+				/padding/ && !p { p = get_value("f") }
+				/border/ { b = get_value("l") }
+				/font/ { print get_value("f") + 2 * (p + b + 1); exit }' ~/.config/rofi/{dmenu,theme}.rasi)
+
+		#((dmenu)) && dmenu_height=$(~/.orw/scripts/get_dmenu_height.sh)
 		(( y_offset += max_bar_height + dmenu_height ))
 
-		sed -i "s/\(^\s*geometry.*x[0-9]*\)[^\"]*/\1-$x_offset+$y_offset/" ~/.config/dunst/{mini_,}dunstrc
+		#sed -i "s/\(^\s*geometry.*x[0-9]*\)[^\"]*/\1-$x_offset+$y_offset/" ~/.config/dunst/{mini_,}dunstrc
 
 		dunst &> /dev/null &
-	fi
+	#fi
 
 	bottom_padding=true
 fi
@@ -284,7 +311,23 @@ if [[ $style ]]; then
 	#	kill -9 $(pidof dunst)
 	#fi
 
-	[[ ! "$type" =~ /$style_config$ ]] && kill -9 $(pidof dunst)
+	#[[ ! "$type" =~ /$style_config$ ]] && kill -9 $(pidof dunst)
+	#echo "$type, /$style_config"
+	#echo "$type, /$style_config"
+	##[[ ($type =~ dunst$ && ! $style_config =~ /dunstrc$) ]] && echo def not #|| echo def yes
+	#[[ ($type =~ dunst$ && $style_config == dunstrc) ]] && echo def yes || echo def no
+	#[[ "$type" =~ /$style_config$ ]] && echo type yes || echo type no
+
+
+	[[ ($type =~ dunst$ && $style_config != dunstrc) ||
+		(! $type =~ dunst$ && ! "$type" =~ /$style_config$) ]] &&
+		pidof dunst | xargs kill -9 &> /dev/null
+		#echo killed &&
+
+	#[[ !("$type" =~ /$style_config$) ||
+	#	($type == dunst && (!$style_config ||
+	#	($style_config && $style_config =~ /dunstrc$))) ]] &&
+	#	pidof dunst | xargs kill -9
 
 	pid=$(pidof dunst)
 	#echo "$killed $pid: $type ~ $style_config" >> ~/Desktop/dunst_log
@@ -301,5 +344,6 @@ padding_font="<span font='${font:-Roboto Mono} ${padding_height-6}'>\n</span>"
 font="Roboto Mono ${font_size:-8}"
 offset="<span font='$font'>$(printf "%-${offset_count-10}s")</span>"
 
-dunstify $image -t $((time * 1000)) $replace 'summery' \
+[[ $miliseconds ]] || ((time *= 1000))
+dunstify $image -t $time $replace 'summery' \
 	"$padding_font<span font='$font'>$padding$offset${message//\\n/$offset\\n$offset}$offset$padding</span>$bottom_padding"
