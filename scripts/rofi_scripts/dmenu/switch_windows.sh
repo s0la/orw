@@ -1,5 +1,35 @@
 #!/bin/bash
 
+if [[ $@ ]]; then
+	if [[ $@ == [0-9] ]]; then
+		desktop="$1"
+
+		wmctrl -l | awk '
+			$2 ~ "'"$desktop"'" {
+				aw[$2] = aw[$2] " " $NF
+			} END { for (w in aw) {
+					gsub(" ", "\n", aw[w])
+					print aw[w]
+				}
+			}'
+	else
+		window="$@"
+		wmctrl -l | sed -n "s/\s.*${window##* }$//p" | xargs wmctrl -ia
+		#echo WIN $window
+	fi
+else
+	desktop_num=$(xdotool get_num_desktops)
+	
+	for desktop in $(seq 0 $((desktop_num - 1))); do
+		modis+="$desktop:$0 $desktop,"
+	done
+
+	desktop=$(xdotool get_desktop)
+	rofi -modi "${modis%,}" -show $desktop -theme sidebar_new
+fi
+
+exit
+
 if [[ $1 ]]; then
 	desktop=$(xdotool get_desktop)
 else
@@ -16,20 +46,16 @@ else
 	workspace_format="%-$((workspace_lenght * 2))s  "
 fi
 
-#wmctrl -l | awk '$2 ~ "'$desktop'" {
-#if(!ti) ti = index($0, $4)
-#	if($1 == "'$id'") cwi = NR
-#		at = at " \"" $2 " " $1 " " substr($0, ti) "\"" 
-#		print cwi, at }'
-#		exit
-
 id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
 read current_window_index x y windows <<< \
-	$(wmctrl -lG | awk '$2 ~ "'$desktop'" {
-			if(!ti) ti = index($0, $8)
+	$(wmctrl -lG | awk '
+		$2 ~ "'$desktop'" {
+			gsub("\"", "\\\\\"")
+			#if(!ti) ti = index($0, $8)
 			if($1 == "'$id'") { cwi = NR; x = $3; y = $4 }
-			aw = aw " \"" $2 " " $1 " " substr($0, ti) "\"" 
+			#aw = aw " \"" $2 " " sprintf("0x%x", $1) " " substr($0, ti) "\"" 
+			aw = aw " \"" $2 " " sprintf("0x%x", $1) " " $NF "\"" 
 		} END {
 			if(!cwi) cwi = x = y = 0
 			print cwi, x, y, aw
@@ -39,8 +65,8 @@ eval "windows=( $windows )"
 
 ((current_window_index)) &&
 	display_width=$(~/.orw/scripts/get_display.sh $x $y | cut -d ' ' -f 4)
-((display_width)) || display_width=$(awk ' /^primary/ { p = $NF }
-							p && $1 == p "_size" { print $2 }' ~/.config/orw/config)
+((display_width)) ||
+	display_width=$(awk ' /^primary/ { p = $NF } p && $1 == p "_size" { print $2 }' ~/.config/orw/config)
 
 rofi_width=$(awk '
 		function get_value() {
@@ -54,63 +80,41 @@ rofi_width=$(awk '
 		END {
 			rw = int('$display_width' * ww / 100)
 			iw = rw - 2 * (wp + ep)
-			print int(iw / (f - 2))
+			print int(iw / (f - 1))
 		}' ~/.config/rofi/list.rasi)
 
 window_title_lenght=$((rofi_width - workspace_lenght))
-max_title_lenght=$((window_title_lenght - 10))
+max_title_lenght=$((window_title_lenght - 20))
 title_format="%-${workspace_lenght}s%${window_title_lenght}s\n"
 
-	#str=$(python -c "print('s ' * 33)")
-	#echo $rofi_width
-	#echo $current_window_index
-	#win=${windows[current_window_index - 1]}
-	#python -c "print('s' * 92)" | rofi -dmenu -theme list
-	#printf "%-*s%*s" $workspace_lenght "web" $((rofi_width - workspace_lenght)) "$win" | rofi -dmenu -theme list
-	#exit
+list_workspaces() {
+	[[ $done ]] && echo -e $done
+	window_index=$(\
+		for window in "${windows[@]}"; do
+			workspace=${window%% *}
+			window_title="${window#* * }"
+			((${#window_title} > max_title_lenght)) &&
+				window_title="${window_title:0:$max_title_lenght}.."
+			printf "$title_format" ${workspaces[workspace]} "$window_title"
+		done | rofi -dmenu -a $((current_window_index - 1)) -format 'i' -theme list)
+}
 
-		#print "\"" $2, $1, t "\"" }')
+if [[ $1 ]]; then
+	done='done\n━━━━━━━'
 
-#eval windows=( $(wmctrl -l | awk '$2 ~ "'$desktop'" {
-#			if(!ti) ti = index($0, $4)
-#			t = substr($0, ti)
-#		print "\"" $2, $1, t "\"" }') )
-#		#print "\"" $1 "  " $2 "  " t "\"" }') )
-#		#print "\"" $1 ":" $2 ":" t "\"" }') )
-
-#declare -A workspaces
-#eval $(wmctrl -d | awk '{ print "workspaces[" $1 "]=" $NF }')
-
-window_index=$(for window in "${windows[@]}"; do
-	workspace=${window%% *}
-	window_title="${window#* * }"
-	((${#window_title} > max_title_lenght)) &&
-		window_title="${window_title:0:$max_title_lenght}.."
-	printf "$title_format" ${workspaces[workspace]} "$window_title"
-	#printf "$workspace_format%s\n" ${workspaces[workspace]}  "${window#* * }"
-done | rofi -dmenu -a $((current_window_index - 1)) -format 'i' -theme list)
-
-
-if [[ $window_index ]]; then
-	window_id=${windows[window_index]:2:10}
-	~/.orw/scripts/minimize_window.sh $window_id
-fi
-
-exit
-
-#is_viewable=$(xwininfo -id $window_id | awk '/Map/ { print $NF == "IsViewable" }')
-
-#~/.orw/scripts/minimize_tiled_window.sh
-#~/.orw/scripts/notify.sh "${properties[window_index]}"
-~/.orw/scripts/minimize_window.sh $window_id
-exit
-
-minimize=~/.orw/scripts/minimize_tiled_window.sh
-
-if ((is_viewable)); then
-	current_window_id=$(printf '0x%.8x' $(xdotool getactivewindow))
-	[[ $window_id == $current_window_id ]] && $minimize
-	#wmctrl -ia $window_id
+	until
+		list_workspaces
+		((window_index))
+	do
+		window_id=${windows[window_index - 2]:2:10}
+	done
 else
-	$minimize $window_id
+	list_workspaces
+
+	if [[ $window_index ]]; then
+		#window_id=${windows[window_index]:2:10}
+		read _ window_id _ <<< ${windows[window_index]}
+		#~/.orw/scripts/minimize_window.sh $window_id
+		wmctrl -ia $window_id
+	fi
 fi
