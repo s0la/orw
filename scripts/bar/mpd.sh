@@ -63,6 +63,8 @@ get_song_info() {
 		(( $minutes == 0 && ${seconds#0} < 5 )) && song_info_index=0 ||
 			song_info_index=$(((minutes * 60 + ${seconds#0}) % (final_index + 2 * delay)))
 
+		#~/.orw/scripts/notify.sh "sii $song_info_index"
+
 		((song_info_index = song_info_index > delay ? song_info_index - delay : 0))
 		[[ $song_info_index -gt $final_index ]] && song_info_index=$final_index
 
@@ -218,6 +220,7 @@ for module in ${4//,/ }; do
 			#((${#module} == 1)) && progression_step=5 || progression_step=${module#p}
 			((${#module} == 1)) && progression_step=5 || progression_step=${module//[^0-9]/}
 			#bar_style=${module//[0-9p]/}
+			#[[ $module =~ d ]] && bar_icon=■ || bar_icon=━
 			[[ $module =~ d ]] && bar_icon=■ || bar_icon=━
 
 			[[ $status == playing && $current_mode == buttons ]] &&

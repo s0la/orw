@@ -58,10 +58,10 @@ left="~/.orw/scripts/vifm.sh -i"
 #middle="~/.orw/scripts/widgets.sh weather -k"
 
 #wallctl
-#icon="%{I+2}%{I-}"
+#icon="%{I+2}%{I-}"
 #name="wallctl"
-#left="~/.orw/scripts/wallctl.sh"
-#middle="~/.orw/scripts/wallctl.sh -v"
+#left="~/.orw/scripts/wallctl.sh -v"
+#middle="~/.orw/scripts/wallctl.sh -A"
 #up="~/.orw/scripts/wallctl.sh -o prev"
 #down="~/.orw/scripts/wallctl.sh -o next"
 

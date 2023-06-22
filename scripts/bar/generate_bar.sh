@@ -37,6 +37,7 @@ get_apps() {
 
 get_launchers() {
 	[[ $single_line ]] && launchers_lines=single
+
 	#echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding ${joiner_start:-$joiner_end}${joiner:-$separator} $launchers_args ${launchers_lines:-${lines-false}})"
 	#~/.orw/scripts/notify.sh "j: ${joiner_start:-${joiner_end:-$joiner}}"
 	echo -e "LAUNCHERS $($path/launchers.sh $bar_name $padding $tweener $launchers_args ${launchers_lines:-${lines:-false}})"
@@ -93,7 +94,7 @@ get_battery() {
 
 get_torrents() {
 	#echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} $label ${lines-false})"
-	echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,p} ${lines:-false} $label)"
+	echo -e "TORRENTS $($path/system_info.sh torrents $tweener ${torrents_info-c,P} ${lines:-false} $label)"
 }
 
 get_date() {
@@ -113,7 +114,17 @@ get_feed() {
 config=~/.config/orw/config
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 
-read x_offset y_offset <<< $(awk -F '[_ ]' '/^[xy]_offset/ { if($1 == "x") xo = $NF; else yo = $NF } END { print xo, yo }' $config)
+#read x_offset y_offset <<< $(awk -F '[_ ]' '/^[xy]_offset/ { if($1 == "x") xo = $NF; else yo = $NF } END { print xo, yo }' $config)
+read {x,y}_offset <<< $(awk -F '[_ ]' '
+	/^([xy]_)?offset/ {
+		if($1 == "x") xo = $NF
+		else if($1 == "y") yo = $NF
+		else o = $NF
+	} END { if(o == "false") print xo, yo }' $config)
+
+((!x_offset && !y_offset)) &&
+	read {x,y}_offset <<< \
+	$(awk -F '=' '/offset/ { print $NF }' ~/.config/orw/offsets | xargs)
 
 get_display_properties() {
 	[[ ! $x && ! $y ]] &&
@@ -216,6 +227,7 @@ set_lines() {
 		right_frame="$bar_side_frame%{-o}%{-u}"
 	else
 		single_line=true
+		single_line=$frame_position
 
 		start_line="%{+$frame_position}"
 		end_line="%{-$frame_position}"
@@ -402,8 +414,9 @@ while getopts :bcrx:y:w:h:p:flIis:jS:PMmAtWNevduF:HLEUTCRDBO:n:oa: flag; do
 		#	[[ $lines ]] && unset {,all_}lines {single,start,end}_line {left,right}_frame || set_lines;;
 		f)
 			check_arg frame_args ${!OPTIND} && shift
-			#[[ $frame_args ]] && read frame_width frame_position <<< ${frame_args//,/ }
-			[[ $frame_args ]] && read frame_width frame_position <<< ${frame_args//[^0-9]/ }
+			[[ $frame_args ]] && read frame_width frame_position <<< ${frame_args//,/ }
+			#[[ $frame_args ]] && read frame_width frame_position <<< ${frame_args//[^0-9]/ }
+			#~/.orw/scripts/notify.sh "fp: $frame_position"
 
 			[[ $lines ]] && unset {,all_}lines {single,start,end}_line {left,right}_frame || set_lines;;
 			#~/.orw/scripts/notify.sh "$OPTIND $frame_args, $frame_position, l: $lines";;
@@ -907,6 +920,12 @@ calculate_width() {
 
 while read -r module; do
 	case $module in
+		#PROGRESSBAR*)
+		#	eval "echo -e ${module:12}"
+		#	#SONG_INFO*) song_info="\"${module:10}\"";;
+		#	echo -e "${module:12}"
+		#SONG_INFO*) song_info="\"${module:10}\"";;
+		#PROGRESSBAR*) progressbar="${module:12}";;
 		SONG_INFO*) song_info=$(eval "echo -e \"${module:10}\"");;
 		PROGRESSBAR*) progressbar=$(eval "echo -e ${module:12}");;
 		BUTTONS*) buttons=$(eval "echo -e \"${module:8}\"");;
@@ -947,7 +966,7 @@ while read -r module; do
 	#[[ $all_modules ]] && last_offset="${all_modules##*%}"
 	#[[ ${separator##*%} == $last_offset ]] && all_modules="${all_modules%$separator}" || all_modules="${all_modules%$separator%*}%$last_offset"
 
-	#sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame" >> ~/Desktop/bar_log
+	#sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame" > ~/Desktop/bar_log1
 	sed "s/$separator\(%{[crO][0-9]\+\?}\)/\1/g" <<< "%{l}%{U$fc}$left_side_frame$all_modules%{B$bg}$right_side_frame"
 done < "$fifo" | calculate_width | lemonbar -d -p -B$bg \
 	-f "$font1" -o $main_font_offset \
