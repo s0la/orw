@@ -73,10 +73,12 @@ function list_archive() {
 		rar) nr=7 flag=l;;
 	esac
 
-	[[ $format =~ zip|rar ]] && un$format $flag $password "$current" | awk 'NR == '$nr' { i = index($0, "Name") } \
+	[[ $format =~ zip|rar ]] && un$format $flag $password "$current" | awk '
+		BEGIN { mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'" }
+		NR == '$nr' { i = index($0, "Name") }
 		/[0-9]{4}-[0-9]{2}-[0-9]{2}/ {
 			f = substr($0, i) 
-			if("'$selection'") s = (f ~ /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
+			if("'$selection'") s = (f ~ "^(" mf ")$") ? " " : " "
 			print s f
 		}'
 }
@@ -166,7 +168,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola"
+current="/home/sola/Music/jazz"
 torrent=""
 selection=""
 multiple_files=""
@@ -198,7 +200,7 @@ open_directory_icon=
 open_directory_icon=
 checkbox_icon=
 checkbox_checked_icon=
-echo -e $back_icon
+#echo -e $back_icon
 
 #~/.orw/scripts/notify.sh "o: $back_icon $options"
 
@@ -590,6 +592,9 @@ if [[ -d "$current" && ! $options ]]; then
 	#echo -e 
 	#echo -e 
 	#echo -e 
+
+	#echo -en "\0keep-selection\x1ftrue\n"
+	echo -e $back_icon
 	echo -e $options_icon
 	echo -e $bookmarks_icon
 	echo -e $open_directory_icon
@@ -606,6 +611,43 @@ if [[ -d "$current" && ! $options ]]; then
 		print_git_files staged
 		print_git_files unstaged
 	else
+		#ls $sort $reverse $all --group-directories-first ~/rofi_multi_test |
+		ls $sort $reverse $all -p --group-directories-first "$current" |
+			awk '
+				BEGIN {
+					se = length("'$selection'")
+					mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'"
+				}
+
+				!/\.$/ {
+					#i = (system("[[ -f '"$current"'/" $0 " ]]")) ? "'$directory_icon'" : "'$file_icon'"
+					if(/\/$/) {
+						sub("/$", "")
+						i = "'$directory_icon' "
+					} else i = "'$file_icon' "
+
+					s = (se && i $0 ~ "^(" mf ")$")
+					if(se) {
+						if(s) {
+							si = " "
+							asf = asf "," NR + 3
+						} else si = " "
+					}
+
+					out = out "\n" si i $0
+					print si i $0
+				} END {
+					if(se) {
+						printf "\0active\x1f%s\n", substr(asf, 2)
+						printf "\0keep-selection\x1ftrue\n"
+						#print mf
+					}
+				}'
+			exit
+
+		[[ $selection == enabled ]] &&
+			echo -en "\0keep-selection\x1ftrue\n"
+
 		while read -r s file; do
 			if [[ $file ]]; then
 				if [[ $selection ]]; then
@@ -626,7 +668,13 @@ if [[ -d "$current" && ! $options ]]; then
 
 				echo -e "$icon $file"
 			fi
-		done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
-			{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
+		done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '
+			BEGIN { mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'" }
+			!/\.$/ { print (length("'$selection'") && $0 ~ "^(" mf ")$"), $0 }')"
+
+		#done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
+		#	{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
+		#done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
+		#	{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
 	fi
 fi
