@@ -74,7 +74,7 @@ case $1 in
 				fi
 
 				~/.orw/scripts/offset_tiled_windows.sh \
-					${property:0:1} ${opposite_sign:-$sign}${delta_value:-${check_value:-$new_value}}
+					-${property:0:1} ${opposite_sign:-$sign}${delta_value:-${check_value:-$new_value}}
 					#${property:0:1} ${sign:-$opposite_sign}${delta_value:-${check_value:-$new_value}}
 			#fi
 		}
@@ -86,24 +86,28 @@ case $1 in
 		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { print; exit }' $orw_conf)
 		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { o = $0 } END { print o }' $orw_conf)
 
-		if [[ $property =~ offset ]]; then
-			read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
+		if [[ $property == m* ]]; then
+			awk -i inplace '/^margin/ { $NF '$sign'= '${new_value}' } { print }' ~/.config/orw/config
+			~/.orw/scripts/signal_windows_event.sh update
+			exit
+		elif [[ $property =~ offset ]]; then
+			#read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
 
-			[[ $offset == true ]] &&
-				value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
-
-			#[[ $mode != floating ]] && offset_tiled_windows
-			offset_tiled_windows
-
-			[[ $offset == true ]] &&
-				~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value && exit
-
-			#if [[ $offset == true ]]; then
+			#[[ $offset == true ]] &&
 			#	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
-			#	offset_tiled_windows
-			#	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
-			#	exit
-			#fi
+
+			##[[ $mode != floating ]] && offset_tiled_windows
+			#offset_tiled_windows
+
+			#[[ $offset == true ]] &&
+			#	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value && exit
+
+			##if [[ $offset == true ]]; then
+			##	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
+			##	offset_tiled_windows
+			##	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
+			##	exit
+			##fi
 
 			min=0
 		else
@@ -152,7 +156,7 @@ case $1 in
 				#message+="\nCurrent ratio: <b>($new_ratio)</b>"
 
 			sed -i "/$property/ s/$value/$check_value/" $orw_conf
-			[[ ! $property =~ offset ]] && get_icon && message="RATIO: $new_ratio"
+			[[ ! $property =~ (offset|margin) ]] && get_icon && message="RATIO: $new_ratio"
 		else
 			#message="<b>${property^} cannot be changed further!"
 			#message="<b>$check_value</b> is out of range <b>(1..$((ratio - 1)))</b>!"
@@ -161,6 +165,7 @@ case $1 in
 
 		#ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $orw_conf)
 		[[ ! $3 ]] && ~/.orw/scripts/notify.sh -pr 22 $style -i ${icon:-} "$message"
+		~/.orw/scripts/signal_windows_event.sh update
 		exit
 		#checking_value=$((value $sign $new_value))
 
@@ -179,214 +184,39 @@ case $1 in
 			print
 		}' ~/.config/orw/config;;
 	r*)
-		#if [[ $1 == rip ]]; then
-		#	if [[ $3 ]]; then
-		#		second_sign=${3%%[0-9]*}
-		#		second_arg=${3#$second_sign}
-		#	fi
+		[[ $1 == rl ]] && config=config.rasi
 
-		#	awk -i inplace '/inputbar|element/ { set = 1 } {
-		#		if(/padding/ && set) {
-		#			set = 0
+		awk -i inplace '\
+			$1 ~ "^'${1:1:1}'[^-]*:" {
+				nv = '$new_value'
+				cv = gensub(/.* ([0-9]+).*/, "\\1", 1)
+				sub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv)
+			}
 
-		#			if(av) {
-		#				if("'$mode'" ~ "dmenu") v2 = v1
-		#			} else {
-		#				fv = '$new_value'
-		#				sv = '${second_arg-0}'
-		#				av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
-		#				split(av, v)
+			$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
+				if($1 ~ ".*-padding") {
+					fv = '$new_value'
+					sv = '${second_arg-0}'
+					av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
+					split(av, v)
 
-		#				v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
-		#				v2 = (sv) ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : \
-		#					("'$mode'" ~ "dmenu") ? v[2] : v1
-		#			}
+					v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
+					v2 = ("'$second_arg'") ? ("'$second_sign'") ? v[2] '$second_sign' sv : \
+						sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
 
-		#			gsub("[0-9]+px [0-9]+", v1 "px " v2)
-		#		}
-		#		print
-		#	}' $rofi_path/$mode
-		#else
+					sub(/([0-9px]+ ?){2}/, v1 "px " v2 "px")
+				} else {
+					u = ($1 ~ "width") ? "%" : "px"
 
-
-
-
-
-			#case $1 in
-			#	rf) pattern=font;;
-			#	rw) pattern=width;;
-			#	rr)
-			#		set=2
-			#		pattern=radius;;
-			#	rim)
-			#		px=px
-			#		pattern=margin
-			#		[[ $mode =~ dmenu ]] && pattern+=".* 0 .*";;
-			#	rwp)
-			#		px=px
-			#	 	pattern=padding;;
-			#	r*bw)
-			#		px=px
-			#		pattern="border:.*px"
-
-			#		[[ $1 == ribw ]] && pattern="${pattern/\./.*0.}" rofi_conf=theme.rasi
-
-			#		[[ $mode =~ list ]] && rofi_conf=theme.rasi;;
-			#		#[[ ! $mode =~ dmenu|icons ]] && rofi_conf=theme.rasi;;
-			#	rl)
-			#		pattern=lines
-			#		rofi_conf=config.rasi;;
-			#	rsp) pattern=spacing;;
-			#esac
-
-			#id=$(xdotool getactivewindow 2> /dev/null)
-
-			#if [[ $id ]]; then
-			#	read x y <<< $(wmctrl -lG | awk '$1 == sprintf("0x%.8x", "'$id'") { print $3, $4 }')
-			#	read width height <<< $(~/.orw/scripts/get_display.sh $x $y | cut -d ' ' -f 4,5)
-			#else
-			#	read width height <<< $(awk '/^primary/ { p = $NF } p && $1 == p { print $2, $3 }' ~/.config/orw/config)
-			#fi
-
-			#awk -i inplace '\
-			#	BEGIN {
-			#		w = '$width'
-			#		h = '$height'
-			#		nv = '$new_value'
-			#	}
-
-			#	$1 ~ "^'${1:1:1}'[^-]*:" {
-			#		#nv = '$new_value'
-			#		cv = gensub(/.* ([0-9]+).*/, "\\1", 1)
-			#		#print gensub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv, 1)
-			#		sub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv)
-			#	}
-
-			#	$1 ~ "'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
-			#		if($1 ~ "(window-border|.*-(padding|radius))") {
-			#			#fv = '$new_value' / (h / 100)
-			#			fv = nv / (h / 100)
-			#			sv = '${second_arg-0}' / (w / 100)
-			#			av = gensub(".* ([0-9.]+).* ([0-9.]+).*", "\\1 \\2", 1)
-			#			split(av, v)
-
-			#			v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
-			#			v2 = ("'$second_arg'") ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : \
-			#				("'$mode'" ~ "dmenu") ? v[2] : h / w * v1
-
-			#			v1p = sprintf(" %.2f%", v1) 
-			#			v2p = sprintf(" %.2f%", v2) 
-
-			#			sub(/( [0-9.%]+){2}/, v1p v2p)
-			#			#print gensub(/( [0-9.%]+){2}/, v1p v2p, 1)
-			#			#print gensub("[0-9.]+% [0-9.]+", v1p "% " v2p, 1)
-			#		} else {
-			#			if($1 ~ "spacing") {
-			#				p = (o == "vertical") ? h : w
-			#				p /= 100
-			#			} else if($1 ~ "(list|input|element)-(border|margin|height)") {
-			#				p = h / 100
-			#			} else {
-			#				p = w / 100
-			#			}
-
-			#			#nv = '$new_value' / p
-			#			nv /= p
-			#			cv = gensub(".* ([0-9.]+)%.*", "\\1", 1)
-			#			sub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%")
-			#			#print gensub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%", 1)
-			#		}
-			#	} { print }' $rofi_path/${rofi_conf:-$mode}
-
-			#case $1 in
-			#	rl) config=config.rasi;;
-			#	r*b|rim) config=theme.rasi;;
-			#esac
-
-			[[ $1 == rl ]] && config=config.rasi
-
-			awk -i inplace '\
-				$1 ~ "^'${1:1:1}'[^-]*:" {
 					nv = '$new_value'
-					cv = gensub(/.* ([0-9]+).*/, "\\1", 1)
-					sub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv)
+
+					cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
+					sub(cv "(%|px)", ("'$sign'") ? cv '$sign' nv u : nv u)
 				}
-
-				#$1 ~ "'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
-				$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
-					#if($1 ~ "(window-border|.*-(padding|radius))") {
-					#if($1 ~ "^'${1:1:1}'.*-padding") {
-					if($1 ~ ".*-padding") {
-						#fv = '$new_value' / (h / 100)
-						#sv = '${second_arg-0}' / (w / 100)
-						fv = '$new_value'
-						sv = '${second_arg-0}'
-						av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
-						split(av, v)
-
-						v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
-						v2 = ("'$second_arg'") ? ("'$second_sign'") ? v[2] '$second_sign' sv : sv : \
-							("'$mode'" ~ "dmenu") ? v[2] : v1
-
-						#sub(/( [0-9.%]+){2}/, " " v1 "px " v2 "px")
-						#sub(/( [0-9px]+){2}/, " " v1 "px " v2 "px")
-						sub(/([0-9px]+ ?){2}/, v1 "px " v2 "px")
-					} else {
-						#if($1 ~ "spacing") {
-						#	p = (o == "vertical") ? h : w
-						#	p /= 100
-						#} else if($1 ~ "(list|input|element)-(border|margin|height)") {
-						#	p = h / 100
-						#} else {
-						#	p = w / 100
-						#}
-
-						u = ($1 ~ "width") ? "%" : "px"
-
-						nv = '$new_value'
-						#nv /= p
-						#cv = gensub(".* ([0-9.]+)%.*", "\\1", 1)
-
-						#cv = gensub(".* ([0-9.]+)px.*", "\\1", 1)
-						#sub(cv "px", ("'$sign'") ? cv '$sign' nv "px" : nv "px")
-
-						cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
-						sub(cv "(%|px)", ("'$sign'") ? cv '$sign' nv u : nv u)
-
-						#sub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%")
-						#print gensub(cv "%", ("'$sign'") ? cv '$sign' nv "%" : nv "%", 1)
-					}
-				} { print }' $rofi_path/${rofi_conf:-$mode};;
-				#{
-					#print
-				#}' $rofi_path/${rofi_conf:-$mode}
-
-			#awk -i inplace '\
-			#	BEGIN { set = '${set:-1}' }
-			#	{
-			#		if(/'"$pattern"'/ && set) {
-			#			px = "'$px'"
-			#			nv = '$new_value'
-			#			cv = gensub(".* ([0-9]*)" px ".*", "\\1", 1)
-			#			sub(cv px, ("'$sign'") ? cv '$sign' nv px : nv px)
-			#			set--
-			#		}
-			#	print
-			#}' $rofi_path/${rofi_conf:-$mode}
-
-			#awk -i inplace '\
-			#	{ if(/'"$pattern"'/ && ! set) {
-			#		px = "'$px'"
-			#		nv = '$new_value'
-			#		cv = gensub(".* ([0-9]*)" px ".*", "\\1", 1)
-			#		sub(cv px, ("'$sign'") ? cv '$sign' nv px : nv px)
-			#		set = '${set-1}'
-			#	}
-			#	print
-			#}' $rofi_path/${rofi_conf:-$mode}
-		#fi;;
+			} { print }' $rofi_path/${rofi_conf:-$mode};;
 	tm*)
-		[[ $1 == tms ]] && pattern=separator || pattern='window.*format'
+		[[ $1 == tms ]] &&
+			pattern=separator || pattern='window.*format'
 
 		awk -i inplace '
 			function set_value() {
@@ -526,24 +356,20 @@ case $1 in
 			}
 			print
 		}' $theme_conf $gtkrc2
+
+	#[[ $1 != [mj]* ]] && ~/sws_test.sh update
 esac
 
-[[ $ob_reload ]] && openbox --reconfigure || exit 0
+#[[ $ob_reload ]] && openbox --reconfigure || exit 0
 
-if [[ $1 == [bcp][hwp] ]]; then
-	sleep 0.5
-	read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
-	awk -i inplace '/^[xy]_border/ { sub($NF, (/^x/) ? '$x_border' : '$y_border') } { print }' $orw_conf
+if [[ $ob_reload ]]; then
+	 openbox --reconfigure
 
-	if pidof -x tile_windows.sh &> /dev/null; then
-		killall tile_windows.sh
-		~/.orw/scripts/tile_windows.sh &> /dev/null &
+	if [[ $1 == [bcp][hwp] ]]; then
+		sleep 0.1
+		read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
+		echo $x_border, $y_border
+		awk -i inplace '/^[xy]_border/ { sub($NF, (/^x/) ? '$x_border' : '$y_border') } { print }' $orw_conf
+		~/.orw/scripts/signal_windows_event.sh update
 	fi
-
-	#pids=( $(pidof -x tile_windows.sh) )
-
-	#if ((${#pids[*]})); then
-	#	kill ${pids[*]}
-	#	~/.orw/scripts/tile_windows.sh &
-	#fi
-fi &
+fi

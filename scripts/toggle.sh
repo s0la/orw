@@ -449,10 +449,26 @@ wm() {
 					else i = ""
 				}
 			}
+
+			#/^direction/ {
+			#	if($1 == "'$1'") i = ($NF == "h") ? "" : ""
+			#	else d = $NF
+			#}
+
 			/^direction/ {
-				if($1 == "'$1'") i = ($NF == "h") ? "" : ""
-				else d = $NF
+				if ($1 == "'$1'") {
+					switch (m) {
+						case "h":
+							i = ""
+							break
+						case "v":
+							i = ""
+							break
+						default: i = ""
+					}
+				} else d = $NF
 			}
+
 			/^reverse/ {
 				if($1 == "'$1'") i = ""
 				rv = ($NF == "true")
@@ -506,6 +522,7 @@ wm() {
 		~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "$1: $mode"
 
 		sed -i "/^$1/ s/\w*$/$mode/" $orw_conf
+		~/.orw/scripts/signal_windows_event.sh update
 	else
 		read mode direction pattern monitor <<< $(awk '
 			/^mode/ {
