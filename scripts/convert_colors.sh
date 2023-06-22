@@ -3,7 +3,7 @@
 color=${@: -1}
 
 set_hsv() {
-	sign=${2:0:1}
+	sign=${2//[0-9]}
 
 	#case $1 in
 	#	H) hue=${2:1};;
@@ -21,15 +21,17 @@ set_hsv() {
 	#~/.orw/scripts/notify.sh "$offset_type ${!offset_type}"
 }
 
-while getopts :d:hrpHS:L:V:l:v:Pcb:f: flag; do
+while getopts :d:hrpHS:L:V:l:v:Pcbf: flag; do
 	case $flag in
 		P) pick_color=true;;
-		d) delimiter=$OPTARG;;
+		d) delimiter="$OPTARG";;
 		h)
 			format=hex
 			hex=${color: -6};;
 		r)
 			format=rgb
+			[[ $delimiter ]] ||
+				delimiters=${color//[0-9]} delimiter=${delimiter:0:1}
 			rgb=( ${color//${delimiter:=;}/ } );;
 		p) percents=true;;
 		[hsvl]) set_hsv $flag $OPTARG;;
@@ -50,13 +52,13 @@ while getopts :d:hrpHS:L:V:l:v:Pcb:f: flag; do
 			sign=${OPTARG:0:1}
 			value=${OPTARG:1};;
 		v) print_value=true;;
-		b)
-			sign=${OPTARG:0:1}
-			value=${OPTARG:1};;
+		b) both=true flag=-n;;
+			#sign=${OPTARG:0:1}
+			#value=${OPTARG:1};;
 		H) hsv=true;;
 		[HSV])
 			hsv=true
-			set_hsv $flag $OPTARG;;
+			set_hsv ${flag,} $OPTARG;;
 		c) convert=true;;
 		f) read current_color_fifo final_color_fifo <<< ${OPTARG/,/ };;
 	esac
@@ -388,10 +390,22 @@ get_color() {
 
 				rgb_to_hsv()
 
-				step = ("'$hue'") ? 360 : 100
-				if("'$hue'") h = h + "'$hue'" / step
-				else if("'$saturation'") s = round_value(s + "'$saturation'" / step)
-				else if("'$value'") v = round_value(v + "'$value'" / step)
+				#step = ("'$hue'") ? 360 : 100
+				#if("'$hue'") h = h + "'$hue'" / step
+				#else if("'$saturation'") s = round_value(s + "'$saturation'" / step)
+				#else if("'$value'") v = round_value(v + "'$value'" / step)
+				##system("~/.orw/scripts/notify.sh " h)
+
+				if("'$hue'") \
+					h = ("'$sign'") ? h + "'$hue'" / 360 : "'$hue'" / 360
+				if("'$saturation'") \
+					s = ("'$sign'") ? round_value(s + "'$saturation'" / 100) : "'$saturation'" / 100
+					#s = round_value((('"$sign"') ? s + "'$saturation'" / 100 : "'$saturation'" / 100))
+					#s = round_value("'$saturation'" / 100 + (('"$sign"') ? s : 0))
+				if("'$value'") \
+					v = ("'$sign'") ? round_value(v + "'$value'" / 100) : "'$value'" / 100
+					#v = round_value((('"$sign"') ? v + "'$value'" / 100 : "'$value'" / 100))
+					#v = round_value("'$value'" / 100 + (('"$sign"') ? v : 0))
 				#system("~/.orw/scripts/notify.sh " h)
 
 				hsv_to_rgb()
@@ -414,7 +428,7 @@ get_color() {
 			#r = round_value(r * 255)
 			#g = round_value(g * 255)
 			#b = round_value(b * 255)
-			d = "'${delimiter:-;}'"
+			d = "'"${delimiter:-;}"'"
 			r *= 255; g *= 255; b *= 255
 			printf("%.2x%.2x%.2x %d %d %d %d %d %d %d", r, g, b, r, g, b, h, s, v, v > 50)
 			#printf("%x%x%x %d %d %d %d %.0f %.0f %.0f", r, g, b, r, g, b, h, s, v, v > 50)
@@ -438,20 +452,29 @@ if [[ $pick_color ]]; then
 		#if [[ $hex ]]; then
 		convert -size 100x100 xc:"#${hex: -6}" $preview
 		feh -g 100x100 --title 'image_preview' $preview &
+		#echo $!
 		#fi
 	}
 
-	read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+	#read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
+	read x y <<< $(xwininfo -int -id $(xdotool getactivewindow) | awk '
+			/Absolute/ { if(/X/) x = $NF; else y = $NF }
+			/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+			/Width/ { w = $NF }
+			/Height/ { print x - 2 * xb + w - 100, y }')
 	~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 
 	preview=/tmp/color_preview.png
 
 	while
 		clear
-		[[ ! $current_color_fifo ]] && display_preview ||
+		if [[ $current_color_fifo ]]; then
 			echo "#$hex" > $current_color_fifo &
+		else
+			display_preview
+		fi
 
-		echo -e "#$hex\n"
+		#echo -e "#$hex\n"
 
 		for property in hue saturation value done; do
 			short=${property:0:1}
@@ -487,16 +510,38 @@ if [[ $pick_color ]]; then
 	#	echo "#$hex" > /tmp/color_preview.fifo &
 	#fi
 #else
-	if [[ $current_color_fifo ]]; then
-		echo "#$hex" > $final_color_fifo &
-		rm $current_color_fifo
-		exit
-	fi
+
+	#if [[ $current_color_fifo ]]; then
+	#	echo "#$hex" > $final_color_fifo &
+	#	rm $current_color_fifo
+	#	exit
+	#fi
 fi
 
 if [[ $convert ]]; then
 	[[ $format == hex ]] && format=rgb || format=hex
 fi
 
-[[ $format == hex ]] && echo "#$hex"
-[[ $format == rgb ]] && sed "s/ /${delimiter:-;}/g" <<< "${rgb[*]} "
+rgb=$(sed "s/ /${delimiter:-;}/g" <<< "${rgb[*]} ")
+
+if [[ $both ]]; then
+	final_color="$rgb #$hex"
+else
+	[[ $format == hex ]] && final_color="#$hex" || final_color=$rgb
+fi
+
+if [[ $current_color_fifo ]]; then
+	echo "$final_color" > $final_color_fifo &
+	rm $current_color_fifo
+else
+	echo "$final_color"
+fi
+
+exit
+
+if [[ $convert ]]; then
+	[[ $format == hex ]] && format=rgb || format=hex
+fi
+
+[[ $format == hex || $both ]] && echo $flag "#$hex"
+[[ $format == rgb || $both ]] && sed "s/ /${delimiter:-;}/g" <<< "${rgb[*]} "
