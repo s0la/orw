@@ -1,78 +1,69 @@
 #!/bin/bash
 
-root="/home/ablive/Pictures/wallpapers"
-selection=""
-category=""
-multi_categories=""
-
 function set() {
 	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
 	sed -i "s|\(^$1=\).*|\1\"${!1//&/\\&}\"|" $0
 }
 
-list_categories() {
-	eval ls -d "$root/*/" | awk -F '/' '\
-		BEGIN {
-			s = "'$selection'"
-
-			if(s) {
-				print "set"
-				print "add"
-				print "remove"
-			}
-
-			print "set_root"
-			print "selection"
-			print "━━━━━━━━━"
-		} {
-		c = $(NF - 1)
-		if("'$selection'") s = (c ~ /^('"${multi_categories//,/|}"')$/) ? " " : " "
-		print s c
-	}'
+set_root() {
+	~/.orw/scripts/wallctl.sh -d "$arg"
+	root="$(awk '/^directory/ { print gensub("'\''", "", "g", $NF) }' ~/.config/orw/config)"
+	set root
 }
 
+get_categories() {
+	all_categories="$(awk '/^directory/ {
+		ac = gensub("'\''", "", "g")
+		print gensub(".*'"$root"'/?\\{?([^}]*).*", "\\1", 1, ac) }' ~/.config/orw/config)"
+}
+
+set_category() {
+	get_categories
+
+	if [[ $all_categories ]]; then
+		[[ "$arg" =~ (^|,)(${all_categories//,/|})(,|$) ]] && modify=remove || modify=add
+		flag=-M
+	else
+		flag=-d
+	fi
+
+	~/.orw/scripts/wallctl.sh $flag $modify "$root/$arg"
+}
+
+list_categories() {
+	get_categories
+
+	eval ls -d "$root/*/" | awk -F '/' '\
+		BEGIN { r = gensub("'\''", "", "g", "'"$root"'") }
+		{
+			cc = $(NF - 1)
+			s = (cc ~ "^(" "'"${all_categories//,/|}"'" ")$") ? " " : " "
+			print s, cc
+		}'
+}
+
+root="/home/sola/Pictures/wallpapers"
+
+if [[ $@ ]]; then
+	read option arg <<< "$@"
+
+	[[ $option == set_root ]] && set_root "$arg" || set_category "$arg"
+fi
+
+echo set_root
+list_categories
+exit
+
 if [[ -z $@ ]]; then
-	list_categories
+	rofi -modi "wc:$0 list" -show wc -theme list
 else
-	case $@ in
-		set_root*)
-			root="${@#* }"
-			list_categories
-			set root "${root/\~/$HOME}";;
-		selection)
-			[[ $selection ]] && unset selection || selection=true
-			list_categories
-			set selection;;
-		set|add|remove)
-			if [[ $multi_categories ]]; then
-				[[ $multi_categories =~ , ]] &&
-					categories="{'${multi_categories//,/\',\'}'}" ||
-					category=$multi_categories
-			fi
+	read option arg <<< "$@"
 
-			[[ $@ == set ]] && flag="-d" || flag="-M" modify="$@"
-			~/.orw/scripts/wallctl.sh $flag $modify "$root/${categories:-$category}"
-
-			unset category multi_categories selection
-			list_categories
-
-			set category
-			set multi_categories
-			set selection;;
-		*)
-			if [[ $selection ]]; then
-				multi_categories="$(awk '{
-					if(/^('"${multi_categories//,/|}"')$/) p = ",?" $0
-					else { p = "$"; r = ("'"$multi_categories"'") ? "," $0 : $0 }
-
-					print gensub(p, r, 1, "'"$multi_categories"'")
-				}' <<< "${@#* }")"
-
-				list_categories
-				set multi_categories
-			else
-				set category "$@"
-				echo -e 'set\nadd\nremove'
-			fi
-	esac
+	if [[ $option == list ]]; then
+		echo set_root
+		list_categories
+	else
+		[[ $option == set_root ]] &&
+			set_root "$arg" || set_category "$arg"
+	fi
 fi
