@@ -1,16 +1,11 @@
 #!/bin/bash
 
-#~/.orw/scripts/notify.sh "Scanning available networks.."
-#scanning_notification() {
-( for range in     ; do
+(
+	for range in     ; do
 		~/.orw/scripts/notify.sh -r 303 -t 1 -s osd -i $range "scanning.."
 		sleep 0.4
-	done ) &
-
-	#killall dunst ) &
-#}
-
-#scanning_notification &
+	done
+) &
 
 id=$(printf "0x%.8x" $(xdotool getactivewindow))
 read window_x window_y <<< $(wmctrl -lG | awk '$1 == "'$id'" { print $3, $4 }')

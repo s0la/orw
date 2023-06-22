@@ -1,6 +1,6 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 if [[ $theme != icons ]]; then
 	part_up='part up' part_down='part down' ratio_up='ratio up' ratio_down='ratio down' sep=' '

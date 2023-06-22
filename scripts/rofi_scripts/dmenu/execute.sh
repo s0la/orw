@@ -10,5 +10,5 @@ else
 
 	command="$@"
 	script=${command%% *}
-	~/.orw/scripts/$script.sh ${@/$script/}
+	~/.orw/scripts/$script.sh ${@/$script/} &
 fi

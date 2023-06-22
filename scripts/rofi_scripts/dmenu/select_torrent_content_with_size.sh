@@ -172,7 +172,7 @@ offset=$(awk '
 #~/.orw/scripts/notify.sh "of: $offset"
 torrent_id="15"
 current=""
-full_path="Psicosfera - Beta \\\\(2018\\\\)"
+full_path="Hornwood Fell"
 
 depth="2"
 final_depth="0"

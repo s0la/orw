@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh window_management
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh window_management
 
 [[ $theme == icons ]] &&
 	#tile=  left= right= center= fullscreen=  save=  restore=  ||

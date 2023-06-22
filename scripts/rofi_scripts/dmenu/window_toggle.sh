@@ -1,6 +1,6 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 if [[ $theme != icons ]]; then
 	wm_mode=wm_mode offset=offset reverse=reverse direction=direction sep=' '

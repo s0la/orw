@@ -13,15 +13,25 @@ get() {
 		rofi -dmenu -p "$3" -format 'i s' -selected-row ${!index} -theme list)
 
 	#[[ $1 == option && ${!1} =~ $alt_named_options ]] && option=${segment:-$module}_$option
-	[[ $1 =~ option && ${!1} =~ $alt_named_options ]] && eval $1=${segment:-${suboption:-$module}}_${!1}
+	#[[ $1 =~ option && ${!1} =~ $alt_named_options ]] &&
+	#[[ ($1 =~ option && ${!1} =~ $alt_named_options) || $1 == segment && ${!1} =~ $alt_named_segments ]] &&
+	[[ $1 =~ option && ${!1} =~ $alt_named_options ]] &&
+		eval $1=${segment:-${suboption:-$module}}_${!1}
+	[[ $1 == segment && ${!1} =~ $alt_named_segments ]] &&
+		eval $1=${option}_${!1}
+	#~/.orw/scripts/notify.sh "alt ${segment:-${suboption:-$module}}_${!1}"
 	#[[ $1 =~ option && ${!1} =~ $alt_named_options ]] && echo $1: ${!1}
 }
 
 print_line() {
 	[[ $1 == option && $suboption ]] && local array=suboptions_array || local array=${1}s_array
 	#[[ $1 == option && ${!1} =~ $alt_named_options ]] && local item=${segment:-$module}_${!1} || local item=${!1}
-	[[ $1 =~ option && ${!1} =~ $alt_named_options ]] &&
-		local item=${segment:-${suboption:-$module}}_${!1} || local item=${!1}
+	#[[ $1 =~ option && ${!1} =~ $alt_named_options ]] &&
+	#[[ ($1 =~ option && ${!1} =~ $alt_named_options) || $1 == segment && ${!1} =~ $alt_named_segments ]] &&
+	#	local item=${segment:-${suboption:-$module}}_${!1} || local item=${!1}
+	if [[ $1 =~ option && ${!1} =~ $alt_named_options ]]; then local item=${segment:-${suboption:-$module}}_${!1}
+	elif [[ $1 == segment && ${!1} =~ $alt_named_segments ]]; then local item=${option}_${!1}
+	else local item=${!1}; fi
 
 	eval local item_name=${!1} item_value=\${$array[$item]}
 	eval [[ \${!$array[*]} =~ $item ]] && local checked= || checked=
@@ -69,6 +79,7 @@ list_options() {
 		colorscheme)
 			[[ ${!options_array[*]} =~ power_colorscheme_select ]] || option_list='name '
 			[[ ${!options_array[*]} =~ colorscheme_name ]] && option_list+=clone || option_list+=select;;
+		torrent) option_list='count progressbar';;
 		date) option_list=format;;
 	esac
 
@@ -84,7 +95,7 @@ list_segments() {
 
 	case $option in
 		mpd_buttons) segment_list='prev next play/pause circle separator';;
-		progressbar) segment_list='step dashed';;
+		*progressbar) segment_list='step dashed';;
 		power_size) segment_list='width height';;
 		power_buttons_actions) segment_list='lock logout reboot suspend poweroff';;
 	esac
@@ -97,15 +108,36 @@ list_segments() {
 }
 
 list_workspace_icons() {
+	#awk '
+	#	BEGIN { if(!"'$1'") print "remove" }
+	#	/Workspace.*_p_icon/ {
+	#		fn = gensub("[^_]*_(.*)_[ps].*", "\\1", 1)
+	#		sn = gensub("(.)[^_]*_?", "\\1", "g", fn)
+	#		if(!"'$1'") print fn
+	#		else if("'$1'" ~ "^(" fn "|" sn ")$") print fn, sn
+	#		#else if("'$1'" ~ "^(" fn "|i" sn ")$") print fn, "i" sn
+	#		#else if("'$1'" ~ "^(" fn "|i" sn ")$") print fn, "i" sn
+	#	}' ~/.orw/scripts/bar/icons
+
+
 	awk '
-		BEGIN { if(!"'$1'") print "remove" }
-		/Workspace.*_p_icon/ {
-			fn = gensub("[^_]*_(.*)_[ps].*", "\\1", 1)
-			sn = gensub("(.)[^_]*_?", "\\1", "g", fn)
-			if(!"'$1'") print fn
-			else if("'$1'" ~ "^(" fn "|" sn ")$") print fn, sn
-			#else if("'$1'" ~ "^(" fn "|i" sn ")$") print fn, "i" sn
-			#else if("'$1'" ~ "^(" fn "|i" sn ")$") print fn, "i" sn
+		function get_icon() {
+			return gensub("^[^_]*_(.*)(_[^_]*){2}=[^}]*}([^%]*).*", "\\1 \\3", 1)
+		}
+
+		/Workspace.*_[psar]\w*_icon/ {
+			nai = get_icon()
+			split(nai, naia)
+			n = gensub("(.)[^_]*_?", "\\1", "g", naia[1])
+			an[n] = an[n] naia[2]
+		}
+
+		END {
+			for(ni in an) {
+				r = ni " " an[ni]
+				if(r ~ "(^| )'"$1"'") print ("'"$1"'") ? r : an[ni]
+				#if("'"$1"'" ~ "^(" ni "|" an[ni] ")" print (("'"$1"'") ? ni " " : ""), an[ni]
+			}
 		}' ~/.orw/scripts/bar/icons
 }
 
@@ -161,7 +193,7 @@ list_values() {
 		colorschemes) echo -e 'current\nselect';;
 		power_colorscheme_current)
 			echo ${options_array[colorscheme_name]:-${options_array[colorscheme_select]}};;
-		*select*|clone)
+		*select*|*clone)
 			ls ~/.config/orw/colorschemes/*ocs | \
 				awk 'BEGIN { print "remove" } { print gensub(".*/([^.]*).*", "\\1", 1) }';;
 		*) echo remove;;
@@ -237,7 +269,7 @@ list_values() {
 
 get_name() {
 	#if [[ $1 =~ ^[0-9]+$ || (($option =~ colorscheme && ! $1 =~ colorscheme) || $option == clone) ]]; then
-	if [[ -f ~/.config/orw/colorschemes/$1.ocs  ]]; then
+	if [[ ${#1} -gt 1 && -f ~/.config/orw/colorschemes/$1.ocs  ]]; then
 		short=$1
 	else
 		case $1 in
@@ -285,11 +317,12 @@ get_name() {
 				fi;;
 			u|under) short=u full=under;;
 			P|power) short=P full=power;;
-			p|*padding|progressbar)
+			p|*padding|*progressbar)
 				short=p
 				[[ $module && $module != padding ]] && local prefix="${suboption:-$module}_"
-				[[ $module == mpd ]] && full=progressbar || full=${prefix}padding;;
-			s|*separator|*size|slide|step|suspend)
+				[[ $module == mpd ]] && full=$option || full=${prefix}padding;;
+				#[[ $module == mpd ]] && full=progressbar || full=${prefix}padding;;
+			s|*separator|*size|slide|*step|suspend)
 				if [[ $module == font_size ]]; then
 					short=a full=font_size
 				else
@@ -316,8 +349,13 @@ get_name() {
 						#else
 						#	[[ $option == power_buttons ]] && full=power_buttons_size || full=size
 						#fi
+					elif [[ $1 == *step ]]; then
+						full=${module}_step
 					elif [[ $module == mpd ]]; then
-						[[ $option == progressbar ]] && full=step || full=slide
+						full=slide
+						#[[ $option == progressbar ]] && full=step || full=slide
+					#elif [[ $module == mpd ]]; then
+					#	[[ $option == progressbar ]] && full=step || full=slide
 					else
 						#echo NAMING v $value, 
 						[[ $value == separator ]] && unset short
@@ -331,7 +369,7 @@ get_name() {
 					[[ $module == apps ]] && full=current || full=center
 				else
 					#[[ ${options_array[colorscheme_name]} ]] && full=center || full=colorscheme
-					[[ $module_options ]] && full=colorscheme || full=center
+					[[ ${module_options:-$options} ]] && full=colorscheme || full=center
 				fi;;
 				#[[ $module == apps ]] && full=current || full=center;;
 				#[[ $module == x ]] && full=center || full=controls;;
@@ -342,9 +380,14 @@ get_name() {
 			r|right|reboot)
 				short=r
 				[[ $module == power ]] && full=reboot || full=right;;
-			d|date|dashed)
+			d|date|*dashed)
 				short=d
-				[[ $module == mpd ]] && full=dashed || full=date;;
+				case $module in
+					mpd) full=${option}_dashed;;
+					joiner) full=distance;;
+					*) full=date
+				esac;;
+				#[[ $module == mpd ]] && full=${option}_dashed || full=date;;
 			C|cpu) short=C full=cpu;;
 			M|memory) short=M full=memory;;
 			D|disks) short=D full=disks;;
@@ -411,8 +454,11 @@ get_name() {
 					fi;;
 				#fi;;
 			S|slide) short=S full=slide;;
-			d|dashed) short=d full=dashed;;
-			t|play/pause) short=t full=play/pause;;
+			d|*dashed) short=d full=${option}_dashed;;
+			#t|play/pause) short=t full=play/pause;;
+			t|torrent|play/pause)
+				short=t
+				[[ $module == mpd ]] && full=play/pause || full=torrent;;
 			p|prev) short=p full=prev;;
 			n|name|numeric|next*)
 				short=n
@@ -442,6 +488,7 @@ get_name() {
 			#*colorscheme) short=c full=colorscheme;;
 			colorscheme) short=c full=colorscheme;;
 			#*) [[ $1 =~ ^[0-9]+$ || ($option =~ name|select|clone && ! $1 =~ name|select|clone) ]] &&
+			[^[:alnum:]]*) read short full <<< $(list_workspace_icons $1);;
 			*) [[ $1 =~ ^[0-9]+$ || ($option =~ colorscheme && ! $1 =~ colorscheme) ]] &&
 				short=$1 || unset short full;;
 		esac
@@ -625,6 +672,7 @@ add_value() {
 
 		#echo $1, ${!1}, $2, $separator, $variable, ${!variable}
 
+		#~/.orw/scripts/notify.sh "ADD $array, $value, $2"
 		[[ $value =~ ^($repeatable_segments)$ ]] || eval $array[$value]=\"$2\"
 		#[[ $value =~ ^($repeatable_segments)$ ]] && echo v: $value
 	fi
@@ -758,6 +806,8 @@ configure_module() {
 
 					until [[ $check =~ back|done|remove ]]; do
 						get segment
+						#~/.orw/scripts/notify.sh "seg: $segment"
+						#~/.orw/scripts/notify.sh "HERE $option $segment"
 
 						if [[ $check == remove ]]; then
 							#get_shorthand $option
@@ -951,24 +1001,26 @@ offset=$(awk '
 declare -A {modules,options,suboptions,segments,values}_array
 
 all_settings='x y width height bar_frame frame joiner padding separator offset font_size colorscheme name center right icons'
-all_modules='apps launchers workspaces cpu disks memory hidden email updates network rss volume power mpd date'
+all_modules='apps launchers workspaces cpu disks memory hidden email updates network rss volume power mpd torrent date'
 
 single_value_modules='name|height|offset|separator|padding|font_size'
-multi_segment_options='progressbar|mpd_buttons|power_size|power_buttons_actions'
-segment_options='dashed|step|prev|play/pause|next|circle|mpd_separator|power_(width|height)|lock|logout|reboot|suspend|poweroff'
+multi_segment_options='.*progressbar|mpd_buttons|power_size|power_buttons_actions'
+segment_options='.*(dashed|step)|prev|play/pause|next|circle|mpd_separator|power_(width|height)|lock|logout|reboot|suspend|poweroff'
+#segment_options='(mpd|torrent)_(dashed|step)|prev|play/pause|next|circle|mpd_separator|power_(width|height)|lock|logout|reboot|suspend|poweroff'
 multi_values='(launchers|workspaces|apps)_separator|representation_icons|workspace|(workspaces|power_buttons)_offset|offset|position|power_colorscheme_select|colorscheme_clone|icons'
 repeatable_segments='mpd.*offset|circle|frame|joiner|offset|separator|padding|icons'
 suboptions_modules='x|workspaces|power'
 suboptions_options='representation|power_buttons|power_colorscheme'
 #all_suboptions='representation|labels|icons|numeric|power_colorscheme|power_(buttons|icons|offset|separator|actions)|current|select|center|whole|(left|right)_edge'
 all_suboptions='representation|labels|representation_icons|numeric|power_(colorscheme(_(select|current))?|buttons(_(size|icons|offset|actions))?)'
-alt_named_options='width|height|top|bottom|offset|separator|padding|buttons|icons|size|actions|colorscheme|name|select|current|volume'
+alt_named_options='width|height|top|bottom|offset|separator|padding|buttons|icons|size|actions|colorscheme|name|clone|select|current|volume|progressbar|step'
+alt_named_segments='.*(step|dashed|progressbar)'
 #separated_options='(x|y)_offset|center|reverse|(left|right)_edge|buttons|colorscheme|size|colorscheme_*|width|edge|distance|(half|next)_bg|symbol'
 separated_options='power_(buttons|colorscheme|size)'
 
 no_values='cpu|memory|disk_space|hidden|network|updates|email|rss|.*volume|'
 no_values+='secondary_color|info|time|toggle|volume|(workspaces|launchers)_padding|active|over|under|around|labels|numeric|.*current|.*bottom|center|right|only|icon|none|'
-no_values+='prev|play/pause|next|circle|dashed|remain|half_bg|lock|logout|reboot|suspend|poweroff|power_buttons_icons|(circle|square)_*|adjustable'
+no_values+='prev|play/pause|next|circle|.*dashed|remain|half_bg|lock|logout|reboot|suspend|poweroff|power_buttons_icons|(circle|square)_*|adjustable'
 
 #until
 #	read section_index section <<< $(echo -e 'done\nsettings\nmodules' | \
@@ -1106,9 +1158,9 @@ get_module() {
 			[[ $config_module == done ]] && full=done || get_name $config_module
 			echo $full
 		done <<< $(awk '
-		BEGIN { if("'$action'" != "add") print "done" }
-			{ print gensub("([^-]*-(.)\\s*([^-]*))", "\\2 \\3\n", "g") }' $config) |
-			rofi -dmenu -format 'i s' -theme list)
+			BEGIN { if("'$action'" != "add") print "done" }
+				{ print gensub("([^-]*-(.)\\s*([^-]*))", "\\2 \\3\n", "g") }' $config) |
+				rofi -dmenu -format 'i s' -theme list)
 
 		#BEGIN { if("'$action'" ~ "remove|edit") printf "done\n" }
 
@@ -1225,6 +1277,9 @@ else
 				original_index=$original_config_index
 			fi
 
+			#echo $module_flag
+			#exit
+
 			#[[ $add == insert ]] && ((original_index--))
 			#if ((original_index < last_index)); then
 			#	[[ $add == insert ]] && before_separator=' ' || after_separator=' '
@@ -1260,31 +1315,48 @@ else
 			#	} { print gensub("(([^-]*-.\\s*[^-]*){" i - 1 "})(-[^-]*)(.*)", "\\1" m "\\3", 1) }' ${original_config:-$config}
 				#{ print gensub("(([^-]*-.\\s*[^-]*){'$original_index'})(.*)", "\\1" m "\\3", 1) }' $config
 		elif [[ $action == swap ]]; then
+			org_module_flag=$module_flag
 			unset module_flag
 			first_index=$original_index
 
 			get_module
+			#echo $org_module_flag, $module_flag, $first_index, $index
+			#[[ "j" == [$org_module_flag$module_flag] ]] &&
+			#	match_ending='' || match_ending='[^-]*'
+			#awk '
+			#	function get(i) {
+			#		#return gensub("(([^-]*-){" i - 1 "}[^-]*)(-(j(([^-]*-)[^j]).([^-]*-.){2}[^-]*|[^-]*)).*", "\\3", 1)
+			#		return gensub("(([^-]*-){" i - 1 "}[^-]*)(-(j[^j]*.\\s*-[^-]*|[^-]*)).*", "\\3", 1)
+			#	}
+			#	{ print get('$first_index') }
+			#	{ print get('$index') }' $config
+			#exit
 			awk -i inplace '
 				BEGIN { f = '$first_index'; s = '$index'; l = '$last_index' }
 
 				function get(i) {
-					return gensub("(([^-]*-){" i - 1 "}[^-]*)(-[^-]*).*", "\\3", 1)
+					#return gensub("(([^-]*-){" i - 1 "}[^-]*)(-[^-]*).*", "\\3", 1)
+					return gensub("(([^-]*-){" i - 1 "}[^-]*)(-(j[^j]*.\\s*-[^-]*|[^-]*)).*", "\\3", 1)
 				}
 
-				function set(i, module) {
+				function set(i, current_module, new_module) {
 					if(i == l) {
-						sub("\\s+$", "", module)
-					} else if(module !~ " $") module = module " "
+						sub("\\s+$", "", new_module)
+					} else if(new_module !~ " $") new_module = new_module " "
 
-					$0 = gensub("(-[^-]*)", module, i)
-					#$0 = gensub("(([^-]*-){" i - 1 "}[^-]*)(-[^-]*)", "\\1" module, 1)
+					if(current_module ~ "-j") sub(current_module, new_module)
+					else $0 = gensub(current_module, new_module, 2)
+					#else gsub(current_module, new_module, 2)
+
+					#$0 = gensub("(-[^-]*)", new_module, i)
+					#$0 = gensub("(([^-]*-){" i - 1 "}[^-]*)(-[^-]*)", "\\1" new_module, 1)
 				}
 
 				{
 					fm = get(f)
 					sm = get(s)
-					set(f, sm)
-					set(s, fm)
+					set(f, fm, sm)
+					set(s, sm, fm)
 					print 
 					#print "^" $0 "^"
 				}' $config
@@ -1301,128 +1373,129 @@ else
 			#module_name=$module
 			#unset module
 			#while [[ $module_flag ]]; do
-				get_name $module_flag
-				module=$full
 
-				if [[ $module == power ]]; then
-					#if [[ ! ${options_array[colorscheme_name]} ]]; then
-					#	read colorscheme_name colorscheme_clone <<< $(awk '{
-					#		print gensub("([^-]*-[^c])*[^-]*-c\\s*(([^, ]*),?([^ ]*)).*", "\\3 \\4", 1)
-					#	}' $config)
+			get_name $module_flag
+			module=$full
 
-					#	options_array[colorscheme_name]=$colorscheme_name
-					#	[[ $colorscheme_clone ]] && options_array[colorscheme_clone]=$colorscheme_clone
-					#fi
+			if [[ $module == power ]]; then
+				#if [[ ! ${options_array[colorscheme_name]} ]]; then
+				#	read colorscheme_name colorscheme_clone <<< $(awk '{
+				#		print gensub("([^-]*-[^c])*[^-]*-c\\s*(([^, ]*),?([^ ]*)).*", "\\3 \\4", 1)
+				#	}' $config)
 
-					for power_option in $options; do
-						if [[ -f ~/.config/orw/colorschemes/$power_option.ocs ]]; then
-							suboptions_array[power_colorscheme_select]=$power_option
-							options_array[power_colorscheme]=$power_option
+				#	options_array[colorscheme_name]=$colorscheme_name
+				#	[[ $colorscheme_clone ]] && options_array[colorscheme_clone]=$colorscheme_clone
+				#fi
+
+				for power_option in $options; do
+					if [[ -f ~/.config/orw/colorschemes/$power_option.ocs ]]; then
+						suboptions_array[power_colorscheme_select]=$power_option
+						options_array[power_colorscheme]=$power_option
+					else
+						if [[ $power_option =~ x ]]; then
+							options_array[size]=$power_option
+							segments_array[width]=${power_option%x*}
+							segments_array[height]=${power_option#*x}
 						else
-							if [[ $power_option =~ x ]]; then
-								options_array[size]=$power_option
-								segments_array[width]=${power_option%x*}
-								segments_array[height]=${power_option#*x}
-							else
-								option=power_buttons
-								suboption=$option
-								options_array[power_buttons]=$power_option
+							option=power_buttons
+							suboption=$option
+							options_array[power_buttons]=$power_option
 
-								for buttons_option in ${power_option//,/ }; do
-									if [[ $buttons_option =~ i|[os][0-9]+ ]]; then
-										get_name ${buttons_option:0:1}
-										[[ $short == [os] ]] && segment_value=${buttons_option:1}
-									else
-										option=power_buttons_actions
-										power_actions=${buttons_option#*:}
+							for buttons_option in ${power_option//,/ }; do
+								if [[ $buttons_option =~ i|[os][0-9]+ ]]; then
+									get_name ${buttons_option:0:1}
+									[[ $short == [os] ]] && segment_value=${buttons_option:1}
+								else
+									option=power_buttons_actions
+									power_actions=${buttons_option#*:}
 
-										segment_value=$power_actions
-										options_array[power_buttons_actions]=$power_actions
+									segment_value=$power_actions
+									options_array[power_buttons_actions]=$power_actions
 
-										while [[ $power_actions ]]; do
-											get_name ${power_actions:0:1}
-											segments_array[$full]=""
-											#echo BUTTON ACTION ${power_actions:0:1}, $short, $full
-											power_actions=${power_actions:1}
-										done
+									while [[ $power_actions ]]; do
+										get_name ${power_actions:0:1}
+										segments_array[$full]=""
+										#echo BUTTON ACTION ${power_actions:0:1}, $short, $full
+										power_actions=${power_actions:1}
+									done
 
-										full=power_buttons_actions
-									fi
+									full=power_buttons_actions
+								fi
 
-									#echo BUTT OPT $short, $full: $segment_value
+								#echo BUTT OPT $short, $full: $segment_value
 
-									suboptions_array[$full]="$segment_value"
-								done
-							fi
+								suboptions_array[$full]="$segment_value"
+							done
 						fi
-					done
-				elif [[ $module == colorscheme ]]; then
-					read colorscheme_name colorscheme_clone <<< ${options//,/ }
-					options_array[colorscheme_name]=$colorscheme_name
-					[[ $colorscheme_clone ]] && options_array[colorscheme_clone]=$colorscheme_clone
-				else
-					index=0
-					#echo ${modules_array[$short]}
+					fi
+				done
+			elif [[ $module == colorscheme ]]; then
+				read colorscheme_name colorscheme_clone <<< ${options//,/ }
+				options_array[colorscheme_name]=$colorscheme_name
+				[[ $colorscheme_clone ]] && options_array[colorscheme_clone]=$colorscheme_clone
+			else
+				index=0
+				#echo ${modules_array[$short]}
 
-					while ((index < ${#options})); do
-						#option_short=${options:$index:1}
-						#((index++))
+				while ((index < ${#options})); do
+					#option_short=${options:$index:1}
+					#((index++))
 
-						#[[ $option_short == [\ ,] ]] &&
-						#	option_short=${options:$index:1} && ((index++))
+					#[[ $option_short == [\ ,] ]] &&
+					#	option_short=${options:$index:1} && ((index++))
 
-						#[[ $module == mpd && $option_short == o ]] &&
-						#	option_short+=${options:index:1} && ((index++))
+					#[[ $module == mpd && $option_short == o ]] &&
+					#	option_short+=${options:index:1} && ((index++))
 
-						#[[ $module == workspaces && $option_short == i ]] &&
-						#	option_short=${options:index - 1} index=${#options}
+					#[[ $module == workspaces && $option_short == i ]] &&
+					#	option_short=${options:index - 1} index=${#options}
 
-						#get_name $option_short
-						#option=$full
+					#get_name $option_short
+					#option=$full
 
-						get_option $options
-						option=$full
+					get_option $options
+					option=$full
 
-						#echo FULL: $full
+					#echo FULL: $full
 
-						if [[ ! $option =~ $no_values ]]; then
-							if [[ $option =~ $multi_segment_options ]]; then
-								get_segment_values
-							else
-								get_numeric_value
-								option_values=$numeric_value
-								unset numeric_value
-							fi
+					if [[ ! $option =~ $no_values ]]; then
+						if [[ $option =~ $multi_segment_options ]]; then
+							get_segment_values
+						else
+							get_numeric_value
+							option_values=$numeric_value
+							unset numeric_value
 						fi
+					fi
 
-						#echo s $option_short, o $option, v $option_values
-						[[ $option == representation_icons ]] &&
-							option_values=$option_short suboptions_array[$option]=${option_values#i} option=representation
+					#echo s $option_short, o $option, v $option_values
+					[[ $option == representation_icons ]] &&
+						option_values=$option_short suboptions_array[$option]=${option_values#i} option=representation
 
-						#echo f: $option, v: $option_values
-						[[ $option ]] && options_array[$option]="$option_values"
-						#options+="$option_short$option_values"
-						unset option_values
+					#echo f: $option, v: $option_values
+					[[ $option ]] && options_array[$option]="$option_values"
+					#options+="$option_short$option_values"
+					unset option_values
 
-						unset option_value_{short,option}
-					done
-				fi
+					unset option_value_{short,option}
+				done
+			fi
 
-				#echo o ${!options_array[*]}, so ${!suboptions_array[*]}
-				#echo o ${options_array[*]}, so ${suboptions_array[*]}
+			#echo o ${!options_array[*]}, so ${!suboptions_array[*]}
+			#echo o ${options_array[*]}, so ${suboptions_array[*]}
 
-				unset {sub,}option index check
-				configure_module
+			unset {sub,}option index check
+			configure_module
 
-				awk -i inplace '
-					BEGIN { oi = '$original_index'; li = '$last_index'; s = (oi == li) ? "" : " " }
-					{ print gensub("-[^-]*", "'"${modules# }"'" s, '$original_index') }' $config
-				#echo $modules
-				#echo $options
+			awk -i inplace '
+				BEGIN { oi = '$original_index'; li = '$last_index'; s = (oi == li) ? "" : " " }
+				{ print gensub("-[^-]*", "'"${modules# }"'" s, '$original_index') }' $config
+			#echo $modules
+			#echo $options
 
-				#unset module{_flag,s,}
-				#unset module{s,}
-				#get_module
+			#unset module{_flag,s,}
+			#unset module{s,}
+			#get_module
 			#done
 		fi
 

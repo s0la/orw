@@ -1,7 +1,7 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh window_management
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh window_management
 
 [[ $theme == icons ]] &&
 	#tile=  left= right= center= fullscreen=  save=  restore=  ||
@@ -28,7 +28,7 @@ windowctl=~/.orw/scripts/windowctl.sh
 
 if [[ $action ]]; then
 	case "$action" in
-		$tile) $windowctl tile;;
+		$tile) $windowctl -b tile;;
 		$center*) $windowctl -c;;
 		$left*) $windowctl move -v 1/1 -h 1/1 resize -h 1/2 -v 1/1;;
 		$right*) $windowctl move -v 1/1 -h 2/2 resize -h 1/2 -v 1/1;;

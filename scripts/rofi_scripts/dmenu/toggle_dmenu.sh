@@ -3,7 +3,7 @@
 #theme=$(awk -F '"' 'END { m = $(NF - 1); print (m == "icons") ? "list" : m }' ~/.config/rofi/main.rasi)
 
 path=~/.config/rofi
-theme=$(awk -F '"' 'END { print $(NF - 1) }' $path/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' $path/main.rasi)
 [[ $theme == icons ]] && list_theme=list
 
 function populate_menu() {

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-bar='lp'
+bar=''
 move=''
 place=''
 toggle=''

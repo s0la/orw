@@ -1,8 +1,8 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #       
-[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh rec
+#[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh rec
 [[ $theme == icons ]] && start= stop=  || start=start stop=stop
 [[ $theme == icons ]] && start= stop=  || start=start stop=stop
 [[ $theme == icons ]] && start= stop=  || start=start stop=stop
@@ -30,7 +30,9 @@ if [[ $action ]]; then
 
 				width=300
 				height=100
-				read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
+				#read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
+				read window_x window_y <<< $(xwininfo -int -id $(xdotool getactivewindow) |
+					awk '/Absolute/ { print $NF }' | xargs)
 				read x y <<< $(~/.orw/scripts/get_display.sh $window_x $window_y | \
 					awk '{ print int(($4 - '$width') / 2), int(($5 - '$height') / 2) }')
 
