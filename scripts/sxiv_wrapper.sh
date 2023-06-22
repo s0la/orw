@@ -21,12 +21,14 @@ if [[ ! $mode =~ floating|selection ]]; then
 	#echo sxiv -tb "$@"
 	#exit
 	eval sxiv -tb "$@"
+	#xdotool search --name 'sxiv' set_window --name 'wallctl'
+	#wmctrl -r :ACTIVE: -T wallctl
 else
 	id=$(xdotool getactivewindow)
 	read x y <<< $(wmctrl -lG | awk '$1 == sprintf("0x%.8x", "'$id'") { print $3, $4 }')
 	#read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -p)
 	#geaometry=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} |\
-	geaometry=$(~/.orw/scripts/get_display.sh $x $y |\
+	geaometry=$(~/.orw/scripts/get_display.sh $x $y |
 		awk '\
 			BEGIN {
 				wp = '${width:-28}'

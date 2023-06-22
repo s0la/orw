@@ -14,8 +14,12 @@ else
 
 		width=300
 		height=100
-		read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
-		read x y <<< $(~/.orw/scripts/get_display.sh $window_x $window_y | \
+
+		#read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
+		window_id=$(xdotool getactivewindow)
+		read window_x window_y <<< $(xwininfo -int -id $window_id |
+			awk '/Absolute/ { print $NF }' | xargs)
+		read x y <<< $(~/.orw/scripts/get_display.sh $window_x $window_y |
 			awk '{ print int(($4 - '$width') / 2), int(($5 - '$height') / 2) }')
 
 		~/.orw/scripts/set_geometry.sh -t input -x $x -y $y -w 300 -h 100

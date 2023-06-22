@@ -1265,6 +1265,7 @@ else
 		wallpaper_name="${wallpaper##*/}"
 		wallpaper_name="${wallpaper_name%\.*}"
 		colorscheme="wall_${wallpaper_name// /_}"
+		colorscheme="${wallpaper_name// /_}"
 
 		[[ -f "${config%/*}/colorschemes/$colorscheme.ocs" ]] && ~/.orw/scripts/rice_and_shine.sh -tC $colorscheme &
 	fi

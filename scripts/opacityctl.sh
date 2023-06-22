@@ -19,8 +19,12 @@ else
 	if [[ $1 == shadow[-_]radius ]]; then
 		pattern="shadow-(radius|offset)"
 	else
+		#[[ $1 == rofi ]] &&
+		#	pattern="opacity-rule.*Rofi" ||
+		#	pattern="^\s*${1:0:1}\w*[-_]${1:1}\w* "
+
 		[[ $1 == rofi ]] &&
-			pattern="opacity-rule.*Rofi" ||
+			pattern="[0-9]:class.*Rofi" ||
 			pattern="^\s*${1:0:1}\w*[-_]${1:1}\w* "
 	fi
 fi

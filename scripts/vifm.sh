@@ -14,7 +14,7 @@ while getopts :t:w:h:i flag; do
 done
 
 [[ ! $title ]] &&
-	title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { print $NF }' | sort -n | \
+	title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { print $NF }' | sort -n |
 	awk '{
 		ic = gensub("vifm", "", 1)
 		if(mc + 1 < ic) exit; else mc = (ic) ? ic : 0

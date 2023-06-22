@@ -76,6 +76,9 @@ for display in ${!displays[*]}; do
 	#	echo $((delta_max - delta_min))
 	#fi
 
+	#echo $top_offset
+	#echo $bottom_offset
+
 	[[ $offset ]] && echo display_$display $top_offset $bottom_offset
 
 	[[ $print ]] ||
@@ -86,28 +89,28 @@ for display in ${!displays[*]}; do
 			}
 
 			/display_'$display'_offset/ {
-									if("'$delta'") {
-										#td = ($2 > to) ? $2 - to : to - $2
-										#bd = ($3 > bo) ? $3 - bo : bo - $3
+				if("'$delta'") {
+					#td = ($2 > to) ? $2 - to : to - $2
+					#bd = ($3 > bo) ? $3 - bo : bo - $3
 
-										#td = gensub("^-", "", 1, $2 - to)
-										#bd = gensub("^-", "", 1, $3 - bo)
+					#td = gensub("^-", "", 1, $2 - to)
+					#bd = gensub("^-", "", 1, $3 - bo)
 
-										#ts = ($2 > to) ? "+" : "-"
-										#bs = ($3 > bo) ? "+" : "-"
+					#ts = ($2 > to) ? "+" : "-"
+					#bs = ($3 > bo) ? "+" : "-"
 
-										#if($2 > to) ts = "+"
-										#if($3 > bo) bs = "+"
+					#if($2 > to) ts = "+"
+					#if($3 > bo) bs = "+"
 
-										td = $2 - to
-										bd = $3 - bo
-										if(td > 0) ts = "+"
-										if(bd > 0) bs = "+"
-									}
+					td = $2 - to
+					bd = $3 - bo
+					if(td > 0) ts = "+"
+					if(bd > 0) bs = "+"
+				}
 
-									$2 = to
-									$3 = bo
-								} { print } END { print ts td, bs bd }' $config
+				$2 = to
+				$3 = bo
+			} { print } END { print ts td, bs bd }' $config
 
 	unset current_bar_height {top,bottom}_offset delta_{min,max,position}
 done

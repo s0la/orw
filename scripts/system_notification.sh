@@ -6,7 +6,7 @@
 #	icon=  command=$([[ $1 =~ mpd ]] && echo mpc volume || echo amixer -D pulse get Master)
 
 theme=default
-[[ $1 =~ mpd ]] && theme=vertical
+[[ $1 =~ mpd ]] && theme=${2:-vertical}
 
 [[ $1 == brightness ]] &&
 	command='echo 50%' replace_id=104 theme=osd ||
@@ -47,4 +47,4 @@ read value level_value empty_value icon <<< $($command | \
 [[ $1 =~ mpd ]] && icon= replace_id=103
 
 [[ $theme == mini ]] && value="-v $value%" || bar="-b $level_value/$empty_value"
-~/.orw/scripts/notify.sh -r $replace_id -s $theme -i $icon "${bar:-$value}"
+~/.orw/scripts/notify.sh -r $replace_id -s $theme -i $icon "${bar:-$value}" &

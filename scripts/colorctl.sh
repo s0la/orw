@@ -21,11 +21,15 @@ get_rgb() {
 	((section && ${#rgb_values[*]} < 4)) && ((section--))
 
 	for rgb_value_index in ${!rgb_values[*]}; do
-		rgb_value=10#${rgb_values[rgb_value_index]}
-		#echo rgh: $((10#rgb_values + 2))
+		#rgb_value=10#${rgb_values[rgb_value_index]}
+		rgb_value=${rgb_values[rgb_value_index]}
+		#echo rgb: $((10#rgb_values + 2))
 
 		if ((${section-$rgb_value_index} == rgb_value_index)); then
 			if [[ ! $balance && $offset ]]; then
+				#((10#$rgb_value ${sign:-+}= offset))
+				#((10#$rgb_value > 255)) && rgb_value=255
+				#((10#$rgb_value < 0)) && rgb_value=0
 				((rgb_value ${sign:-+}= offset))
 				((rgb_value > 255)) && rgb_value=255
 				((rgb_value < 0)) && rgb_value=0
