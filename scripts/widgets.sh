@@ -77,6 +77,16 @@ set_cover_geometry() {
 	geometry=${size:-$previous_size}x${size:-$previous_size}+${x:-$previous_x}+${y:-$previous_y}
 }
 
+get_window_properties() {
+	#xwininfo -int -id $(wmctrl -l | awk '$NF == "'$1'" { print $1 }') |
+	wmctrl -l | awk '$NF == "'$1'" { print $1 }' |
+		xargs xwininfo -id | awk '
+			/Absolute/ { if(/X/) x = $NF; else y = $NF }
+			/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+			/Width/ { w = $NF }
+			/Height/ { print x - xb, y - yb, w, $NF }'
+}
+
 cover() {
 	write() {
 		sed -i "/^\s*previous_$1/ s/'.*'/'${!1}'/" $0
@@ -114,7 +124,8 @@ cover() {
 				#read x y <<< $(~/.orw/scripts/windowctl.sh -n mwi -p |\
 				#	awk '{ print ($4 >= 300) ? $2 : $2 - '$(($size / 3 * 2))', $3 }')
 
-				read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2, $3, $5 - '$border' }')
+				#read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2, $3, $5 - '$border' }')
+				read x y size <<< $(get_window_properties n_nwc | awk '{ print $1, $2, $4 - '$border' }')
 				#read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2 - $5, $3, $5 - '$border' }')
 				geometry="${size}x${size}+${x}+${y}"
 			else
@@ -138,8 +149,11 @@ cover() {
 }
 
 get_display() {
-	read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -n $1 -p)
-	display=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} | awk '{ print $1 }')
+	#read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -n $1 -p)
+	#display=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} | awk '{ print $1 }')
+	read -a window_properties <<< $(get_window_properties $1)
+	display=$(~/.orw/scripts/get_display.sh \
+		${window_properties[2]} ${window_properties[3]} | cut -d ' ' -f 1)
 }
 
 layout() {
@@ -164,8 +178,10 @@ layout() {
 					local delta="+$border"
 				else
 					local mirror=n_mwc
-					local delta=$(~/.orw/scripts/windowctl.sh -n n_mwc -p |\
-						awk '{ s = '$size'; d = ($4 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
+					local delta=$(get_window_properties n_nwc |
+						awk '{ s = '$size'; d = ($3 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
+					#local delta=$(~/.orw/scripts/windowctl.sh -n n_mwc -p |
+					#	awk '{ s = '$size'; d = ($4 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
 
 					[[ $1 == playlist ]] && progressbar=no status=no
 				fi
@@ -177,9 +193,13 @@ layout() {
 				get_display n_mwi
 				layout="-d $display -M n_mwi x,h*15,ys-10,w"
 			else
-				get_display ncmpcpp_playlist
-				[[ $(wmctrl -l | awk '$NF == "ncmpcpp_playlist"') ]] &&
-					layout="-d $display -M ncmpcpp_playlist x,ye+10,w"
+				#get_display ncmpcpp_playlist
+				#[[ $(wmctrl -l | awk '$NF == "ncmpcpp(_playlist)?"') ]] &&
+				#	layout="-d $display -M ncmpcpp_playlist x,ye+10,w"
+
+				get_display ncmpcpp
+				[[ $(wmctrl -l | awk '$NF == "ncmpcpp"') ]] &&
+					layout="-d $display -M ncmpcpp x,ye+10,w"
 			fi
 		fi
 

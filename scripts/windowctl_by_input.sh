@@ -23,8 +23,17 @@ padding=$(awk '/padding/ { print $NF * 2; exit }' ~/.config/gtk-3.0/gtk.css)
 #[[ ! "${BASH_SOURCE[0]}" =~ "$0" ]] &&
 #	read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 
+get_window_properties() {
+	xwininfo -int -id $(xdotool getactivewindow) | awk '
+			/Absolute/ { if(/X/) x = $NF; else y = $NF }
+			/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+			/Width/ { w = $NF }
+			/Height/ { print x - xb, y - yb, w, $NF }'
+}
+
 if [[ "${BASH_SOURCE[0]}" =~ "$0" ]]; then
-	read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+	#read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
+	read window_x window_y window_width window_height <<< $(get_window_properties)
 
 	read size input_x input_y <<< $(awk '\
 		BEGIN {
@@ -48,14 +57,51 @@ if [[ "${BASH_SOURCE[0]}" =~ "$0" ]]; then
 		}' ~/.config/orw/config)
 else
 	size=$((input_size + padding))
-	input_x=$((x - display_x + (w - size) / 2))
-	input_y=$((y - display_y + (h - size) / 2))
+	#input_x=$((x - display_x + (w - size) / 2))
+	#input_y=$((y - display_y + (h - size) / 2))
+	input_x=$((x - display_x))
+	input_y=$((y - display_y))
 fi
-
-~/.orw/scripts/set_geometry.sh -c input -x $input_x -y $input_y -w $size -h $size
 
 source ~/.orw/scripts/${1}_input_template.sh "${@:2}"
 
 $(declare -F prepare)
-read_keyboard_input
-execute
+#read_keyboard_input
+
+read_keyboard_input() {
+	while [[ ! $stop ]]; do
+		$(declare -F get_argument_count)
+
+		#write_command='printf "0x%x %s" $(xdotool getactivewindow) $input'
+		#read_command="read -rsn ${argument_count:-1} input && $write_command > $named_pipe"
+		read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
+		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" #&> /dev/null &
+		termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null &
+		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" & #&> /dev/null &
+
+		#read input_id input < $named_pipe
+		read input < $named_pipe
+		evaluate $input
+
+		((input_count+=2))
+	done
+
+	unset stop
+}
+
+if [[ ${@: -1} != source ]]; then
+	~/.orw/scripts/set_geometry.sh -c input \
+		-x $input_x -y $input_y -w $size -h $size
+	read_keyboard_input
+	execute
+fi
+
+
+#read_keyboard_input
+#execute
+
+#	[[ ! $stop ]]
+#do
+#	continue
+#done
+
