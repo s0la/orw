@@ -10,6 +10,8 @@ launchers_file=$launchers_directory/$1
 
 current_desktop=$(xdotool get_desktop)
 current_id=$(printf "0x%.8x" $(xdotool getactivewindow 2> /dev/null))
+current_name=$(wmctrl -l |
+	awk '$1 == "'"$current_id"'" { i = index($0, $4); print substr($0, i) }')
 
 [[ ! -d $launchers_directory ]] && mkdir $launchers_directory
 [[ ! -f $launchers_file ]] && cp ~/.orw/scripts/bar/launchers $launchers_file
@@ -84,9 +86,10 @@ else
 				active=true
 			else
 				value=${argument:1}
-				property=${argument:0:1}
+				property=${argument::1}
 
 				[[ $5 == true ]] && separator_color='%{B${Lfc:-$fc}}'
+				[[ $5 == true ]] && separator_color='%{B${Lfc}}'
 				#~/.orw/scripts/notify.sh "sc: $5"
 
 				if [[ $property == s ]]; then
@@ -96,9 +99,12 @@ else
 					#launcher_separator="${separator_color:-\$Lsc}%{O$value}"
 					#[[ $value == s ]] && separator_value=\$separator || separator_value="%{O$value}"
 					#((value)) && separator_value="%{O$value}" || separator_value=\$separator
-					((value)) && separator_value="%{O$value}" ||
+
+					#((value)) && separator_value="%{O$value}" ||
+					[[ $value ]] && separator_value="%{O$value}" ||
 						separator_value="%{O\${separator##*O}"
-					launcher_separator="${separator_color:-%{B\$Lsc:-\$bg}}$separator_value"
+					#launcher_separator="${separator_color:-%{B\$Lsc:-\$bg}}$separator_value"
+					launcher_separator="${separator_color:-%{B\${Lsc:-\$bg}}}$separator_value"
 
 					#~/.orw/scripts/notify.sh "sc: $launcher_separator"
 				elif [[ $property =~ p([0-9]+)? ]]; then
@@ -117,11 +123,19 @@ else
 fi
 
 function set_line() {
-	fc="\${Lfc:-\$fc}"
+	#fc="\${Lfc:-\$fc}"
+	fc="\${L${current}fc:-\${Lfc:-\$fc}}"
+	#fc='${Lfc:-$fc}'
 	frame_width="%{O\${Lfw:-\${frame_width-0}}\}"
 
-	if [[ $lines == [ou] ]]; then
-		left_frame="%{+$lines}" right_frame="%{-$lines}"
+	#if [[ $lines == [ou] ]]; then
+	if [[ $lines == single ]]; then
+		#fc="\${Lafc:-${fc//\$/\\\\$}}"
+		#fc="\${Lafc:-${fc}}"
+		#~/.orw/scripts/notify.sh "here $fc"
+
+		#left_frame="%{+$lines\}" right_frame="%{-$lines\}"
+		left_frame="%{+\$frame_position\}" right_frame="%{-\$frame_position\}"
 	else
 		frame="%{B$fc\}$frame_width"
 		left_frame="%{+u\}%{+o\}$frame"
@@ -195,9 +209,13 @@ make_launcher() {
 			current_name="${name#*_}" current_command="ps -C lemonbar -o args="
 
 		current=$(eval "$current_command" | awk '{
-				r = $NF ~ "'"$current_name"'"
-				if(r) exit
-			} END { print r ? "p" : "s" }')
+			#if ($NF ~ "'"$current_name"'") {
+			i = index($0, $4)
+			if(tolower(substr($0, i)) ~ "'"$current_name"'") {
+				r = 1
+				if($1 == "'"$current_id"'") a = 1
+			}
+		} END { print r ? (a ? "a" : "p") : "s" }')
 
 			#current=$(wmctrl -l | awk '{ r = $NF ~ "'"$name"'[0-9]+"; if(r) exit } END { print r ? 
 			#current=$(ps -C lemonbar -o args= | awk '{ r = $NF ~= "'${name#*_}'"; if(r) exit } END { print r ? "s" : "p" }')
@@ -205,8 +223,19 @@ make_launcher() {
 		current=s
 	fi
 
-	bg="\${L${current}bg:-\${Lsbg:-\$${current}bg}}"
-	fg="\${L${current}fg:-\${Lsfg:-\$${current}fg}}"
+	#bg="\${L${current}bg:-\${Lsbg:-\$${current}bg}}"
+	#fg="\${L${current}fg:-\${Lsfg:-\$${current}fg}}"
+
+	[[ $current == a ]] && backup=p || unset backup
+
+	bg="\${L${current}bg:-\${L${backup}bg:-\${Lsbg:-\$${backup:-$current}bg}}}"
+	fg="\${L${current}fg:-\${L${backup}fg:-\${Lsfg:-\$${backup:-$current}fg}}}"
+
+	#bg="\${L${current}bg:-\${Lsbg:-\$${current}bg}}"
+	#fg="\${L${current}fg:-\${Lsfg:-\$${current}fg}}"
+
+	#[[ $current == a ]] && ~/.orw/scripts/notify.sh "a $bg"
+	#[[ $current == a ]] && ~/.orw/scripts/notify.sh "a $name"
 
 	#commands="%{A:if ! wmctrl -a "$name"; then $left; fi:A}"
 	launcher="$commands$bg$fg$offset$icon$offset$closing"
@@ -222,10 +251,14 @@ make_launcher() {
 	#fi
 
 	#if [[ $lines == single ]]; then
-	if [[ $lines == single && $current == p ]]; then
+	if [[ $lines == single && $current == [pa] ]]; then
+		set_line
 		#~/.orw/scripts/notify.sh "s: $separator"
 		#[[ $separator =~ ^% && $current == p ]] &&
+			#launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
 			launcher="%{U$fc}\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
+			#launcher="\${start_line:-$left_frame}$launcher\${end_line:-$right_frame}"
+			#[[ $current == a ]] && ~/.orw/scripts/notify.sh "a $launcher"
 	fi
 
 	unset right middle up down
@@ -282,4 +315,6 @@ fi
 #~/.orw/scripts/notify.sh "s: $1 $separator"
 
 #[[ $launchers ]] && echo -e "$launchers%{B\$bg}$separator"
+#echo -e "$launchers" > launcher.log
+#~/.orw/scripts/notify.sh "s: $1 $separator"
 echo -e "$launchers"

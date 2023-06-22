@@ -16,23 +16,26 @@ function set_icon() {
 }
 
 function set_line() {
-	fc="\${${module}fc:-\$fc}"
-	frame_width="%{O\${${module}fw:-\${frame_width-0}}\}"
+	#if [[ $lines != false ]]; then
+		fc="\${${module}fc:-\$fc}"
+		frame_width="%{O\${${module}fw:-\${frame_width-0}}\}"
 
-	#[[ $lines == [ou] ]] && local start_line_position="%{+$lines}" end_line_position="%{-$lines}"
+		#[[ $lines == [ou] ]] && local start_line_position="%{+$lines}" end_line_position="%{-$lines}"
 
-	#~/.orw/scripts/notify.sh "s: $separator"
+		#~/.orw/scripts/notify.sh "s: $separator"
 
-	if [[ $lines == [ou] ]]; then
-		left_frame="%{+$lines\}" right_frame="%{-$lines\}"
-	else
-		frame="%{B$fc\}$frame_width"
-		left_frame="%{+u\}%{+o\}$frame"
-		right_frame="$frame%{-o\}%{-u\}"
-	fi
+		if [[ $lines == [ou] ]]; then
+			left_frame="%{+$lines\}" right_frame="%{-$lines\}"
+			#~/.orw/scripts/notify.sh "$module, s: $separator, $left_frame"
+		else
+			frame="%{B$fc\}$frame_width"
+			left_frame="%{+u\}%{+o\}$frame"
+			right_frame="$frame%{-o\}%{-u\}"
+		fi
 
-	#left_frame="${start_line_position:-%{+u\}%{+o\}}$frame"
-	#right_frame="$frame${end_line_position:-%{-o\}%{-u\}}"
+		#left_frame="${start_line_position:-%{+u\}%{+o\}}$frame"
+		#right_frame="$frame${end_line_position:-%{-o\}%{-u\}}"
+	#fi
 }
 
 function format() {
@@ -183,9 +186,11 @@ format_fading() {
 			#	~/.orw/scripts/notify.sh "$left_command$right_command${!icon_type:-$label}$left_command_end$right_command_end ${content:-$count}"
 		fi
 	else
-		if [[ $separator =~ ^s ]]; then
-			set_line
-			echo -e "%{U$fc}$left_frame"
+		if [[ $separator =~ ^s && $lines != false ]]; then
+			#if [[ $lines != false ]]; then
+				set_line
+				echo -e "%{U$fc}$left_frame"
+			#fi
 			#echo -e "%{U$fc}\${start_line:-$left_frame}"
 		fi
 		
@@ -201,7 +206,7 @@ case $1 in
 		#lines=${@: -1}
 		lines=$3
 
-		old_mail_count=145
+		old_mail_count=446
 
 		email_auth=~/.orw/scripts/auth/email
 
@@ -212,9 +217,9 @@ case $1 in
 				~/.orw/scripts/barctl.sh
 		fi
 
-		read username password <<< $(awk '{ print $NF }' $email_auth | xargs)
-
-		read mail_count notification <<< $(curl -u $username:$password --silent "https://mail.google.com/mail/feed/atom" |
+		read username {,app_}password <<< $(awk '{ print $NF }' $email_auth | xargs)
+		read mail_count notification <<< $(\
+			curl -su $username:$app_password "https://mail.google.com/mail/feed/atom" |
 			xmllint --format - 2> /dev/null | awk -F '[><]' \
 			'/<(fullcount|title|name)/ && ! /Inbox/ { if($2 ~ /count/) c = $3; \
 			else if($2 == "title" && $3) t = $3; \
@@ -230,7 +235,7 @@ case $1 in
 
 		[[ $(which mutt 2> /dev/null) ]] && command1='termite -e mutt' ||
 			left_command="~/.orw/scripts/notify.sh -p 'Mutt is not found..'"
-		right_command="~/.orw/scripts/show_mail_info.sh $username $password 5"
+		right_command="~/.orw/scripts/show_mail_info.sh $username $app_password 5"
 
 		#if ((mail_count)); then
 		#	if [[ $3 == only ]]; then
@@ -807,9 +812,20 @@ case $1 in
 
 		step=${3//[^0-9]/}
 
-		(($(pidof transmission-daemon))) && read ids s c p b <<< $(transmission-remote -l | awk '\
+		for arg in ${3//,/ }; do
+			torrent_info+="${arg:0:1} "
+
+			case $arg in
+				p:*)
+					progressbar_args=${arg#*:}
+					step=${progressbar_args//[^0-9]/}
+					[[ $progressbar_args =~ d ]] && dashed=true
+			esac
+		done
+
+		(($(pidof transmission-daemon))) && read ids s c P p <<< $(transmission-remote -l | awk '\
 			function make_progressbar(percent) {
-				if(percent > 0) return gensub(/ /, "■", "g", sprintf("%*s", percent, " "))
+				if(percent > 0) return gensub(/ /, ("'$dashed'") ? "■" : "━", "g", sprintf("%*s", percent, " "))
 			}
 
 			NR == 1 {
@@ -832,8 +848,9 @@ case $1 in
 			}' 2> /dev/null)
 
 		((c)) &&
-			for torrent_info in ${3//[0-9,]/ }; do
-				torrents+="${!torrent_info}\${padding}"
+			#for torrent_info in ${3//[0-9,]/ }; do
+			for info in $torrent_info; do
+				torrents+="${!info}\${padding}"
 			done
 
 		left_command="transmission-remote -t $ids -$s &> /dev/null"
@@ -884,7 +901,7 @@ case $1 in
 		separator="$2"
 		lines=$3
 
-		last_feed_count=1
+		last_feed_count=4
 		#feed_count=$(newsboat -x reload print-unread | cut -d ' ' -f 1)
 		pid=$(pidof newsboat)
 		((pid)) &&
@@ -893,6 +910,7 @@ case $1 in
 		#feed_count=3
 
 		#~/.orw/scripts/notify.sh "rss: $feed_count"
+		#~/.orw/scripts/notify.sh "rss: $separator"
 
 		icon="$(sed -n "s/${1}_icon=//p" ${0%/*}/icons)"
 		left_command='termite -t newsboat -e newsboat &> /dev/null &'
@@ -900,7 +918,8 @@ case $1 in
 
 		if ((feed_count != last_feed_count)); then
 			feed_icon=${icon//[[:ascii:]]/}
-			((feed_count)) && ~/.orw/scripts/notify.sh -r 501 -s osd -i $feed_icon "New feeds: $feed_count"
+			((feed_count)) &&
+				~/.orw/scripts/notify.sh -r 501 -s osd -i $feed_icon "New feeds: $feed_count" &> /dev/null
 			sed -i "/^\s*last_feed_count/ s/[0-9]\+/${feed_count:-0}/" $0
 		fi;;
 

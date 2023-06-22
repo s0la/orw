@@ -85,7 +85,9 @@ get_window() {
 
 		window="$commands$bg$fg${padding}${window_name//\"/\\\"}${padding}%{A}%{A}%{A}"
 
-		[[ $app_separator || ($lines == [ou] && $separator =~ ^% && $current == p) ]] &&
+		#[[ $app_separator || ($lines == [ou] && $separator =~ ^% && $current == p) ]] &&
+		[[ ($app_separator && $lines == 1) ||
+			($lines == [ou] && $separator =~ ^% && $current == p) ]] &&
 			window="%{U$fc}$left_frame$window$right_frame"
 		#[[ $app_separator ]] &&
 			#window="%{U$fc}\${start_line:-$left_frame}$window\${end_line:-$right_frame}"
