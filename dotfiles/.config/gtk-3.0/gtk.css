@@ -2,37 +2,6 @@ VteTerminal, vte-terminal {
 	padding: 35px;
 }
 
-window.thunar {
-	background: none;
-/* hide separator */ }
-	window.thunar treeview {
-	background: none; }
-	window.thunar grid *:selected,
-	window.thunar grid *:active {
-		background: #dbd1c9;
-	border-radius: 3px; }
-	window.thunar .sidebar {
-		background-color: rgba(55, 55, 55, 0.5);
-		box-shadow: inset -20px 20px 15px -25px rgba(0, 0, 0, 0.2);
-	padding: 1rem; }
-	window.thunar treeview {
-	padding: 3px; }
-	window.thunar treeview:selected {
-	background: #0F1215; }
-	window.thunar .frame {
-	border: 0; }
-	window.thunar toolbar box {
-	padding: 5px; }
-	window.thunar paned grid {
-	background: #0F1215; }
-	window.thunar toolbar {
-		background: #0F1215;
-	padding: 5px 0; }
-	window.thunar toolbar * {
-	background: none; }
-	window.thunar separator {
-		background-image: image(#0F1215);
-		background-size: 1px 1px;
-	background-position: center center; }
+* { outline: none }
 
-
+@import url("thunar.css");

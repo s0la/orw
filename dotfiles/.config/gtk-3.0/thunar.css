@@ -1,0 +1,99 @@
+@define-color bg #101314;
+@define-color pbg #252b2c;
+@define-color sbg #1a1f20;
+@define-color bbg #c8a789;
+@define-color tbg rgba(26,31,32,0.92);
+@define-color fg #b0bfac;
+@define-color pfg #3d4445;
+@define-color sfg #313839;
+@define-color afg #88a0a0;
+
+window.thunar toolbar * {
+	-gtk-icon-transform: scale(0.5);
+}
+
+window.thunar {
+	background: none;
+}
+
+window.thunar treeview {
+	background: none;
+	color: @fg;
+}
+
+window.thunar paned grid {
+	background: @tbg;
+	padding: 0 20px;
+}
+
+window.thunar grid *:selected,
+window.thunar grid *:active {
+	border-radius: 3px;
+	background: @sbg;
+	color: @afg;
+}
+
+window.thunar .sidebar {
+	background-color: @tbg;
+	padding: 1rem
+}
+
+window.thunar .standard-view .view {
+	background: none;
+	padding: 0px 5px;
+}
+
+window.thunar .standard-view .view:selected {
+	border-radius: 3px;
+	background: @pbg;
+}
+
+window.thunar treeview.view header button {
+	background: none;
+	color: @pfg;
+}
+
+window.thunar treeview:selected {
+	border-radius: 3px;
+	background: @pbg;
+}
+
+window.thunar .frame {
+	border: 0
+}
+
+window.thunar toolbar box {
+}
+
+window.thunar toolbar {
+	background: @bg;
+	padding: 6px;
+	color: @pfg;
+}
+
+window.thunar toolbar * {
+	-gtk-icon-transform: scale(0.5);
+	background: none;
+	margin: 0px 1px;
+	color: @pfg;
+}
+
+window.thunar toolbar button:hover {
+	border-radius: 3px;
+	background: @sbg;
+	color: @pfg;
+}
+
+.thunar toolbar entry {
+	border: 0;
+	border-radius: 3px;
+	background: @sbg;
+	padding-left: 0px;
+	color: @afg;
+	background: none;
+	color: @bg;
+}
+
+window.thunar separator {
+	background: @sbg;
+}
