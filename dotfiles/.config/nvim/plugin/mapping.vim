@@ -6,7 +6,7 @@ tnoremap <Esc> <C-\><C-n>
 
 "normal mode
 noremap <silent> <leader>s :so %<cr>
-noremap <silent> <leader>l :call GitLog()<cr>
+"noremap <silent> <leader>l :call GitLog()<cr>
 noremap <silent> <leader>d :call GitDiff()<cr>
 noremap <silent> <leader>t :call Term()<cr>
 noremap <silent> <leader>vt :call Term('v')<cr>
@@ -37,6 +37,7 @@ inoremap <silent> <C-l> <C-o>:vert resize -3<cr>
 "fzf
 map <leader>f :Files<CR>
 map <leader>b :Buffers<CR>
+map <leader>b :BLines<CR>
 nnoremap <leader>g :Rg<CR>
 nnoremap <leader>t :Tags<CR>
 nnoremap <leader>m :Marks<CR>

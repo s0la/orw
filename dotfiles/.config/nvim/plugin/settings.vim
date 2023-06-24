@@ -20,6 +20,6 @@ set list lcs=tab:\┃\
 set fillchars=vert:┃
 set splitbelow splitright
 
-set completeopt-=preview
+"set completeopt-=preview
 
 set noautoread
