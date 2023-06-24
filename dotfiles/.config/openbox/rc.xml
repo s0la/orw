@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Sans</name>
-      <size>13</size>
+      <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -85,7 +85,7 @@
     </font>
     <font place="MenuItem">
       <name>Roboto</name>
-      <size>7</size>
+      <size>8</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -128,7 +128,7 @@
       <name>media</name>
       <name>upwork</name>
     </names>
-    <popupTime>500</popupTime>
+    <popupTime>0</popupTime>
     <!-- The number of milliseconds to show the popup for when switching
        desktops.  Set this to 0 to disable the popup. -->
   </desktops>
@@ -227,9 +227,14 @@
         <command>~/.orw/scripts/rofi_scripts/dmenu/volume.sh</command>
       </action>
     </keybind>
-    <keybind key="A-b">
+	<keybind key="A-b">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/dmenu/brightness.sh</command>
+      </action>
+    </keybind>
+    <keybind key="A-S-b">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/dmenu/list_bars.sh</command>
       </action>
     </keybind>
     <keybind key="A-a">
@@ -247,19 +252,29 @@
         <command>~/.orw/scripts/rofi_scripts/dmenu/feeds.sh</command>
       </action>
     </keybind>
-    <keybind key="A-r">
+    <keybind key="A-S-r">
       <action name="Execute">
         <command>rofi -show run -theme list</command>
       </action>
     </keybind>
     <keybind key="A-S-r">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/rec.sh</command>
+        <command>rofi -show run -theme list</command>
+      </action>
+    </keybind>
+	<keybind key="A-r">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi.sh</command>
       </action>
     </keybind>
     <keybind key="A-s">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/dmenu/wallpapers.sh</command>
+      </action>
+    </keybind>
+	<keybind key="A-S-s">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/dmenu/wallpaper_group.sh</command>
       </action>
     </keybind>
     <keybind key="A-w">
@@ -274,12 +289,12 @@
     </keybind>
     <keybind key="A-o">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_group.sh offset</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_toggle.sh</command>
       </action>
     </keybind>
     <keybind key="A-S-o">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_toggle.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/opacity.sh</command>
       </action>
     </keybind>
     <keybind key="A-d">
@@ -289,7 +304,7 @@
     </keybind>
     <keybind key="A-S-d">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/workspaces_group.sh</command>
       </action>
     </keybind>
     <keybind key="A-q">
@@ -304,7 +319,7 @@
     </keybind>
     <keybind key="A-m">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/mount_dmenu.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/music.sh</command>
       </action>
     </keybind>
     <!--
@@ -321,7 +336,7 @@
     </keybind>
     <keybind key="A-p">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/mpd_playlist.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh mpd_playlist large_list</command>
       </action>
     </keybind>
     <keybind key="A-S-p">
@@ -331,49 +346,51 @@
     </keybind>
     <keybind key="W-h">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -l +50</command>
+        <command>~/.orw/scripts/resize.sh l +1 move</command>
       </action>
     </keybind>
     <keybind key="W-l">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -r +50</command>
+        <command>~/.orw/scripts/resize.sh l -1 move</command>
       </action>
     </keybind>
     <keybind key="W-k">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -t +50</command>
+        <command>~/.orw/scripts/resize.sh t +1 move</command>
       </action>
     </keybind>
     <keybind key="W-j">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -b +50</command>
+        <command>~/.orw/scripts/resize.sh t -1 move</command>
       </action>
     </keybind>
     <keybind key="W-C-h">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -L</command>
+        <command>~/.orw/scripts/resize.sh l +1 edge</command>
       </action>
     </keybind>
     <keybind key="W-C-l">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -R</command>
+        <command>~/.orw/scripts/resize.sh r +1 edge</command>
       </action>
     </keybind>
     <keybind key="W-C-k">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -T</command>
+        <command>~/.orw/scripts/resize.sh t +1 edge</command>
       </action>
     </keybind>
     <keybind key="W-C-j">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh move -B</command>
+        <command>~/.orw/scripts/resize.sh b +1 edge</command>
       </action>
     </keybind>
     <keybind key="C-S-h">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r -50</command>
+        <command>~/.orw/scripts/resize.sh r -1</command>
       </action>
     </keybind>
+
+	<!--
     <keybind key="A-C-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b resize -l +50 -a</command>
@@ -386,7 +403,7 @@
     </keybind>
     <keybind key="C-S-l">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -r +50</command>
+        <command>~/.orw/scripts/resize.sh r +1</command>
       </action>
     </keybind>
     <keybind key="A-C-l">
@@ -401,7 +418,7 @@
     </keybind>
     <keybind key="C-S-k">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b -50</command>
+        <command>~/.orw/scripts/resize.sh b -1</command>
       </action>
     </keybind>
     <keybind key="A-C-k">
@@ -416,7 +433,7 @@
     </keybind>
     <keybind key="C-S-j">
       <action name="Execute">
-        <command>~/.orw/scripts/windowctl.sh resize -b +50</command>
+        <command>~/.orw/scripts/resize.sh b +1</command>
       </action>
     </keybind>
     <keybind key="A-C-j">
@@ -427,6 +444,63 @@
     <keybind key="A-W-j">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b resize -b -50 -a</command>
+      </action>
+    </keybind>
+	-->
+
+    <keybind key="A-C-h">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh l +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-h">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh l -50</command>
+      </action>
+    </keybind>
+    <keybind key="C-S-l">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh r +1</command>
+      </action>
+    </keybind>
+    <keybind key="A-C-l">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh r +1</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-l">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh r -50</command>
+      </action>
+    </keybind>
+    <keybind key="C-S-k">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh r +1</command>
+      </action>
+    </keybind>
+    <keybind key="A-C-k">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh t +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-k">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh t -50</command>
+      </action>
+    </keybind>
+    <keybind key="C-S-j">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh r +1</command>
+      </action>
+    </keybind>
+    <keybind key="A-C-j">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh b +50</command>
+      </action>
+    </keybind>
+    <keybind key="A-W-j">
+      <action name="Execute">
+        <command>~/.orw/scripts/resize.sh b -50</command>
       </action>
     </keybind>
     <keybind key="W-w">
@@ -622,6 +696,15 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="A-Left" action="Drag">
+		<layer>above</layer>
+		<!--
+		<action name="Execute">
+			<command>xdotool getactivewindow windowsize 100 100</command>
+		</action>
+		-->
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_move</command>
+		</action>
         <action name="Move"/>
       </mousebind>
       <mousebind button="A-Right" action="Press">
@@ -630,8 +713,18 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="A-Right" action="Drag">
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_resize</command>
+		</action>
         <action name="Resize"/>
       </mousebind>
+	  <mousebind button="C-A-Left" action="Drag">
+		<layer>above</layer>
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_move</command>
+		</action>
+        <action name="Move"/>
+	  </mousebind>
       <mousebind button="A-Middle" action="Press">
         <action name="Lower"/>
         <action name="FocusToBottom"/>
@@ -670,6 +763,7 @@
     </context>
     <context name="Titlebar">
       <mousebind button="Left" action="Drag">
+		<layer>above</layer>
         <action name="Move"/>
       </mousebind>
       <mousebind button="Left" action="DoubleClick">
@@ -697,6 +791,9 @@
       </mousebind>
     </context>
     <context name="Titlebar Top Right Bottom Left TLCorner TRCorner BRCorner BLCorner">
+	  <mousebind button="Left" action="Drag">
+		  <action name="Resize"/>
+	  </mousebind>
       <mousebind button="Left" action="Press">
         <action name="Focus"/>
         <action name="Raise"/>
@@ -717,6 +814,9 @@
     </context>
     <context name="Top">
       <mousebind button="Left" action="Drag">
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_resize</command>
+		</action>
         <action name="Resize">
           <edge>top</edge>
         </action>
@@ -724,6 +824,9 @@
     </context>
     <context name="Left">
       <mousebind button="Left" action="Drag">
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_resize</command>
+		</action>
         <action name="Resize">
           <edge>left</edge>
         </action>
@@ -731,6 +834,9 @@
     </context>
     <context name="Right">
       <mousebind button="Left" action="Drag">
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_resize</command>
+		</action>
         <action name="Resize">
           <edge>right</edge>
         </action>
@@ -738,6 +844,9 @@
     </context>
     <context name="Bottom">
       <mousebind button="Left" action="Drag">
+		<action name="Execute">
+		  <command>~/sws_test.sh mouse_resize</command>
+		</action>
         <action name="Resize">
           <edge>bottom</edge>
         </action>
@@ -757,6 +866,11 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="Left" action="Drag">
+		  <!--
+        <action name="Execute">
+			<command>~/.orw/scripts/notify.sh "RESIZING"</command>
+		</action>
+		  -->
         <action name="Resize"/>
       </mousebind>
     </context>
@@ -967,11 +1081,24 @@
     <application name="*">
       <decor>yes</decor>
       <focus>yes</focus>
-      <layer>above</layer>
+      <layer>below</layer>
       <position force="yes">
         <x>center</x>
         <y>center</y>
       </position>
+    </application>
+
+    <application class="*">
+      <layer>below</layer>
+      <decor>no</decor>
+      <position force="yes">
+        <x>1283</x>
+        <y>607</y>
+      </position>
+      <size>
+        <width>150</width>
+        <height>150</height>
+      </size>
     </application>
 
     <application class="custom_size">
@@ -982,8 +1109,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>133</height>
-        <width>101</width>
+        <height>100</height>
+        <width>100</width>
       </size>
     </application>
 
@@ -1005,18 +1132,6 @@
       <layer>below</layer>
     </application>
 
-    <application class="*">
-      <layer>below</layer>
-      <position force="yes">
-        <x>843</x>
-        <y>412</y>
-      </position>
-      <size>
-        <width>150</width>
-        <height>150</height>
-      </size>
-    </application>
-
     <application type="dialog">
       <position force="yes">
         <x>center</x>
@@ -1032,7 +1147,7 @@
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
         <x>480</x>
-        <y>37</y>
+        <y>52</y>
       </position>
       <size>
         <width>960</width>
@@ -1046,8 +1161,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>942</x>
-        <y>552</y>
+        <x>1508</x>
+        <y>631</y>
       </position>
       <size>
         <width>130</width>
@@ -1070,15 +1185,14 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>1041</x>
-        <y>154</y>
+        <x>1282</x>
+        <y>95</y>
       </position>
       <size>
         <width>100</width>
         <height>100</height>
       </size>
     </application>
-
     <!--
   # this is an example with comments through out. use these to make your
   # own rules, but without the comments of course.
@@ -1122,12 +1236,12 @@
       # when force is "yes", then the window will be placed here even if it
       # says you want it placed elsewhere.  this is to override buggy
       # applications who refuse to behave
-      <x>center</x>
+      <x>80</x>
       # a number like 50, or 'center' to center on screen. use a negative number
       # to start from the right (or bottom for <y>), ie -50 is 50 pixels from
       # the right edge (or bottom). use 'default' to specify using value
       # provided by the application, or chosen by openbox, instead.
-      <y>200</y>
+      <y>136</y>
       <monitor>1</monitor>
       # specifies the monitor in a xinerama setup.
       # 1 is the first head, or 'mouse' for wherever the mouse is
