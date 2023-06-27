@@ -1407,15 +1407,20 @@ make_workspace_notification() {
 }
 
 swap_windows() {
-	local size=${properties[opposite_index + 2]} opposite_index
-	((index)) && opposite_index=0 || opposite_index=1
+	((index)) &&
+		local opposite_index=0 || local opposite_index=1
 
 	((diff > 0)) &&
 		local sign=+ opposite_sign=- reverse ||
 		local sign=- opposite_sign=+ reverse=r
 
+	#echo PRE: $index, $reverse: ${properties[*]}
+
+	#list_windows | sort -n${reverse}k $((index + 2)),$((index + 2))
+
+	#list_windows |
 	read {source,target}_move move_ids <<< $(list_windows |
-		sort -nk $((index + 1)),$((index + 1))$reverse |
+		sort -n${reverse}k $((index + 2)),$((index + 2)) |
 		awk '
 			BEGIN {
 				d = '$diff'
@@ -1438,9 +1443,12 @@ swap_windows() {
 				cws = $i; cwos = $oi; cwd = $(i + 2); cwod = $(oi + 2)
 				cwe = cws + cwd + cwb; cwoe = cwos + cwod + cwob
 
+				#print d, cws, we + m, we, m, cwos, wos, cwoe, woe
+
 				if (((d < 0 && cwe <= ws - m) ||
 					(d > 0 && cws >= we + m)) &&
 					(cwos >= wos && cwoe <= woe)) {
+						#print "HERE", $0
 						if ((cwd + cwb + m) > md) {
 							md = (cwd + cwb + m)
 							tsf = md * (wod + wob + m)
@@ -1455,6 +1463,9 @@ swap_windows() {
 				print md, wd + wb + m, ids
 			}')
 
+	#echo PRE
+	#list_windows
+
 	for move_id in $id $move_ids; do
 		props=( ${windows[$move_id]} )
 		[[ $move_id == $id ]] &&
@@ -1466,9 +1477,14 @@ swap_windows() {
 		wmctrl -ir $move_id -e 0,${all_props// /,} &
 	done
 
+	#echo POST
+	#list_windows
+
 	signal_event "launchers" "swap" "$id ${move_ids// /,} $reverse"
 
-	properties=( ${winodws[$id]} )
+	properties=( ${windows[$id]} )
+
+	#echo POST: ${properties[*]}
 }
 
 resize() {
@@ -1511,23 +1527,61 @@ resize() {
 	#return
 
 	if [[ $event == *move* ]]; then
+		#local move_diff=${diffs[*]: -1}
+		#diffs[property + 2]=$move_diff
+
+		#if ((${diffs[*]: -1})); then
+		#	changed_properties[property + 2]=$move_diff
+		#	changed_properties[property]=$move_diff
+		#else
+		#	changed_properties[property]=$move_diff
+		#	changed_properties[property + 2]=$move_diff
+		#fi
+
+		#((${diffs[*]: -1})) &&
+		#local diff=${diffs[*]: -1}
+
+		#((${diffs[*]: -1})) &&
+		local diff=${diffs[*]: -1}
 		((diff > 0)) &&
 			changed_properties=( $((property + 2)) $property ) ||
 			changed_properties=( $property $((property + 2)) )
+
+		#diffs[property + 2]=${diffs[*]: -1}
+		#diffs=( ${diffs[*]: -1} ${diffs[*]: -1} )
+
+		#diffs[property + 2]=${diffs[*]: -1}
+		#echo DIFF: $property, ${!diffs[*]}, ${diffs[*]}, 
+		#killall spy_windows.sh xprop
+		#exit
 	fi
 
 	#for property in ${changed_properties:-$property}; do
 	for property_index in ${!changed_properties[*]}; do
-		property=${changed_properties[property_index]}
-		((${diffs[property_index]})) && diff=${diffs[property_index]}
-		[[ ! $event =~ .*(mouse|rofi) && ${diff#-} -eq 1 ]] && (( diff *= 50 ))
+		#property=${changed_properties[property_index]}
+		#((${diffs[property_index]})) && diff=${diffs[property_index]}
+		#[[ ! $event =~ .*(mouse|rofi) && ${diff#-} -eq 1 ]] && (( diff *= 50 ))
+		##echo DIFF: $diff, ${diffs[property_index]}, $property_index, ${!diffs[*]}, ${diffs[*]}
+		##echo $property, $diff, ${old_properties[*]}
 
-		#properties=( ${old_properties[*]} )
-		properties[property]=${old_properties[property]}
+		##properties=( ${old_properties[*]} )
+		#[[ $event == move ]] &&
+		#	properties=( ${old_properties[*]} ) ||
+		#	properties[property]=${old_properties[property]}
+		#windows[$id]="${properties[*]}"
+
+		property=${changed_properties[property_index]}
+
+		if [[ $event == move ]]; then
+			properties=( ${old_properties[*]} )
+		else
+			properties[property]=${old_properties[property]}
+			((${diffs[property_index]})) && diff=${diffs[property_index]}
+		fi
+
 		windows[$id]="${properties[*]}"
 
-		#echo START, $property, $diff, ${old_properties[*]}
-		#list_windows
+		[[ ! $event =~ .*(mouse|rofi) && ${diff#-} -eq 1 ]] && (( diff *= 50 ))
 
 		if [[ ${tiling_workspaces[*]} != *$workspace* ]]; then
 			((properties[$property] += diff))
@@ -1539,6 +1593,8 @@ resize() {
 		window_end=$((window_start + ${properties[index + 2]} + ${properties[index + 4]}))
 
 		if [[ $event == swap ]]; then
+			properties=( ${old_properties[*]} )
+			windows[$id]="${properties[*]}"
 			swap_windows
 			continue
 		fi
@@ -1633,6 +1689,12 @@ resize() {
 
 			windows[$id]="${properties[*]:1}"
 			set_alignment_properties $direction
+
+			#echo $direction, ${properties[*]}
+			#get_alignment move print
+
+			#killall spy_windows.sh xprop
+			#exit
 
 			read _ _ _ aligned <<< $(get_alignment move)
 			eval aligned_windows=( $aligned )
