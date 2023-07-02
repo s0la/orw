@@ -1,0 +1,21 @@
+bind-key j down
+bind-key k up
+bind-key l open
+bind-key h quit
+
+color listnormal color89 default
+color listfocus color90 color88
+color listnormal_unread color90 default
+color listfocus_unread color91 color88
+color info color90 color88
+
+highlight article ".*" default default
+
+reload-time 1
+refresh-on-startup  yes
+browser qutebrowser
+confirm-mark-all-feeds-read no
+
+#notify-always yes
+#notify-program "~/.orw/scripts/notify.sh"
+#notify-format "New feed: %n"
