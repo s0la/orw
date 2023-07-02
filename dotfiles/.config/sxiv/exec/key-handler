@@ -3,16 +3,18 @@
 while read file; do
 	case "$1" in
 		"d") rm "$file";;
-		"m") mv "$file" ~/Pictures/wallpapers;;
-		"y") cp "$file" ~/Pictures/wallpapers;;
-		"s") ~/.orw/scripts/xwallctl.sh -s "$file";;
-		"a") ~/.orw/scripts/xwallctl.sh -a -s "$file";;
-		"c") ~/.orw/scripts/xwallctl.sh -c -s "$file";;
-		"1") ~/.orw/scripts/xwallctl.sh -n 1 -s "$file";;
-		"2") ~/.orw/scripts/xwallctl.sh -n 2 -s "$file";;
-		"3") ~/.orw/scripts/xwallctl.sh -n 3 -s "$file";;
-		"C-1") ~/.orw/scripts/xwallctl.sh -w 1 -s "$file";;
-		"C-2") ~/.orw/scripts/xwallctl.sh -w 2 -s "$file";;
-		"C-3") ~/.orw/scripts/xwallctl.sh -w 3 -s "$file";;
+		"m") mv "$file" ~/Pictures/wallpapers/tutorial;;
+		"y") cp "$file" ~/Pictures/wallpapers/top;;
+		"t") ~/ogtest.sh "$file";;
+		"T") ~/ogtest.sh "$file" -s;;
+		"s") ~/.orw/scripts/wallctl.sh -s "$file";;
+		"a") ~/.orw/scripts/wallctl.sh -a -s "$file";;
+		"c") ~/.orw/scripts/wallctl.sh -c -s "$file";;
+		"1") ~/.orw/scripts/wallctl.sh -n 1 -s "$file";;
+		"2") ~/.orw/scripts/wallctl.sh -n 2 -s "$file";;
+		"3") ~/.orw/scripts/wallctl.sh -n 3 -s "$file";;
+		"C-1") ~/.orw/scripts/wallctl.sh -w 1 -s "$file";;
+		"C-2") ~/.orw/scripts/wallctl.sh -w 2 -s "$file";;
+		"C-3") ~/.orw/scripts/wallctl.sh -w 3 -s "$file";;
 	esac
 done
