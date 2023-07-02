@@ -15,19 +15,22 @@ workspace=$(xdotool get_desktop)
 is_tiling=$(awk \
 	'/^tiling_workspace/ { if (/'$workspace'/) print 1 }' ~/.orw/scripts/spy_windows.sh)
 
-if ((!is_tiling)); then
+if ((is_tiling)); then
+	[[ $event == edge ]] && event=swap
+else
 	#[[ $event != edge ]] &&
 	#	((value *= 50)) ||
 	#	~/.orw/scripts/windowctl.sh move -${property^}
-    
-	if [[ $event != edge ]]; then
-		((value *= 50))
-	else
-		~/.orw/scripts/windowctl.sh move -${property^}
-		exit
-	fi
-else
-	[[ $event == edge ]] && event=swap
+
+	[[ $event == edge ]] &&
+		~/.orw/scripts/windowctl.sh move -${property^} && exit
+
+	#if [[ $event != edge ]]; then
+	#	((value *= 50))
+	#else
+	#	~/.orw/scripts/windowctl.sh move -${property^}
+	#	exit
+	#fi
 fi
 
 #((is_tiling)) || ((value *= 50))
@@ -47,7 +50,7 @@ parse_properties() {
 			#if (("'"$property"'" ~ "[lt]") || (!t && m))
 			if ("'"$property"'" ~ "[lt]" || (!t && m))
 				p[pi - 2] '$opposite_sign'= '$value'
-			if (t || !m) p[pi] '$sign'= '$value'
+			if (!m) p[pi] '$sign'= '$value'
 
 			printf "0,%d,%d,%d,%d\n", \
 				p[1] - xb, p[2] - yb, p[3], p[4]
