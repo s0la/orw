@@ -104,8 +104,8 @@ run_term() {
 	#fi
 
 	#$run -t $title termite $class -t $title $command
-	#eval termite $class -t $title "$command" &
-	eval alacritty $class -t $title "$command" &
+	eval termite $class -t $title "$command" &
+	#eval alacritty $class -t $title "$command" &
 
 	#~/.orw/scripts/run.sh $title termite -t $title
 }
