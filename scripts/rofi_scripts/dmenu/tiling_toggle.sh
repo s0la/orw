@@ -9,8 +9,9 @@ orw_conf=~/.config/orw/config
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh tiling_toggle
 
 get_state() {
-	read {,t}wm_icon wm_active \
-		{full,use_ratio,offset,margin,reverse,direction,interactive}_icon active{_direction,} <<< \
+		#{full,use_ratio,offset,margin,reverse,direction,interactive}_icon active{_direction,} <<< \
+	read wm_icon wm_active \
+		{full,offset,margin,reverse,direction,interactive}_icon active{_direction,} <<< \
 		$(awk '{
 			if(/^mode/) {
 				m = $NF
@@ -20,41 +21,18 @@ get_state() {
 				else if(m == "floating") { wm = ""; wma = 0 }
 				else { wm = ""; wma = 4 }
 			}
-			else if(/^part/) { p = $NF }
-			else if(/^ratio/) { r = 100 / $NF * p }
 			else if(/^direction/) {
-				dir = $NF
-				d = (dir == "h") ? "" : ""
-				d = (dir == "h") ? "" : ""
-				twm = (dir == "h") ? "" : ""
-				#if(m == "tiling") wm = twm
-
 				switch ($NF) {
 					case "h": d = ""; ad = 0; break
 					case "v": d = ""; ad = 1; break
 					default: d = ""; ad = 2
 				}
 			} else if(/^full/) {
-				#if(dir == "h") f = (rev) ? "" : ""
 				if (dir == "v") f = (rev) ? "" : ""
 				else f = (rev) ? "" : ""
-				#f = ""
-				#f = ""
-
 				if($NF == "true") a = a ",2"
-			} else if(/^use_ratio/) {
-				if(r < 13) ur = ""
-				else if(r <= 25) ur = ""
-				else if(r < 38) ur = ""
-				else if(r <= 50) ur = ""
-				else if(r < 63) ur = ""
-				else if(r <= 75) ur = ""
-				else ur = ""
-				if($NF == "true") a = a ",3"
-			} else if(/^offset/) {
-				o = ""
-				#if($NF == "true") a = a ",4"
-			} else if(/^margin/) m = ""
+			} else if(/^offset/) o = ""
+			else if(/^margin/) m = ""
 			else if(/^reverse/) {
 				r = ""
 				r = ""
@@ -67,7 +45,8 @@ get_state() {
 				if ($NF == "true") a = a ",5"
 			}
 		} END {
-			print wm, twm, wma, f, ur, o, m, r, d, i, ad, a
+			o = ""; m = ""
+			print wm, wma, f, o, m, r, d, i, ad, a
 		}' ~/.config/orw/config)
 
 	[[ $active && $active != -a* ]] && active="-a ${active#,}"
