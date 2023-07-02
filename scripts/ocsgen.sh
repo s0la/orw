@@ -3954,6 +3954,9 @@ color_folders() {
 }
 
 set_thunar() {
+	local {rgb,hex}_hlbg
+	read {rgb,hex}_hlbg <<< $(get_sbg $hex_bg +3 0)
+
 	awk -i inplace '
 		/define/ {
 			switch ($2) {
@@ -3961,6 +3964,7 @@ set_thunar() {
 				case "sbg": $NF = "'"$hex_sbg"';"; break
 				case "pbg": $NF = "'"$hex_pbg"';"; break
 				case "bbg": $NF = "'"$hex_a1"';"; break
+				case "hlbg": $NF = "'"$hex_hlbg"';"; break
 				case "fg": $NF = "'"$hex_fg"';"; break
 				case "sfg": $NF = "'"$hex_sfg"';"; break
 				case "pfg": $NF = "'"$hex_pfg"';"; break
@@ -4032,7 +4036,7 @@ ncmpcpp_conf=~/.orw/dotfiles/.config/ncmpcpp/config*
 zathura_conf=~/.orw/dotfiles/.config/zathura/zathurarc
 qb_conf=~/.orw/dotfiles/.config/qutebrowser/config.py
 home_css_conf=~/.orw/dotfiles/.config/qutebrowser/home.css
-thunar_conf=~/.orw/dotfiles/.config/gtk-3.0/gtk.css
+thunar_conf=~/.orw/dotfiles/.config/gtk-3.0/thunar.css
 sxiv_conf=~/.orw/dotfiles/.config/X11/xresources
 lock_conf=~/.orw/dotfiles/.config/i3lockrc
 

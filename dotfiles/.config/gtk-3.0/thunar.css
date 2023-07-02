@@ -3,11 +3,12 @@
 @define-color sbg #1a1f20;
 @define-color bbg #c8a789;
 @define-color hlbg #161a1b;
-@define-color tbg rgba(26,31,32,0.92);
+@define-color tbg rgba(22,26,27,0.92);
 @define-color fg #b0bfac;
 @define-color pfg #3d4445;
 @define-color sfg #313839;
 @define-color afg #88a0a0;
+@define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
 	background: none;
@@ -18,9 +19,6 @@ window.thunar treeview {
 	color: @fg;
 }
 
-window.thunar iconview {
-}
-
 window.thunar paned grid {
 	background: @tbg;
 	padding: 0 20px;
@@ -28,7 +26,7 @@ window.thunar paned grid {
 
 window.thunar grid *:selected,
 window.thunar grid *:active {
-	border-radius: 3px;
+	border-radius: 1px;
 	background: @sbg;
 	color: @afg;
 }
@@ -45,17 +43,19 @@ window.thunar .standard-view .view {
 }
 
 window.thunar .standard-view .view:selected {
-	border-radius: 3px;
+	border-radius: 1px;
 	background: @pbg;
 }
 
 window.thunar treeview.view header button {
 	background: none;
+	box-shadow: none;
+	border: none;
 	color: @pfg;
 }
 
 window.thunar treeview:selected {
-	border-radius: 3px;
+	border-radius: 1px;
 	background: @pbg;
 }
 
@@ -81,7 +81,7 @@ window.thunar toolbar * {
 
 window.thunar toolbar button:hover {
 	background: @hlbg;
-	border-radius: 3px;
+	border-radius: 1px;
 	box-shadow: none;
 	transition: 0;
 	border: none;
@@ -89,15 +89,27 @@ window.thunar toolbar button:hover {
 }
 
 .thunar toolbar entry {
-	border: 0;
-	border-radius: 3px;
+	border-radius: 1px;
 	background: @sbg;
 	padding-left: 0px;
 	color: @afg;
+	box-shadow: none;
 	background: none;
 	color: @bg;
+	border: 0;
 }
 
 window.thunar separator {
 	background: @sbg;
+}
+
+window.thunar scrollbar:hover {
+	background-color: @sbbg;
+	box-shadow: none;
+	transition: 0;
+	border: 0;
+}
+
+window.thunar scrollbar.button:hover {
+	background-color: @afg;
 }
