@@ -23,9 +23,16 @@ property_log=~/.config/orw/windows_properties
 #		/^orientation / { o = substr($NF, 1, 1) }
 #		END { print p, dc, o }' $config)
 
-read mode part ratio use_ratio alignment_direction reverse full \
-	default_{x,y}_border {x,y}_offset display_count display_orientation <<< $(awk '\
-		/^(mode|part|ratio|full|use_ratio|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
+#read mode part ratio use_ratio alignment_direction reverse full \
+#	default_{x,y}_border {x,y}_offset display_count display_orientation <<< $(awk '\
+#		/^(mode|part|ratio|full|use_ratio|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
+#		/^display_[0-9]_name/ { dc++ }
+#		/^orientation / { o = substr($NF, 1, 1) }
+#		END { print p, dc, o }' $config)
+
+read margin default_{x,y}_border {x,y}_offset full reverse alignment_direction \
+	display_count display_orientation <<< $(awk '
+		/^(margin|full|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
 		/^display_[0-9]_name/ { dc++ }
 		/^orientation / { o = substr($NF, 1, 1) }
 		END { print p, dc, o }' $config)
@@ -74,6 +81,7 @@ function set_windows_properties() {
 			x_border=${properties[5]} y_border=${properties[6]}
 
 	[[ $2 ]] || get_display_properties $1
+
 	#if [[ ! $2 ]]; then
 	#	[[ $1 == h ]] && index=1 || index=2
 	#	get_display_properties $index
@@ -252,13 +260,17 @@ get_display_properties() {
 
 					max += $i
 
-					if((d && p < max && (cd >= d)) || (!d && p < max)) {
-						print (d) ? d : cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
-						exit
-					} else {
+					s = ((d && p < max && (cd >= d)) || (!d && p < max))
+
+					if (!s) {
 						if(d && cd < d || !d) bmin += $4
 						if(p > max) if(i == 4) wx -= $i
 						else wy -= $i
+					}
+				} else if ($3 == "offset") {
+					if (s) {
+						print (d) ? d : cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
+						exit
 					}
 				}
 			}
