@@ -1,0 +1,196 @@
+#ob
+t #828282
+tb #828282
+b #828282
+c #828282
+it #20201f
+itb #20201f
+ib #20201f
+ic #20201f
+cbt #989898
+mabt #989898
+mibt #989898
+cbth #6b6666
+mabth #6b6666
+mibth #6b6666
+ibt #141413
+ibth #141413
+mbg #20201f
+mfg #393939
+mtbg #20201f
+mtfg #454545
+msbg #2c2c2c
+msfg #d89e69
+mb #20201f
+ms #20201f
+bfg #20201f
+bsfg #2c2c2c
+osd #20201f
+osdh #d89e69
+osdu #2c2c2c
+s #6b6666
+
+#bar
+bg #d02c2c2c
+fc #d02c2c2c
+bfc #d0141413
+bfc #d02c2c2c
+bbg #d02c2c2c
+jbg #141413
+jpfg #989898
+jsfg #6b6666
+pbg #141413
+pfg #91a2a2
+sbg #141413
+sfg #454545
+pbefg #d89e69
+pbfg #454545
+mlfg #b3c6c8
+tbfg #454545
+Psbg #20201f
+Psfg #393939
+Apfg #91a2a2
+Abfg #828282
+Lsbg #d0141413
+Lsfg #393939
+Lpbg #d0141413
+Lpfg #8b5b2e
+Labg #d020201f
+Labg #d0141413
+Lafg #91a2a2
+Lafg #d89e69
+
+#qb
+bg #20201f
+fg #393939
+sbg #141413
+sfg #d89e69
+mfg #6cc7c3
+sbbg #141413
+
+#term
+fg #acbfbf
+bg #ff141413
+
+#bash
+bg default
+fg #454545
+sc #454545
+dc #454545
+ic #6cc7c3
+sec #828282
+gcc #828282
+gdc #d89e69
+vc #b3c6c8
+
+#vim
+bg none
+fg #bbcbcb
+ifg #b3c6c8
+vfg #6cc7c3
+cfg #c6b86e
+ffg #828282
+sfg #d89e69
+nbg none
+nfg #2c2c2c
+lbg #20201f
+lfg #d89e69
+syfg #c6b86e
+cmfg #393939
+slbg #20201f
+slfg #393939
+fzfhl #d89e69
+bcbg #828282
+bdbg #d89e69
+nmbg #c6b86e
+imbg #828282
+vmbg #828282
+
+#rofi
+bg #1b1b1a
+tbg #f01b1b1a
+tbg #ea1b1b1a
+mbg #f0141413
+msbg #70272726
+fg #393939
+bc #828282
+ibg #1b1b1a
+ibc #2c2c2c
+abg #181817b0
+abg #08080855
+abg #08080866
+afg #454545
+ebg #1b1b1a
+efg #d89e69
+sbg #272726b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sfg #d89e69
+sul #d89e69
+lpc #acbfbf
+dpc #acbfbf
+btc #1b1b1a
+sbtc #1b1b1a
+btbc #1b1b1a
+ftbg #00000000
+
+#tmux
+bg terminal
+fg #393939
+bc #20201f
+mc #828282
+ibg #20201f
+ifg #393939
+sfg #393939
+wbg #20201f
+wfg #393939
+cbg #2c2c2c
+cfg #d89e69
+
+#dunst
+bg #20201f
+fg #acbfbf
+fc #828282
+sbg #141413
+pbfg #d89e69
+
+#vifm
+fg #454545
+dfg #2c2c2c
+efg #454545
+cbg #20201f
+cfg #d89e69
+sfg #20201f
+tfg #20201f
+slbg #20201f
+slfg #454545
+
+#ncmpcpp
+npp #454545
+np #454545
+sip #2c2c2c
+sc #2c2c2c
+mwc #2c2c2c
+etc #191e24
+c2 #DBBD7D
+pc #2c2c2c
+pec #d89e69
+vc #d89e69
+
+#sxiv
+bg #141413
+fg #d89e69
+
+#lock
+tc #ffacbfbf
+rc #ffd89e69
+ic #dc141413
+wc #ff989898
+
+#nb
+fg #2c2c2c
+pfg #20201f
+pbg default
+ifg #454545
+ibg #2c2c2c

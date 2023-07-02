@@ -1,11 +1,11 @@
 /* list config */
 
-@import "theme"
+@import "theme.rasi"
 
 * {
 	bg: @tbg;
 
-	font:                   "remix 13";
+	font:                   "material 13";
 
 	window-orientation:     vertical;
 
@@ -15,28 +15,34 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        26px 26px;
+	element-padding:        23px 23px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
 	window-location:        west;
-	window-padding:         5px 5px;
-	window-margin:          0 0 0 9px;
+	window-padding:         7px 7px;
+	window-margin:          0 7px;
 	window-radius:          5px;
-	window-height:          313.6px;
-	window-width:           89.07px;
+	window-width:           91px;
+
+	background-color: @ftbg;
+}
+
+configuration {
+	fixed-num-lines: false;
 }
 
 #window {
 	border:           0;
 	width:            @window-width;
-	height:           @window-height;
+	/*height:           @window-height;*/
 	margin:           @window-margin;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @window-padding;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
+	background-color: @tbg;
 }
 
 #horibox {
@@ -48,6 +54,7 @@
 	layout:      @window-orientation;
 	spacing:     @list-spacing;
 	lines:       0.260417;
+	/*background-color: argb:00000000;*/
 }
 
 #inputbar {
@@ -66,11 +73,12 @@
 #element {
 	padding:        @element-padding;
 	border-radius:  @element-radius;
+	background-color: inherit;
 }
 
 #element.normal.normal, element.alternate.normal {
 	text-color:       @fg;
-	background-color: @ebg;
+	background-color: inherit;
 }
 
 #element.selected.normal {

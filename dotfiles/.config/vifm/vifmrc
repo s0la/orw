@@ -244,16 +244,20 @@ fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.svg,*.xpm
         \ %pc
         \ image_preview clear
 
+" opening text files
+command! open termite -e "nvim %c:p" &> /dev/null &
+nnoremap o :open<cr>
+
 " smart splitting
 command! smartsplit smart_split "%a %f" &
 
-nnoremap ss :smartsplit<cr>
+nnoremap ss :smartsplit v:servername<cr>
 nnoremap sd :smartsplit OPEN_DIRECTORY<cr>
 nnoremap e :smartsplit view<cr>
 
 " adding music
 command! addsong add_music %f:p &
-command! adddirectory add_music %d:p &
+command! adddirectory add_music %c:p &
 
 nnoremap as :addsong<cr>
 nnoremap ad :adddirectory<cr>
@@ -418,19 +422,21 @@ set classify='::../::,:dir:'
 " set classify='  ::../::, :dir:/'
 " set classify=' ::../::, :dir:, :reg:, :exe:,'
 " set classify=' ::../::, :dir:, :reg:, :exe:,'
-set classify='  ::../::,  :dir:, :reg:, :exe:,'
+"set classify='  ::../::,  :dir:, :reg:, :exe:,'
+"set classify='  ::../::,'
+set classify='  ::../::,  :dir:,  :reg:,  :exe:,'
 
 " archives
 " set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
-set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
+"set classify+=' ::*.zip,,*.[bgrtx]z,,*.rar,,*.7z::'
 
 " images
 " set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
-set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
+"set classify+=' ::*.gif,,*.jpeg,,*.jpg,,*.ico,,*.png,,*.svg,,*.xbm,,*.xcf,,*.xpm::'
 
 " audio
 " set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
-set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
+"set classify+=' ::.flac,,*.m2a,,*.m4a,,*.mp3,,*.ogg,,*.wav,,*.wma,,*.ac3::'
 
 
 " ------------------------------------------------------------------------------
@@ -466,8 +472,8 @@ nnoremap S :sort<cr>
 nnoremap w :view<cr>
 vnoremap w :view<cr>gv
 
-" Open file in existing instance of gvim
-nnoremap o :!gvim --remote-tab-silent %f<cr>
+"" Open file in existing instance of gvim
+"nnoremap o :!gvim --remote-tab-silent %f<cr>
 " Open file in new instance of gvim
 nnoremap O :!nvim %f<cr>
 

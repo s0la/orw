@@ -1,0 +1,191 @@
+#ob
+t #888886
+tb #888886
+b #888886
+c #888886
+it #201811
+itb #201811
+ib #201811
+ic #201811
+cbt #9e9e9e
+mabt #9e9e9e
+mibt #9e9e9e
+cbth #71716a
+mabth #71716a
+mibth #71716a
+ibt #140f0a
+ibth #140f0a
+mbg #201811
+mfg #392c21
+mtbg #201811
+mtfg #453729
+msbg #2c2218
+msfg #c6a075
+mb #201811
+ms #201811
+bfg #201811
+bsfg #2c2218
+osd #201811
+osdh #c6a075
+osdu #2c2218
+s #71716a
+
+#bar
+bg #d02c2218
+fc #d02c2218
+bfc #d0201811
+bbg #d02c2218
+jbg #140f0a
+jpfg #9e9e9e
+jsfg #71716a
+pbg #140f0a
+pfg #a2a291
+sbg #140f0a
+sfg #453729
+pbefg #c6a075
+pbfg #453729
+mlfg #bababa
+tbfg #453729
+Psbg #201811
+Psfg #392c21
+Apfg #a2a291
+Abfg #888886
+Lsbg #d0201811
+Lsfg #392c21
+Lpbg #d0201811
+Lpfg #614f3e
+Labg #d02c2218
+Lafg #a2a291
+Lafg #c6a075
+
+#qb
+bg #201811
+fg #392c21
+sbg #140f0a
+sfg #c6a075
+mfg #acc8cd
+sbbg #140f0a
+
+#term
+fg #bfbfac
+bg #ff140f0a
+
+#bash
+bg default
+fg #453729
+sc #453729
+dc #453729
+ic #acc8cd
+sec #888886
+gcc #888886
+gdc #c6a075
+vc #bababa
+
+#vim
+bg none
+fg #cbcbbb
+ifg #bababa
+vfg #acc8cd
+cfg #e2cfa5
+ffg #888886
+sfg #c6a075
+nbg none
+nfg #2c2218
+lbg #201811
+lfg #c6a075
+syfg #e2cfa5
+cmfg #392c21
+slbg #201811
+slfg #392c21
+fzfhl #c6a075
+bcbg #9e9f9e
+bdbg #c6a075
+nmbg #e2cfa5
+imbg #888886
+vmbg #9e9f9e
+
+#rofi
+bg #1b140d
+tbg #f01b140d
+mbg #f0140f0a
+msbg #70271d13
+fg #392c21
+bc #888886
+ibg #1b140d
+ibc #2c2218
+abg #18120cb0
+abg #08080855
+afg #453729
+ebg #1b140d
+efg #c6a075
+sbg #271d13b0
+sbg #e0e0e00e
+sbg #eeeeee13
+sfg #c6a075
+sul #c6a075
+lpc #bfbfac
+dpc #bfbfac
+btc #1b140d
+sbtc #1b140d
+btbc #1b140d
+ftbg #00000000
+
+#tmux
+bg terminal
+fg #392c21
+bc #201811
+mc #9e9f9e
+ibg #201811
+ifg #392c21
+sfg #392c21
+wbg #201811
+wfg #392c21
+cbg #2c2218
+cfg #c6a075
+
+#dunst
+bg #201811
+fg #bfbfac
+fc #9e9f9e
+sbg #140f0a
+pbfg #c6a075
+
+#vifm
+fg #453729
+dfg #2c2218
+efg #453729
+cbg #201811
+cfg #c6a075
+sfg #201811
+tfg #201811
+slbg #201811
+slfg #453729
+
+#ncmpcpp
+npp #453729
+np #453729
+sip #2c2218
+sc #2c2218
+mwc #2c2218
+etc #191e24
+c2 #DBBD7D
+pc #2c2218
+pec #c6a075
+vc #c6a075
+
+#sxiv
+bg #140f0a
+fg #c6a075
+
+#lock
+tc #ffbfbfac
+rc #ffc6a075
+ic #dc140f0a
+wc #ff9e9e9e
+
+#nb
+fg #2c2218
+pfg #201811
+pbg default
+ifg #453729
+ibg #2c2218

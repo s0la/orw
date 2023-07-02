@@ -1,0 +1,214 @@
+# Configuration for Alacritty, the GPU enhanced terminal emulator.
+
+window:
+    opacity: 1.00
+
+    padding:
+        x: 25
+        y: 25
+    
+    dimensions:
+        columns: 120
+        lines: 30
+
+tabspaces: 4
+
+cursor:
+    style: Block
+    unfocused_hollow: false
+
+font:
+    size: 9
+
+    glyph_offset:
+        y: 0
+
+    normal:
+        style: Regular
+        family: Iosevka Orw
+
+colors:
+    primary:
+        background: '0x101314'
+        background: '0x101314'
+        foreground: '0xb0bfac'
+
+    normal:
+        black:   '0x494a4c'
+        red:     '0x785A5A'
+        green:   '0x807E60'
+        yellow:  '0xDBBD7D'
+        blue:    '0x4c5359'
+        magenta: '0x8C7681'
+        cyan:    '0x608985'
+        white:   '0x999999'
+
+    bright:
+        black:   '0x707070'
+        red:     '0xb2908a'
+        green:   '0xb5bc6d'
+        yellow:  '0x877f69'
+        blue:    '0x81a2be'
+        magenta: '0xcca8bb'
+        cyan:    '0x9FC2C2'
+        white:   '0xb0b0b0'
+
+    indexed_colors: [
+          { index: 16, color: "0xB3836B" },
+          { index: 17, color: "0x8fa398" },
+          { index: 18, color: "0x7FA891" },
+          { index: 19, color: "0x89b2a8" },
+          { index: 20, color: "0x807773" },
+          { index: 21, color: "0x5f6a73" },
+          { index: 22, color: "0x756367" },
+          { index: 23, color: "0xb2adae" },
+          { index: 24, color: "0x171a20" },
+          { index: 25, color: "0x21242c" },
+          { index: 26, color: "0x373b45" },
+          { index: 27, color: "0xd6a8a8" },
+          { index: 28, color: "0x1c2020" },
+          { index: 29, color: "0x282c2c" },
+          { index: 30, color: "0x424545" },
+          { index: 31, color: "0xb38363" },
+          { index: 32, color: "0x201a1a" },
+          { index: 33, color: "0x2c2525" },
+          { index: 34, color: "0x453d3d" },
+          { index: 35, color: "0xaf996a" },
+          { index: 36, color: "0x20201e" },
+          { index: 37, color: "0x2c2c2a" },
+          { index: 38, color: "0x454545" },
+          { index: 39, color: "0xcab19e" },
+          { index: 40, color: "0xd8c6b8" },
+          { index: 41, color: "0x20201c" },
+          { index: 42, color: "0x2c2c28" },
+          { index: 43, color: "0x454542" },
+          { index: 44, color: "0xdadfb5" },
+          { index: 45, color: "0x201d1c" },
+          { index: 46, color: "0x2c2928" },
+          { index: 47, color: "0x454342" },
+          { index: 48, color: "0xd59164" },
+          { index: 49, color: "0x201f1e" },
+          { index: 50, color: "0x2c2b2a" },
+          { index: 51, color: "0xd19564" },
+          { index: 52, color: "0x171c20" },
+          { index: 53, color: "0x21272c" },
+          { index: 54, color: "0x373f45" },
+          { index: 55, color: "0x779ccf" },
+          { index: 56, color: "0x12201f" },
+          { index: 57, color: "0x1a2c2b" },
+          { index: 58, color: "0x2c4544" },
+          { index: 59, color: "0x64c490" },
+          { index: 60, color: "0x192015" },
+          { index: 61, color: "0x232c1e" },
+          { index: 62, color: "0x394532" },
+          { index: 63, color: "0xa8cdca" },
+          { index: 64, color: "0x202020" },
+          { index: 65, color: "0x2c2c2c" },
+          { index: 66, color: "0xc1af9e" },
+          { index: 67, color: "0x191a20" },
+          { index: 68, color: "0x23252c" },
+          { index: 69, color: "0x3a3d45" },
+          { index: 70, color: "0xb6b5c3" },
+          { index: 71, color: "0xd3c1b3" },
+          { index: 72, color: "0x6188b2" },
+          { index: 73, color: "0x1e1e20" },
+          { index: 74, color: "0x2a2a2c" },
+          { index: 75, color: "0xedd563" },
+          { index: 76, color: "0x0f1a20" },
+          { index: 77, color: "0x15242c" },
+          { index: 78, color: "0x243a45" },
+          { index: 79, color: "0xc6b6ba" },
+          { index: 80, color: "0x191d20" },
+          { index: 81, color: "0x23282c" },
+          { index: 82, color: "0x3a4045" },
+          { index: 83, color: "0x60aad1" },
+          { index: 84, color: "0x1e2020" },
+          { index: 85, color: "0x2a2c2c" },
+          { index: 86, color: "0xe6ba5c" },
+          { index: 87, color: "0x9e8f80" },
+          { index: 88, color: "0x1a1f20" },
+          { index: 89, color: "0x252b2c" },
+          { index: 90, color: "0x3d4445" },
+          { index: 91, color: "0xc8a789" },
+          { index: 92, color: "0x121520" },
+          { index: 93, color: "0x1a1e2c" },
+          { index: 94, color: "0x2c3245" },
+          { index: 95, color: "0xca2d5e" },
+          { index: 96, color: "0x1f2020" },
+          { index: 97, color: "0xffaf50" },
+          { index: 98, color: "0x1f1f20" },
+          { index: 99, color: "0xcaced0" },
+          { index: 100, color: "0x1a1d20" },
+          { index: 101, color: "0x25292c" },
+          { index: 102, color: "0x3d4245" },
+          { index: 103, color: "0x6dbdee" },
+          { index: 104, color: "0x1f201f" },
+          { index: 105, color: "0xcca17e" },
+          { index: 106, color: "0xe98769" },
+          { index: 107, color: "0xe9695a" },
+          { index: 108, color: "0xcd8a75" },
+          { index: 109, color: "0x201f1c" },
+          { index: 110, color: "0x2c2b28" },
+          { index: 111, color: "0x454442" },
+          { index: 112, color: "0xe27c87" },
+          { index: 113, color: "0x20191a" },
+          { index: 114, color: "0x2c2325" },
+          { index: 115, color: "0x453a3d" },
+          { index: 116, color: "0xcecece" },
+          { index: 117, color: "0x201c0f" },
+          { index: 118, color: "0x2c2715" },
+          { index: 119, color: "0x453e24" },
+          { index: 120, color: "0xca9e62" },
+          { index: 121, color: "0x032020" },
+          { index: 122, color: "0x052c2c" },
+          { index: 123, color: "0x0b4545" },
+          { index: 124, color: "0x568ef0" },
+          { index: 125, color: "0x201c1c" },
+          { index: 126, color: "0x2c2828" },
+          { index: 127, color: "0x454242" },
+          { index: 128, color: "0xca545b" },
+          { index: 129, color: "0xca9a72" },
+          { index: 130, color: "0xffb379" },
+          { index: 131, color: "0x201212" },
+          { index: 132, color: "0x2c1a1a" },
+          { index: 133, color: "0x452c2c" },
+          { index: 134, color: "0xde6146" },
+          { index: 135, color: "0x172020" },
+          { index: 136, color: "0x212c2c" },
+          { index: 137, color: "0x374545" },
+          { index: 138, color: "0xc1939c" },
+          { index: 139, color: "0xc49e64" },
+          { index: 140, color: "0x121720" },
+          { index: 141, color: "0x1a202c" },
+          { index: 142, color: "0x2c3445" },
+          { index: 143, color: "0xcb7462" },
+          { index: 144, color: "0xc49260" },
+          { index: 145, color: "0x1d201a" },
+          { index: 146, color: "0x292c25" },
+          { index: 147, color: "0x42453d" },
+          { index: 148, color: "0xff3541" },
+          { index: 149, color: "0x8d9ca0" },
+          { index: 150, color: "0x20201f" },
+          { index: 151, color: "0x977e66" },
+          { index: 152, color: "0x191f20" },
+          { index: 153, color: "0x232b2c" },
+          { index: 154, color: "0x3a4445" },
+          { index: 155, color: "0xcb9268" },
+          { index: 156, color: "0x201c20" },
+          { index: 157, color: "0x2c282c" },
+          { index: 158, color: "0x454245" },
+          { index: 159, color: "0x65d6e4" },
+          { index: 160, color: "0x151c20" },
+          { index: 161, color: "0x1e272c" },
+          { index: 162, color: "0x323e45" },
+          { index: 163, color: "0xddc17c" },
+          { index: 164, color: "0x071720" },
+          { index: 165, color: "0x0a202c" },
+          { index: 166, color: "0x133345" },
+          { index: 167, color: "0x37b3ff" },
+          { index: 168, color: "0xaaa189" },
+          { index: 169, color: "0x1c1c20" },
+          { index: 170, color: "0x28282c" },
+          { index: 171, color: "0x424245" },
+          { index: 172, color: "0xe34e68" }
+        ]

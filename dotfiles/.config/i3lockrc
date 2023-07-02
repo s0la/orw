@@ -1,12 +1,11 @@
-#colors
-tc=b0b0b0ff
-rc=87a79eff
-ic=121315dc
-wc=6D4E48ff
+tc=b0bfacff
+rc=c8a789ff
+ic=101314dc
+wc=646e80ff
 
 blur=6
 width=7
-delta=55
+delta=35
 radius=125
 datesize=13
 timesize=28

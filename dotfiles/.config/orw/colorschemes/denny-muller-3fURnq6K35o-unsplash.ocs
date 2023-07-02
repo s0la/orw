@@ -1,0 +1,185 @@
+#ob
+t #5a525a
+tb #5a525a
+b #5a525a
+c #5a525a
+it #20201f
+itb #20201f
+ib #20201f
+ic #20201f
+cbt #706b70
+mabt #706b70
+mibt #706b70
+cbth #433a43
+mabth #433a43
+mibth #433a43
+ibt #141413
+ibth #141413
+mbg #20201f
+mfg #393939
+mtbg #20201f
+mtfg #454545
+msbg #2c2c2c
+msfg #ffae3f
+mb #20201f
+ms #20201f
+bfg #20201f
+bsfg #2c2c2c
+osd #20201f
+osdh #ffae3f
+osdu #2c2c2c
+s #433a43
+
+#bar
+bg #383838
+fc #383838
+bfc #141413
+bbg #383838
+jbg #141413
+jpfg #706b70
+jsfg #433a43
+pbg #141413
+pfg #9e91a2
+sbg #141413
+sfg #454545
+pbefg #ffae3f
+pbfg #454545
+mlfg #eb9a5d
+tbfg #454545
+Psbg #20201f
+Psfg #393939
+Apfg #eb9a5d
+Lsfg #393939
+Lpbg #20201f
+Lpfg #454545
+Labg #282827
+Lafg #9e91a2
+Lfc #ffae3f
+
+#qb
+bg #20201f
+fg #393939
+sbg #141413
+sfg #ffae3f
+mfg #9a959c
+sbbg #141413
+
+#term
+fg #baacbf
+bg #ff141413
+
+#bash
+bg default
+fg #454545
+sc #454545
+dc #454545
+ic #9a959c
+sec #5a525a
+gcc #5a525a
+gdc #ffae3f
+vc #eb9a5d
+
+#vim
+bg none
+fg #c7bbcb
+ifg #eb9a5d
+vfg #9a959c
+cfg #c1a2a0
+ffg #5a525a
+sfg #ffae3f
+nbg none
+nfg #2c2c2c
+lbg #20201f
+lfg #ffae3f
+syfg #c1a2a0
+cmfg #393939
+slbg #20201f
+slfg #393939
+fzfhl #ffae3f
+bcbg #5c5d5a
+bdbg #ffae3f
+nmbg #c1a2a0
+imbg #5a525a
+vmbg #5c5d5a
+
+#rofi
+bg #1b1b1a
+tbg #001b1b1a
+mbg #f0141413
+msbg #70252524
+fg #393939
+bc #5a525a
+ibg #1b1b1a
+ibc #2c2c2c
+abg #141413
+afg #454545
+ebg #1b1b1a
+efg #ffae3f
+sbg #252524
+sfg #ffae3f
+sul #ffae3f
+lpc #baacbf
+dpc #baacbf
+btc #1b1b1a
+sbtc #1b1b1a
+btbc #1b1b1a
+
+#tmux
+bg terminal
+fg #393939
+bc #20201f
+mc #5c5d5a
+ibg #20201f
+ifg #393939
+sfg #393939
+wbg #20201f
+wfg #393939
+cbg #2c2c2c
+cfg #ffae3f
+
+#dunst
+bg #20201f
+fg #baacbf
+fc #5c5d5a
+sbg #141413
+pbfg #ffae3f
+
+#vifm
+fg #454545
+dfg #2c2c2c
+efg #454545
+cbg #20201f
+cfg #ffae3f
+sfg #20201f
+tfg #20201f
+slbg #20201f
+slfg #454545
+
+#ncmpcpp
+npp #454545
+np #454545
+sip #2c2c2c
+sc #2c2c2c
+mwc #2c2c2c
+etc #191e24
+c2 #DBBD7D
+pc #2c2c2c
+pec #ffae3f
+vc #ffae3f
+
+#sxiv
+bg #141413
+fg #ffae3f
+
+#lock
+tc #ffbaacbf
+rc #ffffae3f
+ic #dc141413
+wc #ff706b70
+
+#nb
+fg #2c2c2c
+pfg #20201f
+pbg default
+ifg #454545
+ibg #2c2c2c

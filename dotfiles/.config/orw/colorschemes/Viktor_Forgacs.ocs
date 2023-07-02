@@ -1,0 +1,186 @@
+#ob
+t #83aeb5
+tb #83aeb5
+b #83aeb5
+c #83aeb5
+it #151f20
+itb #151f20
+ib #151f20
+ic #151f20
+cbt #9bc5cb
+mabt #9bc5cb
+mibt #9bc5cb
+cbth #6c979e
+mabth #6c979e
+mibth #6c979e
+ibt #0d1314
+ibth #0d1314
+mbg #151f20
+mfg #283739
+mtbg #151f20
+mtfg #324445
+msbg #1e2b2c
+msfg #97c4d3
+mb #151f20
+ms #151f20
+bfg #151f20
+bsfg #1e2b2c
+osd #151f20
+osdh #97c4d3
+osdu #1e2b2c
+s #6c979e
+
+#bar
+bg #dd273738
+fc #dd273738
+bfc #0d1314
+bbg #dd273738
+jbg #0d1314
+jpfg #9bc5cb
+jsfg #6c979e
+pbg #0d1314
+pfg #97a291
+sbg #0d1314
+sfg #324445
+pbefg #97c4d3
+pbfg #324445
+mlfg #b5c3d3
+tbfg #324445
+Psbg #151f20
+Psfg #283739
+Apfg #97a291
+Abfg #83aeb5
+Lsfg #283739
+Lpbg #151f20
+Lpfg #324445
+Labg #1b2628
+Lafg #97a291
+Lfc #97c4d3
+
+#qb
+bg #151f20
+fg #283739
+sbg #0d1314
+sfg #97c4d3
+mfg #e4b8cc
+sbbg #0d1314
+
+#term
+fg #b3bfac
+bg #ff0d1314
+
+#bash
+bg default
+fg #324445
+sc #324445
+dc #324445
+ic #e4b8cc
+sec #83aeb5
+gcc #83aeb5
+gdc #97c4d3
+vc #b5c3d3
+
+#vim
+bg none
+fg #c1cbbb
+ifg #b5c3d3
+vfg #e4b8cc
+cfg #e1d1c2
+ffg #83aeb5
+sfg #97c4d3
+nbg none
+nfg #1e2b2c
+lbg #151f20
+lfg #97c4d3
+syfg #e1d1c2
+cmfg #283739
+slbg #151f20
+slfg #283739
+fzfhl #97c4d3
+bcbg #bec6c6
+bdbg #97c4d3
+nmbg #e1d1c2
+imbg #83aeb5
+vmbg #bec6c6
+
+#rofi
+bg #121a1b
+tbg #00121a1b
+mbg #f00d1314
+msbg #701a2627
+fg #283739
+bc #83aeb5
+ibg #121a1b
+ibc #1e2b2c
+abg #0d1515
+afg #324445
+ebg #121a1b
+efg #97c4d3
+sbg #1a2627
+sfg #97c4d3
+sul #97c4d3
+lpc #b3bfac
+dpc #b3bfac
+btc #121a1b
+sbtc #121a1b
+btbc #121a1b
+
+#tmux
+bg terminal
+fg #283739
+bc #151f20
+mc #bec6c6
+ibg #151f20
+ifg #283739
+sfg #283739
+wbg #151f20
+wfg #283739
+cbg #1e2b2c
+cfg #97c4d3
+
+#dunst
+bg #151f20
+fg #b3bfac
+fc #bec6c6
+sbg #0d1314
+pbfg #97c4d3
+
+#vifm
+fg #324445
+dfg #1e2b2c
+efg #324445
+cbg #151f20
+cfg #97c4d3
+sfg #151f20
+tfg #151f20
+slbg #151f20
+slfg #324445
+
+#ncmpcpp
+npp #324445
+np #324445
+sip #1e2b2c
+sc #1e2b2c
+mwc #1e2b2c
+etc #191e24
+c2 #DBBD7D
+pc #1e2b2c
+pec #97c4d3
+vc #97c4d3
+
+#sxiv
+bg #0d1314
+fg #97c4d3
+
+#lock
+tc #ffb3bfac
+rc #ff97c4d3
+ic #dc0d1314
+wc #ff9bc5cb
+
+#nb
+fg #1e2b2c
+pfg #151f20
+pbg default
+ifg #324445
+ibg #1e2b2c

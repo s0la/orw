@@ -1,0 +1,185 @@
+#ob
+t #555264
+tb #555264
+b #555264
+c #555264
+it #151420
+itb #151420
+ib #151420
+ic #151420
+cbt #6c697a
+mabt #6c697a
+mibt #6c697a
+cbth #3e3c4d
+mabth #3e3c4d
+mibth #3e3c4d
+ibt #0d0c14
+ibth #0d0c14
+mbg #151420
+mfg #282639
+mtbg #151420
+mtfg #322f45
+msbg #1e1c2c
+msfg #cabaa7
+mb #151420
+ms #151420
+bfg #151420
+bsfg #1e1c2c
+osd #151420
+osdh #cabaa7
+osdu #1e1c2c
+s #3e3c4d
+
+#bar
+bg #272438
+fc #272438
+bfc #0d0c14
+bbg #272438
+jbg #0d0c14
+jpfg #6c697a
+jsfg #3e3c4d
+pbg #0d0c14
+pfg #9191a2
+sbg #0d0c14
+sfg #322f45
+pbefg #cabaa7
+pbfg #322f45
+mlfg #bfb0a8
+tbfg #322f45
+Psbg #151420
+Psfg #282639
+Apfg #bfb0a8
+Lsfg #1b1928
+Lpbg #151420
+Lpfg #322f45
+Labg #1b1928
+Lafg #9191a2
+Lfc #cabaa7
+
+#qb
+bg #151420
+fg #282639
+sbg #0d0c14
+sfg #cabaa7
+mfg #a8869e
+sbbg #0d0c14
+
+#term
+fg #acacbf
+bg #ff0d0c14
+
+#bash
+bg default
+fg #322f45
+sc #322f45
+dc #322f45
+ic #a8869e
+sec #555264
+gcc #555264
+gdc #cabaa7
+vc #bfb0a8
+
+#vim
+bg none
+fg #bbbbcb
+ifg #bfb0a8
+vfg #a8869e
+cfg #86a1a8
+ffg #555264
+sfg #cabaa7
+nbg none
+nfg #1e1c2c
+lbg #151420
+lfg #cabaa7
+syfg #86a1a8
+cmfg #282639
+slbg #151420
+slfg #282639
+fzfhl #cabaa7
+bcbg #696272
+bdbg #cabaa7
+nmbg #86a1a8
+imbg #555264
+vmbg #696272
+
+#rofi
+bg #12101b
+tbg #0012101b
+mbg #f00d0c14
+msbg #70181725
+fg #282639
+bc #555264
+ibg #12101b
+ibc #1e1c2c
+abg #0d0c14
+afg #322f45
+ebg #12101b
+efg #cabaa7
+sbg #181725
+sfg #cabaa7
+sul #cabaa7
+lpc #acacbf
+dpc #acacbf
+btc #12101b
+sbtc #12101b
+btbc #12101b
+
+#tmux
+bg terminal
+fg #282639
+bc #151420
+mc #696272
+ibg #151420
+ifg #282639
+sfg #282639
+wbg #151420
+wfg #282639
+cbg #1e1c2c
+cfg #cabaa7
+
+#dunst
+bg #151420
+fg #acacbf
+fc #696272
+sbg #0d0c14
+pbfg #cabaa7
+
+#vifm
+fg #322f45
+dfg #1e1c2c
+efg #322f45
+cbg #151420
+cfg #cabaa7
+sfg #151420
+tfg #151420
+slbg #151420
+slfg #322f45
+
+#ncmpcpp
+npp #322f45
+np #322f45
+sip #1e1c2c
+sc #1e1c2c
+mwc #1e1c2c
+etc #191e24
+c2 #DBBD7D
+pc #1e1c2c
+pec #cabaa7
+vc #cabaa7
+
+#sxiv
+bg #0d0c14
+fg #cabaa7
+
+#lock
+tc #ffacacbf
+rc #ffcabaa7
+ic #dc0d0c14
+wc #ff6c697a
+
+#nb
+fg #1e1c2c
+pfg #151420
+pbg default
+ifg #322f45
+ibg #1e1c2c

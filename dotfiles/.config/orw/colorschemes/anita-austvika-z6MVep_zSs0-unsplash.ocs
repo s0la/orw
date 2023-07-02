@@ -1,0 +1,200 @@
+#ob
+t #726269
+tb #726269
+b #726269
+c #726269
+it #20191a
+itb #20191a
+ib #20191a
+ic #20191a
+cbt #887b81
+mabt #887b81
+mibt #887b81
+cbth #5b4a51
+mabth #5b4a51
+mibth #5b4a51
+ibt #140f10
+ibth #140f10
+mbg #20191a
+mfg #392f31
+mtbg #20191a
+mtfg #453a3d
+msbg #2c2325
+msfg #cecece
+mb #20191a
+ms #20191a
+bfg #20191a
+bsfg #2c2325
+osd #20191a
+osdh #cecece
+osdu #2c2325
+s #5b4a51
+
+#bar
+bg #2c2325
+fc #2c2325
+bfc #d0140f10
+bfc #2c2325
+bbg #2c2325
+jbg #140f10
+jpfg #887b81
+jsfg #5b4a51
+pbg #140f10
+pfg #9891a2
+sbg #140f10
+sfg #453a3d
+pbefg #cecece
+pbfg #453a3d
+mlfg #838891
+tbfg #453a3d
+Psbg #20191a
+Psfg #392f31
+Apfg #9891a2
+Abfg #726269
+Lsbg #d0140f10
+Lsfg #392f31
+Lpbg #d0140f10
+Lpfg #816e6e
+Labg #d020191a
+Labg #d0140f10
+Lafg #9891a2
+Lafg #cecece
+
+#qb
+bg #20191a
+fg #392f31
+sbg #140f10
+sfg #cecece
+mfg #a07e8a
+sbbg #140f10
+
+#term
+fg #b4acbf
+bg #ff140f10
+
+#bash
+bg default
+fg #453a3d
+sc #453a3d
+dc #453a3d
+ic #a07e8a
+sec #726269
+gcc #726269
+gdc #cecece
+vc #838891
+
+#vim
+bg none
+fg #c2bbcb
+ifg #838891
+vfg #a07e8a
+cfg #859aaa
+ffg #726269
+sfg #cecece
+nbg none
+nfg #2c2325
+lbg #20191a
+lfg #cecece
+syfg #859aaa
+cmfg #392f31
+slbg #20191a
+slfg #392f31
+fzfhl #cecece
+bcbg #726269
+bdbg #cecece
+nmbg #859aaa
+imbg #726269
+vmbg #726269
+
+#rofi
+bg #1b1416
+tbg #f01b1416
+tbg #ea1b1416
+mbg #f0140f10
+msbg #70271d20
+fg #392f31
+bc #726269
+bc #1b1416
+ibg #1b1416
+ibc #2c2325
+ibc #1b1416
+abg #181213b0
+abg #08080855
+abg #08080866
+afg #453a3d
+ebg #1b1416
+efg #cecece
+sbg #271d20b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sfg #cecece
+sul #cecece
+lpc #b4acbf
+dpc #b4acbf
+btc #1b1416
+sbtc #1b1416
+btbc #1b1416
+ftbg #00000000
+sbbg #cececebb
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #392f31
+bc #20191a
+mc #726269
+ibg #20191a
+ifg #392f31
+sfg #392f31
+wbg #20191a
+wfg #392f31
+cbg #2c2325
+cfg #cecece
+
+#dunst
+bg #20191a
+fg #b4acbf
+fc #726269
+sbg #140f10
+pbfg #cecece
+
+#vifm
+fg #453a3d
+dfg #2c2325
+efg #453a3d
+cbg #20191a
+cfg #cecece
+sfg #20191a
+tfg #20191a
+slbg #20191a
+slfg #453a3d
+
+#ncmpcpp
+npp #453a3d
+np #453a3d
+sip #2c2325
+sc #2c2325
+mwc #2c2325
+etc #191e24
+c2 #DBBD7D
+pc #2c2325
+pec #cecece
+vc #cecece
+
+#sxiv
+bg #140f10
+fg #cecece
+
+#lock
+tc #ffb4acbf
+rc #ffcecece
+ic #dc140f10
+wc #ff887b81
+
+#nb
+fg #2c2325
+pfg #20191a
+pbg default
+ifg #453a3d
+ibg #2c2325

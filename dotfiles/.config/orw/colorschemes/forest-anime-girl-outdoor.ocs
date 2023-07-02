@@ -1,0 +1,178 @@
+t #905679
+tb #905679
+b #905679
+c #905679
+it #20191f
+itb #20191f
+ib #20191f
+ic #20191f
+cbt #a96d91
+mabt #a96d91
+mibt #a96d91
+cbth #7e4768
+mabth #7e4768
+mibth #7e4768
+ibt #140f13
+ibth #140f13
+mbg #20191f
+mfg #392f38
+mtbg #20191f
+mtfg #453a44
+msbg #2c232b
+msfg #e2cab8
+mb #20191f
+ms #20191f
+bfg #20191f
+bsfg #2c232b
+osd #20191f
+osdh #e2cab8
+osdu #2c232b
+s #7e4768
+
+#bar
+bg #002c232b
+fc #905679
+bfc #140f13
+bbg #2c232b
+jbg #140f13
+jpfg #a96d91
+jsfg #7e4768
+pbg #140f13
+pfg #9e91a2
+sbg #140f13
+sfg #453a44
+pbefg #e2cab8
+pbfg #453a44
+mlfg #b291ac
+tbfg #453a44
+Psbg #20191f
+Psfg #392f38
+Apfg #b291ac
+Lsfg #281f26
+Lpbg #20191f
+Lpfg #453a44
+Labg #281f26
+Lafg #9e91a2
+Lfc #a96d91
+
+#qb
+bg #20191f
+fg #392f38
+sbg #140f13
+sfg #e2cab8
+mfg #caacd8
+sbbg #140f13
+
+#term
+fg #baacbf
+bg #140f13
+
+#bash
+bg default
+fg #453a44
+sc #453a44
+dc #2c232b
+ic #cda5a7
+sec #baacbf
+gcc #baacbf
+gdc #e2cab8
+vc #b291ac
+
+#vim
+bg none
+fg #c7bbcb
+ifg #b291ac
+vfg #caacd8
+cfg #cda5a7
+ffg #905679
+sfg #e2cab8
+nbg none
+nfg #2c232b
+lbg #20191f
+lfg #e2cab8
+syfg #cda5a7
+cmfg #392f38
+slbg #20191f
+slfg #392f38
+fzfhl #e2cab8
+bcbg #6e526b
+bdbg #e2cab8
+nmbg #cda5a7
+imbg #905679
+vmbg #6e526b
+
+#rofi
+bg #1b151a
+tbg #001b151a
+mbg #f0140f13
+msbg #70251d23
+fg #392f38
+bc #905679
+ibg #1b151a
+ibc #2c232b
+abg #140f13
+afg #453a44
+ebg #1b151a
+efg #e2cab8
+sbg #251d23
+sfg #e2cab8
+sul #e2cab8
+lpc #baacbf
+dpc #baacbf
+btc #1b151a
+sbtc #1b151a
+btbc #1b151a
+ 
+#tmux 
+bg terminal
+fg #392f38
+bc #20191f
+mc #6e526b
+ibg #20191f
+ifg #392f38
+sfg #392f38
+wbg #20191f
+wfg #392f38
+cbg #2c232b
+cfg #e2cab8
+ 
+#dunst 
+bg #20191f
+fg #baacbf
+fc #6e526b
+sbg #140f13
+pbfg #e2cab8
+
+#vifm
+fg #453a44
+dfg #2c232b
+efg #453a44
+cbg #20191f
+cfg #e2cab8
+sfg #20191f
+tfg #20191f
+slbg #20191f
+slfg #453a44
+
+#ncmpcpp
+npp #453a44
+np #453a44
+sip #2c232b
+sc #2c232b
+mwc #2c232b
+etc #191e24
+c2 #DBBD7D
+pc #2c232b
+pec #e2cab8
+vc #e2cab8
+
+#sxiv
+bg #140f13
+fg #e2cab8
+
+#nb
+fg #2c232b
+pfg #20191f
+pbg default
+ifg #453a44
+ibg #2c232b

@@ -1,0 +1,185 @@
+#ob
+t #555555
+tb #555555
+b #555555
+c #555555
+it #1d1d1d
+itb #1d1d1d
+ib #1d1d1d
+ic #1d1d1d
+cbt #c3c3c3
+mabt #c3c3c3
+mibt #c3c3c3
+cbth #898989
+mabth #898989
+mibth #898989
+ibt #111111
+ibth #111111
+mbg #1d1d1d
+mfg #363636
+mtbg #1d1d1d
+mtfg #424242
+msbg #292929
+msfg #a1be8f
+mb #1d1d1d
+ms #1d1d1d
+bfg #1d1d1d
+bsfg #292929
+osd #1d1d1d
+osdh #a1be8f
+osdu #292929
+s #898989
+
+#bar
+bg #353535
+fc #353535
+bfc #111111
+bbg #353535
+jbg #111111
+jpfg #c3c3c3
+jsfg #898989
+pbg #111111
+pfg #8d8c8c
+sbg #111111
+sfg #424242
+pbefg #a1be8f
+pbfg #424242
+mlfg #7f7f7f
+tbfg #424242
+Psbg #1d1d1d
+Psfg #363636
+Apfg #7f7f7f
+Lsfg #252525
+Lpbg #1d1d1d
+Lpfg #424242
+Labg #252525
+Lafg #8d8c8c
+Lfc #a1be8f
+
+#qb
+bg #1d1d1d
+fg #363636
+sbg #111111
+sfg #a1be8f
+mfg #505050
+sbbg #111111
+
+#term
+fg #aaaaaa
+bg #ff111111
+
+#bash
+bg default
+fg #424242
+sc #424242
+dc #424242
+ic #505050
+sec #555555
+gcc #555555
+gdc #a1be8f
+vc #7f7f7f
+
+#vim
+bg none
+fg #aaaaaa
+ifg #7f7f7f
+vfg #505050
+cfg #e9e9e9
+ffg #555555
+sfg #a1be8f
+nbg none
+nfg #292929
+lbg #1d1d1d
+lfg #a1be8f
+syfg #e9e9e9
+cmfg #363636
+slbg #1d1d1d
+slfg #363636
+fzfhl #a1be8f
+bcbg '
+bdbg #a1be8f
+nmbg #e9e9e9
+imbg #555555
+vmbg '
+
+#rofi
+bg #181818
+tbg #00181818
+mbg #f0111111
+msbg #70222222
+fg #363636
+bc #555555
+ibg #181818
+ibc #292929
+abg #111111
+afg #424242
+ebg #181818
+efg #a1be8f
+sbg #222222
+sfg #a1be8f
+sul #a1be8f
+lpc #aaaaaa
+dpc #aaaaaa
+btc #181818
+sbtc #181818
+btbc #181818
+
+#tmux
+bg terminal
+fg #363636
+bc #1d1d1d
+mc 
+ibg #1d1d1d
+ifg #363636
+sfg #363636
+wbg #1d1d1d
+wfg #363636
+cbg #292929
+cfg #a1be8f
+
+#dunst
+bg #1d1d1d
+fg #aaaaaa
+fc 
+sbg #111111
+pbfg #a1be8f
+
+#vifm
+fg #424242
+dfg #292929
+efg #424242
+cbg #1d1d1d
+cfg #a1be8f
+sfg #1d1d1d
+tfg #1d1d1d
+slbg #1d1d1d
+slfg #424242
+
+#ncmpcpp
+npp #424242
+np #424242
+sip #292929
+sc #292929
+mwc #292929
+etc #191e24
+c2 #DBBD7D
+pc #292929
+pec #a1be8f
+vc #a1be8f
+
+#sxiv
+bg #111111
+fg #a1be8f
+
+#lock
+tc #ffaaaaaa
+rc #ffa1be8f
+ic #dc111111
+wc #ffc3c3c3
+
+#nb
+fg #292929
+pfg #1d1d1d
+pbg default
+ifg #424242
+ibg #292929

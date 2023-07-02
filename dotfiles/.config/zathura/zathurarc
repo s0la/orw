@@ -1,0 +1,17 @@
+set recolor   
+set recolor-lightcolor          "#101314"
+set recolor-darkcolor           "#b0bfac"
+set recolor-keephue
+
+set default-fg                  "#b0bfac"
+set default-bg                  "#101314"
+
+set completion-bg               "#101314"
+set completion-fg               "#b0bfac"
+set completion-highlight-bg     ""
+set completion-highlight-fg     "#101314"
+set completion-group-bg         "#101314"
+set completion-group-fg         "#b0bfac"
+
+set statusbar-fg                "#3d4445"
+set statusbar-bg                "#1a1f20"

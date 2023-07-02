@@ -1,0 +1,186 @@
+#ob
+t #864d84
+tb #864d84
+b #864d84
+c #864d84
+it #070720
+itb #070720
+ib #070720
+ic #070720
+cbt #9c609a
+mabt #9c609a
+mibt #9c609a
+cbth #6f3b6d
+mabth #6f3b6d
+mibth #6f3b6d
+ibt #040414
+ibth #040414
+mbg #070720
+mfg #0f0f39
+mtbg #070720
+mtfg #131345
+msbg #0a0a2c
+msfg #d34574
+mb #070720
+ms #070720
+bfg #070720
+bsfg #0a0a2c
+osd #070720
+osdh #d34574
+osdu #0a0a2c
+s #6f3b6d
+
+#bar
+bg #dd0d0d38
+fc #dd0d0d38
+bfc #040414
+bbg #dd0d0d38
+jbg #040414
+jpfg #9c609a
+jsfg #6f3b6d
+pbg #040414
+pfg #9196a2
+sbg #040414
+sfg #131345
+pbefg #d34574
+pbfg #131345
+mlfg #986086
+tbfg #131345
+Psbg #070720
+Psfg #0f0f39
+Apfg #9196a2
+Abfg #864d84
+Lsfg #0f0f39
+Lpbg #070720
+Lpfg #131345
+Labg #090928
+Lafg #9196a2
+Lfc #d34574
+
+#qb
+bg #070720
+fg #0f0f39
+sbg #040414
+sfg #d34574
+mfg #626281
+sbbg #040414
+
+#term
+fg #acb2bf
+bg #ff040414
+
+#bash
+bg default
+fg #131345
+sc #131345
+dc #131345
+ic #626281
+sec #864d84
+gcc #864d84
+gdc #d34574
+vc #986086
+
+#vim
+bg none
+fg #bbc0cb
+ifg #986086
+vfg #626281
+cfg #ca8cae
+ffg #864d84
+sfg #d34574
+nbg none
+nfg #0a0a2c
+lbg #070720
+lfg #d34574
+syfg #ca8cae
+cmfg #0f0f39
+slbg #070720
+slfg #0f0f39
+fzfhl #d34574
+bcbg #4379c2
+bdbg #d34574
+nmbg #ca8cae
+imbg #864d84
+vmbg #4379c2
+
+#rofi
+bg #05051b
+tbg #0005051b
+mbg #f0040414
+msbg #70090927
+fg #0f0f39
+bc #864d84
+ibg #05051b
+ibc #0a0a2c
+abg #040415
+afg #131345
+ebg #05051b
+efg #d34574
+sbg #090927
+sfg #d34574
+sul #d34574
+lpc #acb2bf
+dpc #acb2bf
+btc #05051b
+sbtc #05051b
+btbc #05051b
+
+#tmux
+bg terminal
+fg #0f0f39
+bc #070720
+mc #4379c2
+ibg #070720
+ifg #0f0f39
+sfg #0f0f39
+wbg #070720
+wfg #0f0f39
+cbg #0a0a2c
+cfg #d34574
+
+#dunst
+bg #070720
+fg #acb2bf
+fc #4379c2
+sbg #040414
+pbfg #d34574
+
+#vifm
+fg #131345
+dfg #0a0a2c
+efg #131345
+cbg #070720
+cfg #d34574
+sfg #070720
+tfg #070720
+slbg #070720
+slfg #131345
+
+#ncmpcpp
+npp #131345
+np #131345
+sip #0a0a2c
+sc #0a0a2c
+mwc #0a0a2c
+etc #191e24
+c2 #DBBD7D
+pc #0a0a2c
+pec #d34574
+vc #d34574
+
+#sxiv
+bg #040414
+fg #d34574
+
+#lock
+tc #ffacb2bf
+rc #ffd34574
+ic #dc040414
+wc #ff9c609a
+
+#nb
+fg #0a0a2c
+pfg #070720
+pbg default
+ifg #131345
+ibg #0a0a2c

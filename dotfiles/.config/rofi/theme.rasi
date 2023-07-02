@@ -1,28 +1,37 @@
 /* color definition */
 
 * {
-	bg: #0e171c;
-	tbg: argb:000e171c;
-	fg: #262f34;
-	bc: #0e171c;
-
-	ibg: #0e171c;
-	ibc: #d0958f;
-
-	abg: #0c151a;
-	afg: #293237;
-
-	ebg: #060f14;
-	efg: #e8d1a9;
-	sbg: #131c21;
-	sfg: #e8d1a9;
-	sul: #87a79e;
-
-	lpc: #262f34;
-	dpc: #725d43;
-	btc: #0e171c;
-	sbtc: #0e171c;
-	btbc: #0e171c;
+	bg: #161a1b;
+	tbg: argb:f0161a1b;
+	tbg: argb:ea161a1b;
+	mbg: argb:f0101314;
+	msbg: argb:70202627;
+	fg: #313839;
+	bc: #4e586a;
+	bc: #161a1b;
+	ibg: #161a1b;
+	ibc: #252b2c;
+	ibc: #161a1b;
+	abg: #131718b0;
+	abg: #08080855;
+	abg: #08080866;
+	afg: #3d4445;
+	ebg: #161a1b;
+	efg: #c8a789;
+	sbg: #202627b0;
+	sbg: #e0e0e00e;
+	sbg: #fafafa0a;
+	sbg: #eeeeee0a;
+	sfg: #c8a789;
+	sul: #c8a789;
+	lpc: #b0bfac;
+	dpc: #b0bfac;
+	btc: #161a1b;
+	sbtc: #161a1b;
+	btbc: #161a1b;
+	ftbg: #00000000;
+	sbbg: #c8a789bb;
+	sbsbg: #11111144;
 
 	background-color: @bg;
 
@@ -30,6 +39,8 @@
 
 	window-border: 2px;
 	input-border:  0 0 2px;
+
+	highlight:     bold;
 }
 
 #window {
@@ -38,27 +49,40 @@
 }
 
 #element.normal.normal, element.urgent.normal, element.alternate.normal, element.alternate.urgent {
-	text-color:       @fg;
 	background-color: @bg;
 }
 
+#element-text normal.normal, element-text urgent.normal, element-text alternate.normal, element-text alternate.urgent {
+	text-color:       @fg;
+}
+
 #element.normal.active, element.alternate.active {
-	text-color:       @bg;
-	background-color: @fg;
-	text-color:       @afg;
 	background-color: @abg;
 }
 
+#element-text normal.active, element-text alternate.active {
+	text-color:       @afg;
+	background-color: @ftbg;
+}
+
 #element.selected.normal {
-	text-color:       @sfg;
 	border-color:     @sul;
 	background-color: @sbg;
 }
 
-#element.selected.active {
+#element-text selected.normal {
 	text-color:       @sfg;
+	background-color: @ftbg;
+}
+
+#element.selected.active {
 	border-color:     @sul;
 	background-color: @abg;
+}
+
+#element-text selected.active {
+	text-color:       @sfg;
+	background-color: @ftbg;
 }
 
 #inputbar {
@@ -80,7 +104,7 @@
 
 #sidebar {
 	margin: 10px 0 0 0;
-	border: @border;
+	border: @window-border;
 	border-color: @btbc;
 }
 

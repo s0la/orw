@@ -1,0 +1,186 @@
+#ob
+t #5e61a4
+tb #5e61a4
+b #5e61a4
+c #5e61a4
+it #070f20
+itb #070f20
+ib #070f20
+ic #070f20
+cbt #7275ba
+mabt #7275ba
+mibt #7275ba
+cbth #4b4e8d
+mabth #4b4e8d
+mibth #4b4e8d
+ibt #040914
+ibth #040914
+mbg #070f20
+mfg #0f1c39
+mtbg #070f20
+mtfg #132345
+msbg #0a152c
+msfg #f28c70
+mb #070f20
+ms #070f20
+bfg #070f20
+bsfg #0a152c
+osd #070f20
+osdh #f28c70
+osdu #0a152c
+s #4b4e8d
+
+#bar
+bg #dd0d1b38
+fc #dd0d1b38
+bfc #040914
+bbg #dd0d1b38
+jbg #040914
+jpfg #7275ba
+jsfg #4b4e8d
+pbg #040914
+pfg #a29193
+sbg #040914
+sfg #132345
+pbefg #f28c70
+pbfg #132345
+mlfg #dd649c
+tbfg #132345
+Psbg #070f20
+Psfg #0f1c39
+Apfg #a29193
+Abfg #5e61a4
+Lsfg #0f1c39
+Lpbg #070f20
+Lpfg #132345
+Labg #091328
+Lafg #a29193
+Lfc #f28c70
+
+#qb
+bg #070f20
+fg #0f1c39
+sbg #040914
+sfg #f28c70
+mfg #696488
+sbbg #040914
+
+#term
+fg #bfacaf
+bg #ff040914
+
+#bash
+bg default
+fg #132345
+sc #132345
+dc #132345
+ic #696488
+sec #5e61a4
+gcc #5e61a4
+gdc #f28c70
+vc #dd649c
+
+#vim
+bg none
+fg #cbbbbe
+ifg #dd649c
+vfg #696488
+cfg #ba6ab0
+ffg #5e61a4
+sfg #f28c70
+nbg none
+nfg #0a152c
+lbg #070f20
+lfg #f28c70
+syfg #ba6ab0
+cmfg #0f1c39
+slbg #070f20
+slfg #0f1c39
+fzfhl #f28c70
+bcbg #a25aa4
+bdbg #f28c70
+nmbg #ba6ab0
+imbg #5e61a4
+vmbg #a25aa4
+
+#rofi
+bg #050c1b
+tbg #00050c1b
+mbg #f0040914
+msbg #70091227
+fg #0f1c39
+bc #5e61a4
+ibg #050c1b
+ibc #0a152c
+abg #040915
+afg #132345
+ebg #050c1b
+efg #f28c70
+sbg #091227
+sfg #f28c70
+sul #f28c70
+lpc #bfacaf
+dpc #bfacaf
+btc #050c1b
+sbtc #050c1b
+btbc #050c1b
+
+#tmux
+bg terminal
+fg #0f1c39
+bc #070f20
+mc #a25aa4
+ibg #070f20
+ifg #0f1c39
+sfg #0f1c39
+wbg #070f20
+wfg #0f1c39
+cbg #0a152c
+cfg #f28c70
+
+#dunst
+bg #070f20
+fg #bfacaf
+fc #a25aa4
+sbg #040914
+pbfg #f28c70
+
+#vifm
+fg #132345
+dfg #0a152c
+efg #132345
+cbg #070f20
+cfg #f28c70
+sfg #070f20
+tfg #070f20
+slbg #070f20
+slfg #132345
+
+#ncmpcpp
+npp #132345
+np #132345
+sip #0a152c
+sc #0a152c
+mwc #0a152c
+etc #191e24
+c2 #DBBD7D
+pc #0a152c
+pec #f28c70
+vc #f28c70
+
+#sxiv
+bg #040914
+fg #f28c70
+
+#lock
+tc #ffbfacaf
+rc #fff28c70
+ic #dc040914
+wc #ff7275ba
+
+#nb
+fg #0a152c
+pfg #070f20
+pbg default
+ifg #132345
+ibg #0a152c

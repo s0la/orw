@@ -9,11 +9,15 @@ configuration {
 	kb-row-up:        "Ctrl+k,Up";
 	kb-row-down:      "Ctrl+j,Down";
 	kb-cancel:        "Escape";
-	kb-page-prev:     "Alt+k";
 	kb-page-next:     "Alt+j";
-	kb-mode-next:     "Alt+l";
+	kb-page-prev:     "Alt+k";
 	kb-accept-entry:  "Return";
 	kb-delete-entry:  "Alt+Delete";
 	kb-remove-to-eol:  "Ctrl+Delete";
-	kb-mode-previous: "Alt+h";
+
+	kb-mode-complete: "";
+
+	kb-remove-char-back: "BackSpace,Shift+BackSpace";
+	kb-mode-previous: "Ctrl+l";
+	kb-mode-next:     "Ctrl+h";
 }

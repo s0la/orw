@@ -1,0 +1,186 @@
+#ob
+t #c66745
+tb #c66745
+b #c66745
+c #c66745
+it #20170f
+itb #20170f
+ib #20170f
+ic #20170f
+cbt #dc7955
+mabt #dc7955
+mibt #dc7955
+cbth #af5536
+mabth #af5536
+mibth #af5536
+ibt #140e09
+ibth #140e09
+mbg #20170f
+mfg #392a1d
+mtbg #20170f
+mtfg #453424
+msbg #2c2015
+msfg #efa13c
+mb #20170f
+ms #20170f
+bfg #20170f
+bsfg #2c2015
+osd #20170f
+osdh #efa13c
+osdu #2c2015
+s #af5536
+
+#bar
+bg #dd38291b
+fc #dd38291b
+bfc #140e09
+bbg #dd38291b
+jbg #140e09
+jpfg #dc7955
+jsfg #af5536
+pbg #140e09
+pfg #9aa291
+sbg #140e09
+sfg #453424
+pbefg #efa13c
+pbfg #453424
+mlfg #e4d6ac
+tbfg #453424
+Psbg #20170f
+Psfg #392a1d
+Apfg #9aa291
+Abfg #c66745
+Lsfg #392a1d
+Lpbg #20170f
+Lpfg #453424
+Labg #281d13
+Lafg #9aa291
+Lfc #efa13c
+
+#qb
+bg #20170f
+fg #392a1d
+sbg #140e09
+sfg #efa13c
+mfg #d8d2b8
+sbbg #140e09
+
+#term
+fg #b6bfac
+bg #ff140e09
+
+#bash
+bg default
+fg #453424
+sc #453424
+dc #453424
+ic #d8d2b8
+sec #c66745
+gcc #c66745
+gdc #efa13c
+vc #e4d6ac
+
+#vim
+bg none
+fg #c4cbbb
+ifg #e4d6ac
+vfg #d8d2b8
+cfg #f46f36
+ffg #c66745
+sfg #efa13c
+nbg none
+nfg #2c2015
+lbg #20170f
+lfg #efa13c
+syfg #f46f36
+cmfg #392a1d
+slbg #20170f
+slfg #392a1d
+fzfhl #efa13c
+bcbg #d48d55
+bdbg #efa13c
+nmbg #f46f36
+imbg #c66745
+vmbg #d48d55
+
+#rofi
+bg #1b130c
+tbg #001b130c
+mbg #f0140e09
+msbg #70271c12
+fg #392a1d
+bc #c66745
+ibg #1b130c
+ibc #2c2015
+abg #150f09
+afg #453424
+ebg #1b130c
+efg #efa13c
+sbg #271c12
+sfg #efa13c
+sul #efa13c
+lpc #b6bfac
+dpc #b6bfac
+btc #1b130c
+sbtc #1b130c
+btbc #1b130c
+
+#tmux
+bg terminal
+fg #392a1d
+bc #20170f
+mc #d48d55
+ibg #20170f
+ifg #392a1d
+sfg #392a1d
+wbg #20170f
+wfg #392a1d
+cbg #2c2015
+cfg #efa13c
+
+#dunst
+bg #20170f
+fg #b6bfac
+fc #d48d55
+sbg #140e09
+pbfg #efa13c
+
+#vifm
+fg #453424
+dfg #2c2015
+efg #453424
+cbg #20170f
+cfg #efa13c
+sfg #20170f
+tfg #20170f
+slbg #20170f
+slfg #453424
+
+#ncmpcpp
+npp #453424
+np #453424
+sip #2c2015
+sc #2c2015
+mwc #2c2015
+etc #191e24
+c2 #DBBD7D
+pc #2c2015
+pec #efa13c
+vc #efa13c
+
+#sxiv
+bg #140e09
+fg #efa13c
+
+#lock
+tc #ffb6bfac
+rc #ffefa13c
+ic #dc140e09
+wc #ffdc7955
+
+#nb
+fg #2c2015
+pfg #20170f
+pbg default
+ifg #453424
+ibg #2c2015

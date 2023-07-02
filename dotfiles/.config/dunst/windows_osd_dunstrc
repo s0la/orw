@@ -29,7 +29,10 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "360x400+820-80"
+    #default_geometry = "294x400+841-80"
+    #geometry = "294x400+841-80"
+    #geometry = "420x400+--170-80"
+    geometry = "378x400-789-115"
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -41,7 +44,7 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.).
-transparency = 20
+	transparency = 20
 
     # The height of the entire notification.  If the height is smaller
     # than the font height and padding combined, it will be raised
@@ -90,7 +93,7 @@ transparency = 20
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
-    line_height = 2
+    line_height = -2
 
     # Possible values are:
     # full: Allow a small subset of html markup in notifications:
@@ -162,13 +165,13 @@ transparency = 20
     ### Icons ###
 
     # Align icons left/right/off
-    icon_position = left
+    icon_position = off
 
     # Scale larger icons down to this size, set to 0 to disable
     max_icon_size = 60
 
     # Paths to default icons.
-    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    # icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
 
     ### History ###
 
@@ -275,23 +278,17 @@ transparency = 20
     # Context menu.
     context = ctrl+shift+period
 
+[urgency_normal]
+	background = "#1a1f20"
+	foreground = "#b0bfac"
+	frame_color = "#4e586a"
+
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
-    background = "#222222"
-    foreground = "#888888"
-    timeout = 10
-    # Icon for notifications with low urgency, uncomment to enable
-    #icon = /path/to/icon
-
-[urgency_normal]
-    background = "#111a1f"
-    foreground = "#9e9e9e"
-	frame_color = "#d3efeb"
-	#87939c = "#a1b5c0"
-    timeout = 5
-    # Icon for notifications with normal urgency, uncomment to enable
-    #icon = /path/to/icon
+	background = "#1d201c"
+	foreground = "#ccb7b7"
+	frame_color = "#6c6e69"
 
 [urgency_critical]
     background = "#900000"

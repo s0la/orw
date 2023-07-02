@@ -1,0 +1,185 @@
+#ob
+t #5d566e
+tb #5d566e
+b #5d566e
+c #5d566e
+it #171520
+itb #171520
+ib #171520
+ic #171520
+cbt #746d84
+mabt #746d84
+mibt #746d84
+cbth #474057
+mabth #474057
+mibth #474057
+ibt #0e0d14
+ibth #0e0d14
+mbg #171520
+mfg #2b2839
+mtbg #171520
+mtfg #353245
+msbg #201e2c
+msfg #b69177
+mb #171520
+ms #171520
+bfg #171520
+bsfg #201e2c
+osd #171520
+osdh #b69177
+osdu #201e2c
+s #474057
+
+#bar
+bg #292738
+fc #292738
+bfc #0e0d14
+bbg #292738
+jbg #0e0d14
+jpfg #746d84
+jsfg #474057
+pbg #0e0d14
+pfg #9199a2
+sbg #0e0d14
+sfg #353245
+pbefg #b69177
+pbfg #353245
+mlfg #816e5e
+tbfg #353245
+Psbg #171520
+Psfg #2b2839
+Apfg #816e5e
+Lsfg #1d1b28
+Lpbg #171520
+Lpfg #353245
+Labg #1d1b28
+Lafg #9199a2
+Lfc #b69177
+
+#qb
+bg #171520
+fg #2b2839
+sbg #0e0d14
+sfg #b69177
+mfg #63769b
+sbbg #0e0d14
+
+#term
+fg #acb5bf
+bg #ff0e0d14
+
+#bash
+bg default
+fg #353245
+sc #353245
+dc #353245
+ic #63769b
+sec #5d566e
+gcc #5d566e
+gdc #b69177
+vc #816e5e
+
+#vim
+bg none
+fg #bbc3cb
+ifg #816e5e
+vfg #63769b
+cfg #88a7a9
+ffg #5d566e
+sfg #b69177
+nbg none
+nfg #201e2c
+lbg #171520
+lfg #b69177
+syfg #88a7a9
+cmfg #2b2839
+slbg #171520
+slfg #2b2839
+fzfhl #b69177
+bcbg #574c59
+bdbg #b69177
+nmbg #88a7a9
+imbg #5d566e
+vmbg #574c59
+
+#rofi
+bg #13121b
+tbg #0013121b
+mbg #f00e0d14
+msbg #701a1825
+fg #2b2839
+bc #5d566e
+ibg #13121b
+ibc #201e2c
+abg #0e0d14
+afg #353245
+ebg #13121b
+efg #b69177
+sbg #1a1825
+sfg #b69177
+sul #b69177
+lpc #acb5bf
+dpc #acb5bf
+btc #13121b
+sbtc #13121b
+btbc #13121b
+
+#tmux
+bg terminal
+fg #2b2839
+bc #171520
+mc #574c59
+ibg #171520
+ifg #2b2839
+sfg #2b2839
+wbg #171520
+wfg #2b2839
+cbg #201e2c
+cfg #b69177
+
+#dunst
+bg #171520
+fg #acb5bf
+fc #574c59
+sbg #0e0d14
+pbfg #b69177
+
+#vifm
+fg #353245
+dfg #201e2c
+efg #353245
+cbg #171520
+cfg #b69177
+sfg #171520
+tfg #171520
+slbg #171520
+slfg #353245
+
+#ncmpcpp
+npp #353245
+np #353245
+sip #201e2c
+sc #201e2c
+mwc #201e2c
+etc #191e24
+c2 #DBBD7D
+pc #201e2c
+pec #b69177
+vc #b69177
+
+#sxiv
+bg #0e0d14
+fg #b69177
+
+#lock
+tc #ffacb5bf
+rc #ffb69177
+ic #dc0e0d14
+wc #ff746d84
+
+#nb
+fg #201e2c
+pfg #171520
+pbg default
+ifg #353245
+ibg #201e2c

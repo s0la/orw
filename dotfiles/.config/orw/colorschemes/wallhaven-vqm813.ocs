@@ -1,0 +1,178 @@
+t #507897
+tb #507897
+b #507897
+c #507897
+it #201c17
+itb #201c17
+ib #201c17
+ic #201c17
+cbt #6690b0
+mabt #6690b0
+mibt #6690b0
+cbth #426885
+mabth #426885
+mibth #426885
+ibt #14110e
+ibth #14110e
+mbg #201c17
+mfg #39332c
+mtbg #201c17
+mtfg #453f37
+msbg #2c2721
+msfg #e49c67
+mb #201c17
+ms #201c17
+bfg #201c17
+bsfg #2c2721
+osd #201c17
+osdh #e49c67
+osdu #2c2721
+s #426885
+
+#bar
+bg #002c2721
+fc #507897
+bfc #14110e
+bbg #2c2721
+jbg #14110e
+jpfg #6690b0
+jsfg #426885
+pbg #14110e
+pfg #91a291
+sbg #14110e
+sfg #453f37
+pbefg #e49c67
+pbfg #453f37
+mlfg #acc6b3
+tbfg #453f37
+Psbg #201c17
+Psfg #39332c
+Apfg #acc6b3
+Lsfg #28231d
+Lpbg #201c17
+Lpfg #453f37
+Labg #28231d
+Lafg #91a291
+Lfc #6690b0
+
+#qb
+bg #201c17
+fg #39332c
+sbg #14110e
+sfg #e49c67
+mfg #56d0da
+sbbg #14110e
+
+#term
+fg #acbfac
+bg #14110e
+
+#bash
+bg default
+fg #453f37
+sc #453f37
+dc #2c2721
+ic #df6453
+sec #acbfac
+gcc #acbfac
+gdc #e49c67
+vc #acc6b3
+
+#vim
+bg none
+fg #bbcbbb
+ifg #acc6b3
+vfg #56d0da
+cfg #df6453
+ffg #507897
+sfg #e49c67
+nbg none
+nfg #2c2721
+lbg #201c17
+lfg #e49c67
+syfg #df6453
+cmfg #39332c
+slbg #201c17
+slfg #39332c
+fzfhl #e49c67
+bcbg #4a69a9
+bdbg #e49c67
+nmbg #df6453
+imbg #507897
+vmbg #4a69a9
+
+#rofi
+bg #1b1713
+tbg #001b1713
+mbg #f014110e
+msbg #7025201b
+fg #39332c
+bc #507897
+ibg #1b1713
+ibc #2c2721
+abg #14110e
+afg #453f37
+ebg #1b1713
+efg #e49c67
+sbg #25201b
+sfg #e49c67
+sul #e49c67
+lpc #acbfac
+dpc #acbfac
+btc #1b1713
+sbtc #1b1713
+btbc #1b1713
+ 
+#tmux 
+bg terminal
+fg #39332c
+bc #201c17
+mc #4a69a9
+ibg #201c17
+ifg #39332c
+sfg #39332c
+wbg #201c17
+wfg #39332c
+cbg #2c2721
+cfg #e49c67
+ 
+#dunst 
+bg #201c17
+fg #acbfac
+fc #4a69a9
+sbg #14110e
+pbfg #e49c67
+
+#vifm
+fg #453f37
+dfg #2c2721
+efg #453f37
+cbg #201c17
+cfg #e49c67
+sfg #201c17
+tfg #201c17
+slbg #201c17
+slfg #453f37
+
+#ncmpcpp
+npp #453f37
+np #453f37
+sip #2c2721
+sc #2c2721
+mwc #2c2721
+etc #191e24
+c2 #DBBD7D
+pc #2c2721
+pec #e49c67
+vc #e49c67
+
+#sxiv
+bg #14110e
+fg #e49c67
+
+#nb
+fg #2c2721
+pfg #201c17
+pbg default
+ifg #453f37
+ibg #2c2721

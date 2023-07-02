@@ -9,23 +9,23 @@ msfg #87a79e
 ms #1a1a1a
 bfg #1a1a1a
 bsfg #202020
-b #273035
-c #273035
-mabt #474545
+b #cecece
+c #cecece
+mabt #adadad
 mabth #9ea9a9
-cbt #785A5A
+cbt #adadad
 cbth #9ea9a9
-mibt #615954
+mibt #adadad
 mibth #9ea9a9
-tb #273035
-t #273035
-ib #111a1f
+tb #cecece
+t #cecece
+ib #0c151a
 ic #171c1d
 ibth #B39C80
-ibt #272727
-itb #111a1f
-it #111a1f
-osd #273035
+ibt #172025
+itb #0c151a
+it #0c151a
+osd #cecece
 osdh #bbbbbb
 osdu #888888
 s #ae7f65
@@ -38,7 +38,7 @@ sbg #060f14
 pbfg #81a39e
 
 #term
-fg #d2c4bb
+fg #ddcfc6
 bg #ff111a1f
 colors #494a4c #785A5A #807E60 #DBBD7D #4c5359 #8C7681 #608985 #999999 #707070 #b2908a #b5bc6d #877f69 #81a2be #cca8bb #9FC2C2 #b0b0b0
 
@@ -55,7 +55,7 @@ nfg #1c252a
 lbg #141d22
 lfg #f1938b
 syfg #c0c0c0
-cmfg #1c252a
+cmfg #242d32
 slbg #182126
 slfg #2e373c
 fzfhl #97a199
@@ -119,7 +119,7 @@ vc #f3dcb4
 #tmux
 bg terminal
 fg #656c1d
-bc #1f1f1f
+bc #182126
 mc #3a3a3a
 ibg default
 ifg #20292e
@@ -131,18 +131,18 @@ cfg #97a199
 
 #rofi
 bg #0e171c
-fg #293237
-bc #96968e
-ibg #96968e
-ibc #96968e
+fg #262f34
+bc #273035
+ibg #273035
+ibc #273035
 abg #0c151a
 afg #293237
 ebg #060f14
-efg #96968e
+efg #e8d1a9
 sbg #131c21
-sfg #f3dcb4
+sfg #e8d1a9
 sul #87a79e
-lpc #293237
+lpc #081116
 dpc #725d43
 btc #0e171c
 sbtc #0e171c
@@ -155,15 +155,15 @@ sc #43474a
 ic #bcd1d3
 sec #81625c
 gcc #879394
-gdc #9ec0bb
+gdc #ffaba3
 vc #b48a71
 
 #qb
-bg #1a1a1a
-fg #383838
-sbg #171717
-sfg #737373
-mfg #87a79e
+bg #111a1f
+fg #222b30
+sbg #0c151a
+sfg #ddcfc6
+mfg #fc9e96
 sbbg #1a1b1d
 
 #nb

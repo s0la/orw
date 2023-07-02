@@ -1,0 +1,186 @@
+#ob
+t #797c96
+tb #797c96
+b #797c96
+c #797c96
+it #0a1a20
+itb #0a1a20
+ib #0a1a20
+ic #0a1a20
+cbt #9295ac
+mabt #9295ac
+mibt #9295ac
+cbth #61647f
+mabth #61647f
+mibth #61647f
+ibt #061014
+ibth #061014
+mbg #0a1a20
+mfg #142f39
+mtbg #0a1a20
+mtfg #193945
+msbg #0e242c
+msfg #e8916e
+mb #0a1a20
+ms #0a1a20
+bfg #0a1a20
+bsfg #0e242c
+osd #0a1a20
+osdh #e8916e
+osdu #0e242c
+s #61647f
+
+#bar
+bg #dd122e38
+fc #dd122e38
+bfc #061014
+bbg #dd122e38
+jbg #061014
+jpfg #9295ac
+jsfg #61647f
+pbg #061014
+pfg #a091a2
+sbg #061014
+sfg #193945
+pbefg #e8916e
+pbfg #193945
+mlfg #e0a8b0
+tbfg #193945
+Psbg #0a1a20
+Psfg #142f39
+Apfg #a091a2
+Abfg #797c96
+Lsfg #142f39
+Lpbg #0a1a20
+Lpfg #193945
+Labg #0d2028
+Lafg #a091a2
+Lfc #e8916e
+
+#qb
+bg #0a1a20
+fg #142f39
+sbg #061014
+sfg #e8916e
+mfg #91a1ae
+sbbg #061014
+
+#term
+fg #bcacbf
+bg #ff061014
+
+#bash
+bg default
+fg #193945
+sc #193945
+dc #193945
+ic #91a1ae
+sec #797c96
+gcc #797c96
+gdc #e8916e
+vc #e0a8b0
+
+#vim
+bg none
+fg #c9bbcb
+ifg #e0a8b0
+vfg #91a1ae
+cfg #a18ea9
+ffg #797c96
+sfg #e8916e
+nbg none
+nfg #0e242c
+lbg #0a1a20
+lfg #e8916e
+syfg #a18ea9
+cmfg #142f39
+slbg #0a1a20
+slfg #142f39
+fzfhl #e8916e
+bcbg #518195
+bdbg #e8916e
+nmbg #a18ea9
+imbg #797c96
+vmbg #518195
+
+#rofi
+bg #08161b
+tbg #0008161b
+mbg #f0061014
+msbg #700c2027
+fg #142f39
+bc #797c96
+ibg #08161b
+ibc #0e242c
+abg #061115
+afg #193945
+ebg #08161b
+efg #e8916e
+sbg #0c2027
+sfg #e8916e
+sul #e8916e
+lpc #bcacbf
+dpc #bcacbf
+btc #08161b
+sbtc #08161b
+btbc #08161b
+
+#tmux
+bg terminal
+fg #142f39
+bc #0a1a20
+mc #518195
+ibg #0a1a20
+ifg #142f39
+sfg #142f39
+wbg #0a1a20
+wfg #142f39
+cbg #0e242c
+cfg #e8916e
+
+#dunst
+bg #0a1a20
+fg #bcacbf
+fc #518195
+sbg #061014
+pbfg #e8916e
+
+#vifm
+fg #193945
+dfg #0e242c
+efg #193945
+cbg #0a1a20
+cfg #e8916e
+sfg #0a1a20
+tfg #0a1a20
+slbg #0a1a20
+slfg #193945
+
+#ncmpcpp
+npp #193945
+np #193945
+sip #0e242c
+sc #0e242c
+mwc #0e242c
+etc #191e24
+c2 #DBBD7D
+pc #0e242c
+pec #e8916e
+vc #e8916e
+
+#sxiv
+bg #061014
+fg #e8916e
+
+#lock
+tc #ffbcacbf
+rc #ffe8916e
+ic #dc061014
+wc #ff9295ac
+
+#nb
+fg #0e242c
+pfg #0a1a20
+pbg default
+ifg #193945
+ibg #0e242c

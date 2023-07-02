@@ -1,12 +1,12 @@
-let $fg = 'default'
-let $dfg = 185
-let $efg = 'default'
-let $cbg = 185
-let $cfg = 179
-let $sfg = 185
-let $tfg = 0
-let $slbg = 'default'
-let $slfg = 182
+let $fg = 90
+let $dfg = 89
+let $efg = 90
+let $cbg = 88
+let $cfg = 91
+let $sfg = 88
+let $tfg = 88
+let $slbg = 88
+let $slfg = 90
 
 highlight clear
 
@@ -27,10 +27,11 @@ highlight Socket cterm=bold ctermfg=223 ctermbg=default
 
 if layoutis('split')
 	let $bbg = 'default'
-	let $bfg = 114
+	let $bfg = $cfg
 else
 	let $bbg = 'default'
 	let $bfg = 'default'
+	let $bfg = $cfg
 endif
 
 execute 'highlight Border cterm=none ctermfg=' . $slfg . ' ctermbg=' . $bbg

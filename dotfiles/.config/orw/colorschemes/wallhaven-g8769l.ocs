@@ -1,0 +1,178 @@
+t #554f59
+tb #554f59
+b #554f59
+c #554f59
+it #200f17
+itb #200f17
+ib #200f17
+ic #200f17
+cbt #6f6b72
+mabt #6f6b72
+mibt #6f6b72
+cbth #433d47
+mabth #433d47
+mibth #433d47
+ibt #14090e
+ibth #14090e
+mbg #200f17
+mfg #391d2a
+mtbg #200f17
+mtfg #452434
+msbg #2c1520
+msfg #d07b5e
+mb #200f17
+ms #200f17
+bfg #200f17
+bsfg #2c1520
+osd #200f17
+osdh #d07b5e
+osdu #2c1520
+s #433d47
+
+#bar
+bg #002c1520
+fc #554f59
+bfc #14090e
+bbg #2c1520
+jbg #14090e
+jpfg #6f6b72
+jsfg #433d47
+pbg #14090e
+pfg #91a292
+sbg #14090e
+sfg #452434
+pbefg #d07b5e
+pbfg #452434
+mlfg #d0b384
+tbfg #452434
+Psbg #200f17
+Psfg #391d2a
+Apfg #d0b384
+Lsfg #28131d
+Lpbg #200f17
+Lpfg #452434
+Labg #28131d
+Lafg #91a292
+Lfc #6f6b72
+
+#qb
+bg #200f17
+fg #391d2a
+sbg #14090e
+sfg #d07b5e
+mfg #93bf99
+sbbg #14090e
+
+#term
+fg #acbfae
+bg #ff14090e
+
+#bash
+bg default
+fg #452434
+sc #452434
+dc #2c1520
+ic #965467
+sec #acbfae
+gcc #acbfae
+gdc #d07b5e
+vc #d0b384
+
+#vim
+bg none
+fg #bbcbbd
+ifg #d0b384
+vfg #93bf99
+cfg #965467
+ffg #554f59
+sfg #d07b5e
+nbg none
+nfg #2c1520
+lbg #200f17
+lfg #d07b5e
+syfg #965467
+cmfg #391d2a
+slbg #200f17
+slfg #391d2a
+fzfhl #d07b5e
+bcbg #6c6b65
+bdbg #d07b5e
+nmbg #965467
+imbg #554f59
+vmbg #6c6b65
+
+#rofi
+bg #1b0c13
+tbg #001b0c13
+mbg #f014090e
+msbg #7025111a
+fg #391d2a
+bc #554f59
+ibg #1b0c13
+ibc #2c1520
+abg #14090e
+afg #452434
+ebg #1b0c13
+efg #d07b5e
+sbg #25111a
+sfg #d07b5e
+sul #d07b5e
+lpc #acbfae
+dpc #acbfae
+btc #1b0c13
+sbtc #1b0c13
+btbc #1b0c13
+ 
+#tmux 
+bg terminal
+fg #391d2a
+bc #200f17
+mc #6c6b65
+ibg #200f17
+ifg #391d2a
+sfg #391d2a
+wbg #200f17
+wfg #391d2a
+cbg #2c1520
+cfg #d07b5e
+ 
+#dunst 
+bg #200f17
+fg #acbfae
+fc #6c6b65
+sbg #14090e
+pbfg #d07b5e
+
+#vifm
+fg #452434
+dfg #2c1520
+efg #452434
+cbg #200f17
+cfg #d07b5e
+sfg #200f17
+tfg #200f17
+slbg #200f17
+slfg #452434
+
+#ncmpcpp
+npp #452434
+np #452434
+sip #2c1520
+sc #2c1520
+mwc #2c1520
+etc #191e24
+c2 #DBBD7D
+pc #2c1520
+pec #d07b5e
+vc #d07b5e
+
+#sxiv
+bg #14090e
+fg #d07b5e
+
+#nb
+fg #2c1520
+pfg #200f17
+pbg default
+ifg #452434
+ibg #2c1520

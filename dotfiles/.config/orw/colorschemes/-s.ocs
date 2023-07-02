@@ -1,0 +1,185 @@
+#ob
+t 
+tb 
+b 
+c 
+it #0c0c0c
+itb #0c0c0c
+ib #0c0c0c
+ic #0c0c0c
+cbt #
+mabt #
+mibt #
+cbth #
+mabth #
+mibth #
+ibt #
+ibth #
+mbg #0c0c0c
+mfg #252525
+mtbg #0c0c0c
+mtfg #313131
+msbg #181818
+msfg 
+mb #0c0c0c
+ms #0c0c0c
+bfg #0c0c0c
+bsfg #181818
+osd #0c0c0c
+osdh 
+osdu #181818
+s #
+
+#bar
+bg #dd242424
+fc #dd242424
+bfc #
+bbg #dd242424
+jbg #
+jpfg #
+jsfg #
+pbg #
+pfg #000000
+sbg #
+sfg #313131
+pbefg 
+pbfg #313131
+mlfg 
+tbfg #313131
+Psbg #0c0c0c
+Psfg #252525
+Apfg #000000
+Abfg 
+Lsfg #252525
+Lpbg #0c0c0c
+Lpfg #313131
+Labg #141414
+Lafg #000000
+Lfc 
+
+#qb
+bg #0c0c0c
+fg #252525
+sbg #
+sfg 
+mfg 
+sbbg #
+
+#term
+fg #
+bg #ff
+
+#bash
+bg default
+fg \
+sc \
+dc \
+ic #
+sec #181818
+gcc #181818
+gdc #
+vc #
+
+#vim
+bg none
+fg #0c0c0c
+ifg '
+vfg '
+cfg '
+ffg '
+sfg '
+nbg none
+nfg #181818
+lbg #0c0c0c
+lfg '
+syfg '
+cmfg #252525
+slbg #0c0c0c
+slfg #252525
+fzfhl '
+bcbg '
+bdbg '
+nmbg '
+imbg '
+vmbg '
+
+#rofi
+bg #070707
+tbg #00070707
+mbg #f0
+msbg #70131313
+fg #252525
+bc 
+ibg #070707
+ibc #181818
+abg #010101
+afg #313131
+ebg #070707
+efg 
+sbg #131313
+sfg 
+sul 
+lpc #
+dpc #
+btc #070707
+sbtc #070707
+btbc #070707
+
+#tmux
+bg terminal
+fg #252525
+bc #0c0c0c
+mc 
+ibg #0c0c0c
+ifg #252525
+sfg #252525
+wbg #0c0c0c
+wfg #252525
+cbg #181818
+cfg 
+
+#dunst
+bg #0c0c0c
+fg #
+fc 
+sbg #
+pbfg 
+
+#vifm
+fg #313131
+dfg #181818
+efg #313131
+cbg #0c0c0c
+cfg 
+sfg #0c0c0c
+tfg #0c0c0c
+slbg #0c0c0c
+slfg #313131
+
+#ncmpcpp
+npp #313131
+np #313131
+sip #181818
+sc #181818
+mwc #181818
+etc #191e24
+c2 #DBBD7D
+pc #181818
+pec 
+vc 
+
+#sxiv
+bg #
+
+#lock
+tc=ff
+rc=ff
+ic=dc
+wc=ff
+
+#nb
+fg #181818
+pfg #0c0c0c
+pbg default
+ifg #313131
+ibg #181818

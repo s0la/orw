@@ -1,0 +1,72 @@
+
+@theme "/dev/null"
+
+@import "theme"
+
+mainbox {
+  background-image:	url("/tmp/rofi_cover_art.png");
+}
+
+window {
+  width:		300px;
+  height:		300px;
+  border:		0;
+}
+
+prompt {
+  padding:		10px;
+  background-color:   @mbg;
+  font:			"Iosevka Orw 10";
+  border-radius:	5px;
+  expand: false;
+	text-color: @lpc;
+}
+
+inputbar {
+  background-image:	url("/tmp/rofi_cover_art.png");
+  children:		[ prompt ];
+  expand:		false;
+  border-radius:	8px 8px 0px 0px;
+  padding:		143px 10px 10px 10px;
+  // padding:		218px 10px 10px 10px;
+}
+
+listview {
+  layout:		horizontal;
+  padding:		7px;
+  background-color:   @mbg;
+  transparency: "real";
+}
+
+mainbox { children: [ inputbar, listview ]; }
+
+element {
+  margin: 3px;
+  border-radius:	5px;
+}
+
+element-text {
+  padding:		15px;
+  font:			"remix 14";
+  background-color: inherit;
+}
+
+#element.normal.normal, element.urgent.normal, element.alternate.normal, element.alternate.urgent {
+  background-color: argb:00000000;
+}
+
+#element-text normal.normal, element-text urgent.normal, element-text alternate.normal, element-text alternate.urgent {
+	text-color:       @fg;
+}
+
+#element.selected.normal {
+	background-color: argb:00000000;
+	// background-color: @sbg;
+}
+
+#element-text selected.normal {
+	text-color:       @sfg;
+	background-color: @msbg;
+	// background-color: argb:10000000;
+	// background-color: @sbg;
+}

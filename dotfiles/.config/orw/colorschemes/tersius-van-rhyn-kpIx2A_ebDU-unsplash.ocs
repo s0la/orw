@@ -1,0 +1,185 @@
+#ob
+t #5b6a60
+tb #5b6a60
+b #5b6a60
+c #5b6a60
+it #152020
+itb #152020
+ib #152020
+ic #152020
+cbt #738078
+mabt #738078
+mibt #738078
+cbth #435349
+mabth #435349
+mibth #435349
+ibt #0d1414
+ibth #0d1414
+mbg #152020
+mfg #283939
+mtbg #152020
+mtfg #324545
+msbg #1e2c2c
+msfg #cab175
+mb #152020
+ms #152020
+bfg #152020
+bsfg #1e2c2c
+osd #152020
+osdh #cab175
+osdu #1e2c2c
+s #435349
+
+#bar
+bg #273838
+fc #273838
+bfc #0d1414
+bbg #273838
+jbg #0d1414
+jpfg #738078
+jsfg #435349
+pbg #0d1414
+pfg #a1a291
+sbg #0d1414
+sfg #324545
+pbefg #cab175
+pbfg #324545
+mlfg #8f917c
+tbfg #324545
+Psbg #152020
+Psfg #283939
+Apfg #8f917c
+Lsfg #1b2828
+Lpbg #152020
+Lpfg #324545
+Labg #1b2828
+Lafg #a1a291
+Lfc #cab175
+
+#qb
+bg #152020
+fg #283939
+sbg #0d1414
+sfg #cab175
+mfg #617b86
+sbbg #0d1414
+
+#term
+fg #bdbfac
+bg #ff0d1414
+
+#bash
+bg default
+fg #324545
+sc #324545
+dc #1e2c2c
+ic #bfbc9a
+sec #bdbfac
+gcc #bdbfac
+gdc #cab175
+vc #8f917c
+
+#vim
+bg none
+fg #cacbbb
+ifg #8f917c
+vfg #617b86
+cfg #bfbc9a
+ffg #5b6a60
+sfg #cab175
+nbg none
+nfg #1e2c2c
+lbg #152020
+lfg #cab175
+syfg #bfbc9a
+cmfg #283939
+slbg #152020
+slfg #283939
+fzfhl #cab175
+bcbg #889e83
+bdbg #cab175
+nmbg #bfbc9a
+imbg #5b6a60
+vmbg #889e83
+
+#rofi
+bg #121b1b
+tbg #00121b1b
+mbg #f00d1414
+msbg #70182525
+fg #283939
+bc #5b6a60
+ibg #121b1b
+ibc #1e2c2c
+abg #0d1414
+afg #324545
+ebg #121b1b
+efg #cab175
+sbg #182525
+sfg #cab175
+sul #cab175
+lpc #bdbfac
+dpc #bdbfac
+btc #121b1b
+sbtc #121b1b
+btbc #121b1b
+
+#tmux
+bg terminal
+fg #283939
+bc #152020
+mc #889e83
+ibg #152020
+ifg #283939
+sfg #283939
+wbg #152020
+wfg #283939
+cbg #1e2c2c
+cfg #cab175
+
+#dunst
+bg #152020
+fg #bdbfac
+fc #889e83
+sbg #0d1414
+pbfg #cab175
+
+#vifm
+fg #324545
+dfg #1e2c2c
+efg #324545
+cbg #152020
+cfg #cab175
+sfg #152020
+tfg #152020
+slbg #152020
+slfg #324545
+
+#ncmpcpp
+npp #324545
+np #324545
+sip #1e2c2c
+sc #1e2c2c
+mwc #1e2c2c
+etc #191e24
+c2 #DBBD7D
+pc #1e2c2c
+pec #cab175
+vc #cab175
+
+#sxiv
+bg #0d1414
+fg #cab175
+
+#lock
+tc #ffbdbfac
+rc #ffcab175
+ic #dc0d1414
+wc #ff738078
+
+#nb
+fg #1e2c2c
+pfg #152020
+pbg default
+ifg #324545
+ibg #1e2c2c

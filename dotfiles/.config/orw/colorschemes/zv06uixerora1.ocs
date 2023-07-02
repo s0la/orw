@@ -1,0 +1,185 @@
+#ob
+t #44514a
+tb #44514a
+b #44514a
+c #44514a
+it #1f201a
+itb #1f201a
+ib #1f201a
+ic #1f201a
+cbt #5b6761
+mabt #5b6761
+mibt #5b6761
+cbth #2e3a33
+mabth #2e3a33
+mibth #2e3a33
+ibt #131410
+ibth #131410
+mbg #1f201a
+mfg #383931
+mtbg #1f201a
+mtfg #44453d
+msbg #2b2c25
+msfg #b78f6c
+mb #1f201a
+ms #1f201a
+bfg #1f201a
+bsfg #2b2c25
+osd #1f201a
+osdh #b78f6c
+osdu #2b2c25
+s #2e3a33
+
+#bar
+bg #373830
+fc #373830
+bfc #131410
+bbg #373830
+jbg #131410
+jpfg #5b6761
+jsfg #2e3a33
+pbg #131410
+pfg #a29191
+sbg #131410
+sfg #44453d
+pbefg #b78f6c
+pbfg #44453d
+mlfg #a17d56
+tbfg #44453d
+Psbg #1f201a
+Psfg #383931
+Apfg #a17d56
+Lsfg #262821
+Lpbg #1f201a
+Lpfg #44453d
+Labg #262821
+Lafg #a29191
+Lfc #b78f6c
+
+#qb
+bg #1f201a
+fg #383931
+sbg #131410
+sfg #b78f6c
+mfg #646861
+sbbg #131410
+
+#term
+fg #bfacac
+bg #ff131410
+
+#bash
+bg default
+fg #44453d
+sc #44453d
+dc #44453d
+ic #646861
+sec #44514a
+gcc #44514a
+gdc #b78f6c
+vc #a17d56
+
+#vim
+bg none
+fg #cbbbbb
+ifg #a17d56
+vfg #646861
+cfg #9a9c98
+ffg #44514a
+sfg #b78f6c
+nbg none
+nfg #2b2c25
+lbg #1f201a
+lfg #b78f6c
+syfg #9a9c98
+cmfg #383931
+slbg #1f201a
+slfg #383931
+fzfhl #b78f6c
+bcbg #9a8164
+bdbg #b78f6c
+nmbg #9a9c98
+imbg #44514a
+vmbg #9a8164
+
+#rofi
+bg #1a1b16
+tbg #001a1b16
+mbg #f0131410
+msbg #7024251e
+fg #383931
+bc #44514a
+ibg #1a1b16
+ibc #2b2c25
+abg #131410
+afg #44453d
+ebg #1a1b16
+efg #b78f6c
+sbg #24251e
+sfg #b78f6c
+sul #b78f6c
+lpc #bfacac
+dpc #bfacac
+btc #1a1b16
+sbtc #1a1b16
+btbc #1a1b16
+
+#tmux
+bg terminal
+fg #383931
+bc #1f201a
+mc #9a8164
+ibg #1f201a
+ifg #383931
+sfg #383931
+wbg #1f201a
+wfg #383931
+cbg #2b2c25
+cfg #b78f6c
+
+#dunst
+bg #1f201a
+fg #bfacac
+fc #9a8164
+sbg #131410
+pbfg #b78f6c
+
+#vifm
+fg #44453d
+dfg #2b2c25
+efg #44453d
+cbg #1f201a
+cfg #b78f6c
+sfg #1f201a
+tfg #1f201a
+slbg #1f201a
+slfg #44453d
+
+#ncmpcpp
+npp #44453d
+np #44453d
+sip #2b2c25
+sc #2b2c25
+mwc #2b2c25
+etc #191e24
+c2 #DBBD7D
+pc #2b2c25
+pec #b78f6c
+vc #b78f6c
+
+#sxiv
+bg #131410
+fg #b78f6c
+
+#lock
+tc #ffbfacac
+rc #ffb78f6c
+ic #dc131410
+wc #ff5b6761
+
+#nb
+fg #2b2c25
+pfg #1f201a
+pbg default
+ifg #44453d
+ibg #2b2c25

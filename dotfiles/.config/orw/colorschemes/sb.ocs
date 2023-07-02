@@ -1,0 +1,185 @@
+#ob
+t #4c4c4c
+tb #4c4c4c
+b #4c4c4c
+c #4c4c4c
+it #141414
+itb #141414
+ib #141414
+ic #141414
+cbt #c3c3c3
+mabt #c3c3c3
+mibt #c3c3c3
+cbth #808080
+mabth #808080
+mibth #808080
+ibt #080808
+ibth #080808
+mbg #141414
+mfg #2d2d2d
+mtbg #141414
+mtfg #393939
+msbg #202020
+msfg #
+mb #141414
+ms #141414
+bfg #141414
+bsfg #202020
+osd #141414
+osdh #
+osdu #202020
+s #808080
+
+#bar
+bg #2c2c2c
+fc #2c2c2c
+bfc #080808
+bbg #2c2c2c
+jbg #080808
+jpfg #c3c3c3
+jsfg #808080
+pbg #080808
+pfg #8d8c8c
+sbg #080808
+sfg #393939
+pbefg #
+pbfg #393939
+mlfg #767676
+tbfg #393939
+Psbg #141414
+Psfg #2d2d2d
+Apfg #767676
+Lsfg #1c1c1c
+Lpbg #141414
+Lpfg #393939
+Labg #1c1c1c
+Lafg #8d8c8c
+Lfc #
+
+#qb
+bg #141414
+fg #2d2d2d
+sbg #080808
+sfg #
+mfg #474747
+sbbg #080808
+
+#term
+fg #aaaaaa
+bg #ff080808
+
+#bash
+bg default
+fg #0f0f0f
+sc #0f0f0f
+dc #393939
+ic #474747
+sec #4c4c4c
+gcc #4c4c4c
+gdc #
+vc #767676
+
+#vim
+bg none
+fg #aaaaaa
+ifg #767676
+vfg #474747
+cfg #e9e9e9
+ffg #4c4c4c
+sfg #
+nbg none
+nfg #202020
+lbg #141414
+lfg #
+syfg #e9e9e9
+cmfg #2d2d2d
+slbg #141414
+slfg #2d2d2d
+fzfhl #
+bcbg '
+bdbg #
+nmbg #e9e9e9
+imbg #4c4c4c
+vmbg '
+
+#rofi
+bg #0f0f0f
+tbg #000f0f0f
+mbg #f0080808
+msbg #70191919
+fg #2d2d2d
+bc #4c4c4c
+ibg #0f0f0f
+ibc #202020
+abg #080808
+afg #393939
+ebg #0f0f0f
+efg #
+sbg #191919
+sfg #
+sul #
+lpc #aaaaaa
+dpc #aaaaaa
+btc #0f0f0f
+sbtc #0f0f0f
+btbc #0f0f0f
+
+#tmux
+bg terminal
+fg #2d2d2d
+bc #141414
+mc 
+ibg #141414
+ifg #2d2d2d
+sfg #2d2d2d
+wbg #141414
+wfg #2d2d2d
+cbg #202020
+cfg #
+
+#dunst
+bg #141414
+fg #aaaaaa
+fc 
+sbg #080808
+pbfg #
+
+#vifm
+fg #393939
+dfg #202020
+efg #393939
+cbg #141414
+cfg #
+sfg #141414
+tfg #141414
+slbg #141414
+slfg #393939
+
+#ncmpcpp
+npp #393939
+np #393939
+sip #202020
+sc #202020
+mwc #202020
+etc #191e24
+c2 #DBBD7D
+pc #202020
+pec #
+vc #
+
+#sxiv
+bg #080808
+fg #
+
+#lock
+tc #ffaaaaaa
+rc=ff
+ic #dc080808
+wc #ffc3c3c3
+
+#nb
+fg #202020
+pfg #141414
+pbg default
+ifg #393939
+ibg #202020

@@ -1,0 +1,178 @@
+t #4f6262
+tb #4f6262
+b #4f6262
+c #4f6262
+it #17200d
+itb #17200d
+ib #17200d
+ic #17200d
+cbt #697b7b
+mabt #697b7b
+mibt #697b7b
+cbth #3e5050
+mabth #3e5050
+mibth #3e5050
+ibt #0e1408
+ibth #0e1408
+mbg #17200d
+mfg #2a391a
+mtbg #17200d
+mtfg #344521
+msbg #202c13
+msfg #c99e68
+mb #17200d
+ms #17200d
+bfg #17200d
+bsfg #202c13
+osd #17200d
+osdh #c99e68
+osdu #202c13
+s #3e5050
+
+#bar
+bg #00202c13
+fc #4f6262
+bfc #0e1408
+bbg #202c13
+jbg #0e1408
+jpfg #697b7b
+jsfg #3e5050
+pbg #0e1408
+pfg #a29991
+sbg #0e1408
+sfg #344521
+pbefg #c99e68
+pbfg #344521
+mlfg #858585
+tbfg #344521
+Psbg #17200d
+Psfg #2a391a
+Apfg #858585
+Lsfg #1d2811
+Lpbg #17200d
+Lpfg #344521
+Labg #1d2811
+Lafg #a29991
+Lfc #697b7b
+
+#qb
+bg #17200d
+fg #2a391a
+sbg #0e1408
+sfg #c99e68
+mfg #98aec6
+sbbg #0e1408
+
+#term
+fg #bfb5ac
+bg #0e1408
+
+#bash
+bg default
+fg #344521
+sc #344521
+dc #202c13
+ic #6d694e
+sec #bfb5ac
+gcc #bfb5ac
+gdc #c99e68
+vc #858585
+
+#vim
+bg none
+fg #cbc3bb
+ifg #858585
+vfg #98aec6
+cfg #6d694e
+ffg #4f6262
+sfg #c99e68
+nbg none
+nfg #202c13
+lbg #17200d
+lfg #c99e68
+syfg #6d694e
+cmfg #2a391a
+slbg #17200d
+slfg #2a391a
+fzfhl #c99e68
+bcbg #66625e
+bdbg #c99e68
+nmbg #6d694e
+imbg #4f6262
+vmbg #66625e
+
+#rofi
+bg #131b0b
+tbg #00131b0b
+mbg #f00e1408
+msbg #701a250f
+fg #2a391a
+bc #4f6262
+ibg #131b0b
+ibc #202c13
+abg #0e1408
+afg #344521
+ebg #131b0b
+efg #c99e68
+sbg #1a250f
+sfg #c99e68
+sul #c99e68
+lpc #bfb5ac
+dpc #bfb5ac
+btc #131b0b
+sbtc #131b0b
+btbc #131b0b
+ 
+#tmux 
+bg terminal
+fg #2a391a
+bc #17200d
+mc #66625e
+ibg #17200d
+ifg #2a391a
+sfg #2a391a
+wbg #17200d
+wfg #2a391a
+cbg #202c13
+cfg #c99e68
+ 
+#dunst 
+bg #17200d
+fg #bfb5ac
+fc #66625e
+sbg #0e1408
+pbfg #c99e68
+
+#vifm
+fg #344521
+dfg #202c13
+efg #344521
+cbg #17200d
+cfg #c99e68
+sfg #17200d
+tfg #17200d
+slbg #17200d
+slfg #344521
+
+#ncmpcpp
+npp #344521
+np #344521
+sip #202c13
+sc #202c13
+mwc #202c13
+etc #191e24
+c2 #DBBD7D
+pc #202c13
+pec #c99e68
+vc #c99e68
+
+#sxiv
+bg #0e1408
+fg #c99e68
+
+#nb
+fg #202c13
+pfg #17200d
+pbg default
+ifg #344521
+ibg #202c13

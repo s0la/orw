@@ -1,0 +1,178 @@
+t #979c95
+tb #979c95
+b #979c95
+c #979c95
+it #201d1c
+itb #201d1c
+ib #201d1c
+ic #201d1c
+cbt #b5b5b5
+mabt #b5b5b5
+mibt #b5b5b5
+cbth #828a7f
+mabth #828a7f
+mibth #828a7f
+ibt #141211
+ibth #141211
+mbg #201d1c
+mfg #393635
+mtbg #201d1c
+mtfg #454342
+msbg #2c2928
+msfg #ca9762
+mb #201d1c
+ms #201d1c
+bfg #201d1c
+bsfg #2c2928
+osd #201d1c
+osdh #ca9762
+osdu #2c2928
+s #828a7f
+
+#bar
+bg #002c2928
+fc #979c95
+bfc #141211
+bbg #2c2928
+jbg #141211
+jpfg #b5b5b5
+jsfg #828a7f
+pbg #141211
+pfg #a291a2
+sbg #141211
+sfg #454342
+pbefg #ca9762
+pbfg #454342
+mlfg #bdae7f
+tbfg #454342
+Psbg #201d1c
+Psfg #393635
+Apfg #bdae7f
+Lsfg #282523
+Lpbg #201d1c
+Lpfg #454342
+Labg #282523
+Lafg #a291a2
+Lfc #b5b5b5
+
+#qb
+bg #201d1c
+fg #393635
+sbg #141211
+sfg #ca9762
+mfg #99b7c0
+sbbg #141211
+
+#term
+fg #bfacbf
+bg #141211
+
+#bash
+bg default
+fg #454342
+sc #454342
+dc #2c2928
+ic #c4acc4
+sec #bfacbf
+gcc #bfacbf
+gdc #ca9762
+vc #bdae7f
+
+#vim
+bg none
+fg #cbbbcb
+ifg #bdae7f
+vfg #99b7c0
+cfg #c4acc4
+ffg #979c95
+sfg #ca9762
+nbg none
+nfg #2c2928
+lbg #201d1c
+lfg #ca9762
+syfg #c4acc4
+cmfg #393635
+slbg #201d1c
+slfg #393635
+fzfhl #ca9762
+bcbg #965d5d
+bdbg #ca9762
+nmbg #c4acc4
+imbg #979c95
+vmbg #965d5d
+
+#rofi
+bg #1b1917
+tbg #001b1917
+mbg #f0141211
+msbg #70252120
+fg #393635
+bc #979c95
+ibg #1b1917
+ibc #2c2928
+abg #141211
+afg #454342
+ebg #1b1917
+efg #ca9762
+sbg #252120
+sfg #ca9762
+sul #ca9762
+lpc #bfacbf
+dpc #bfacbf
+btc #1b1917
+sbtc #1b1917
+btbc #1b1917
+ 
+#tmux 
+bg terminal
+fg #393635
+bc #201d1c
+mc #965d5d
+ibg #201d1c
+ifg #393635
+sfg #393635
+wbg #201d1c
+wfg #393635
+cbg #2c2928
+cfg #ca9762
+ 
+#dunst 
+bg #201d1c
+fg #bfacbf
+fc #965d5d
+sbg #141211
+pbfg #ca9762
+
+#vifm
+fg #454342
+dfg #2c2928
+efg #454342
+cbg #201d1c
+cfg #ca9762
+sfg #201d1c
+tfg #201d1c
+slbg #201d1c
+slfg #454342
+
+#ncmpcpp
+npp #454342
+np #454342
+sip #2c2928
+sc #2c2928
+mwc #2c2928
+etc #191e24
+c2 #DBBD7D
+pc #2c2928
+pec #ca9762
+vc #ca9762
+
+#sxiv
+bg #141211
+fg #ca9762
+
+#nb
+fg #2c2928
+pfg #201d1c
+pbg default
+ifg #454342
+ibg #2c2928

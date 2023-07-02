@@ -1,0 +1,178 @@
+t #555354
+tb #555354
+b #555354
+c #555354
+it #201f1f
+itb #201f1f
+ib #201f1f
+ic #201f1f
+cbt #6e6e6e
+mabt #6e6e6e
+mibt #6e6e6e
+cbth #433f41
+mabth #433f41
+mibth #433f41
+ibt #141313
+ibth #141313
+mbg #201f1f
+mfg #393939
+mtbg #201f1f
+mtfg #454545
+msbg #2c2c2c
+msfg #b87464
+mb #201f1f
+ms #201f1f
+bfg #201f1f
+bsfg #2c2c2c
+osd #201f1f
+osdh #b87464
+osdu #2c2c2c
+s #433f41
+
+#bar
+bg #002c2c2c
+fc #555354
+bfc #141313
+bbg #2c2c2c
+jbg #141313
+jpfg #6e6e6e
+jsfg #433f41
+pbg #141313
+pfg #a29f91
+sbg #141313
+sfg #454545
+pbefg #b87464
+pbfg #454545
+mlfg #a59a84
+tbfg #454545
+Psbg #201f1f
+Psfg #393939
+Apfg #a59a84
+Lsfg #282727
+Lpbg #201f1f
+Lpfg #454545
+Labg #282727
+Lafg #a29f91
+Lfc #6e6e6e
+
+#qb
+bg #201f1f
+fg #393939
+sbg #141313
+sfg #b87464
+mfg #c4bda8
+sbbg #141313
+
+#term
+fg #bfbbac
+bg #ff141313
+
+#bash
+bg default
+fg #454545
+sc #454545
+dc #2c2c2c
+ic #757068
+sec #bfbbac
+gcc #bfbbac
+gdc #b87464
+vc #a59a84
+
+#vim
+bg none
+fg #cbc8bb
+ifg #a59a84
+vfg #c4bda8
+cfg #757068
+ffg #555354
+sfg #b87464
+nbg none
+nfg #2c2c2c
+lbg #201f1f
+lfg #b87464
+syfg #757068
+cmfg #393939
+slbg #201f1f
+slfg #393939
+fzfhl #b87464
+bcbg #8e8783
+bdbg #b87464
+nmbg #757068
+imbg #555354
+vmbg #8e8783
+
+#rofi
+bg #1b1a1a
+tbg #001b1a1a
+mbg #f0141313
+msbg #70252424
+fg #393939
+bc #555354
+ibg #1b1a1a
+ibc #2c2c2c
+abg #141313
+afg #454545
+ebg #1b1a1a
+efg #b87464
+sbg #252424
+sfg #b87464
+sul #b87464
+lpc #bfbbac
+dpc #bfbbac
+btc #1b1a1a
+sbtc #1b1a1a
+btbc #1b1a1a
+ 
+#tmux 
+bg terminal
+fg #393939
+bc #201f1f
+mc #8e8783
+ibg #201f1f
+ifg #393939
+sfg #393939
+wbg #201f1f
+wfg #393939
+cbg #2c2c2c
+cfg #b87464
+ 
+#dunst 
+bg #201f1f
+fg #bfbbac
+fc #8e8783
+sbg #141313
+pbfg #b87464
+
+#vifm
+fg #454545
+dfg #2c2c2c
+efg #454545
+cbg #201f1f
+cfg #b87464
+sfg #201f1f
+tfg #201f1f
+slbg #201f1f
+slfg #454545
+
+#ncmpcpp
+npp #454545
+np #454545
+sip #2c2c2c
+sc #2c2c2c
+mwc #2c2c2c
+etc #191e24
+c2 #DBBD7D
+pc #2c2c2c
+pec #b87464
+vc #b87464
+
+#sxiv
+bg #141313
+fg #b87464
+
+#nb
+fg #2c2c2c
+pfg #201f1f
+pbg default
+ifg #454545
+ibg #2c2c2c

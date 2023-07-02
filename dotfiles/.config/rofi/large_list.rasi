@@ -4,11 +4,12 @@
 
 * {
 	font:   "Iosevka Orw 9";
+	font:                  "SFMono Medium 9";
 
-	window-width:    45%;
-	window-height:   43%;
-	window-border:   0px;
-	window-padding:  60px 60px;
+	window-width:    35%;
+	window-height:   35%;
+	window-border:   2px;
+	window-padding:  4% 4%;
 
 	/*input-border:    0 0 2px;*/
 	list-padding:    0px 0px;
@@ -45,7 +46,8 @@
 	// padding:        @input-padding;
 	// margin:         @input-padding;
 	margin:         @element-padding;
-	padding:        @input-padding;
+	margin:         @input-padding;
+	padding:        @element-padding;
 	children:       [ prompt, entry ];
 	background-color: @bg;
 }

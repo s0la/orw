@@ -1,0 +1,200 @@
+#ob
+t #5d5968
+tb #5d5968
+b #5d5968
+c #5d5968
+it #1e1e20
+itb #1e1e20
+ib #1e1e20
+ic #1e1e20
+cbt #75717e
+mabt #75717e
+mibt #75717e
+cbth #464251
+mabth #464251
+mibth #464251
+ibt #121214
+ibth #121214
+mbg #1e1e20
+mfg #383839
+mtbg #1e1e20
+mtfg #454545
+msbg #2a2a2c
+msfg #c36b4f
+mb #1e1e20
+ms #1e1e20
+bfg #1e1e20
+bsfg #2a2a2c
+osd #1e1e20
+osdh #c36b4f
+osdu #2a2a2c
+s #464251
+
+#bar
+bg #2a2a2c
+fc #2a2a2c
+bfc #d0121214
+bfc #2a2a2c
+bbg #2a2a2c
+jbg #121214
+jpfg #75717e
+jsfg #464251
+pbg #121214
+pfg #a29197
+sbg #121214
+sfg #454545
+pbefg #c36b4f
+pbfg #454545
+mlfg #aa7376
+tbfg #454545
+Psbg #1e1e20
+Psfg #383839
+Apfg #a29197
+Abfg #5d5968
+Lsbg #d0121214
+Lsfg #383839
+Lpbg #d0121214
+Lpfg #76331e
+Labg #d01e1e20
+Labg #d0121214
+Lafg #a29197
+Lafg #c36b4f
+
+#qb
+bg #1e1e20
+fg #383839
+sbg #121214
+sfg #c36b4f
+mfg #a786a2
+sbbg #121214
+
+#term
+fg #bfacb3
+bg #ff121214
+
+#bash
+bg default
+fg #454545
+sc #454545
+dc #454545
+ic #a786a2
+sec #5d5968
+gcc #5d5968
+gdc #c36b4f
+vc #aa7376
+
+#vim
+bg none
+fg #cbbbc1
+ifg #aa7376
+vfg #a786a2
+cfg #7b5a50
+ffg #5d5968
+sfg #c36b4f
+nbg none
+nfg #2a2a2c
+lbg #1e1e20
+lfg #c36b4f
+syfg #7b5a50
+cmfg #383839
+slbg #1e1e20
+slfg #383839
+fzfhl #c36b4f
+bcbg #5d5968
+bdbg #c36b4f
+nmbg #7b5a50
+imbg #5d5968
+vmbg #5d5968
+
+#rofi
+bg #18181b
+tbg #f018181b
+tbg #ea18181b
+mbg #f0121214
+msbg #70232327
+fg #383839
+bc #5d5968
+bc #18181b
+ibg #18181b
+ibc #2a2a2c
+ibc #18181b
+abg #161618b0
+abg #08080855
+abg #08080866
+afg #454545
+ebg #18181b
+efg #c36b4f
+sbg #232327b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sfg #c36b4f
+sul #c36b4f
+lpc #bfacb3
+dpc #bfacb3
+btc #18181b
+sbtc #18181b
+btbc #18181b
+ftbg #00000000
+sbbg #c36b4fbb
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #383839
+bc #1e1e20
+mc #5d5968
+ibg #1e1e20
+ifg #383839
+sfg #383839
+wbg #1e1e20
+wfg #383839
+cbg #2a2a2c
+cfg #c36b4f
+
+#dunst
+bg #1e1e20
+fg #bfacb3
+fc #5d5968
+sbg #121214
+pbfg #c36b4f
+
+#vifm
+fg #454545
+dfg #2a2a2c
+efg #454545
+cbg #1e1e20
+cfg #c36b4f
+sfg #1e1e20
+tfg #1e1e20
+slbg #1e1e20
+slfg #454545
+
+#ncmpcpp
+npp #454545
+np #454545
+sip #2a2a2c
+sc #2a2a2c
+mwc #2a2a2c
+etc #191e24
+c2 #DBBD7D
+pc #2a2a2c
+pec #c36b4f
+vc #c36b4f
+
+#sxiv
+bg #121214
+fg #c36b4f
+
+#lock
+tc #ffbfacb3
+rc #ffc36b4f
+ic #dc121214
+wc #ff75717e
+
+#nb
+fg #2a2a2c
+pfg #1e1e20
+pbg default
+ifg #454545
+ibg #2a2a2c

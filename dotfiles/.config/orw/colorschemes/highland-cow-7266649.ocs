@@ -1,0 +1,179 @@
+#ob
+t #626262
+tb #626262
+b #626262
+c #626262
+it #2a2a2a
+itb #2a2a2a
+ib #2a2a2a
+ic #2a2a2a
+cbt #c3c3c3
+mabt #c3c3c3
+mibt #c3c3c3
+cbth #969696
+mabth #969696
+mibth #969696
+ibt #1e1e1e
+ibth #1e1e1e
+mbg #2a2a2a
+mfg #434343
+mtbg #2a2a2a
+mtfg #4f4f4f
+msbg #363636
+msfg #e3ccc0
+mb #2a2a2a
+ms #2a2a2a
+bfg #2a2a2a
+bsfg #363636
+osd #2a2a2a
+osdh #e3ccc0
+osdu #363636
+s #969696
+
+#bar
+bg #00363636
+fc #aaaaaa
+bfc #1e1e1e
+bbg #363636
+jbg #1e1e1e
+jpfg #c3c3c3
+jsfg #969696
+pbg #1e1e1e
+pfg #8d8c8c
+sbg #1e1e1e
+sfg #4f4f4f
+pbefg #e3ccc0
+pbfg #4f4f4f
+mlfg #8c8c8c
+tbfg #4f4f4f
+Psbg #2a2a2a
+Psfg #434343
+Apfg #8c8c8c
+Lsfg #323232
+Lpbg #2a2a2a
+Lpfg #4f4f4f
+Labg #323232
+Lafg #8d8c8c
+Lfc #e3ccc0
+
+#qb
+bg #2a2a2a
+fg #434343
+sbg #1e1e1e
+sfg #e3ccc0
+mfg #5d5d5d
+sbbg #1e1e1e
+
+#term
+fg #aaaaaa
+bg #ff1e1e1e
+
+#bash
+bg default
+fg \
+sc \
+dc #252525
+ic #e9e9e9
+sec #363636
+gcc #363636
+gdc #e3ccc0
+vc #8c8c8c
+
+#vim
+bg none
+fg #aaaaaa
+ifg #8c8c8c
+vfg #5d5d5d
+cfg #e9e9e9
+ffg #626262
+sfg #e3ccc0
+nbg none
+nfg #363636
+lbg #2a2a2a
+lfg #e3ccc0
+syfg #e9e9e9
+cmfg #434343
+slbg #2a2a2a
+slfg #434343
+fzfhl #e3ccc0
+bcbg '
+bdbg #e3ccc0
+nmbg #e9e9e9
+imbg #626262
+vmbg '
+
+#rofi
+bg #252525
+tbg #00252525
+mbg #f01e1e1e
+msbg #702f2f2f
+fg #434343
+bc #626262
+ibg #252525
+ibc #363636
+abg #1e1e1e
+afg #4f4f4f
+ebg #252525
+efg #e3ccc0
+sbg #2f2f2f
+sfg #e3ccc0
+sul #e3ccc0
+lpc #aaaaaa
+dpc #aaaaaa
+btc #252525
+sbtc #252525
+btbc #252525
+
+#tmux
+bg terminal
+fg #434343
+bc #2a2a2a
+mc 
+ibg #2a2a2a
+ifg #434343
+sfg #434343
+wbg #2a2a2a
+wfg #434343
+cbg #363636
+cfg #e3ccc0
+
+#dunst
+bg #2a2a2a
+fg #aaaaaa
+fc 
+sbg #1e1e1e
+pbfg #e3ccc0
+
+#vifm
+fg #4f4f4f
+dfg #363636
+efg #4f4f4f
+cbg #2a2a2a
+cfg #e3ccc0
+sfg #2a2a2a
+tfg #2a2a2a
+slbg #2a2a2a
+slfg #4f4f4f
+
+#ncmpcpp
+npp #4f4f4f
+np #4f4f4f
+sip #363636
+sc #363636
+mwc #363636
+etc #191e24
+c2 #DBBD7D
+pc #363636
+pec #e3ccc0
+vc #e3ccc0
+
+#sxiv
+bg #1e1e1e
+fg #e3ccc0
+
+#nb
+fg #363636
+pfg #2a2a2a
+pbg default
+ifg #4f4f4f
+ibg #363636

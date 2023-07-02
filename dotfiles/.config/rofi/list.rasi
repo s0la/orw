@@ -4,25 +4,26 @@
 
 * {
 	font:                  "Iosevka Orw 9";
+	font:                  "SFMono Medium 9";
 
-	lines:                 10;
+	lines:                 6;
 
-	window-width:          33%;
-	window-margin:         30px 0;
-	window-padding:        30px 30px;
+	window-width:          35%;
+	window-margin:         0px 0;
+	window-padding:        3% 2%;
 	window-location:       center;
 	window-orientation:    horizontal;
 
-	list-padding:          0px 0px;
-	list-margin:           10px 0;
+	list-padding:          6px 6px;
+	list-margin:           6px 0;
 
 	/*input-border:          0 0 2px;*/
 	input-margin:          0 0 10px;
-	input-padding:         5px 5px;
+	input-padding:         5px 8px;
 
 	entry-margin:          0 3px 0;
 
-	element-padding:       5px 5px;
+	element-padding:       8px 8px;
 }
 
 #mainbox {
@@ -57,9 +58,11 @@
 #entry {
 	margin: @entry-margin;
 	background-color: @ibg;
+	color:            @lpc;
 }
 
 #prompt {
+	enabled: false;
 	str:              "";
 	background-color: @ibg;
 	color:            @lpc;
@@ -68,7 +71,6 @@
 #textbox-prompt-colon {
 	str:              "";
 	str:              "›";
-	color:            @lpc;
 	expand:           false;
 	background-color: @ibg;
 }
@@ -79,4 +81,16 @@
 
 sidebar {
 	color:          @fg;
+}
+
+#button normal {
+	width:     10%;
+	border-radius:    50%;
+	background-color: @sbg;
+}
+
+#button selected {
+	width:     10%;
+	border-radius:    50%;
+	background-color: @abg;
 }
