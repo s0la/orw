@@ -1,31 +1,79 @@
 #!/bin/bash
 
-if [[ $@ ]]; then
-	if [[ $@ == [0-9] ]]; then
-		desktop="$1"
+icons=~/.orw/scripts/bar/icons
+workspaces=$(awk '
+		NR == FNR && /<\/?names>/ { wn = !wn }
 
-		wmctrl -l | awk '
-			$2 ~ "'"$desktop"'" {
-				aw[$2] = aw[$2] " " $NF
-			} END { for (w in aw) {
-					gsub(" ", "\n", aw[w])
-					print aw[w]
-				}
-			}'
+		wn && /<name>/ {
+			gsub("\\s*<[^>]*>", "")
+			awn = awn "|" $0
+		}
+
+		NR != FNR && $0 ~ "Workspace_(" substr(awn, 2) ")_icon" {
+			if (!wii) wii = NR
+			gsub("(^|%)[^}]*.", "")
+			awi[NR - wii] = $0
+			#awi = awi " " $0
+		} END { for (i in awi) printf "[%s]=%d ", awi[i], i }
+		' ~/.config/openbox/rc.xml $icons)
+
+		
+eval declare -A workspaces=( "$workspaces" )
+
+if [[ $@ ]]; then
+	if [[ "${!workspaces[*]}" == *$@* ]]; then
+		desktop="${workspaces[$1]}"
+
+		id=$(printf '0x%.8x' $(xdotool getactivewindow))
+
+		#index=$(wmctrl -l | awk '
+		#	$2 ~ "'"$desktop"'" {
+		#		aw[$2] = aw[$2] " " $NF
+		#		#sub("0x0*", "", $1)
+		#		if ($1 == "'"$id"'") i = NR - 1
+		#	} END { for (w in aw) {
+		#			gsub(" ", "\n", aw[w])
+		#			print i aw[w]
+		#		}
+		#	}' | { read current_window; { echo $current_window >&1; cat >&2; } })
+	#	}' | { read -r o; { echo "$o" >&1; cat > $openbox_conf; } })
+
+		IFS=$'\n' read -d '' current_window all <<< \
+			$(wmctrl -l | awk '
+				$2 ~ "'"$desktop"'" {
+					aw[$2] = aw[$2] " " $NF
+					if ($1 == "'"$id"'") i = wc
+					wc++
+				} END { for (w in aw) {
+						gsub(" ", "\n", aw[w])
+						print i aw[w]
+					}
+				}')
+
+		echo -ne "\0active\x1f$current_window\n${all/ /\n}"
 	else
 		window="$@"
 		wmctrl -l | sed -n "s/\s.*${window##* }$//p" | xargs wmctrl -ia
 		#echo WIN $window
 	fi
 else
-	desktop_num=$(xdotool get_num_desktops)
-	
-	for desktop in $(seq 0 $((desktop_num - 1))); do
-		modis+="$desktop:$0 $desktop,"
-	done
+	#desktop_num=$(xdotool get_num_desktops)
+	#for desktop in $(seq 0 $((desktop_num - 1))); do
+	#	modis+="$desktop:$0 $desktop,"
+	#done
 
 	desktop=$(xdotool get_desktop)
-	rofi -modi "${modis%,}" -show $desktop -theme sidebar_new
+
+	while read index icon; do
+		modis+="$icon:$0 $icon,"
+		((desktop == index)) && current_desktop=$icon
+	done <<< $(
+		for workspace in ${!workspaces[*]}; do
+			echo "${workspaces[$workspace]} $workspace"
+		done | sort -nk 1,1 #| cut -d ' ' -f 2
+	)
+
+	rofi -modi "${modis%,}" -show $current_desktop -theme sidebar
 fi
 
 exit
