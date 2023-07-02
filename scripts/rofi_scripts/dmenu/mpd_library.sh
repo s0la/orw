@@ -62,13 +62,30 @@ notify_on_finish() {
 	done && ~/.orw/scripts/notify.sh "Music library updated."
 }
 
-current="black"
+set_dashed_separator() {
+	sed -i "/^dashed_separator/ s/''/'$dashed_separator'/" $0
+}
+
+current=""
+#dashed_separator='━━━━━━━━━━━━━━━━━━━━━━━━━━━'
 
 if [[ -z $@ ]]; then
 	set_current ''
 else
-	case "$@" in
+	#arg="$@"
+	#arg="${arg#* }"
+
+	[[ $@ == ━* ]] &&
+		read dashed_separator arg <<< "$@"
+
+	case "$arg" in
+		'') set_current '';;
 		back) back;;
+		#'')
+		#	dashed_separator=$1
+		#	set_dashed_separator
+		#	set_current ''
+		#	;;
 		update)
 			coproc (mpc -q update &)
 			pid=$((COPROC_PID + 1))
@@ -79,9 +96,9 @@ else
 			back;;
 		*.mp3|*.ogg)
 			[[ $current ]] && current+='/'
-			mpc add "$current${@// /\ }";;
+			mpc add "$current${arg// /\ }";;
 		*)
-			file="${@// /\ }"
+			file="${arg// /\ }"
 			[[ $current ]] && current+="/$file" || current="$file"
 			set_current "$current";;
 	esac

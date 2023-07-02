@@ -77,18 +77,18 @@ get_rofi_width() {
 					if (/^display_[0-9]_xy/ && $pf > p) {
 						rw = int(w * (ww - sw - 2 * wp) / 100)
 						rw -= 2 * ep
-						print int(rw / (f - 2) / 2 - 1)
+						#print int(rw / (f - 2) / 2 - 1)
+						print int(rw / (f - 2)) - 1
 						exit
 					}
 				}
-			}' ~/.config/{rofi/sidebar_new.rasi,orw/config})
+			}' ~/.config/{rofi/large_list.rasi,orw/config})
 
-	dashed_separator=$(printf '━ %.0s' $(eval echo {0..$rofi_width}))
-	#echo -e $rofi_width, $dashed_separator
+	dashed_separator=$(printf '━% .0s' $(eval echo {0..$rofi_width}))
+	#set_dashed_separator
 }
 
-get_rofi_width
-#exit
+#get_rofi_width
 #dashed_separator="$1"
 #shfit
 
@@ -141,44 +141,87 @@ options=
 
 #echo -en "\0active\x1f$index\n",
 
+#~/.orw/scripts/notify.sh -p "PL: $1"
+
+#~/.orw/scripts/notify.sh -p "ALL: ^$@^"
+#echo "ALL ^$@^" >> log
+
+#~/.orw/scripts/notify.sh -p "D: $@"
+
+set_dashed_separator() {
+	sed -i "/^dashed_separator/ s/''/'$dashed_separator'/" $0
+}
+
+#dashed_separator='━━━━━━━━━━━━━━━━━━━━━━━━━━━'
+
 if [[ -z $@ ]]; then
+	get_rofi_width
 	list_songs
 else
 #if [[ $@ ]]; then
-	case $@ in
-		"${empty}options")
-			set_options true
-			sed -i '/^options/ s/\w*$/true/' $0
-			echo -e 'load\nsave\nclear\nrefresh';;
-		refresh) set_options;;
-		clear|save*)
-			set_options
+	#arg="${@//[![:ascii:]]}"
+	#echo "ALL ^$@^: $arg" >> log
 
-			mpc -q $@
-			action="${@%% *}ed"
-			[[ $@ =~ ' ' ]] && playlist="${@#* }";;
-		load) mpc lsplaylists | grep -v .*.m3u;;
-		*)
-			if [[ $options ]]; then
+	##if [[ $@ =~ ^[![:ascii:]]*$ ]]; then
+	#if [[ $@ =~ ^━*$ ]]; then
+	#	dashed_separator=$1
+	#	set_dashed_separator
+	#	#~/.orw/scripts/notify.sh -p "DD: $dashed_separator"
+	#	#list_songs
+	#else
+	#	arg="$@"
+	#	arg="${arg#* }"
+
+	#	echo "ARG $@: $arg" >> log
+
+	[[ $@ == ━* ]] &&
+		separator=dashed_separator
+	read $separator arg <<< "$@"
+
+	[[ $arg ]] &&
+		case $arg in
+			##━━━*)
+			#[![:ascii:]]*)
+			#	dashed_separator=$1
+			#	set_dashed_separator
+			#	;;
+			"$options")
+				set_options true
+				sed -i '/^options/ s/\w*$/true/' $0
+				echo -e 'load\nsave\nclear\nrefresh'
+				;;
+			refresh) set_options;;
+			clear|save*)
 				set_options
-				playlist="$@"
-				action="loaded"
-				mpc load "$playlist" > /dev/null
-			else
-				item="$@"
-				#ind=$(sed -n "/${item//[\(\)]/\.}/d;=")
 
-				#item_stripped="${item:2}"
-				#echo item "${item//\//\\/}"
-				#item_index=$(mpc playlist | awk '
-				#	/'"${item_stripped//\//\\/}"'/ { print NR; exit }')
+				mpc -q $arg
+				action="${arg%% *}ed"
+				[[ $arg =~ ' ' ]] && playlist="${arg#* }"
+				;;
+			load) mpc lsplaylists | grep -v .*.m3u;;
+			*)
+				if [[ $options ]]; then
+					set_options
+					playlist="$arg"
+					action="loaded"
+					mpc load "$playlist" > /dev/null
+				else
+					item="$arg"
+					#ind=$(sed -n "/${item//[\(\)]/\.}/d;=")
 
-				item_index=$(mpc playlist | awk '/'"${item//[()]/\.}"'/ { print NR; exit }')
-				mpc -q play $item_index
-				#~/.orw/scripts/play_song_from_playlist.sh "${item:${#empty}}"
-			fi;;
-	esac
+					#item_stripped="${item:2}"
+					#echo item "${item//\//\\/}"
+					#item_index=$(mpc playlist | awk '
+					#	/'"${item_stripped//\//\\/}"'/ { print NR; exit }')
 
+					item_index=$(mpc playlist | awk '/'"${item//[()]/\.}"'/ { print NR; exit }')
+					mpc -q play $item_index
+					#~/.orw/scripts/play_song_from_playlist.sh "${item:${#empty}}"
+				fi;;
+		esac
+	#fi
+
+	[[ $dashed_separator ]] || exit
 	[[ $action && $action != load ]] && ~/.orw/scripts/notify.sh -p "<b>$playlist</b> playlist ${action//ee/e}."
 	[[ $options ]] || list_songs
 fi
