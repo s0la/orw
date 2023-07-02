@@ -9,7 +9,7 @@ theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #    
 modis+=":$path/select_wallpaper.sh,"
 modis+=":$path/wallpaper_categories.sh,"
-rofi -modi "$modis" -show  -theme sidebar_new
+rofi -modi "$modis" -show  -theme sidebar
 exit
 
 modis+="wallpapers:$path/wallpapers.sh,"

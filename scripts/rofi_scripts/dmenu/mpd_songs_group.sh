@@ -97,7 +97,7 @@ modis+=":$path/mpd_playlist.sh $dashed_separator,"
 modis+=":$path/mpd_library.sh $dashed_separator"
 #modis+=":$path/mpd_playlist.sh,"
 #modis+=":$path/mpd_library.sh"
-rofi -modi "$modis" -show  -theme sidebar_new
+rofi -modi "$modis" -show  -theme sidebar
 exit
 
 modis+="library:$path/mpd_library.sh $dashed_separator,"

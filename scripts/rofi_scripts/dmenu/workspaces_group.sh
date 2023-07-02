@@ -14,7 +14,7 @@ declare -A workspaces
 eval workspaces=( $(get_workspaces) )
 
 if [[ -z $@ ]]; then
-	rofi -format 'i' -modi ":$0 switch,:$0 wall,:$0 move,:$0 tiling" -show  -theme sidebar_new
+	rofi -format 'i' -modi ":$0 switch,:$0 wall,:$0 move,:$0 tiling" -show  -theme sidebar
 else
 	case $# in
 		1)
