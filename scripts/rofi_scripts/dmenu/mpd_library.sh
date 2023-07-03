@@ -41,7 +41,7 @@ get_rofi_width() {
 	dashed_separator=$(printf '━ %.0s' $(eval echo {0..$rofi_width}))
 }
 
-get_rofi_width
+#get_rofi_width
 #dashed_separator="$1"
 #shfit
 
