@@ -730,7 +730,7 @@ align_windows() {
 	#		windows[$window]="${all_windows[$window]}"
 	#done
 
-	get_workspace_windows
+	[[ $tiling ]] || get_workspace_windows
 
 	set_alignment_properties $alignment_direction
 	#get_alignment "$action" #print
@@ -975,9 +975,11 @@ update_aligned_windows() {
 			#read x y w h xb yb <<< "${all_aligned_windows[$window_id]}"
 			props=( ${all_aligned_windows[$window_id]} )
 
-			[[ $1 && $window_id == $1 ]] && set_border_diff $1
-
 			if ((${#props[*]})); then
+				[[ $1 && $window_id == $1 ]] && set_border_diff $1
+				[[ $window_id == $current_id ]] &&
+					workspaces[$current_id]="${workspace}_${display}"
+
 				new_props="${props[*]::4}"
 				wmctrl -ir $window_id -e 0,${new_props// /,}
 				all_windows[$window_id]="${props[*]}"
@@ -2096,6 +2098,7 @@ set_tile_event() {
 	[[ $rofi_state == opened ]] && toggle_rofi $workspace
 
 	select_tiling_window
+	get_workspace_windows
 
 	toggle_rofi
 	align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
