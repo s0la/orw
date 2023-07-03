@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 200 -y 15 -h 27 -s 10 -p 10 -f 2 u -a 8 -c bar_gruv bar_white -M -n gruv -i -l -W o8,n -l -r -m s22,i,of150,c:ptn -j 25 -v -d I:M_d_b -j -P lro
+~/.orw/scripts/bar/generate_bar.sh -x o0 -y o0 -h 26 -a 8 -f 3 -c auto_generated -n gruv -m oe10,p:s7,b:ct,s22,of10,T,i -c -W p10,o4p,n,icc -r -t p:s10d -j d10 -R -e -v -j -d

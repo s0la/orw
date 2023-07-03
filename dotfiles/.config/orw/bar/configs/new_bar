@@ -1,0 +1,1 @@
+~/bar_new/run.sh -y 20 -h 32 -F 3 -f u:2 -c auto_generated -n new_bar -A o:20 -c -f -j 30 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:1,p:10 -j -r -i -T P:10d -j 10 -C -N i -R -e -v -t -V -j
