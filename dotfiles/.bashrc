@@ -254,7 +254,7 @@ get_branch_info() {
 				sub("\\.\\.\\..*", "", b)
 				r = NF
 
-				f_start = (/\.\.\./) ? 7 : 4
+				f_start = (/\.\.\./) ? 5 : 4
 
 				if(r > f_start) for(f = 5; f < NF; f++) {
 					#i = ($f ~ /^ ?a/) ? "  " : "  "
