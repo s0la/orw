@@ -346,22 +346,22 @@
     </keybind>
     <keybind key="W-h">
       <action name="Execute">
-        <command>~/.orw/scripts/resize.sh l +1 move</command>
+        <command>~/.orw/scripts/resize.sh l +50 move</command>
       </action>
     </keybind>
     <keybind key="W-l">
       <action name="Execute">
-        <command>~/.orw/scripts/resize.sh l -1 move</command>
+        <command>~/.orw/scripts/resize.sh l -50 move</command>
       </action>
     </keybind>
     <keybind key="W-k">
       <action name="Execute">
-        <command>~/.orw/scripts/resize.sh t +1 move</command>
+        <command>~/.orw/scripts/resize.sh t +50 move</command>
       </action>
     </keybind>
     <keybind key="W-j">
       <action name="Execute">
-        <command>~/.orw/scripts/resize.sh t -1 move</command>
+        <command>~/.orw/scripts/resize.sh t -50 move</command>
       </action>
     </keybind>
     <keybind key="W-C-h">
@@ -465,7 +465,7 @@
     </keybind>
     <keybind key="A-C-l">
       <action name="Execute">
-        <command>~/.orw/scripts/resize.sh r +1</command>
+        <command>~/.orw/scripts/resize.sh r +50</command>
       </action>
     </keybind>
     <keybind key="A-W-l">
@@ -1092,8 +1092,8 @@
       <layer>below</layer>
       <decor>no</decor>
       <position force="yes">
-        <x>1283</x>
-        <y>607</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>150</width>
@@ -1161,8 +1161,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>1508</x>
-        <y>631</y>
+        <x>706</x>
+        <y>726</y>
       </position>
       <size>
         <width>130</width>
