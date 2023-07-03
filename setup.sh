@@ -159,6 +159,9 @@ function apps() {
 	##compton with kawase blur
 	#get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
 
+	#pynput
+	python -m pip install pynput &> /dev/null
+
 	#picom with kawase blur
 	install_picom
 
