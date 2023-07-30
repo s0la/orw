@@ -194,8 +194,11 @@ set_new_position() {
 
 get_full_window_properties() {
 	x=$x_start
+	[[ $rofi_state == opened ]] &&
+		((x += rofi_offset))
+
 	y=$y_start
-	w=$((x_end - x_start - x_border))
+	w=$((x_end - x - x_border))
 	h=$((y_end - y_start - y_border))
 }
 
@@ -810,11 +813,13 @@ handle_first_window() {
 	wmctrl -ir $id -e 0,${new_props// /,} &
 	#wmctrl -ir $id -e 0,$x,$y,$w,$h &
 
-	workspaces[$id]="${workspace}_${display}"
 	all_windows[$id]="${props[*]}"
 	windows[$id]="${props[*]}"
 	properties=( ${props[*]} )
 	((window_count++))
+
+	get_display_properties
+	workspaces[$id]="${workspace}_${display}"
 }
 
 align() {
@@ -971,8 +976,6 @@ update_aligned_windows() {
 
 	if [[ $aligned_ids ]]; then
 		for window_id in ${aligned_ids/$current_id} $current_id; do
-			#[[ $window_id == $current_id ]] && echo "$window_id, ${all_aligned_windows[$window_id]}"
-			#read x y w h xb yb <<< "${all_aligned_windows[$window_id]}"
 			props=( ${all_aligned_windows[$window_id]} )
 
 			if ((${#props[*]})); then
@@ -981,13 +984,9 @@ update_aligned_windows() {
 					workspaces[$current_id]="${workspace}_${display}"
 
 				new_props="${props[*]::4}"
-				wmctrl -ir $window_id -e 0,${new_props// /,}
+				wmctrl -ir $window_id -e 0,${new_props// /,} &
 				all_windows[$window_id]="${props[*]}"
 				windows[$window_id]="${props[*]}"
-
-				#wmctrl -ir $window_id -e 0,$x,$y,$w,$h &
-				#windows[$window_id]="$x $y $w $h $xb $yb"
-				#all_windows[$window_id]="${windows[$window_id]}"
 			fi
 		done
 	fi
@@ -1524,6 +1523,8 @@ resize() {
 				changed_properties[index]=$property
 			fi
 
+			#echo $index: ${diffs[index]}, ${changed_properties[index]}
+
 			[[ ($event == *mouse* && ${#diffs[*]} -eq 2) ||
 				$event != *mouse* ]] && break
 
@@ -1668,8 +1669,8 @@ resize() {
 		((index)) &&
 			direction=v || direction=h
 
-		id=temp
-		properties=( $id 0 0 0 0 0 0 )
+		#id=temp
+		properties=( temp 0 0 0 0 0 0 )
 		opposite_index=$(((index + 1) % 2 + 1))
 		((index++))
 
@@ -1700,11 +1701,16 @@ resize() {
 				properties[index + 2]=$(((diff - margin) * 1))
 			fi
 
+			windows[$id]="${all_windows[$id]}"
+			id=temp
 			windows[$id]="${properties[*]:1}"
 			set_alignment_properties $direction
 
+			#(
 			#echo $direction, ${properties[*]}
+			#list_windows
 			#get_alignment move print
+			#) >> ~/w.log
 
 			#killall spy_windows.sh xprop
 			#exit
@@ -1712,6 +1718,9 @@ resize() {
 			read _ _ _ aligned <<< $(get_alignment move)
 			eval aligned_windows=( $aligned )
 			unset aligned_windows[${same_windows%% *}]
+
+			#echo $index, $property: $direction - ${properties[*]}
+			#echo $aligned
 
 			#((property)) && get_alignment move print
 			#echo $property, $diff, $aligned
@@ -1990,11 +1999,6 @@ adjust_window() {
 }
 
 update_workspaces() {
-	eval workspaces=( $(wmctrl -l |
-		awk '{ sub("0x0*", "0x", $1); print "[" $1 "]=" $2 }') )
-}
-
-update_workspaces() {
 	workspaces=$(awk '{
 			if (NR == FNR) {
 				if (/^orientation/) i = ($NF == "horizontal") ? 2 : 3
@@ -2131,16 +2135,23 @@ set_max_event() {
 	local event=max
 
 	if [[ ${states[$id]} ]]; then
+		unset maxed_id
 		restore
 	else
-		properties=( $id ${properties[*]} )
+		maxed_id=$id
 		get_full_window_properties $id
 		wmctrl -ir $id -e 0,$x,$y,$w,$h &
+		properties=( $id ${windows[$id]} )
+
 		align m
+
+		properties=( $x $y $w $h ${properties[*]: -2} )
 	fi
 
 	update_aligned_windows
-	properties=( ${windows[$id]} )
+	
+	all_windows[$id]="${properties[*]}"
+	windows[$id]="${properties[*]}"
 }
 
 set_update_event() {
@@ -2233,11 +2244,15 @@ tile_windows() {
 			((properties[changing_index - 2] += changing_side))
 			((properties[changing_index] -= changing_side))
 		fi
+
+		#echo p: $scalled_surface, ${properties[*]}
 	done
 
 	aligned_properties=( ${properties[*]} $x_border $y_border)
+	#echo ap: ${aligned_properties[*]}
 	((aligned_properties[2]-=x_border))
 	((aligned_properties[3]-=y_border))
+	#echo ap: ${aligned_properties[*]}
 
 	all_aligned_windows[$wid]="${aligned_properties[*]}"
 	alignments[$wid]=$alignment_direction
@@ -2340,10 +2355,6 @@ transform() {
 set_transform_resize_event() {
 	local event=resize
 	get_workspace_windows
-	echo $id, ${workspaces[$id]}, $display, ${display_properties[*]}
-	for w in ${!windows[*]}; do
-		echo W: $w - ${windows[$w]}
-	done
 	transform
 }
 
@@ -2989,9 +3000,28 @@ set_rofi_windows() {
 	#echo $rofi_offset, ${rofi_window[*]}, $rofi_restore_windows, $rofi_align_windows
 }
 
+toggle_maxed_window() {
+	local {opposite_,}sign
+	[[ $rofi_windows_state == align ]] &&
+		sign=+ opposite_sign=- || sign=- opposite_sign=+
+
+	properties=( ${windows[$maxed_id]} )
+	echo PRE: ${properties[*]}
+	((properties[0] $sign= rofi_offset))
+	((properties[2] $opposite_sign= rofi_offset))
+	echo POST: ${properties[*]}
+	read x y w h b{x,y} <<< "${properties[*]}"
+
+	wmctrl -ir $maxed_id -e 0,$x,$y,$w,$h &
+
+	windows[$maxed_id]="${properties[*]}"
+	all_windows[$maxed_id]="${properties[*]}"
+}
+
 toggle_rofi() {
 	if ((rofi_offset > 0)); then
 		local rofi_windows_state current_rofi_workspace=$rofi_workspace
+		local {align,restore}_maxed
 
 		[[ $1 ]] &&
 			local workspace=$1
@@ -3001,10 +3031,8 @@ toggle_rofi() {
 			rofi_windows_state=align
 			local current_rofi_workspace=$rofi_workspace
 			rofi_state=opened
+			align_maxed=true
 		else
-			#[[ ! $1 ]] &&
-			#	rofi_state=closed &&
-			#	unset rofi_workspace
 			if [[ ! $1 ]]; then
 				rofi_state=closed
 				unset rofi_workspace
@@ -3013,6 +3041,7 @@ toggle_rofi() {
 			fi
 
 			rofi_windows_state=restore
+			restore_maxed=true
 		fi
 
 		if [[ $1 || ($workspace == $current_rofi_workspace &&
@@ -3021,22 +3050,36 @@ toggle_rofi() {
 				local event=rofi reverse=true
 				local state_properties=rofi_${rofi_windows_state}_windows
 
-				local id=temp
-				local properties=( ${!state_properties} )
+				#echo $id: ${properties[*]}, $1: $rofi_state
+				if [[ $id ]]; then
+					[[ $id != temp ]] && get_workspace_windows
 
-				local aligned=$(list_windows | sort -nk 2,2 | awk '{
-						print "'${properties[1]}'" + "'${properties[3]}'" + '$margin' == $2
-						exit
-					}')
+					local properties=( ${!state_properties} )
+					local id=temp
 
-				if ((aligned)); then
-					windows[$id]="${properties[*]:1}"
-					set_alignment_properties h
-					read _{,,} aligned <<< $(get_alignment move)
-					eval aligned_windows=( $aligned )
+					local aligned=$(list_windows | grep -v "^\<$maxed_id\>" | sort -nk 2,2 |
+						awk '{
+							print "'${properties[1]}'" + "'${properties[3]}'" + '$margin' == $2
+							exit
+						}')
 
-					unset windows[temp]
-					set_aligned_windows
+					#list_windows | sort -nk 2,2 | head -1
+					#echo $aligned: $margin, ${properties[*]}
+
+					if ((aligned)); then
+						windows[$id]="${properties[*]:1}"
+						set_alignment_properties h
+
+						#[[ $maxed_id ]] && get_alignment move print
+
+						read _{,,} aligned <<< $(get_alignment move)
+						eval aligned_windows=( $aligned )
+
+						[[ $restore_maxed && $maxed_id ]] && toggle_maxed_window
+						unset windows[temp]
+						set_aligned_windows
+						[[ $align_maxed && $maxed_id ]] && toggle_maxed_window
+					fi
 				fi
 		fi
 	fi
@@ -3947,7 +3990,7 @@ trap save_state SIGKILL SIGINT SIGTERM
 declare -A {all_,}windows {all_,}aligned_windows workspaces
 declare -A displays alignments states
 
-tiling_workspaces=( 1 2 3 )
+tiling_workspaces=( 1 2 )
 workspace=$(xdotool get_desktop)
 
 read total_workspace_count workspace <<< \
