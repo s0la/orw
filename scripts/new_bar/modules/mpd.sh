@@ -69,10 +69,16 @@ get_mpd_stats() {
 
 					si = (ct < d || fnl <= sa) ? 0 : (ct >= fnl - sa + d) ? fnl - sa : ct - d
 
+					#bl = length(a) + 1
+					#if (si + sa <= bl) bl--
+					#if (si + sa <= bl) sv = 1
+					#print si + sa, bl, sv
+
+					al = length(a)
+					bl = al + (al <= si + sa)
+
 					if (fnl > sa || st) {
 						rs = 1
-						#fn = (st && fnl < sa) ? fn "  " ft : \
-						#	li " " substr(fn, si + 1, sa) " " li
 
 						if (st && fnl < sa) fn = fn "  " ft
 						else {
@@ -81,12 +87,31 @@ get_mpd_stats() {
 						}
 					} else rs = int(ts / pbs) - ss
 
-					al = length(a) + 1
+					#print fn
 
-					if (si < al) 
-						fn = "%{T2}" substr(fn, 1, al + lil - si - 0) \
-							"%{T-}" substr(fn, al + lil - si + nsl)
+					#al = length(a) + 0
+					#if (si + sa <= al) sv = 1
 
+					##print si, bl, sa, bl + lil - si - sv, fn
+					##print 1, fn "      " substr(fn, 1, bl + lil - si - sv)
+					#print 1, fn "      " substr(fn, 1, bl + lil - (si + 0) - sv)
+					#print 2, "%{T2}" substr(fn, 1, bl + lil - (si + 0) - sv)
+					##print 3, "%{T-}" substr(fn, bl + lil - (si + 1) + nsl - sv)
+
+					#print 1, fn "      " substr(fn, 1, al + lil - (si + 0) - sv)
+					#print bl + lil - (si + 0) + nsl - sv
+
+					if (si < al) {
+						if (si + sa > al) {
+							fn = "%{T2}" substr(fn, 1, bl + lil - si) \
+								"%{T-}" substr(fn, bl + lil - si + nsl)
+						} else fn = "%{T2}" fn "%{T-}"
+					}
+
+					#print length(a), a
+					#print lil, li
+					#print al + lil - si, fn
+					#print al, lil, si, nsl, al + lil - si + nsl
 					break
 
 					al = length(a) + 1 + lil
@@ -102,6 +127,7 @@ get_mpd_stats() {
 					break
 			}
 		} END {
+			#print fn
 			if (s) printf "%s\n%d\n%s\n%s\n%s", s, rs, v, pb, fn
 		}'
 }
