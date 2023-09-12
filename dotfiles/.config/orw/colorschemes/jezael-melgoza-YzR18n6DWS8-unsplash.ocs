@@ -31,11 +31,11 @@ osdu #13212c
 s #5e4249
 
 #bar
-bg #d013212c
-fc #d013212c
+bg #13212c
+fc #13212c
 bfc #d0080f14
-bfc #d013212c
-bbg #d013212c
+bfc #13212c
+bbg #13212c
 jbg #080f14
 jpfg #8b6d75
 jsfg #5e4249
@@ -51,6 +51,8 @@ Psbg #0d1820
 Psfg #1a2c39
 Apfg #95a291
 Abfg #75575f
+Wsbg #13212c
+Wpbg #13212c
 Lsbg #d0080f14
 Lsfg #1a2c39
 Lpbg #d0080f14
@@ -102,14 +104,15 @@ slfg #1a2c39
 fzfhl #b57675
 bcbg #75575f
 bdbg #b57675
-nmbg #cac1b1
-imbg #75575f
-vmbg #75575f
+nmbg #89a0a2
+imbg #65a2af
+vmbg #cac1b1
 
 #rofi
 bg #0b141b
 tbg #f00b141b
 tbg #ea0b141b
+tbg #dd0b141b
 mbg #f0080f14
 msbg #70101d27
 fg #1a2c39
@@ -121,6 +124,7 @@ ibc #0b141b
 abg #091218b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #213545
 ebg #0b141b
 efg #b57675
@@ -128,6 +132,8 @@ sbg #101d27b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #b57675
 sul #b57675
 lpc #b1bfac
@@ -136,6 +142,8 @@ btc #0b141b
 sbtc #0b141b
 btbc #0b141b
 ftbg #00000000
+sbbg #b5767588
+sbsbg #11111144
 
 #tmux
 bg terminal

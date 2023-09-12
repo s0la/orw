@@ -104,14 +104,15 @@ slfg #313839
 fzfhl #c8a789
 bcbg #4e586a
 bdbg #c8a789
-nmbg #bac19c
-imbg #4e586a
-vmbg #4e586a
+nmbg #8b9b87
+imbg #88a0a0
+vmbg #bac19c
 
 #rofi
 bg #161a1b
 tbg #f0161a1b
 tbg #ea161a1b
+tbg #dd161a1b
 mbg #f0101314
 msbg #70202627
 fg #313839
@@ -123,6 +124,7 @@ ibc #161a1b
 abg #131718b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #3d4445
 ebg #161a1b
 efg #c8a789
@@ -130,6 +132,8 @@ sbg #202627b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #c8a789
 sul #c8a789
 lpc #b0bfac
@@ -138,7 +142,7 @@ btc #161a1b
 sbtc #161a1b
 btbc #161a1b
 ftbg #00000000
-sbbg #c8a789bb
+sbbg #c8a78988
 sbsbg #11111144
 
 #tmux

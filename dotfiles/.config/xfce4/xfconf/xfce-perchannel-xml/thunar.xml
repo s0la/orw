@@ -20,11 +20,11 @@
   </property>
   <property name="last-location-bar" type="string" value="ThunarLocationEntry"/>
   <property name="last-side-pane" type="string" value="void"/>
-  <property name="last-window-width" type="int" value="854"/>
-  <property name="last-window-height" type="int" value="612"/>
+  <property name="last-window-width" type="int" value="1674"/>
+  <property name="last-window-height" type="int" value="447"/>
   <property name="last-window-maximized" type="bool" value="false"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_75_PERCENT"/>
-  <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,242,50,81,541,50,50,50,50,50"/>
+  <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,242,50,81,435,50,50,50,50,50"/>
   <property name="last-details-view-visible-columns" type="string" value="THUNAR_COLUMN_NAME"/>
   <property name="last-menubar-visible" type="bool" value="false"/>
   <property name="last-separator-position" type="int" value="162"/>

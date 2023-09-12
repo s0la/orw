@@ -31,11 +31,11 @@ osdu #2c2c2c
 s #211e23
 
 #bar
-bg #d02c2c2c
-fc #d02c2c2c
+bg #2c2c2c
+fc #2c2c2c
 bfc #d0141414
-bfc #d02c2c2c
-bbg #d02c2c2c
+bfc #2c2c2c
+bbg #2c2c2c
 jbg #141414
 jpfg #4f4b50
 jsfg #211e23
@@ -51,6 +51,8 @@ Psbg #202020
 Psfg #393939
 Apfg #91a2a2
 Abfg #38343a
+Wsbg #2c2c2c
+Wpbg #2c2c2c
 Lsbg #d0141414
 Lsfg #393939
 Lpbg #d0141414
@@ -88,21 +90,21 @@ bg none
 fg #bbcbcb
 ifg #afa89d
 vfg #b3cdcc
-cfg #838383
+cfg #656669
 ffg #38343a
 sfg #e4cfa8
 nbg none
 nfg #2c2c2c
 lbg #202020
 lfg #e4cfa8
-syfg #838383
+syfg #656669
 cmfg #393939
 slbg #202020
 slfg #393939
 fzfhl #e4cfa8
 bcbg #38343a
 bdbg #e4cfa8
-nmbg #838383
+nmbg #656669
 imbg #38343a
 vmbg #38343a
 
@@ -136,6 +138,8 @@ btc #1b1b1b
 sbtc #1b1b1b
 btbc #1b1b1b
 ftbg #00000000
+sbbg #e4cfa8bb
+sbsbg #11111144
 
 #tmux
 bg terminal

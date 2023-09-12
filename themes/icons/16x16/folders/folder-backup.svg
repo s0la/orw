@@ -97,28 +97,28 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#546750;fill-rule:evenodd;stroke-opacity:0;stroke:#546750;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#6f968e;fill-rule:evenodd;stroke-opacity:0;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#7d8e79;fill-rule:evenodd;stroke-opacity:1;stroke:#546750;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#9bbdb5;fill-rule:evenodd;stroke-opacity:1;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <g
      id="g3016"
-     style="fill-opacity:1;fill:#546750"
+     style="fill-opacity:1;fill:#6f968e"
      transform="matrix(3.4156853,0,0,3.4156853,167.9121,194.31656)">
     <path
        id="path3018"
        d="M 28,6 C 18.058594,6 10,14.058594 10,24 l 4,0 c 0,-7.730469 6.269531,-14 14,-14 7.730469,0 14,6.269531 14,14 0,7.730469 -6.269531,14 -14,14 l 0,4 C 37.941406,42 46,33.941406 46,24 46,14.058594 37.941406,6 28,6 z"
-       style="fill-opacity:1;fill-rule:evenodd;fill:#546750"
+       style="fill-opacity:1;fill-rule:evenodd;fill:#6f968e"
        inkscape:connector-curvature="0" />
     <path
        id="path3020"
        d="M 2,24 22,24 12,34 z"
        inkscape:connector-curvature="0"
-       style="fill-opacity:1;fill:#546750" />
+       style="fill-opacity:1;fill:#6f968e" />
   </g>
 </svg>

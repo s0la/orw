@@ -1,18 +1,18 @@
 #ob
-t #514c4b
-tb #514c4b
-b #514c4b
-c #514c4b
+t #4c4745
+tb #4c4745
+b #4c4745
+c #4c4745
 it #191f20
 itb #191f20
 ib #191f20
 ic #191f20
-cbt #676464
-mabt #676464
-mibt #676464
-cbth #3a3433
-mabth #3a3433
-mibth #3a3433
+cbt #625f5d
+mabt #625f5d
+mibt #625f5d
+cbth #35302e
+mabth #35302e
+mibth #35302e
 ibt #0f1314
 ibth #0f1314
 mbg #191f20
@@ -28,17 +28,17 @@ bsfg #232b2c
 osd #191f20
 osdh #ac8e75
 osdu #232b2c
-s #3a3433
+s #35302e
 
 #bar
-bg #d0232b2c
-fc #d0232b2c
+bg #232b2c
+fc #232b2c
 bfc #d00f1314
-bfc #d0232b2c
-bbg #d0232b2c
+bfc #232b2c
+bbg #232b2c
 jbg #0f1314
-jpfg #676464
-jsfg #3a3433
+jpfg #625f5d
+jsfg #35302e
 pbg #0f1314
 pfg #9191a2
 sbg #0f1314
@@ -50,7 +50,9 @@ tbfg #3a4445
 Psbg #191f20
 Psfg #2f3839
 Apfg #9191a2
-Abfg #514c4b
+Abfg #4c4745
+Wsbg #232b2c
+Wpbg #232b2c
 Lsbg #d00f1314
 Lsfg #2f3839
 Lpbg #d00f1314
@@ -78,8 +80,8 @@ fg #3a4445
 sc #3a4445
 dc #3a4445
 ic #4f6064
-sec #514c4b
-gcc #514c4b
+sec #4c4745
+gcc #4c4745
 gdc #ac8e75
 vc #646653
 
@@ -89,7 +91,7 @@ fg #bbbbcb
 ifg #646653
 vfg #4f6064
 cfg #9898ad
-ffg #514c4b
+ffg #4c4745
 sfg #ac8e75
 nbg none
 nfg #232b2c
@@ -100,20 +102,21 @@ cmfg #2f3839
 slbg #191f20
 slfg #2f3839
 fzfhl #ac8e75
-bcbg #514c4b
+bcbg #4c4745
 bdbg #ac8e75
-nmbg #9898ad
-imbg #514c4b
-vmbg #514c4b
+nmbg #646653
+imbg #4f6064
+vmbg #9898ad
 
 #rofi
 bg #141a1b
 tbg #f0141a1b
 tbg #ea141a1b
+tbg #dd141a1b
 mbg #f00f1314
 msbg #701d2627
 fg #2f3839
-bc #514c4b
+bc #4c4745
 bc #141a1b
 ibg #141a1b
 ibc #232b2c
@@ -121,6 +124,7 @@ ibc #141a1b
 abg #121718b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #3a4445
 ebg #141a1b
 efg #ac8e75
@@ -128,6 +132,8 @@ sbg #1d2627b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #ac8e75
 sul #ac8e75
 lpc #acacbf
@@ -136,12 +142,14 @@ btc #141a1b
 sbtc #141a1b
 btbc #141a1b
 ftbg #00000000
+sbbg #ac8e7588
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #2f3839
 bc #191f20
-mc #514c4b
+mc #4c4745
 ibg #191f20
 ifg #2f3839
 sfg #2f3839
@@ -153,7 +161,7 @@ cfg #ac8e75
 #dunst
 bg #191f20
 fg #acacbf
-fc #514c4b
+fc #4c4745
 sbg #0f1314
 pbfg #ac8e75
 
@@ -188,7 +196,7 @@ fg #ac8e75
 tc #ffacacbf
 rc #ffac8e75
 ic #dc0f1314
-wc #ff676464
+wc #ff625f5d
 
 #nb
 fg #232b2c

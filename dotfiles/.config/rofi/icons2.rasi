@@ -1,0 +1,104 @@
+/* list config */
+
+@import "theme"
+
+* {
+	bg: #222222;
+	fg: #cecece;
+	bc: #121212;
+
+	ibg: #121212;
+	ibc: #95554e;
+
+	abg: #333333;
+	afg: #cecece;
+
+	ebg: #333333;
+	efg: #cecece;
+	sbg: #333333;
+	sfg: #cecece;
+	sul: #725d43;
+
+	lpc: #202020;
+	dpc: #725d43;
+	btc: #121212;
+	sbtc: #121212;
+	btbc: #121212;
+
+	font:                   "remix 13";
+
+	window-orientation:     horizontal;
+
+	spacing:                5px;
+
+	input-margin:           0 0 5px;
+
+	entry-margin:           0 5px;
+
+	element-padding:        26px 26px;
+	element-border:         0 0 0px;
+	element-radius:         5px;
+
+	window-location:        center;
+	window-padding:         5px 5px;
+	window-margin:          0 0 9px 0;
+	window-radius:          5px;
+	window-height:          100.5px;
+	window-width:           376.853px;
+}
+
+#window {
+	border:           0;
+	width:            @window-width;
+	height:           @window-height;
+	margin:           @window-margin;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @window-padding;
+	border-radius:    @window-radius;
+	children:         [ horibox ];
+}
+
+#horibox {
+	orientation: @window-orientation;
+	children:    [ listview ];
+}
+
+#listview {
+	layout:      @window-orientation;
+	spacing:     @spacing;
+	lines:       0.260417;
+}
+
+#inputbar {
+	margin:       @input-margin;
+	border-color: @bg;
+}
+
+#entry {
+	margin: @entry-margin;
+}
+
+#prompt {
+	color:        @fg;
+}
+
+#element {
+	padding:        @element-padding;
+	border-radius:  @element-radius;
+}
+
+#element.normal.normal, element.alternate.normal {
+	text-color:       @fg;
+	background-color: @ebg;
+}
+
+#element.selected.normal {
+	text-color:       @efg;
+	background-color: @sbg;
+	border:           @element-border;
+}
+
+#element.selected.active {
+	text-color:       @efg;
+}

@@ -51,6 +51,8 @@ Psbg #201517
 Psfg #39282b
 Apfg #9196a2
 Abfg #8f596f
+Wsbg #2c1e20
+Wpbg #2c1e20
 Lsbg #d0140d0e
 Lsfg #39282b
 Lpbg #d0140d0e
@@ -102,14 +104,15 @@ slfg #39282b
 fzfhl #d37275
 bcbg #8f596f
 bdbg #d37275
-nmbg #e8c3a8
-imbg #8f596f
-vmbg #8f596f
+nmbg #cfb3c4
+imbg #74a8ca
+vmbg #e8c3a8
 
 #rofi
 bg #1b1113
 tbg #f01b1113
 tbg #ea1b1113
+tbg #dd1b1113
 mbg #f0140d0e
 msbg #7027191b
 fg #39282b
@@ -121,6 +124,7 @@ ibc #1b1113
 abg #180f11b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #453235
 ebg #1b1113
 efg #d37275
@@ -128,6 +132,8 @@ sbg #27191bb0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #d37275
 sul #d37275
 lpc #acb2bf
@@ -136,7 +142,7 @@ btc #1b1113
 sbtc #1b1113
 btbc #1b1113
 ftbg #00000000
-sbbg #d37275bb
+sbbg #d3727588
 sbsbg #11111144
 
 #tmux

@@ -1,0 +1,82 @@
+/* list config */
+
+@import "theme"
+
+* {
+	font:                  "Iosevka Orw 9";
+
+	lines:                 6;
+
+	window-width:          25%;
+	window-margin:         0px 0;
+	window-padding:        20px 20px;
+	window-location:       center;
+	window-orientation:    horizontal;
+
+	list-padding:          6px 6px;
+	list-margin:           6px 0;
+
+	/*input-border:          0 0 2px;*/
+	input-margin:          0 0 20px;
+	input-padding:         5px 8px;
+
+	entry-margin:          0 3px 0;
+
+	element-padding:       8px 8px;
+}
+
+#mainbox {
+	spacing:      0;
+}
+
+#window {
+	width:          @window-width;
+	border:         @window-border;
+	margin:         @window-margin;
+	padding:        @window-padding;
+	location:       @window-location;
+}
+
+#listview {
+	//margin:         @list-margin;
+	scrollbar:      false;
+	dynamic:        true;
+	vertical-align: 0.5;
+	spacing:        0;
+}
+
+#inputbar {
+	border:           @input-border;
+	// margin:           @element-padding;
+	margin:           @input-margin;
+	padding:          @input-padding;
+	children:         [ prompt, entry ];
+	transparency:                   "real";
+}
+
+#entry {
+	margin: @entry-margin;
+	background-color: @ibg;
+}
+
+#prompt {
+	str:              "";
+	background-color: @ibg;
+	color:            @lpc;
+}
+
+#textbox-prompt-colon {
+	str:              "";
+	str:              "›";
+	color:            @lpc;
+	expand:           false;
+	background-color: @ibg;
+}
+
+#element {
+	padding:        @element-padding;
+}
+
+sidebar {
+	color:          @fg;
+}

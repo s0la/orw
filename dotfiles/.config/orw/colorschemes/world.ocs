@@ -1,18 +1,18 @@
 #ob
-t #755c54
-tb #755c54
-b #755c54
-c #755c54
+t #708979
+tb #708979
+b #708979
+c #708979
 it #19201d
 itb #19201d
 ib #19201d
 ic #19201d
-cbt #8b726a
-mabt #8b726a
-mibt #8b726a
-cbth #5e473f
-mabth #5e473f
-mibth #5e473f
+cbt #899f91
+mabt #899f91
+mibt #899f91
+cbth #587261
+mabth #587261
+mibth #587261
 ibt #0f1412
 ibth #0f1412
 mbg #19201d
@@ -28,29 +28,31 @@ bsfg #232c28
 osd #19201d
 osdh #c1a76e
 osdu #232c28
-s #5e473f
+s #587261
 
 #bar
-bg #d0232c28
-fc #d0232c28
+bg #232c28
+fc #232c28
 bfc #d00f1412
-bfc #d0232c28
-bbg #d0232c28
+bfc #232c28
+bbg #232c28
 jbg #0f1412
-jpfg #8b726a
-jsfg #5e473f
+jpfg #899f91
+jsfg #587261
 pbg #0f1412
 pfg #93a291
 sbg #0f1412
 sfg #3a4540
 pbefg #c1a76e
 pbfg #3a4540
-mlfg #c08e5e
+mlfg #a4bfa0
 tbfg #3a4540
 Psbg #19201d
 Psfg #2f3935
 Apfg #93a291
-Abfg #755c54
+Abfg #708979
+Wsbg #232c28
+Wpbg #232c28
 Lsbg #d00f1412
 Lsfg #2f3935
 Lpbg #d00f1412
@@ -78,33 +80,33 @@ fg #3a4540
 sc #3a4540
 dc #3a4540
 ic #94b458
-sec #755c54
-gcc #755c54
+sec #708979
+gcc #708979
 gdc #c1a76e
-vc #c08e5e
+vc #a4bfa0
 
 #vim
 bg none
 fg #becbbb
-ifg #c08e5e
+ifg #a4bfa0
 vfg #94b458
-cfg #a4bfa0
-ffg #755c54
+cfg #c08e5e
+ffg #708979
 sfg #c1a76e
 nbg none
 nfg #232c28
 lbg #19201d
 lfg #c1a76e
-syfg #a4bfa0
+syfg #c08e5e
 cmfg #2f3935
 slbg #19201d
 slfg #2f3935
 fzfhl #c1a76e
-bcbg #755c54
+bcbg #708979
 bdbg #c1a76e
-nmbg #a4bfa0
-imbg #755c54
-vmbg #755c54
+nmbg #c08e5e
+imbg #708979
+vmbg #708979
 
 #rofi
 bg #141b18
@@ -113,7 +115,7 @@ tbg #ea141b18
 mbg #f00f1412
 msbg #701d2723
 fg #2f3935
-bc #755c54
+bc #708979
 bc #141b18
 ibg #141b18
 ibc #232c28
@@ -136,12 +138,14 @@ btc #141b18
 sbtc #141b18
 btbc #141b18
 ftbg #00000000
+sbbg #c1a76ebb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #2f3935
 bc #19201d
-mc #755c54
+mc #708979
 ibg #19201d
 ifg #2f3935
 sfg #2f3935
@@ -153,7 +157,7 @@ cfg #c1a76e
 #dunst
 bg #19201d
 fg #afbfac
-fc #755c54
+fc #708979
 sbg #0f1412
 pbfg #c1a76e
 
@@ -188,7 +192,7 @@ fg #c1a76e
 tc #ffafbfac
 rc #ffc1a76e
 ic #dc0f1412
-wc #ff8b726a
+wc #ff899f91
 
 #nb
 fg #232c28

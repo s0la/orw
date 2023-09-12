@@ -31,11 +31,11 @@ osdu #232c2c
 s #38474a
 
 #bar
-bg #d0232c2c
-fc #d0232c2c
+bg #232c2c
+fc #232c2c
 bfc #d00f1414
-bfc #d0232c2c
-bbg #d0232c2c
+bfc #232c2c
+bbg #232c2c
 jbg #0f1414
 jpfg #657477
 jsfg #38474a
@@ -51,6 +51,8 @@ Psbg #192020
 Psfg #2f3939
 Apfg #91a291
 Abfg #4e5e61
+Wsbg #232c2c
+Wpbg #232c2c
 Lsbg #d00f1414
 Lsfg #2f3939
 Lpbg #d00f1414
@@ -65,7 +67,7 @@ bg #192020
 fg #2f3939
 sbg #0f1414
 sfg #849b77
-mfg #8c7f7d
+mfg #877977
 sbbg #0f1414
 
 #term
@@ -77,7 +79,7 @@ bg default
 fg #3a4545
 sc #3a4545
 dc #3a4545
-ic #8c7f7d
+ic #877977
 sec #4e5e61
 gcc #4e5e61
 gdc #849b77
@@ -87,7 +89,7 @@ vc #8da098
 bg none
 fg #bbcbbb
 ifg #8da098
-vfg #8c7f7d
+vfg #877977
 cfg #b0c4b0
 ffg #4e5e61
 sfg #849b77
@@ -114,8 +116,10 @@ mbg #f00f1414
 msbg #701d2727
 fg #2f3939
 bc #4e5e61
+bc #141b1b
 ibg #141b1b
 ibc #232c2c
+ibc #141b1b
 abg #121818b0
 abg #08080855
 abg #08080866
@@ -134,11 +138,13 @@ btc #141b1b
 sbtc #141b1b
 btbc #141b1b
 ftbg #00000000
+sbbg #849b77bb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #2f3939
-bc #0f1414
+bc #192020
 mc #4e5e61
 ibg #192020
 ifg #2f3939

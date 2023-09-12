@@ -31,11 +31,11 @@ osdu #271e2c
 s #46384c
 
 #bar
-bg #d0271e2c
-fc #d0271e2c
+bg #271e2c
+fc #271e2c
 bfc #d0110d14
-bfc #d0271e2c
-bbg #d0271e2c
+bfc #271e2c
+bbg #271e2c
 jbg #110d14
 jpfg #736379
 jsfg #46384c
@@ -45,12 +45,14 @@ sbg #110d14
 sfg #3e3245
 pbefg #cf7579
 pbfg #3e3245
-mlfg #aea1ba
+mlfg #68a1be
 tbfg #3e3245
 Psbg #1c1520
 Psfg #332839
 Apfg #919da2
 Abfg #5d4d63
+Wsbg #271e2c
+Wpbg #271e2c
 Lsbg #d0110d14
 Lsfg #332839
 Lpbg #d0110d14
@@ -65,7 +67,7 @@ bg #1c1520
 fg #332839
 sbg #110d14
 sfg #cf7579
-mfg #68a1be
+mfg #5689d0
 sbbg #110d14
 
 #term
@@ -77,17 +79,17 @@ bg default
 fg #3e3245
 sc #3e3245
 dc #3e3245
-ic #68a1be
+ic #5689d0
 sec #5d4d63
 gcc #5d4d63
 gdc #cf7579
-vc #aea1ba
+vc #68a1be
 
 #vim
 bg none
 fg #bbc6cb
-ifg #aea1ba
-vfg #68a1be
+ifg #68a1be
+vfg #5689d0
 cfg #d8afac
 ffg #5d4d63
 sfg #cf7579
@@ -114,8 +116,10 @@ mbg #f0110d14
 msbg #70211927
 fg #332839
 bc #5d4d63
+bc #17111b
 ibg #17111b
 ibc #271e2c
+ibc #17111b
 abg #150f18b0
 abg #08080855
 abg #08080866
@@ -134,11 +138,13 @@ btc #17111b
 sbtc #17111b
 btbc #17111b
 ftbg #00000000
+sbbg #cf7579bb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #332839
-bc #110d14
+bc #1c1520
 mc #5d4d63
 ibg #1c1520
 ifg #332839

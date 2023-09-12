@@ -51,6 +51,8 @@ Psbg #191d20
 Psfg #2f3539
 Apfg #919ca2
 Abfg #7b7b7b
+Wsbg #23282c
+Wpbg #23282c
 Lsbg #d00f1214
 Lsfg #2f3539
 Lpbg #d00f1214
@@ -65,7 +67,7 @@ bg #191d20
 fg #2f3539
 sbg #0f1214
 sfg #9e8f80
-mfg #667075
+mfg #5e696e
 sbbg #0f1214
 
 #term
@@ -77,7 +79,7 @@ bg default
 fg #3a4045
 sc #3a4045
 dc #3a4045
-ic #667075
+ic #5e696e
 sec #7b7b7b
 gcc #7b7b7b
 gdc #9e8f80
@@ -87,7 +89,7 @@ vc #8999a3
 bg none
 fg #bbc5cb
 ifg #8999a3
-vfg #667075
+vfg #5e696e
 cfg #879e80
 ffg #7b7b7b
 sfg #9e8f80
@@ -102,14 +104,15 @@ slfg #2f3539
 fzfhl #9e8f80
 bcbg #7b7b7b
 bdbg #9e8f80
-nmbg #879e80
-imbg #7b7b7b
-vmbg #7b7b7b
+nmbg #8999a3
+imbg #5e696e
+vmbg #879e80
 
 #rofi
 bg #14181b
 tbg #f014181b
 tbg #ea14181b
+tbg #dd14181b
 mbg #f00f1214
 msbg #701d2327
 fg #2f3539
@@ -121,6 +124,7 @@ ibc #14181b
 abg #121518b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #3a4045
 ebg #14181b
 efg #9e8f80
@@ -128,6 +132,8 @@ sbg #1d2327b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #9e8f80
 sul #9e8f80
 lpc #acb8bf
@@ -136,7 +142,7 @@ btc #14181b
 sbtc #14181b
 btbc #14181b
 ftbg #00000000
-sbbg #9e8f80bb
+sbbg #9e8f8088
 sbsbg #11111144
 
 #tmux

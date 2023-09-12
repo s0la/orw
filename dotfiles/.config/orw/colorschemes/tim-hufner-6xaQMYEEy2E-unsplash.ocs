@@ -1,18 +1,18 @@
 #ob
-t #505250
-tb #505250
-b #505250
-c #505250
+t #484b48
+tb #484b48
+b #484b48
+c #484b48
 it #1e2020
 itb #1e2020
 ib #1e2020
 ic #1e2020
-cbt #686868
-mabt #686868
-mibt #686868
-cbth #373b37
-mabth #373b37
-mibth #373b37
+cbt #616161
+mabt #616161
+mibt #616161
+cbth #2f342f
+mabth #2f342f
+mibth #2f342f
 ibt #121414
 ibth #121414
 mbg #1e2020
@@ -28,29 +28,31 @@ bsfg #2a2c2c
 osd #1e2020
 osdh #cf8d66
 osdu #2a2c2c
-s #373b37
+s #2f342f
 
 #bar
-bg #d02a2c2c
-fc #d02a2c2c
+bg #2a2c2c
+fc #2a2c2c
 bfc #d0121414
-bfc #d02a2c2c
-bbg #d02a2c2c
+bfc #2a2c2c
+bbg #2a2c2c
 jbg #121414
-jpfg #686868
-jsfg #373b37
+jpfg #616161
+jsfg #2f342f
 pbg #121414
 pfg #a2919d
 sbg #121414
 sfg #454545
 pbefg #cf8d66
 pbfg #454545
-mlfg #bfa6a2
+mlfg #9e8997
 tbfg #454545
 Psbg #1e2020
 Psfg #383939
 Apfg #a2919d
-Abfg #505250
+Abfg #484b48
+Wsbg #2a2c2c
+Wpbg #2a2c2c
 Lsbg #d0121414
 Lsfg #383939
 Lpbg #d0121414
@@ -65,7 +67,7 @@ bg #1e2020
 fg #383939
 sbg #121414
 sfg #cf8d66
-mfg #97a0a7
+mfg #86929a
 sbbg #121414
 
 #term
@@ -77,55 +79,61 @@ bg default
 fg #454545
 sc #454545
 dc #454545
-ic #97a0a7
-sec #505250
-gcc #505250
+ic #86929a
+sec #484b48
+gcc #484b48
 gdc #cf8d66
-vc #bfa6a2
+vc #9e8997
 
 #vim
 bg none
 fg #cbbbc6
-ifg #bfa6a2
-vfg #97a0a7
-cfg #9e8997
-ffg #505250
+ifg #9e8997
+vfg #86929a
+cfg #bfa6a2
+ffg #484b48
 sfg #cf8d66
 nbg none
 nfg #2a2c2c
 lbg #1e2020
 lfg #cf8d66
-syfg #9e8997
+syfg #bfa6a2
 cmfg #383939
 slbg #1e2020
 slfg #383939
 fzfhl #cf8d66
-bcbg #505250
+bcbg #484b48
 bdbg #cf8d66
 nmbg #9e8997
-imbg #505250
-vmbg #505250
+imbg #86929a
+vmbg #bfa6a2
 
 #rofi
 bg #181b1b
 tbg #f0181b1b
 tbg #ea181b1b
+tbg #dd181b1b
 mbg #f0121414
 msbg #70232727
 fg #383939
-bc #505250
+bc #484b48
+bc #181b1b
 ibg #181b1b
 ibc #2a2c2c
-abg #161818b0
+ibc #181b1b
 abg #08080855
 abg #08080866
+abg #08080844
+abg #111313b0
 afg #454545
 ebg #181b1b
 efg #cf8d66
-sbg #232727b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #232727b0
 sfg #cf8d66
 sul #cf8d66
 lpc #bfacb9
@@ -134,12 +142,14 @@ btc #181b1b
 sbtc #181b1b
 btbc #181b1b
 ftbg #00000000
+sbbg #cf8d6688
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #383939
 bc #1e2020
-mc #505250
+mc #484b48
 ibg #1e2020
 ifg #383939
 sfg #383939
@@ -151,7 +161,7 @@ cfg #cf8d66
 #dunst
 bg #1e2020
 fg #bfacb9
-fc #505250
+fc #484b48
 sbg #121414
 pbfg #cf8d66
 
@@ -186,7 +196,7 @@ fg #cf8d66
 tc #ffbfacb9
 rc #ffcf8d66
 ic #dc121414
-wc #ff686868
+wc #ff616161
 
 #nb
 fg #2a2c2c

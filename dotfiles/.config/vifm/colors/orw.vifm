@@ -1,12 +1,12 @@
-let $fg = 90
-let $dfg = 89
-let $efg = 90
-let $cbg = 88
-let $cfg = 91
-let $sfg = 88
-let $tfg = 88
-let $slbg = 88
-let $slfg = 90
+let $fg = 46
+let $dfg = 45
+let $efg = 46
+let $cbg = 44
+let $cfg = 121
+let $sfg = 44
+let $tfg = 44
+let $slbg = 44
+let $slfg = 46
 
 highlight clear
 

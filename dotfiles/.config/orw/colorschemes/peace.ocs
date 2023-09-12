@@ -31,11 +31,11 @@ osdu #1e2c2c
 s #62708c
 
 #bar
-bg #d01e2c2c
-fc #d01e2c2c
+bg #1e2c2c
+fc #1e2c2c
 bfc #d00d1414
-bfc #d01e2c2c
-bbg #d01e2c2c
+bfc #1e2c2c
+bbg #1e2c2c
 jbg #0d1414
 jpfg #919eb9
 jsfg #62708c
@@ -51,6 +51,8 @@ Psbg #152020
 Psfg #283939
 Apfg #91a29b
 Abfg #7987a3
+Wsbg #1e2c2c
+Wpbg #1e2c2c
 Lsbg #d00d1414
 Lsfg #283939
 Lpbg #d00d1414
@@ -65,7 +67,7 @@ bg #152020
 fg #283939
 sbg #0d1414
 sfg #df8577
-mfg #63b5bb
+mfg #5eaeb3
 sbbg #0d1414
 
 #term
@@ -77,7 +79,7 @@ bg default
 fg #324545
 sc #324545
 dc #324545
-ic #63b5bb
+ic #5eaeb3
 sec #7987a3
 gcc #7987a3
 gdc #df8577
@@ -87,22 +89,22 @@ vc #b8c1a1
 bg none
 fg #bbcbc4
 ifg #b8c1a1
-vfg #63b5bb
-cfg #d1a3da
+vfg #5eaeb3
+cfg #a575c3
 ffg #7987a3
 sfg #df8577
 nbg none
 nfg #1e2c2c
 lbg #152020
 lfg #df8577
-syfg #d1a3da
+syfg #a575c3
 cmfg #283939
 slbg #152020
 slfg #283939
 fzfhl #df8577
 bcbg #7987a3
 bdbg #df8577
-nmbg #d1a3da
+nmbg #a575c3
 imbg #7987a3
 vmbg #7987a3
 
@@ -114,8 +116,10 @@ mbg #f00d1414
 msbg #70192727
 fg #283939
 bc #7987a3
+bc #111b1b
 ibg #111b1b
 ibc #1e2c2c
+ibc #111b1b
 abg #0f1818b0
 abg #08080855
 abg #08080866
@@ -134,11 +138,13 @@ btc #111b1b
 sbtc #111b1b
 btbc #111b1b
 ftbg #00000000
+sbbg #df8577bb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #283939
-bc #0d1414
+bc #152020
 mc #7987a3
 ibg #152020
 ifg #283939

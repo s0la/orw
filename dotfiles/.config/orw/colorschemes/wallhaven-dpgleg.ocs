@@ -1,18 +1,18 @@
 #ob
-t #555558
-tb #555558
-b #555558
-c #555558
+t #4a4a4e
+tb #4a4a4e
+b #4a4a4e
+c #4a4a4e
 it #14201c
 itb #14201c
 ib #14201c
 ic #14201c
-cbt #6e6e6e
-mabt #6e6e6e
-mibt #6e6e6e
-cbth #3c3c41
-mabth #3c3c41
-mibth #3c3c41
+cbt #636364
+mabt #636364
+mibt #636364
+cbth #323237
+mabth #323237
+mibth #323237
 ibt #0c1411
 ibth #0c1411
 mbg #14201c
@@ -28,29 +28,31 @@ bsfg #1c2c27
 osd #14201c
 osdh #63b5a3
 osdu #1c2c27
-s #3c3c41
+s #323237
 
 #bar
-bg #d01c2c27
-fc #d01c2c27
+bg #1c2c27
+fc #1c2c27
 bfc #d00c1411
-bfc #d01c2c27
-bbg #d01c2c27
+bfc #1c2c27
+bbg #1c2c27
 jbg #0c1411
-jpfg #6e6e6e
-jsfg #3c3c41
+jpfg #636364
+jsfg #323237
 pbg #0c1411
 pfg #92a291
 sbg #0c1411
 sfg #2f453e
 pbefg #63b5a3
 pbfg #2f453e
-mlfg #9cbf97
+mlfg #b7cbb4
 tbfg #2f453e
 Psbg #14201c
 Psfg #263933
 Apfg #92a291
-Abfg #555558
+Abfg #4a4a4e
+Wsbg #1c2c27
+Wpbg #1c2c27
 Lsbg #d00c1411
 Lsfg #263933
 Lpbg #d00c1411
@@ -65,7 +67,7 @@ bg #14201c
 fg #263933
 sbg #0c1411
 sfg #63b5a3
-mfg #9b9981
+mfg #939178
 sbbg #0c1411
 
 #term
@@ -77,19 +79,19 @@ bg default
 fg #2f453e
 sc #2f453e
 dc #2f453e
-ic #9b9981
-sec #555558
-gcc #555558
+ic #939178
+sec #4a4a4e
+gcc #4a4a4e
 gdc #63b5a3
-vc #9cbf97
+vc #b7cbb4
 
 #vim
 bg none
 fg #bdcbbb
-ifg #9cbf97
-vfg #9b9981
+ifg #b7cbb4
+vfg #939178
 cfg #849aa9
-ffg #555558
+ffg #4a4a4e
 sfg #63b5a3
 nbg none
 nfg #1c2c27
@@ -100,32 +102,40 @@ cmfg #263933
 slbg #14201c
 slfg #263933
 fzfhl #63b5a3
-bcbg #555558
+bcbg #4a4a4e
 bdbg #63b5a3
-nmbg #849aa9
-imbg #555558
-vmbg #555558
+nmbg #b7cbb4
+imbg #939178
+vmbg #849aa9
 
 #rofi
 bg #101b17
 tbg #f0101b17
 tbg #ea101b17
+tbg #dd101b17
 mbg #f00c1411
 msbg #70172721
 fg #263933
-bc #555558
+bc #4a4a4e
+bc #101b17
 ibg #101b17
 ibc #1c2c27
-abg #0e1815b0
+ibc #101b17
 abg #08080855
 abg #08080866
+abg #08080844
+abg #0b1310b0
+abg #0b1310dd
 afg #2f453e
 ebg #101b17
 efg #63b5a3
-sbg #172721b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #172721b0
+sbg #172721d0
 sfg #63b5a3
 sul #63b5a3
 lpc #aebfac
@@ -134,12 +144,14 @@ btc #101b17
 sbtc #101b17
 btbc #101b17
 ftbg #00000000
+sbbg #63b5a388
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #263933
-bc #0c1411
-mc #555558
+bc #14201c
+mc #4a4a4e
 ibg #14201c
 ifg #263933
 sfg #263933
@@ -151,7 +163,7 @@ cfg #63b5a3
 #dunst
 bg #14201c
 fg #aebfac
-fc #555558
+fc #4a4a4e
 sbg #0c1411
 pbfg #63b5a3
 
@@ -186,7 +198,7 @@ fg #63b5a3
 tc #ffaebfac
 rc #ff63b5a3
 ic #dc0c1411
-wc #ff6e6e6e
+wc #ff636364
 
 #nb
 fg #1c2c27

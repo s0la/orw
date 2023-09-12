@@ -1,18 +1,18 @@
 #ob
-t #83837c
-tb #83837c
-b #83837c
-c #83837c
+t #47574f
+tb #47574f
+b #47574f
+c #47574f
 it #112020
 itb #112020
 ib #112020
 ic #112020
-cbt #999997
-mabt #999997
-mibt #999997
-cbth #6c6c61
-mabth #6c6c61
-mibth #6c6c61
+cbt #5e6d66
+mabt #5e6d66
+mibt #5e6d66
+cbth #314038
+mabth #314038
+mibth #314038
 ibt #0a1414
 ibth #0a1414
 mbg #112020
@@ -28,40 +28,46 @@ bsfg #182c2c
 osd #112020
 osdh #d4a864
 osdu #182c2c
-s #6c6c61
+s #314038
 
 #bar
-bg #1f3838
-fc #1f3838
-bfc #0a1414
-bbg #1f3838
+bg #182c2c
+fc #182c2c
+bfc #d00a1414
+bfc #182c2c
+bbg #182c2c
 jbg #0a1414
-jpfg #999997
-jsfg #6c6c61
+jpfg #5e6d66
+jsfg #314038
 pbg #0a1414
 pfg #a29191
 sbg #0a1414
 sfg #294545
 pbefg #d4a864
 pbfg #294545
-mlfg #cdb1a0
+mlfg #7f9c9a
 tbfg #294545
 Psbg #112020
 Psfg #213939
-Apfg #cdb1a0
+Apfg #a29191
+Abfg #47574f
+Wsbg #182c2c
+Wpbg #182c2c
+Lsbg #d00a1414
 Lsfg #213939
-Lpbg #112020
-Lpfg #294545
-Labg #152828
+Lpbg #d00a1414
+Lpfg #87632b
+Labg #d0112020
+Labg #d00a1414
 Lafg #a29191
-Lfc #d4a864
+Lafg #d4a864
 
 #qb
 bg #112020
 fg #213939
 sbg #0a1414
 sfg #d4a864
-mfg #8aa6a5
+mfg #b1cacd
 sbbg #0a1414
 
 #term
@@ -73,56 +79,67 @@ bg default
 fg #294545
 sc #294545
 dc #294545
-ic #8aa6a5
-sec #83837c
-gcc #83837c
+ic #b1cacd
+sec #47574f
+gcc #47574f
 gdc #d4a864
-vc #cdb1a0
+vc #7f9c9a
 
 #vim
 bg none
 fg #cbbbbb
-ifg #cdb1a0
-vfg #8aa6a5
-cfg #d7a4ab
-ffg #83837c
+ifg #7f9c9a
+vfg #b1cacd
+cfg #ca969d
+ffg #47574f
 sfg #d4a864
 nbg none
 nfg #182c2c
 lbg #112020
 lfg #d4a864
-syfg #d7a4ab
+syfg #ca969d
 cmfg #213939
 slbg #112020
 slfg #213939
 fzfhl #d4a864
 bcbg #47574f
 bdbg #d4a864
-nmbg #d7a4ab
-imbg #83837c
+nmbg #ca969d
+imbg #47574f
 vmbg #47574f
 
 #rofi
-bg #0e1b1b
-tbg #000e1b1b
+bg #0d1b1b
+tbg #f00d1b1b
+tbg #ea0d1b1b
 mbg #f00a1414
-msbg #70142525
+msbg #70132727
 fg #213939
-bc #83837c
-ibg #0e1b1b
+bc #47574f
+bc #0d1b1b
+ibg #0d1b1b
 ibc #182c2c
-abg #0a1414
+ibc #0d1b1b
+abg #0c1818b0
+abg #08080855
+abg #08080866
 afg #294545
-ebg #0e1b1b
+ebg #0d1b1b
 efg #d4a864
-sbg #142525
+sbg #132727b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
 sfg #d4a864
 sul #d4a864
 lpc #bfacac
 dpc #bfacac
-btc #0e1b1b
-sbtc #0e1b1b
-btbc #0e1b1b
+btc #0d1b1b
+sbtc #0d1b1b
+btbc #0d1b1b
+ftbg #00000000
+sbbg #d4a864bb
+sbsbg #11111144
 
 #tmux
 bg terminal
@@ -175,7 +192,7 @@ fg #d4a864
 tc #ffbfacac
 rc #ffd4a864
 ic #dc0a1414
-wc #ff999997
+wc #ff5e6d66
 
 #nb
 fg #182c2c

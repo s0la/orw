@@ -1,18 +1,18 @@
 #ob
-t #4b4e4e
-tb #4b4e4e
-b #4b4e4e
-c #4b4e4e
+t #464949
+tb #464949
+b #464949
+c #464949
 it #1c2020
 itb #1c2020
 ib #1c2020
 ic #1c2020
-cbt #646464
-mabt #646464
-mibt #646464
-cbth #323737
-mabth #323737
-mibth #323737
+cbt #5f5f5f
+mabt #5f5f5f
+mibt #5f5f5f
+cbth #2d3232
+mabth #2d3232
+mibth #2d3232
 ibt #111414
 ibth #111414
 mbg #1c2020
@@ -28,7 +28,7 @@ bsfg #282c2c
 osd #1c2020
 osdh #b38363
 osdu #282c2c
-s #323737
+s #2d3232
 
 #bar
 bg #282c2c
@@ -37,20 +37,22 @@ bfc #d0111414
 bfc #282c2c
 bbg #282c2c
 jbg #111414
-jpfg #646464
-jsfg #323737
+jpfg #5f5f5f
+jsfg #2d3232
 pbg #111414
 pfg #a191a2
 sbg #111414
 sfg #424545
 pbefg #b38363
 pbfg #424545
-mlfg #9f8d89
+mlfg #95827d
 tbfg #424545
 Psbg #1c2020
 Psfg #353939
 Apfg #a191a2
-Abfg #4b4e4e
+Abfg #464949
+Wsbg #282c2c
+Wpbg #282c2c
 Lsbg #d0111414
 Lsfg #353939
 Lpbg #d0111414
@@ -78,42 +80,43 @@ fg #424545
 sc #424545
 dc #424545
 ic #a894aa
-sec #4b4e4e
-gcc #4b4e4e
+sec #464949
+gcc #464949
 gdc #b38363
-vc #9f8d89
+vc #95827d
 
 #vim
 bg none
 fg #cabbcb
-ifg #9f8d89
+ifg #95827d
 vfg #a894aa
-cfg #716e5f
-ffg #4b4e4e
+cfg #5f5c4d
+ffg #464949
 sfg #b38363
 nbg none
 nfg #282c2c
 lbg #1c2020
 lfg #b38363
-syfg #716e5f
+syfg #5f5c4d
 cmfg #353939
 slbg #1c2020
 slfg #353939
 fzfhl #b38363
-bcbg #4b4e4e
+bcbg #464949
 bdbg #b38363
-nmbg #716e5f
-imbg #4b4e4e
-vmbg #4b4e4e
+nmbg #95827d
+imbg #a894aa
+vmbg #5f5c4d
 
 #rofi
 bg #171b1b
 tbg #f0171b1b
 tbg #ea171b1b
+tbg #dd171b1b
 mbg #f0111414
 msbg #70212727
 fg #353939
-bc #4b4e4e
+bc #464949
 bc #171b1b
 ibg #171b1b
 ibc #282c2c
@@ -121,6 +124,7 @@ ibc #171b1b
 abg #151818b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #424545
 ebg #171b1b
 efg #b38363
@@ -128,6 +132,8 @@ sbg #212727b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #b38363
 sul #b38363
 lpc #bdacbf
@@ -136,14 +142,14 @@ btc #171b1b
 sbtc #171b1b
 btbc #171b1b
 ftbg #00000000
-sbbg #b38363bb
+sbbg #b3836388
 sbsbg #11111144
 
 #tmux
 bg terminal
 fg #353939
 bc #1c2020
-mc #4b4e4e
+mc #464949
 ibg #1c2020
 ifg #353939
 sfg #353939
@@ -155,7 +161,7 @@ cfg #b38363
 #dunst
 bg #1c2020
 fg #bdacbf
-fc #4b4e4e
+fc #464949
 sbg #111414
 pbfg #b38363
 
@@ -190,7 +196,7 @@ fg #b38363
 tc #ffbdacbf
 rc #ffb38363
 ic #dc111414
-wc #ff646464
+wc #ff5f5f5f
 
 #nb
 fg #282c2c

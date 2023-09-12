@@ -97,31 +97,31 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#546750;fill-rule:evenodd;stroke-opacity:0;stroke:#546750;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#6f968e;fill-rule:evenodd;stroke-opacity:0;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#7d8e79;fill-rule:evenodd;stroke-opacity:1;stroke:#546750;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#9bbdb5;fill-rule:evenodd;stroke-opacity:1;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <g
      id="g3237"
      transform="matrix(9.2117621,0,0,9.2117621,177.35465,204.81067)"
-     style="fill-opacity:1;fill:#546750">
+     style="fill-opacity:1;fill:#6f968e">
     <path
        sodipodi:nodetypes="ssssssccsccccccc"
        inkscape:connector-curvature="0"
        id="rect2991"
        d="M 4,0 C 2.892,0 2,0.892 2,2 l 0,12 c 0,1.108 0.892,2 2,2 l 8,0 c 1.108,0 2,-0.892 2,-2 L 14,5 9,0 z m 0,2 6,0 1,1 1,1 0,10 -8,0 z"
-       style="fill-opacity:1;fill:#546750;stroke-opacity:0;strokenone" />
+       style="fill-opacity:1;fill:#6f968e;stroke-opacity:0;strokenone" />
     <path
        sodipodi:nodetypes="cccc"
        inkscape:connector-curvature="0"
        id="path2997"
        d="m 9,0 0,5 5,0 z"
-       style="fill-opacity:1;fill:#546750;stroke-opacity:0;strokenone" />
+       style="fill-opacity:1;fill:#6f968e;stroke-opacity:0;strokenone" />
     <rect
        ry="0.25"
        rx="0.25"
@@ -130,9 +130,9 @@
        height="1"
        width="4"
        id="rect3767"
-       style="fill-opacity:1;fill:#546750;stroke-opacity:0;strokenone" />
+       style="fill-opacity:1;fill:#6f968e;stroke-opacity:0;strokenone" />
     <rect
-       style="fill-opacity:1;fill:#546750;stroke-opacity:0;strokenone"
+       style="fill-opacity:1;fill:#6f968e;stroke-opacity:0;strokenone"
        id="rect3771"
        width="6"
        height="1"
@@ -148,6 +148,6 @@
        height="1"
        width="6"
        id="rect3775"
-       style="fill-opacity:1;fill:#546750;stroke-opacity:0;strokenone" />
+       style="fill-opacity:1;fill:#6f968e;stroke-opacity:0;strokenone" />
   </g>
 </svg>

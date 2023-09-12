@@ -1,0 +1,116 @@
+/* list config */
+
+@import "theme"
+
+configuration {
+	sidebar-mode: true;
+}
+
+* {
+	font:                  "Iosevka Orw 9";
+
+	lines:                 6;
+
+	window-width:          30%;
+	window-margin:         0px 0;
+	window-padding:        3% 2%;
+	window-location:       center;
+	window-orientation:    horizontal;
+
+	list-padding:          6px 6px;
+	list-margin:           6px 0;
+
+	/*input-border:          0 0 2px;*/
+	input-margin:          0 0 10px;
+	input-padding:         5px 8px;
+
+	entry-margin:          0 3px 0;
+
+	element-padding:       8px 8px;
+}
+
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    background-color:            transparent;
+    orientation:                 horizontal;
+    children:                    [  "inputbar" , "listbox" ];
+}
+
+#window {
+	width:          @window-width;
+	border:         @window-border;
+	margin:         @window-margin;
+	padding:        0;
+	location:       @window-location;
+    background-color:            transparent;
+}
+
+mode-switcher{
+	background-color:            transparent;
+    orientation:                 vertical;
+    enabled:                     true;
+    spacing:                     2%;
+    text-color:                  @fg;
+    width:                       3%;
+    padding:                     0.5%;
+}
+
+button {
+    background-color:            #11111be6; //Crust
+    cursor:                      pointer;
+    border-radius:               50%;
+	width: 2%;
+}
+
+button selected {
+    background-color:            #11111be6; //Crust
+}
+
+listbox {
+	children:                    [ "listview" ];
+	background-color:            #11111be6; //Crust
+}
+
+#listview {
+	//margin:         @list-margin;
+	scrollbar:      false;
+	dynamic:        true;
+	vertical-align: 0.5;
+	spacing:        0;
+	padding:        @window-padding;
+}
+
+inputbar {
+    width:                       3%;
+	/* margin:                     3% 0; */
+	children:                    [ "mode-switcher" , "entry" ];
+	background-color:            @sbbg;
+}
+
+entry {
+    enabled:                     false;
+	background-color: @sfg;
+}
+
+#element {
+	padding:        @element-padding;
+}
+
+sidebar {
+	color:          @fg;
+}
+
+#button normal {
+	width:     10%;
+	border-radius:    50%;
+	background-color: transparent;
+	color: @sfg;
+}
+
+#button selected {
+	width:     10%;
+	border-radius:    50%;
+	background-color: @abg;
+	color: @efg;
+}

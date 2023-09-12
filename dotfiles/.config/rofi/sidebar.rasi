@@ -103,6 +103,7 @@ inputbar {
 }
 
 #button {
+	font: "material 11";
 	expand: false;
 	padding: 2% 0;
 }

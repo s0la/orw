@@ -1,0 +1,87 @@
+/* list config */
+
+@import "theme"
+
+* {
+	bg: @tbg;
+
+	font:                   "remix 13";
+
+	window-orientation:     vertical;
+
+	list-spacing:                5px;
+
+	input-margin:           0 0 5px;
+
+	entry-margin:           0 5px;
+
+	element-padding:        26px 26px;
+	element-border:         0 0 0px;
+	element-radius:         5px;
+
+	window-location:        west;
+	window-padding:         5px 5px;
+	window-margin:          0 0 0 9px;
+	window-radius:          5px;
+	// window-height:          calc( rofi_hp2 + (rofi_hp1 + rofi_fs) * rofi_ic + rofi_ls * (rofi_ic - 1) + rofi_eb );
+	window-height:          calc( 22px + 33px );
+	window-width:           calc( @element-radius + 5px );
+	// window-width:           calc( rofi_hp2 + rofi_hp1 + rofi_fs );
+}
+
+#window {
+	border:           0;
+	width:            @window-width;
+	height:           @window-height;
+	margin:           @window-margin;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @window-padding;
+	border-radius:    @window-radius;
+	children:         [ horibox ];
+}
+
+#horibox {
+	orientation: @window-orientation;
+	children:    [ listview ];
+}
+
+#listview {
+	layout:      @window-orientation;
+	spacing:     @list-spacing;
+	lines:       0.260417;
+}
+
+#inputbar {
+	margin:       @input-margin;
+	border-color: @bg;
+}
+
+#entry {
+	margin: @entry-margin;
+}
+
+#prompt {
+	color:        @fg;
+}
+
+#element {
+	padding:        @element-padding;
+	border-radius:  @element-radius;
+}
+
+#element.normal.normal, element.alternate.normal {
+	text-color:       @fg;
+	background-color: @ebg;
+}
+
+#element.selected.normal {
+	text-color:       @efg;
+	background-color: @sbg;
+	border:           @element-border;
+}
+
+#element.selected.active {
+	text-color:       @efg;
+	border:           @element-border;
+}

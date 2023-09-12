@@ -1,0 +1,209 @@
+#ob
+t #585a6a
+tb #585a6a
+b #585a6a
+c #585a6a
+it #141720
+itb #141720
+ib #141720
+ic #141720
+cbt #707280
+mabt #707280
+mibt #707280
+cbth #414353
+mabth #414353
+mibth #414353
+ibt #0c0e14
+ibth #0c0e14
+mbg #141720
+mfg #262b39
+mtbg #141720
+mtfg #2f3545
+msbg #1c202c
+msfg #d1b664
+mb #141720
+ms #141720
+bfg #141720
+bsfg #1c202c
+osd #141720
+osdh #d1b664
+osdu #1c202c
+s #414353
+
+#bar
+bg #1c202c
+fc #1c202c
+bfc #d00c0e14
+bfc #1c202c
+bbg #1c202c
+jbg #0c0e14
+jpfg #707280
+jsfg #414353
+pbg #0c0e14
+pfg #a29191
+sbg #0c0e14
+sfg #2f3545
+pbefg #d1b664
+pbfg #2f3545
+mlfg #818e91
+tbfg #2f3545
+Psbg #141720
+Psfg #262b39
+Apfg #a29191
+Abfg #585a6a
+Wsbg #1c202c
+Wpbg #1c202c
+Lsbg #d00c0e14
+Lsfg #262b39
+Lpbg #d00c0e14
+Lpfg #846e2b
+Labg #d0141720
+Labg #d00c0e14
+Lafg #a29191
+Lafg #d1b664
+
+#qb
+bg #141720
+fg #262b39
+sbg #0c0e14
+sfg #d1b664
+mfg #6a696d
+sbbg #0c0e14
+
+#term
+fg #bfacac
+bg #ff0c0e14
+
+#bash
+bg default
+fg #2f3545
+sc #2f3545
+dc #2f3545
+ic #6a696d
+sec #585a6a
+gcc #585a6a
+gdc #d1b664
+vc #818e91
+
+#vim
+bg none
+fg #cbbbbb
+ifg #818e91
+vfg #6a696d
+cfg #474647
+ffg #585a6a
+sfg #d1b664
+nbg none
+nfg #1c202c
+lbg #141720
+lfg #d1b664
+syfg #474647
+cmfg #262b39
+slbg #141720
+slfg #262b39
+fzfhl #d1b664
+bcbg #585a6a
+bdbg #d1b664
+nmbg #474647
+imbg #585a6a
+vmbg #585a6a
+%{T2}%{T2}%{I}%{I} umanity's Last Br
+%{T-}eat %%{T-}{I}%{I}
+22 Humanity's Last Breath
+10 %{I}%{I}
+32 %{T2}%{I}%{I} umanity's Last Breat %%{T-}{I}%{I}
+23 10 1 1 33
+%{T2}%{I}%{I} umanity's Last Breat %%{T-}{I}%{I}
+
+#rofi
+bg #10131b
+tbg #f010131b
+tbg #ea10131b
+mbg #f00c0e14
+msbg #70171b27
+fg #262b39
+bc #585a6a
+bc #10131b
+ibg #10131b
+ibc #1c202c
+ibc #10131b
+abg #0e1118b0
+abg #08080855
+abg #08080866
+afg #2f3545
+ebg #10131b
+efg #d1b664
+sbg #171b27b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sfg #d1b664
+sul #d1b664
+lpc #bfacac
+dpc #bfacac
+btc #10131b
+sbtc #10131b
+btbc #10131b
+ftbg #00000000
+sbbg #d1b664bb
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #262b39
+bc #141720
+mc #585a6a
+ibg #141720
+ifg #262b39
+sfg #262b39
+wbg #141720
+wfg #262b39
+cbg #1c202c
+cfg #d1b664
+
+#dunst
+bg #141720
+fg #bfacac
+fc #585a6a
+sbg #0c0e14
+pbfg #d1b664
+
+#vifm
+fg #2f3545
+dfg #1c202c
+efg #2f3545
+cbg #141720
+cfg #d1b664
+sfg #141720
+tfg #141720
+slbg #141720
+slfg #2f3545
+
+#ncmpcpp
+npp #2f3545
+np #2f3545
+sip #1c202c
+sc #1c202c
+mwc #1c202c
+etc #191e24
+c2 #DBBD7D
+pc #1c202c
+pec #d1b664
+vc #d1b664
+
+#sxiv
+bg #0c0e14
+fg #d1b664
+
+#lock
+tc #ffbfacac
+rc #ffd1b664
+ic #dc0c0e14
+wc #ff707280
+
+#nb
+fg #1c202c
+pfg #141720
+pbg default
+ifg #2f3545
+ibg #1c202c

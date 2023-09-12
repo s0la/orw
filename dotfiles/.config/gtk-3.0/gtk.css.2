@@ -1,0 +1,93 @@
+@define-color bg #141112;
+@define-color pbg #2c2829;
+@define-color sbg #201c1d;
+@define-color tbg rgba(44, 40, 41, 0.9);
+@define-color fg #b5bfac;
+@define-color pfg #454243;
+@define-color sfg #393536;
+@define-color afg #d8869b;
+
+VteTerminal, vte-terminal {
+	padding: 35px;
+}
+
+window.thunar {
+	background: @sbg;
+}
+
+window.thunar treeview {
+	background: @sbg;
+}
+
+window.thunar grid *:selected,
+window.thunar grid *:active {
+	background-color: @sbg;
+	border-radius: 3px;
+	color: @afg
+}
+
+window.thunar .sidebar {
+	background-color: rgba(44, 40, 41, 0.9);
+	box-shadow: inset -20px 20px 15px -25px rgba(0, 0, 0, 0.2);
+	padding: 1rem
+}
+
+window.thunar treeview {
+	padding: 3px
+}
+
+window.thunar treeview.view header button {
+	background: @pbg;
+}
+
+window.thunar treeview:selected {
+	background-color: @bg;
+	border-radius: 3px;
+	color: @afg
+}
+
+window.thunar .frame {
+	border: 0
+}
+
+window.thunar toolbar box {
+	padding: 5px
+}
+
+window.thunar #location-toolbar entry:active {
+	border-color: @afg;
+}
+
+window.thunar toolbar#location-toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:checked {
+	border-color: @afg;
+}
+
+window.thunar paned grid {
+	background: @tbg
+}
+
+window.thunar toolbar {
+	background: @sbg;
+	padding: 5px 0;
+	color: @pfg;
+}
+
+window.thunar toolbar * {
+	-gtk-icon-transform: scale(0.5);
+	background: none
+}
+
+.thunar toolbar entry {
+	border: 0;
+	border-radius: 0px;
+	background-color: #608985;
+	font-family: "Fira Mono"; 
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+window.thunar separator {
+	background-image: image(#0F1215);
+	background-size: 1px 1px;
+	background-position: center center
+}

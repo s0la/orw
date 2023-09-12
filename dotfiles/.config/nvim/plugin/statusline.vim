@@ -15,7 +15,7 @@ let s:settings .= 'm.m.;'
 let s:settings .= 'f.s. %F ;'
 let s:settings .= 'b.b.;'
 "let s:settings .= 'cpi.lfg.● ;'
-let s:settings .= 'cpi.lfg. ● ;'
+let s:settings .= 'cpi.m. ● ;'
 " let s:settings .= 'c.imbg. ●.f;'
 let s:settings .= 'e.n.;'
 "let s:settings .= 'ln.fr.  %l:%c  .fr;'
@@ -245,10 +245,24 @@ func! MakeIndicator(module, hi_group)
 	let l:var = MapModule(l:module)
 	let l:hi_group = MapModule(toupper(l:module))
 
+	if a:hi_group =~ 'g$'
+		"let l:fg_index = 1
+		let l:fg = {'g:' . a:hi_group}
+	else
+		"let l:fg_index = 0
+		let l:fg = split(GetHiGroupColors(toupper(MapModule(a:hi_group)))[1], '=')[1]
+	endif
+
+	"echo "CHANGE " . l:fg
+	"hi Mode
+
+	"echo "CHANGE " . a:hi_group . " color " . MapModule(a:hi_group) . " " . l:hi_group_var . " " l:fg
+
 	let l:adjacent_module_bg = GetAdjacentModuleBg(l:module, l:direction)
 	let l:bg = split(l:adjacent_module_bg, '=')[1]
 
-	let {'s:' . l:var . '_hi_group'} = MakeHiGroup(l:hi_group, a:hi_group, l:bg, 'i')
+	"let {'s:' . l:var . '_hi_group'} = MakeHiGroup(l:hi_group, a:hi_group, l:bg, 'i')
+	let {'s:' . l:var . '_hi_group'} = MakeHiGroup(l:hi_group, l:fg, l:bg, 'i')
 endf
 
 func! SetBranchColor()
@@ -358,7 +372,8 @@ func! SetVar(module, hi_group, ...)
 
 	if a:hi_group != ''
 		if a:module =~ 'i$'
-			call MakeIndicator(a:module[:-2], {'g:' . a:hi_group})
+			"call MakeIndicator(a:module[:-2], {'g:' . a:hi_group})
+			call MakeIndicator(a:module[:-2], a:hi_group)
 		else
 			if a:hi_group =~ 'g$'
 				let l:hi_group = GetHiGroup(a:module, a:hi_group)
@@ -382,6 +397,11 @@ func! SetVar(module, hi_group, ...)
 			endif
 
 			let {'s:' . l:module . '_hi_group'} = l:hi_group
+
+			"if a:module == 'f'
+			"	echo "File " . a:hi_group . " color " . s:mode_hi_group
+			"endif
+
 		endif
 	else
 		call ClearHiGroup(a:module)

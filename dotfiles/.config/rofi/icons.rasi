@@ -15,7 +15,7 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        23px 23px;
+	element-padding:        25px 25px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
@@ -23,13 +23,18 @@
 	window-padding:         7px 7px;
 	window-margin:          0 7px;
 	window-radius:          5px;
-	window-width:           91px;
+	window-width:           95px;
 
 	background-color: @ftbg;
 }
 
 configuration {
 	fixed-num-lines: false;
+}
+
+mainbox {
+    spacing:                     0px;
+    background-color:            transparent;
 }
 
 #window {
@@ -42,7 +47,8 @@ configuration {
 	padding:          @window-padding;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
-	background-color: @tbg;
+    background-color:            transparent;
+    // background-color:            @bg;
 }
 
 #horibox {
@@ -54,6 +60,7 @@ configuration {
 	layout:      @window-orientation;
 	spacing:     @list-spacing;
 	lines:       0.260417;
+    background-color:            transparent;
 	/*background-color: argb:00000000;*/
 }
 
@@ -73,12 +80,13 @@ configuration {
 #element {
 	padding:        @element-padding;
 	border-radius:  @element-radius;
-	background-color: inherit;
+	background-color: @bg;
 }
 
 #element.normal.normal, element.alternate.normal {
 	text-color:       @fg;
-	background-color: inherit;
+	background-color: @bg;
+	// background-color: transparent;
 }
 
 #element.selected.normal {
@@ -89,5 +97,6 @@ configuration {
 
 #element.selected.active {
 	text-color:       @efg;
+	// background-color: @bg;
 	border:           @element-border;
 }

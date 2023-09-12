@@ -1,18 +1,18 @@
 #ob
-t #5c5873
-tb #5c5873
-b #5c5873
-c #5c5873
+t #3b374f
+tb #3b374f
+b #3b374f
+c #3b374f
 it #141420
 itb #141420
 ib #141420
 ic #141420
-cbt #736f89
-mabt #736f89
-mibt #736f89
-cbth #46425c
-mabth #46425c
-mibth #46425c
+cbt #4f4b65
+mabt #4f4b65
+mibt #4f4b65
+cbth #272438
+mabth #272438
+mibth #272438
 ibt #0c0c14
 ibth #0c0c14
 mbg #141420
@@ -28,17 +28,17 @@ bsfg #1c1c2c
 osd #141420
 osdh #d89079
 osdu #1c1c2c
-s #46425c
+s #272438
 
 #bar
-bg #d01c1c2c
-fc #d01c1c2c
+bg #1c1c2c
+fc #1c1c2c
 bfc #d00c0c14
-bfc #d01c1c2c
-bbg #d01c1c2c
+bfc #1c1c2c
+bbg #1c1c2c
 jbg #0c0c14
-jpfg #736f89
-jsfg #46425c
+jpfg #4f4b65
+jsfg #272438
 pbg #0c0c14
 pfg #a29d91
 sbg #0c0c14
@@ -50,7 +50,9 @@ tbfg #2f2f45
 Psbg #141420
 Psfg #262639
 Apfg #a29d91
-Abfg #5c5873
+Abfg #3b374f
+Wsbg #1c1c2c
+Wpbg #1c1c2c
 Lsbg #d00c0c14
 Lsfg #262639
 Lpbg #d00c0c14
@@ -78,8 +80,8 @@ fg #2f2f45
 sc #2f2f45
 dc #2f2f45
 ic #f2d6a5
-sec #5c5873
-gcc #5c5873
+sec #3b374f
+gcc #3b374f
 gdc #d89079
 vc #c67285
 
@@ -88,23 +90,23 @@ bg none
 fg #cbc6bb
 ifg #c67285
 vfg #f2d6a5
-cfg #846486
-ffg #5c5873
+cfg #876789
+ffg #3b374f
 sfg #d89079
 nbg none
 nfg #1c1c2c
 lbg #141420
 lfg #d89079
-syfg #846486
+syfg #876789
 cmfg #262639
 slbg #141420
 slfg #262639
 fzfhl #d89079
-bcbg #5c5873
+bcbg #3b374f
 bdbg #d89079
-nmbg #846486
-imbg #5c5873
-vmbg #5c5873
+nmbg #876789
+imbg #3b374f
+vmbg #3b374f
 
 #rofi
 bg #10101b
@@ -113,9 +115,11 @@ tbg #ea10101b
 mbg #f00c0c14
 msbg #70171727
 fg #262639
-bc #5c5873
+bc #3b374f
+bc #10101b
 ibg #10101b
 ibc #1c1c2c
+ibc #10101b
 abg #0e0e18b0
 abg #08080855
 abg #08080866
@@ -134,12 +138,14 @@ btc #10101b
 sbtc #10101b
 btbc #10101b
 ftbg #00000000
+sbbg #d89079bb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #262639
-bc #0c0c14
-mc #5c5873
+bc #141420
+mc #3b374f
 ibg #141420
 ifg #262639
 sfg #262639
@@ -151,7 +157,7 @@ cfg #d89079
 #dunst
 bg #141420
 fg #bfb9ac
-fc #5c5873
+fc #3b374f
 sbg #0c0c14
 pbfg #d89079
 
@@ -186,7 +192,7 @@ fg #d89079
 tc #ffbfb9ac
 rc #ffd89079
 ic #dc0c0c14
-wc #ff736f89
+wc #ff4f4b65
 
 #nb
 fg #1c1c2c

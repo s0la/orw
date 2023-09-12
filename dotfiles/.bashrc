@@ -705,14 +705,14 @@ generate_ps1() {
 	#dc="25;40;48;"
 
 	bg="default"
-	fg="61;68;69;"
-	sc="61;68;69;"
-	dc="61;68;69;"
-	ic="136;160;160;"
-	sec="78;88;106;"
-	gcc="78;88;106;"
-	gdc="200;167;138;"
-	vc="139;155;135;"
+	fg="55;69;69;"
+	sc="55;69;69;"
+	dc="55;69;69;"
+	ic="124;141;165;"
+	sec="156;125;165;"
+	gcc="156;125;165;"
+	gdc="95;193;191;"
+	vc="171;203;196;"
 
 	#clean="\[$(tput sgr0)\]"
 	clean='\[\033[0m\]'
@@ -965,6 +965,7 @@ alias stc="show_tty_clock"
 
 #tmux
 alias tmux="tmux -f ~/.config/tmux/tmux.conf"
+alias nf="clear && neofetch"
 
 #previous
 #alias previous="history | tail -2 | head -1 | ~/previous.sh"

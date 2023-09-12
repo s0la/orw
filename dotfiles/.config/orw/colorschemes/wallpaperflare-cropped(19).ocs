@@ -31,11 +31,11 @@ osdu #29282c
 s #42343d
 
 #bar
-bg #d029282c
-fc #d029282c
+bg #29282c
+fc #29282c
 bfc #d0121114
-bfc #d029282c
-bbg #d029282c
+bfc #29282c
+bbg #29282c
 jbg #121114
 jpfg #6f616b
 jsfg #42343d
@@ -51,6 +51,8 @@ Psbg #1d1c20
 Psfg #363539
 Apfg #a291a2
 Abfg #594a54
+Wsbg #29282c
+Wpbg #29282c
 Lsbg #d0121114
 Lsfg #363539
 Lpbg #d0121114
@@ -88,23 +90,23 @@ bg none
 fg #cbbbcb
 ifg #a088a0
 vfg #b1c8d8
-cfg #686877
+cfg #606070
 ffg #594a54
 sfg #ba6a65
 nbg none
 nfg #29282c
 lbg #1d1c20
 lfg #ba6a65
-syfg #686877
+syfg #606070
 cmfg #363539
 slbg #1d1c20
 slfg #363539
 fzfhl #ba6a65
 bcbg #594a54
 bdbg #ba6a65
-nmbg #686877
-imbg #594a54
-vmbg #594a54
+nmbg #a088a0
+imbg #b1c8d8
+vmbg #606070
 
 #rofi
 bg #18171b
@@ -114,8 +116,10 @@ mbg #f0121114
 msbg #70232127
 fg #363539
 bc #594a54
+bc #18171b
 ibg #18171b
 ibc #29282c
+ibc #18171b
 abg #151518b0
 abg #08080855
 abg #08080866
@@ -134,11 +138,13 @@ btc #18171b
 sbtc #18171b
 btbc #18171b
 ftbg #00000000
+sbbg #ba6a65bb
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #363539
-bc #121114
+bc #1d1c20
 mc #594a54
 ibg #1d1c20
 ifg #363539

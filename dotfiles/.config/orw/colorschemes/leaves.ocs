@@ -31,11 +31,11 @@ osdu #2b2c28
 s #392e30
 
 #bar
-bg #d02b2c28
-fc #d02b2c28
+bg #2b2c28
+fc #2b2c28
 bfc #d0131411
-bfc #d02b2c28
-bbg #d02b2c28
+bfc #2b2c28
+bbg #2b2c28
 jbg #131411
 jpfg #665c5e
 jsfg #392e30
@@ -45,12 +45,14 @@ sbg #131411
 sfg #444542
 pbefg #e7bc5c
 pbfg #444542
-mlfg #b85c5a
+mlfg #5cc6d4
 tbfg #444542
 Psbg #1f201c
 Psfg #383935
 Apfg #a29391
 Abfg #504547
+Wsbg #2b2c28
+Wpbg #2b2c28
 Lsbg #d0131411
 Lsfg #383935
 Lpbg #d0131411
@@ -81,28 +83,28 @@ ic #7b80ac
 sec #504547
 gcc #504547
 gdc #e7bc5c
-vc #b85c5a
+vc #5cc6d4
 
 #vim
 bg none
 fg #cbbebb
-ifg #b85c5a
+ifg #5cc6d4
 vfg #7b80ac
-cfg #5cc6d4
+cfg #b85c5a
 ffg #504547
 sfg #e7bc5c
 nbg none
 nfg #2b2c28
 lbg #1f201c
 lfg #e7bc5c
-syfg #5cc6d4
+syfg #b85c5a
 cmfg #383935
 slbg #1f201c
 slfg #383935
 fzfhl #e7bc5c
 bcbg #504547
 bdbg #e7bc5c
-nmbg #5cc6d4
+nmbg #b85c5a
 imbg #504547
 vmbg #504547
 
@@ -136,6 +138,8 @@ btc #1a1b17
 sbtc #1a1b17
 btbc #1a1b17
 ftbg #00000000
+sbbg #e7bc5cbb
+sbsbg #11111144
 
 #tmux
 bg terminal

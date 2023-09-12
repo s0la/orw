@@ -1,0 +1,33 @@
+/*
+You can type here any CSS rule recognised by GTK.
+You can temporarily disable this custom CSS by clicking on the “Pause” button above.
+
+Changes are applied instantly and globally, for the whole application.
+*/
+
+.thunar toolbar  {
+	border: 0;
+}
+
+.thunar .standard-view {
+	border: 0;
+}
+
+.thunar toolbar entry {
+	border: 0;
+	border-radius: 50px;
+	background-color: #232530;
+	font-family: "Fira Mono"; 
+	padding-left: 12px;
+	padding-right: 12px;
+}
+
+.thunar toolbar entry:focus {
+	background-color: #232530;
+}
+
+.thunar toolbar entry:focus selection,
+.thunar entry selection {
+	background-color: #6C6F93;
+	color: white;
+}

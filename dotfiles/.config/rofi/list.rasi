@@ -8,7 +8,7 @@
 
 	lines:                 6;
 
-	window-width:          35%;
+	window-width:          30%;
 	window-margin:         0px 0;
 	window-padding:        3% 2%;
 	window-location:       center;

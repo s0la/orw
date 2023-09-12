@@ -1,18 +1,18 @@
 #ob
-t #7a6065
-tb #7a6065
-b #7a6065
-c #7a6065
+t #64464c
+tb #64464c
+b #64464c
+c #64464c
 it #1f2020
 itb #1f2020
 ib #1f2020
 ic #1f2020
-cbt #90777c
-mabt #90777c
-mibt #90777c
-cbth #63494e
-mabth #63494e
-mibth #63494e
+cbt #7a5a61
+mabt #7a5a61
+mibt #7a5a61
+cbth #4d3238
+mabth #4d3238
+mibth #4d3238
 ibt #131414
 ibth #131414
 mbg #1f2020
@@ -28,16 +28,17 @@ bsfg #2c2c2c
 osd #1f2020
 osdh #ffb771
 osdu #2c2c2c
-s #63494e
+s #4d3238
 
 #bar
-bg #dd383838
-fc #dd383838
-bfc #131414
-bbg #dd383838
+bg #2c2c2c
+fc #2c2c2c
+bfc #d0131414
+bfc #2c2c2c
+bbg #2c2c2c
 jbg #131414
-jpfg #90777c
-jsfg #63494e
+jpfg #7a5a61
+jsfg #4d3238
 pbg #131414
 pfg #91a2a2
 sbg #131414
@@ -49,20 +50,24 @@ tbfg #454545
 Psbg #1f2020
 Psfg #393939
 Apfg #91a2a2
-Abfg #7a6065
+Abfg #64464c
+Wsbg #2c2c2c
+Wpbg #2c2c2c
+Lsbg #d0131414
 Lsfg #393939
-Lpbg #1f2020
-Lpfg #454545
-Labg #272828
+Lpbg #d0131414
+Lpfg #b27234
+Labg #d01f2020
+Labg #d0131414
 Lafg #91a2a2
-Lfc #ffb771
+Lafg #ffb771
 
 #qb
 bg #1f2020
 fg #393939
 sbg #131414
 sfg #ffb771
-mfg #96959e
+mfg #878591
 sbbg #131414
 
 #term
@@ -74,9 +79,9 @@ bg default
 fg #454545
 sc #454545
 dc #454545
-ic #96959e
-sec #7a6065
-gcc #7a6065
+ic #878591
+sec #64464c
+gcc #64464c
 gdc #ffb771
 vc #b5a1a5
 
@@ -84,9 +89,9 @@ vc #b5a1a5
 bg none
 fg #bbcbcb
 ifg #b5a1a5
-vfg #96959e
+vfg #878591
 cfg #9fb5b5
-ffg #7a6065
+ffg #64464c
 sfg #ffb771
 nbg none
 nfg #2c2c2c
@@ -97,26 +102,38 @@ cmfg #393939
 slbg #1f2020
 slfg #393939
 fzfhl #ffb771
-bcbg #76565c
+bcbg #64464c
 bdbg #ffb771
-nmbg #9fb5b5
-imbg #7a6065
-vmbg #76565c
+nmbg #b5a1a5
+imbg #878591
+vmbg #9fb5b5
 
 #rofi
 bg #1a1b1b
-tbg #001a1b1b
+tbg #f01a1b1b
+tbg #ea1a1b1b
+tbg #dd1a1b1b
 mbg #f0131414
 msbg #70262727
 fg #393939
-bc #7a6065
+bc #64464c
+bc #1a1b1b
 ibg #1a1b1b
 ibc #2c2c2c
-abg #141515
+ibc #1a1b1b
+abg #171818b0
+abg #08080855
+abg #08080866
+abg #08080844
 afg #454545
 ebg #1a1b1b
 efg #ffb771
-sbg #262727
+sbg #262727b0
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
 sfg #ffb771
 sul #ffb771
 lpc #acbfbf
@@ -124,12 +141,15 @@ dpc #acbfbf
 btc #1a1b1b
 sbtc #1a1b1b
 btbc #1a1b1b
+ftbg #00000000
+sbbg #ffb77188
+sbsbg #11111144
 
 #tmux
 bg terminal
 fg #393939
 bc #1f2020
-mc #76565c
+mc #64464c
 ibg #1f2020
 ifg #393939
 sfg #393939
@@ -141,7 +161,7 @@ cfg #ffb771
 #dunst
 bg #1f2020
 fg #acbfbf
-fc #76565c
+fc #64464c
 sbg #131414
 pbfg #ffb771
 
@@ -176,7 +196,7 @@ fg #ffb771
 tc #ffacbfbf
 rc #ffffb771
 ic #dc131414
-wc #ff90777c
+wc #ff7a5a61
 
 #nb
 fg #2c2c2c

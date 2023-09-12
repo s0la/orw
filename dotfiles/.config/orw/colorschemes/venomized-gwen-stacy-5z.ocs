@@ -1,18 +1,18 @@
 #ob
-t #b27a78
-tb #b27a78
-b #b27a78
-c #b27a78
+t #91817d
+tb #91817d
+b #91817d
+c #91817d
 it #201f20
 itb #201f20
 ib #201f20
 ic #201f20
-cbt #c8918f
-mabt #c8918f
-mibt #c8918f
-cbth #9b6462
-mabth #9b6462
-mibth #9b6462
+cbt #a79a97
+mabt #a79a97
+mibt #a79a97
+cbth #7a6864
+mabth #7a6864
+mibth #7a6864
 ibt #141314
 ibth #141314
 mbg #201f20
@@ -28,17 +28,17 @@ bsfg #2c2c2c
 osd #201f20
 osdh #e2557c
 osdu #2c2c2c
-s #9b6462
+s #7a6864
 
 #bar
-bg #d02c2c2c
-fc #d02c2c2c
+bg #2c2c2c
+fc #2c2c2c
 bfc #d0141314
-bfc #d02c2c2c
-bbg #d02c2c2c
+bfc #2c2c2c
+bbg #2c2c2c
 jbg #141314
-jpfg #c8918f
-jsfg #9b6462
+jpfg #a79a97
+jsfg #7a6864
 pbg #141314
 pfg #9891a2
 sbg #141314
@@ -50,7 +50,9 @@ tbfg #454545
 Psbg #201f20
 Psfg #393939
 Apfg #9891a2
-Abfg #b27a78
+Abfg #91817d
+Wsbg #2c2c2c
+Wpbg #2c2c2c
 Lsbg #d0141314
 Lsfg #393939
 Lpbg #d0141314
@@ -78,8 +80,8 @@ fg #454545
 sc #454545
 dc #454545
 ic #bbbbbc
-sec #b27a78
-gcc #b27a78
+sec #91817d
+gcc #91817d
 gdc #e2557c
 vc #c9a5bd
 
@@ -89,7 +91,7 @@ fg #c2bbcb
 ifg #c9a5bd
 vfg #bbbbbc
 cfg #c49e77
-ffg #b27a78
+ffg #91817d
 sfg #e2557c
 nbg none
 nfg #2c2c2c
@@ -100,11 +102,11 @@ cmfg #393939
 slbg #201f20
 slfg #393939
 fzfhl #e2557c
-bcbg #b27a78
+bcbg #91817d
 bdbg #e2557c
-nmbg #c49e77
-imbg #b27a78
-vmbg #b27a78
+nmbg #c9a5bd
+imbg #bbbbbc
+vmbg #c49e77
 
 #rofi
 bg #1b1a1b
@@ -113,7 +115,7 @@ tbg #ea1b1a1b
 mbg #f0141314
 msbg #70272627
 fg #393939
-bc #b27a78
+bc #91817d
 bc #1b1a1b
 ibg #1b1a1b
 ibc #2c2c2c
@@ -121,6 +123,7 @@ ibc #1b1a1b
 abg #181718b0
 abg #08080855
 abg #08080866
+abg #08080844
 afg #454545
 ebg #1b1a1b
 efg #e2557c
@@ -128,6 +131,7 @@ sbg #272627b0
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
+sbg #cccccc0a
 sfg #e2557c
 sul #e2557c
 lpc #b4acbf
@@ -143,7 +147,7 @@ sbsbg #11111144
 bg terminal
 fg #393939
 bc #201f20
-mc #b27a78
+mc #91817d
 ibg #201f20
 ifg #393939
 sfg #393939
@@ -155,7 +159,7 @@ cfg #e2557c
 #dunst
 bg #201f20
 fg #b4acbf
-fc #b27a78
+fc #91817d
 sbg #141314
 pbfg #e2557c
 
@@ -190,7 +194,7 @@ fg #e2557c
 tc #ffb4acbf
 rc #ffe2557c
 ic #dc141314
-wc #ffc8918f
+wc #ffa79a97
 
 #nb
 fg #2c2c2c
