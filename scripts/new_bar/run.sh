@@ -95,9 +95,9 @@ get_icon() {
 	sed -n "s/^[^#]*$icon[^%]*//p" $icons_file
 }
 
-singles=( tiling power )
+singles=( rec tiling power )
 multiframe_modules=( workspaces windows launchers )
-labeled_modules=( rss emails volume counter vanter torrents network power display )
+labeled_modules=( rss emails volume counter vanter torrents network power display rec )
 
 set_module_colors() {
 	local module_short=$1
@@ -241,6 +241,7 @@ get_module() {
 		P) module=power;;
 		t) module=tiling;;
 		D) module=display;;
+		X) module=rec;;
 	esac
 }
 
@@ -1630,8 +1631,8 @@ print_module() {
 
 			#[[ $module == network ]] &&
 			#echo "$module: $output_content" >> j.log
-			[[ $module == volume ]] &&
-			echo "$module: $volume_padding, $output_content" >> j.log
+			#[[ $module == volume ]] &&
+			#echo "$module: $volume_padding, $output_content" >> j.log
 		fi
 
 		local module_index modules_to_reload reload_mode
@@ -1767,8 +1768,8 @@ print_module() {
 				sleep 0.05
 			done
 
-			[[ $module == mpd ]] &&
-			echo "MPD lock" >> mpd.log
+			#[[ $module == mpd ]] &&
+			#echo "MPD lock" >> mpd.log
 			#~/.orw/scripts/notify.sh "MPD lock"
 
 			[[ $module ]] && echo $module > $joiner_lock_file
@@ -1888,8 +1889,8 @@ print_module() {
 			[[ ($cjsfg && $cjpfg) && ! $labeled ]] &&
 				eval "output_content=\"$output_content\""
 
-			[[ $module == volume ]] &&
-			echo "$module: $volume_padding, $output_content" >> j.log
+			#[[ $module == volume ]] &&
+			#echo "$module: $volume_padding, $output_content" >> j.log
 		fi
 
 		local module_index modules_to_reload reload_mode
@@ -2039,7 +2040,7 @@ assign_width_args() {
 	esac
 }
 
-while getopts :xywhspcrfFSjinemdvtDNPTCVOWARL opt; do
+while getopts :xywhspcrfFSjinemdvtDNPTCVOWARLX opt; do
 	args=''
 	#[[ ! ${!OPTIND} == -[[:alpha:]] ]] &&
 	#	args="${!OPTIND}" && shift 1
@@ -2352,7 +2353,9 @@ main_pid=$$
 
 while IFS=':' read module content; do
 	eval ${module,,}=\""$content"\"
+	#[[ $module == LAUNCHERS ]] && eval echo \""$content"\" >> l.log
 	eval echo -e \""$bar_content"\"
+	#eval echo -e \""$bar_content"\" >> rec.log
 	#[[ $module == DISPLAY ]] &&
 	#eval echo -e \"$module:   "$content"\" >> dis.log
 done < $fifo | adjust_bar_width |
