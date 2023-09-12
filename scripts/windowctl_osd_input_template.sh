@@ -336,11 +336,18 @@ font="Roboto Mono 8"
 offset="<span font='$font'>$(printf "%-3s")</span>"
 
 notify() {
+	#echo START
+	#ps -C dunst -o args=
+	#ps -C notify.sh -o args=
 	local notification="$1" time="$2" offset="   "
 	dunstify -t ${time:-10000} -r 222 "summary" \
 		"<span font='Iosevka Orw $font_size'>\n$notification\n</span>" &> /dev/null
 		#"\n${notification//\\n/$offset\\n$offset}\n" #&> /dev/null &
 		#"$padding_font<span font='$font'>$padding$offset${message//\\n/$offset\\n$offset}$offset$padding</span>$bottom_padding"
+
+	#echo END
+	#ps -C dunst -o args=
+	#ps -C notify.sh -o args=
 }
 
 display_notification() {
@@ -716,9 +723,11 @@ set_geometry() {
 
 	#expr="(($columns + ${separator_width:-0} + $font_size) * $font_size * 1.3) / 1"
 	#expr="((($columns + 2) * $font_size + 2 * 10) * 1.3) / 1"
-	osd_width=$(echo "((($columns + 2) * $font_size + 2 * 10) * 1.3) / 1" | bc)
+	osd_width=$(echo "((($columns + 2) * $font_size + 2 * 10) * 1.2) / 1" | bc)
 	#osd_x=$(((width - osd_width) / 2))
 	osd_x=$(((x_start + (x_end - x_start) - osd_width) / 2))
+	osd_x=$(((x_end + x_start - osd_width) / 2))
+	echo $columns, $font_size, $osd_width, $osd_x
 
 	#~/.orw/scripts/notify.sh -t 11 "$columns, $font_size, $osd_width, $osd_x"
 	#~/.orw/scripts/notify.sh -t 11 "$total_width, $x_end, $x_start"
@@ -730,7 +739,7 @@ set_geometry() {
 
 		/^\s*geometry/ {
 			replace(3, '$osd_x')
-			replace(1, '$osd_width' * 1.3)
+			replace(1, '$osd_width' * 1.2)
 			#replace(1, '$osd_width' * 2.5)
 		} { print }' ~/.config/dunst/windows_osd_dunstrc
 
