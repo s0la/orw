@@ -209,6 +209,17 @@ read average_hue mono{,_accent} <<< $(get_mono_accent)
 #echo $mono, $average_hue
 #exit
 
+#for c in ${!colors[*]}; do
+#	#echo $c: ${colors[$c]}
+#	print_color $c label
+#done
+#exit
+#
+#for c in ${!sorted_colors[*]}; do
+#	echo $c: ${sorted_colors[$c]}
+#done
+#exit
+
 #while read c; do
 #	echo $c
 #	print_color $c label
@@ -1848,18 +1859,25 @@ else
 			if ((s > v)); then
 				if ((s > 3 * v)); then
 					value=$(((s - 3 * v) * 5))
+					((value > 30)) && value=30
 					light_accent=$(get_sbg ${accent##*_} +$value)
 					echo HREHREHRHERHE $value
 				else
 					#((a + 1 >= v)) && multiplier=1.3 || multiplier=1.7
 					#((a + 1 >= v)) && multiplier=1.3 || multiplier=1.9
-					((a + 1 >= v)) && multiplier=1.3 || multiplier=1.6
+
+					#((a + 1 >= v)) && multiplier=1.3 || multiplier=1.6
+					((a + 1 >= v)) && multiplier=1.3 || multiplier=1.7
+					#((a + 1 >= v)) && multiplier=1.3 || multiplier=2.3
 
 					#value_diff=$(bc <<< "($value_diff * $multiplier) / 1 + $v")
-					value_diff=$(bc <<< "($value_diff * $multiplier) / 1 + 0")
-					((value_diff > 100)) && value_diff=90
+					value=$(bc <<< "($value_diff * $multiplier) / 1 + 0")
+					((value > 100)) && value=90
 					#light_accent=$(get_sbg ${accent##*_} ${value_diff#-} $((s - 5)))
-					light_accent=$(get_sbg ${accent##*_} +${value_diff#-})
+					light_accent=$(get_sbg ${accent##*_} +${value#-} 5)
+					#light_accent=$(get_sbg ${accent##*_} +${value#-})
+
+					echo THERE $a, $s, $v, $multiplier, $value, $light_accent
 				fi
 			else
 				if ((v < avg_value)); then
@@ -1872,8 +1890,11 @@ else
 							((${sv_diff#-} > 2 * a && 2 * v > avg_value)) &&
 								multiplier=0.4 || multiplier=0.7
 								#multiplier=0.4 || multiplier=1
+							multiplier=0.8
+							multiplier=1.2
+							#multiplier=2.2
 						else
-							value=$((value_diff + accent_deviation)) multiplier=1.5
+							value=$((value_diff + accent_deviation)) multiplier=1.6
 							((value > 10)) && value=10
 							((value < 5)) && value=5
 						fi
@@ -1888,17 +1909,24 @@ else
 						else
 							value=$((v - a)) multiplier=0.4
 							value=$((v - a)) multiplier=0.3
+							multiplier=1
 							((v > 3 * s)) && value=$s
 						fi
 
 						echo HERE $value, $value_diff, $avg_value, $v, $s, $a
 					fi
 
-					echo OVER $accent $multiplier
-					value_diff=$(bc <<< "($value * $multiplier) / 1")
+					#value_diff=$(bc <<< "($value * $multiplier) / 1")
+					value_diff=$(bc <<< "(5 * $multiplier) / 1")
+
+					echo OVER $value - $value_diff: $avg_value, $v, $accent $multiplier
 					#((value_diff > 10)) && value_diff=10
 					#((value_diff < 5)) && value_diff=5
+
+					#value=10
+					#value_diff=1
 					light_accent=$(get_sbg ${accent##*_} +${value_diff#-})
+					#echo ACCENT: $light_accent, ${accent##*_} - $(get_sbg ${accent##*_} +0)
 
 					((avg_value -= 5))
 				else
@@ -1916,10 +1944,12 @@ else
 						echo OVER HERE $accent,
 						((v < 70)) && value=10 || value=+5
 						((s < 20)) &&
-							light_accent=$(get_sbg ${accent##*_} $((v + value)) $((s + 5))) ||
+							#light_accent=$(get_sbg ${accent##*_} $((v + value)) $((s + 5))) ||
+							light_accent=$(get_sbg ${accent##*_} $((v + value)) $((s + value))) ||
 							light_accent=$(get_sbg ${accent##*_} $((v + 18)) $((s + 5)))
 
 						#light_accent=$(get_sbg ${accent##*_} $((v + 15)) $((s + 5)))
+						#light_accent=$(get_sbg ${accent##*_} +0)
 					else
 						#value=$((10 - (v - avg_value)))
 						#((value < 0)) && value=5
@@ -1928,14 +1958,20 @@ else
 
 						#light_accent=$(get_sbg ${accent##*_} +20 10)
 						#light_accent=$(get_sbg ${accent##*_} +10)
-						light_accent=$(get_sbg ${accent##*_} +10)
+						((v > 2 * s)) &&
+							value=10 || value=5
+						light_accent=$(get_sbg ${accent##*_} +$value)
 						echo 20: $accent
 					fi
 				fi
 			fi
 
+			#echo ACCENT $value: $light_accent
+
+			#((value < 9)) && light_accent=$(get_sbg ${accent##*_} +10)
 			((value < 10)) && light_accent=$(get_sbg ${accent##*_} +10)
-			echo $h, $a, $value_diff, $s, $new_s, $v, $new_v, $avg_value, $v
+			#((value <= 10 && avg_value < 50)) && light_accent=$(get_sbg ${accent##*_} +10)
+			echo $h, $a, $value_diff, $s, $new_s, $v, $new_v, $avg_value, $v, $light_accent
 
 			#light_accent_colors+=( "${sv};${h};${s};${v}_${light_accent// /_}" )
 
@@ -2423,7 +2459,7 @@ else
 							if (!del && similar(ar1[i], ar2[ai]) && !(ar1[i] in sc)) sc[ar1[i]] = length(aac)
 
 							#if (del && similar(ar1[i], ar2[ai])) {
-							if (del && int(lab) < ds) {
+							if (del && int(lab) <= ds) {
 								#print "HERE", i, ar1[i], ai, ar2[ai], aac[6], lab, ds
 								#ar2[ai] = aac[6]
 								#da[aac[6]] = 1
@@ -2580,9 +2616,16 @@ else
 
 						scc = (la < 33 || slab > 230) ? 5 : (slab > 180 || slab < 150) ? 3 : 4
 						scc = (la < 33 || slab > 240) ? 5 : (slab > 180) ? 3 : 4
+						scc = (la < 33 || slab > 240) ? 5 : (slab > 155) ? 3 : 4
+						#NEW ONE
+						scc = (la < 33 || slab > 240 && slab < 300) ? 5 : (slab > 155) ? 3 : 4
+						#scc = 3
 
 						#scc = ((la < 33 && la >= 30) || slab > 240) ? 5 : (slab > 180 || slab < 140) ? 3 : 4
 						#print slab, scc, slab / scc, la, sqrt((int(slab / scc) - int(la)) ^ 2) #< 5
+
+						#new
+						range = (slab > 120) ? 7 : 5
 
 						#skipped = 1
 						#return
@@ -2591,12 +2634,14 @@ else
 						#aslab = sprintf("%.0f", slab / scc)
 						#print  sqrt((aslab - int(la)) ^ 2) #< 5
 						#if (sqrt((aslab - int(la)) ^ 2) < 5) {
-						if (sqrt((int(slab / scc) - int(la)) ^ 2) < 7) {
+						if (sqrt((int(slab / scc) - int(la)) ^ 2) < range) {
 						#if (sprintf("%.0f", slab / scc) >= int(la)) {
 						#if (slab / ++scc < la) {
 							#print "SKIPPED", c
 							#system("~/.orw/scripts/notify.sh " sqrt((int(slab / scc) - int(la)) ^ 2))
 							skipped = 1
+							if (length(ac) < 3) sac = c
+							#sac = c
 							return
 						}
 					}
@@ -2643,7 +2688,11 @@ else
 				get_rgb($0)
 				trgb = r + g + b
 				rgbd = (sqrt((r - g) ^ 2) + sqrt((g - b) ^ 2)) / 2
-				if (trgb / 3 > 190 && rgbd < 10) next
+				if ('${#light_accent_colors[*]}' >= 6 &&
+					trgb / 3 > 195 && rgbd < 10) {
+						bac[++bai] = $0
+						next
+				}
 
 				ac[NR] = $0
 				sub(";.*", "", $1)
@@ -2671,7 +2720,7 @@ else
 				#sa[aac[5]] = 1
 				#sa[aac[6]] = 1
 
-				dc = '$dark_count'
+				dc = 2
 				for (di=2; di < dc + 2; di++) {
 					dac[di - 1] = ac[di]
 					sa[ac[di]] = 1
@@ -2713,6 +2762,16 @@ else
 				#print length(ac)
 				#exit
 
+				#for (a in ac) print la, a, ac[a]
+				#exit
+
+				acl = length(ac)
+				bacl = length(bac)
+
+				if (acl < 3 && bacl) {
+					for (bai=1; bai < 3 - acl; bai++) ac[acl + bai] = bac[bai]
+				}
+
 				#print(get_next_color(ac))
 				#for (fai=2; fai<5; fai++) aac[fai] = get_next_color(ac)
 				#for (ai=1; ai<=6; ai++) print aac[ai]
@@ -2726,7 +2785,9 @@ else
 				#if ((mlab > 12 || mlab < 5) && tc > 6) get_color3(aac)
 				#print ds
 
-				if (length(dl) && length(ac) > 3) la = avl / length(dl)
+				#if (length(dl) && length(ac) > 3) la = avl / length(dl)
+				if (length(dl) && length(ac) >= 3) la = avl / length(dl)
+				#print "LA", avl, length(dl), length(ac), la
 
 				#for (a in ac) print la, a, ac[a]
 				#exit
@@ -2753,6 +2814,11 @@ else
 							#cc = get_color3(ac, aac)
 						} while (!cc)
 						aac[fai] = cc
+
+						if (sac) {
+							ac[length(ac)] = sac
+							sac = ""
+						}
 					}
 				}
 
@@ -3399,9 +3465,9 @@ set_ob() {
 
 			{ print }' $ob_conf
 
-		cd ~/Downloads/openbox
-		frame_color="0x${hex_a5_br:1:2}, 0x${hex_a5_br:3:2}, 0x${hex_a5_br:5:2}"
-		sed -i "/^\s*primary_color/ s/0x.*\w/$frame_color/" openbox/focus_cycle_indicator.c
+		#cd ~/Downloads/openbox
+		#frame_color="0x${hex_a5_br:1:2}, 0x${hex_a5_br:3:2}, 0x${hex_a5_br:5:2}"
+		#sed -i "/^\s*primary_color/ s/0x.*\w/$frame_color/" openbox/focus_cycle_indicator.c
 
 		#{
 		#	./bootstrap
@@ -3601,7 +3667,7 @@ set_rofi() {
 	local {rgb,hex}_rofi_{s,a,}bg
 	read {rgb,hex}_rofi_bg <<< $(get_sbg $hex_bg +3 0)
 	read {rgb,hex}_rofi_sbg <<< $(get_sbg $hex_sbg +3 0)
-	read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -3)
+	read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -5)
 	read {rgb,hex}_rofi_pbg <<< $(get_sbg $hex_rofi_bg +5 0)
 
 	#echo $hex_rofi_abg, $hex_rofi_sbg, $hex_bg, $hex_sbg
@@ -3610,6 +3676,7 @@ set_rofi() {
 		bg: $hex_rofi_bg;
 		tbg: argb:f0${hex_rofi_bg#\#};
 		tbg: argb:ea${hex_rofi_bg#\#};
+		tbg: argb:dd${hex_rofi_bg#\#};
 		mbg: argb:f0${hex_bg#\#};
 		msbg: argb:70${hex_rofi_pbg#\#};
 		fg: $hex_sfg;
@@ -3618,16 +3685,21 @@ set_rofi() {
 		ibg: $hex_rofi_bg;
 		ibc: $hex_pbg;
 		ibc: $hex_rofi_bg;
-		abg: ${hex_rofi_abg}b0;
 		abg: #08080855;
 		abg: #08080866;
+		abg: #08080844;
+		abg: ${hex_rofi_abg}b0;
+		abg: ${hex_rofi_abg}dd;
 		afg: $hex_pfg;
 		ebg: $hex_rofi_bg;
 		efg: $hex_a1;
-		sbg: ${hex_rofi_pbg}b0;
 		sbg: #e0e0e00e;
 		sbg: #fafafa0a;
 		sbg: #eeeeee0a;
+		sbg: #cccccc0a;
+		sbg: #dddddd0d;
+		sbg: ${hex_rofi_pbg}b0;
+		sbg: ${hex_rofi_pbg}d0;
 		sfg: $hex_a1;
 		sul: $hex_a1;
 		lpc: $hex_fg;
@@ -3636,7 +3708,7 @@ set_rofi() {
 		sbtc: $hex_rofi_bg;
 		btbc: $hex_rofi_bg;
 		ftbg: #00000000;
-		sbbg: ${hex_a1}bb;
+		sbbg: ${hex_a1}88;
 		sbsbg: #11111144;
 	EOF
 
@@ -3697,9 +3769,9 @@ set_vim() {
 		let g:fzfhl = '$hex_a1'
 		let g:bcbg = '$hex_a5'
 		let g:bdbg = '$hex_a1'
-		let g:nmbg = '$hex_a3'
-		let g:imbg = '$hex_a5'
-		let g:vmbg = '$hex_a5'
+		let g:nmbg = '$hex_a4'
+		let g:imbg = '$hex_a2'
+		let g:vmbg = '$hex_a3'
 	EOF
 }
 
