@@ -27,10 +27,10 @@ icon_up=
 icon_down=
 icon_mute=
 
-toggle_rofi() {
-	#~/.orw/scripts/notify.sh "SIG" &
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	#~/.orw/scripts/notify.sh "SIG" &
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
 trap toggle_rofi EXIT

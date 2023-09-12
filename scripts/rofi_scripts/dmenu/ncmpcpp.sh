@@ -52,9 +52,9 @@ if [[ $theme == icons ]]; then
 	default_label=default vertical_label=vertical split_label=split cover_label=cover visualizer_label=visualizer dual_h_label='dual horizontal' dual_v_label='dual vertical'
 fi
 
-toggle_rofi() {
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
 trap toggle_rofi EXIT

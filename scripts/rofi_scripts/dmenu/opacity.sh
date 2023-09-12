@@ -5,6 +5,9 @@ icon_x_up=
 icon_y_up=
 icon_y_down=
 
+toggle_rofi
+trap toggle_rofi EXIT
+
 while
 	index=$(echo -e '\n' | rofi -dmenu -format i -selected-row $index -theme main)
 	((index)) &&

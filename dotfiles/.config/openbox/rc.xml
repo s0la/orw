@@ -57,7 +57,7 @@
     <keepBorder>yes</keepBorder>
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
-      <name>Sans</name>
+      <name>Roboto</name>
       <size>10</size>
       <!-- font size in points -->
       <weight>Normal</weight>
@@ -66,7 +66,7 @@
       <!-- 'italic' or 'normal' -->
     </font>
     <font place="InactiveWindow">
-      <name>Sans</name>
+      <name>Roboto</name>
       <size>6</size>
       <!-- font size in points -->
       <weight>Normal</weight>
@@ -194,12 +194,12 @@
     </keybind>
     <keybind key="A-z">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/playback.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh playback</command>
       </action>
     </keybind>
     <keybind key="A-S-z">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/ncmpcpp.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh ncmpcpp</command>
       </action>
     </keybind>
     <keybind key="A-S-l">
@@ -209,7 +209,7 @@
     </keybind>
     <keybind key="A-t">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/toggle_dmenu.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh tiling_toggle</command>
       </action>
     </keybind>
     <keybind key="A-S-t">
@@ -224,12 +224,12 @@
     </keybind>
     <keybind key="A-v">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/volume.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh volume</command>
       </action>
     </keybind>
-	<keybind key="A-b">
+    <keybind key="A-b">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/brightness.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh brightness</command>
       </action>
     </keybind>
     <keybind key="A-S-b">
@@ -239,7 +239,7 @@
     </keybind>
     <keybind key="A-a">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/apps.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh apps</command>
       </action>
     </keybind>
     <keybind key="A-f">
@@ -262,9 +262,9 @@
         <command>rofi -show run -theme list</command>
       </action>
     </keybind>
-	<keybind key="A-r">
+    <keybind key="A-r">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh rofi</command>
       </action>
     </keybind>
     <keybind key="A-s">
@@ -272,24 +272,24 @@
         <command>~/.orw/scripts/rofi_scripts/dmenu/wallpapers.sh</command>
       </action>
     </keybind>
-	<keybind key="A-S-s">
+    <keybind key="A-S-s">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/dmenu/wallpaper_group.sh</command>
       </action>
     </keybind>
     <keybind key="A-w">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/window_actions.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh window_actions</command>
       </action>
     </keybind>
     <keybind key="A-S-w">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/window_management.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh window_management</command>
       </action>
     </keybind>
     <keybind key="A-o">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/tiling_toggle.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh opacity</command>
       </action>
     </keybind>
     <keybind key="A-S-o">
@@ -299,7 +299,7 @@
     </keybind>
     <keybind key="A-d">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh workspaces</command>
       </action>
     </keybind>
     <keybind key="A-S-d">
@@ -309,7 +309,7 @@
     </keybind>
     <keybind key="A-q">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/power.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh power</command>
       </action>
     </keybind>
     <keybind key="A-n">
@@ -336,7 +336,10 @@
     </keybind>
     <keybind key="A-p">
       <action name="Execute">
+        <!--
         <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh mpd_playlist large_list</command>
+		  -->
+        <command>~/.orw/scripts/rofi_scripts/dmenu/art_playlist.sh</command>
       </action>
     </keybind>
     <keybind key="A-S-p">
@@ -389,8 +392,7 @@
         <command>~/.orw/scripts/resize.sh r -1</command>
       </action>
     </keybind>
-
-	<!--
+    <!--
     <keybind key="A-C-h">
       <action name="Execute">
         <command>~/.orw/scripts/windowctl.sh -b resize -l +50 -a</command>
@@ -447,7 +449,6 @@
       </action>
     </keybind>
 	-->
-
     <keybind key="A-C-h">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh l +50</command>
@@ -696,15 +697,15 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="A-Left" action="Drag">
-		<layer>above</layer>
-		<!--
+        <layer>above</layer>
+        <!--
 		<action name="Execute">
 			<command>xdotool getactivewindow windowsize 100 100</command>
 		</action>
 		-->
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_move</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_move</command>
+        </action>
         <action name="Move"/>
       </mousebind>
       <mousebind button="A-Right" action="Press">
@@ -713,18 +714,18 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="A-Right" action="Drag">
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_resize</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_resize</command>
+        </action>
         <action name="Resize"/>
       </mousebind>
-	  <mousebind button="C-A-Left" action="Drag">
-		<layer>above</layer>
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_move</command>
-		</action>
+      <mousebind button="C-A-Left" action="Drag">
+        <layer>above</layer>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_move</command>
+        </action>
         <action name="Move"/>
-	  </mousebind>
+      </mousebind>
       <mousebind button="A-Middle" action="Press">
         <action name="Lower"/>
         <action name="FocusToBottom"/>
@@ -763,7 +764,7 @@
     </context>
     <context name="Titlebar">
       <mousebind button="Left" action="Drag">
-		<layer>above</layer>
+        <layer>above</layer>
         <action name="Move"/>
       </mousebind>
       <mousebind button="Left" action="DoubleClick">
@@ -791,9 +792,9 @@
       </mousebind>
     </context>
     <context name="Titlebar Top Right Bottom Left TLCorner TRCorner BRCorner BLCorner">
-	  <mousebind button="Left" action="Drag">
-		  <action name="Resize"/>
-	  </mousebind>
+      <mousebind button="Left" action="Drag">
+        <action name="Resize"/>
+      </mousebind>
       <mousebind button="Left" action="Press">
         <action name="Focus"/>
         <action name="Raise"/>
@@ -814,9 +815,9 @@
     </context>
     <context name="Top">
       <mousebind button="Left" action="Drag">
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_resize</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_resize</command>
+        </action>
         <action name="Resize">
           <edge>top</edge>
         </action>
@@ -824,9 +825,9 @@
     </context>
     <context name="Left">
       <mousebind button="Left" action="Drag">
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_resize</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_resize</command>
+        </action>
         <action name="Resize">
           <edge>left</edge>
         </action>
@@ -834,9 +835,9 @@
     </context>
     <context name="Right">
       <mousebind button="Left" action="Drag">
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_resize</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_resize</command>
+        </action>
         <action name="Resize">
           <edge>right</edge>
         </action>
@@ -844,9 +845,9 @@
     </context>
     <context name="Bottom">
       <mousebind button="Left" action="Drag">
-		<action name="Execute">
-		  <command>~/sws_test.sh mouse_resize</command>
-		</action>
+        <action name="Execute">
+          <command>~/.orw/scripts/signal_windows_event.sh mouse_resize</command>
+        </action>
         <action name="Resize">
           <edge>bottom</edge>
         </action>
@@ -866,7 +867,7 @@
         <action name="Unshade"/>
       </mousebind>
       <mousebind button="Left" action="Drag">
-		  <!--
+        <!--
         <action name="Execute">
 			<command>~/.orw/scripts/notify.sh "RESIZING"</command>
 		</action>
@@ -1077,6 +1078,7 @@
     <manageDesktops>yes</manageDesktops>
     <!-- show the manage desktops section in the client-list-(combined-)menu -->
   </menu>
+
   <applications>
     <application name="*">
       <decor>yes</decor>
@@ -1091,9 +1093,10 @@
     <application class="*">
       <layer>below</layer>
       <decor>no</decor>
+	  <focus>no</focus>
       <position force="yes">
-        <x>center</x>
-        <y>center</y>
+        <x>1320</x>
+        <y>536</y>
       </position>
       <size>
         <width>150</width>
@@ -1109,8 +1112,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>100</height>
-        <width>100</width>
+        <height>250</height>
+        <width>350</width>
       </size>
     </application>
 
@@ -1161,8 +1164,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>706</x>
-        <y>726</y>
+        <x>622</x>
+        <y>458</y>
       </position>
       <size>
         <width>130</width>
@@ -1185,8 +1188,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>1282</x>
-        <y>95</y>
+        <x>1044</x>
+        <y>155</y>
       </position>
       <size>
         <width>100</width>

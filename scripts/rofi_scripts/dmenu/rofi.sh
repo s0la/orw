@@ -8,6 +8,8 @@ font_icon= #  
 margin_icon=
 padding_icon=
 element_padding_icon=
+#element_padding_icon=    
+element_padding_icon=  #  
 
 list_options() {
 	read row action <<< \
@@ -41,7 +43,7 @@ choose_direction() {
 
 		resize_rofi
 
-		~/sws_test.sh rofi_resize
+		~/.orw/scripts/signal_windows_event.sh rofi_resize
 	done
 }
 
@@ -82,12 +84,12 @@ resize_rofi() {
 #resize_rofi
 #exit
 
-opn() {
-	~/sws_test.sh rofi_toggle
-}
+#toggle_rofi() {
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
-opn
-trap opn EXIT
+toggle_rofi
+trap toggle_rofi EXIT
 
 while
 	list_options

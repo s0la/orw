@@ -169,23 +169,36 @@ for workspace_index in ${!workspaces[*]}; do
 	all_workspaces+="$prefix${workspaces[workspace_index]}"
 done
 
-toggle_rofi() {
-	#~/.orw/scripts/notify.sh "SIG" &
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#if [[ ! $move ]]; then
+#	toggle_rofi
+#	trap toggle_rofi EXIT
+#fi
 
-if [[ ! $move ]]; then
-	toggle_rofi
-	trap toggle_rofi EXIT
-fi
+#toggle_rofi() {
+#	((tiling_workspace)) &&
+#		~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
+#
+#tiling_workspace=$(awk '
+#	/^tiling_workspace/ { print (/'$current_workspace'/) }' \
+#		~/.orw/scripts/spy_windows.sh)
+
+[[ $move ]] || toggle_rofi
 
 #chosen_workspace=$(echo -e "$all_workspaces" | rofi -dmenu $active -theme main)
-chosen_workspace=$(echo	-e "$all_workspaces" | \
-	rofi -dmenu -selected-row $current_workspace $active -theme main)
+read chosen_{index,workspace} <<< $(echo	-e "$all_workspaces" |
+	rofi -dmenu -format 'i s' -selected-row $current_workspace $active -theme main)
 
 #echo -e "$all_workspaces"
 
-[[ $chosen_workspace ]] || exit 0
+#echo $tiling_workspace: $chosen_workspace, $chosen_index - $current_workspace >> ~/w.log
+
+if [[ -z $chosen_workspace || $chosen_index -eq $current_workspace ]]; then
+	#echo TOGGLING >> ~/w.log
+	toggle_rofi
+	exit 0
+fi
+
 [[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r &
 
 if [[ "$chosen_workspace" =~   ]]; then

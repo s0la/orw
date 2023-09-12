@@ -22,9 +22,9 @@ icon_reboot=
 icon_off=
 icon_off=
 
-toggle_rofi() {
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
 trap toggle_rofi EXIT
@@ -53,7 +53,8 @@ if [[ $action ]]; then
 	else
 		confirmation=$(echo -e "$yes_icon$yes_label\n$no_icon$no_label" | rofi -dmenu -theme main)
 
-		[[ $confirmation == "$yes_icon$yes_label" ]] && case "$action" in
+		[[ $confirmation == "$yes_icon$yes_label" ]] &&
+			case "$action" in
 				$icon_logout*) openbox --exit;;
 				$icon_reboot*) systemctl reboot;;
 				$icon_suspend) systemctl suspend;;

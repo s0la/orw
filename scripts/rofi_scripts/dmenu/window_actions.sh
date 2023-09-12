@@ -4,14 +4,6 @@ theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh volume
 [[ $theme != icons ]] && close=close min=min max=max sep=' '
 
-icon_max=
-icon_min=
-icon_close=
-
-icon_max=
-icon_min=
-icon_close=
-
 icon_max=
 icon_min=
 icon_close=
@@ -25,65 +17,16 @@ config=~/.config/orw/config
 offsets=~/.config/orw/offsets
 properties=~/.config/orw/windows_properties
 
-#id=$(printf "0x%.8x" $(xdotool getactivewindow))
 id=$(printf "0x%x" $(xdotool getactivewindow))
 title=$(wmctrl -l | awk '$1 == "'$id'" { print $NF }')
 maxed=$(awk '$1 == "'$id'" { m = ($NF == "maxed") } END { if(m) print "-a 1" }' $properties)
 
-##read title x y w h <<< $(wmctrl -l | awk '$1 == "'$id'" { print $NF, $3, $4, $5, $6 }')
-##mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
-#read mode {x,{double_,}y}_border {x,y}_offset offset <<< \
-#	$(awk '/^mode/ { m = $NF }
-#		$1 ~ "border" {
-#			if(/^x/) xb = $NF
-#			else {
-#				yb = $NF
-#				dyb = (yb - (xb / 2)) * 2
-#			}
-#		}
-#		$1 ~ "offset" {
-#			if(/^x/) xo = $NF
-#			else if(/^y/) yo = $NF
-#			else print m, xb, dyb, yb, xo, yo, $NF
-#		}' $config)
-#
-#read title x y w h <<< $(wmctrl -lG | \
-#			awk '$1 == "'$id'" { print $NF, $3 - '$x_border', $4 - '$double_y_border', $5, $6 }')
-#
-##read x_border y_border x y w h <<< $(~/.orw/scripts/windowctl.sh -p)
-#read display display_x display_y display_w display_h rest <<< $(~/.orw/scripts/get_display.sh $x $y)
-##read x_offset y_offset offset <<< $(awk '$1 ~ "offset" { print $NF }' $config | xargs)
-#[[ $offset == true ]] && read {x,y}_offset <<< $(sed -n 's/.*offset=//p' $offsets | xargs)
-#
-#while read -r bar_name position bar_x bar_y bar_width bar_height adjustable_width frame; do
-#	if ((adjustable_width)); then
-#		read bar_width bar_height bar_x bar_y < ~/.config/orw/bar/geometries/$bar_name
-#	fi
-#
-#	current_bar_height=$((bar_y + bar_height + frame))
-#
-#	if ((position)); then
-#		((current_bar_height > bar_top_offset)) && bar_top_offset=$current_bar_height
-#	else
-#		((current_bar_height > bar_bottom_offset)) && bar_bottom_offset=$current_bar_height
-#	fi
-#done <<< $(~/.orw/scripts/get_bar_info.sh $display)
-#
-#x_start=$((display_x + x_offset))
-#x_end=$((display_x + display_w - x_offset))
-#y_start=$((display_y + bar_top_offset + y_offset))
-#y_end=$((display_y + display_h - bar_bottom_offset - y_offset))
-#
-#((x == x_start && y == y_start && x + w + x_border == x_end && y + h + y_border == y_end)) && maxed='-a 1'
-##maxed=$(awk '$1 == "'$id'" { print "-a 1" }' ~/.config/orw/windows_properties)
-
-toggle_rofi() {
-	#~/.orw/scripts/notify.sh "SIG" &
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
-trap toggle_rofi EXIT
+#trap toggle_rofi EXIT
 
 action=$(cat <<- EOF | rofi -dmenu $maxed -theme main
 	$icon_close$sep$close

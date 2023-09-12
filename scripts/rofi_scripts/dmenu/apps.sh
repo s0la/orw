@@ -49,10 +49,10 @@ fi
 #~/.orw/scripts/notify.sh "OPENS" &
 #~/.orw/scripts/signal_windows_event.sh test
 
-toggle_rofi() {
-	#~/.orw/scripts/notify.sh "SIG" &
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	#~/.orw/scripts/notify.sh "SIG" &
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
 trap toggle_rofi EXIT

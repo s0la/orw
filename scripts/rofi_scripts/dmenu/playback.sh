@@ -45,9 +45,9 @@ handle_volume() {
 	~/.orw/scripts/system_notification.sh mpd_volume &
 }
 
-toggle_rofi() {
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle_rofi() {
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
 toggle_rofi
 trap toggle_rofi EXIT
