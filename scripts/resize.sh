@@ -80,7 +80,8 @@ parse_properties() {
 
 #if [[ ! -f /tmp/wmctrl_lock ]]; then
 wmctrl -ir $id -e $(parse_properties)
-((is_tiling)) && ~/.orw/scripts/signal_windows_event.sh $event
+#((is_tiling)) && ~/.orw/scripts/signal_windows_event.sh $event
+~/.orw/scripts/signal_windows_event.sh $event
 #fi
 exit
 
