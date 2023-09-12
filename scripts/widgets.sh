@@ -80,7 +80,7 @@ set_cover_geometry() {
 get_window_properties() {
 	#xwininfo -int -id $(wmctrl -l | awk '$NF == "'$1'" { print $1 }') |
 	wmctrl -l | awk '$NF == "'$1'" { print $1 }' |
-		xargs xwininfo -id | awk '
+		xargs -r xwininfo -id | awk '
 			/Absolute/ { if(/X/) x = $NF; else y = $NF }
 			/Relative/ { if(/X/) xb = $NF; else yb = $NF }
 			/Width/ { w = $NF }

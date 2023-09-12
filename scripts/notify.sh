@@ -236,7 +236,7 @@ if [[ $style ]]; then
 	case $style in
 		osd)
 			((icon_size)) || icon_size=57
-			((info_size)) || info_size=5
+			((info_size)) || info_size=10
 			icon="<span font='Iosevka Orw $icon_size' foreground='$fg'>$font_icon</span>"
 
 			if [[ $bar ]]; then

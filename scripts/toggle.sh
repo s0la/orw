@@ -450,11 +450,6 @@ wm() {
 				}
 			}
 
-			#/^direction/ {
-			#	if($1 == "'$1'") i = ($NF == "h") ? "" : ""
-			#	else d = $NF
-			#}
-
 			/^direction/ {
 				if ($1 == "'$1'") {
 					switch (m) {

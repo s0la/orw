@@ -2643,7 +2643,7 @@ else
 				get_rgb($0)
 				trgb = r + g + b
 				rgbd = (sqrt((r - g) ^ 2) + sqrt((g - b) ^ 2)) / 2
-				if (trgb / 3 > 190 && rgbd < 10) next
+				#if (trgb / 3 > 190 && rgbd < 10) next
 
 				ac[NR] = $0
 				sub(";.*", "", $1)
@@ -2749,9 +2749,15 @@ else
 					if (length(ac)) {
 						do {
 							tac[1] = aac[fai - 1]
+
+							#if (!tac[1]) {
+							#	for (i in aac) print i, ac[i]
+							#	exit
+							#}
+							#print "HERE", tac[1]
 							cc = get_color3(ac, tac)
 							#cc = get_color3(ac, aac)
-						} while (!cc)
+						} while (!cc && tac[1])
 						aac[fai] = cc
 					}
 				}
@@ -3399,9 +3405,9 @@ set_ob() {
 
 			{ print }' $ob_conf
 
-		cd ~/Downloads/openbox
-		frame_color="0x${hex_a5_br:1:2}, 0x${hex_a5_br:3:2}, 0x${hex_a5_br:5:2}"
-		sed -i "/^\s*primary_color/ s/0x.*\w/$frame_color/" openbox/focus_cycle_indicator.c
+		#cd ~/Downloads/openbox
+		#frame_color="0x${hex_a5_br:1:2}, 0x${hex_a5_br:3:2}, 0x${hex_a5_br:5:2}"
+		#sed -i "/^\s*primary_color/ s/0x.*\w/$frame_color/" openbox/focus_cycle_indicator.c
 
 		#{
 		#	./bootstrap

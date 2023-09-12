@@ -13,7 +13,6 @@ workspaces=$(awk '
 			if (!wii) wii = NR
 			gsub("(^|%)[^}]*.", "")
 			awi[NR - wii] = $0
-			#awi = awi " " $0
 		} END { for (i in awi) printf "[%s]=%d ", awi[i], i }
 		' ~/.config/openbox/rc.xml $icons)
 
@@ -44,12 +43,16 @@ if [[ $@ ]]; then
 					aw[$2] = aw[$2] " " $NF
 					if ($1 == "'"$id"'") i = wc
 					wc++
-				} END { for (w in aw) {
+				} END {
+					i = (i) ? i : " "
+					for (w in aw) {
 						gsub(" ", "\n", aw[w])
 						print i aw[w]
 					}
 				}')
 
+		#[[ $current_window ]] &&
+		#	current_window="\0active\x1f$current_window"
 		echo -ne "\0active\x1f$current_window\n${all/ /\n}"
 	else
 		window="$@"

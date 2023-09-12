@@ -33,7 +33,7 @@ get_current_torrent_id() {
 	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current="  Michael Kiwanuka - Discography - 2011-2019"
+current=""
 selection=""
 multiple_torrents=""
 
@@ -73,7 +73,7 @@ else
 
 				get_current_torrent_id
 				~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id $current_torrent_id
-				~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content
+				~/.orw/scripts/rofi_scripts/dmenu/torrents_group.sh select_torrent_content
 
 				un_set current_torrent_id
 				exit 0;;

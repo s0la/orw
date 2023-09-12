@@ -169,10 +169,43 @@ offset=$(awk '
 		print int(iw / (f - 2) - 5)
 	}' ~/.config/rofi/large_list.rasi)
 
+#offset=$(awk '
+offset=$(awk '
+		function get_value() {
+			return gensub(".* ([0-9]+).*", "\\1", 1)
+		}
+
+		{
+			if (NR == FNR) {
+				if (/^\s*font/) f = get_value()
+				if (/^\s*window-width/) ww = get_value()
+				if (/^\s*window-padding/) wp = get_value()
+				if (/^\s*element-padding/) ep = get_value()
+			} else {
+				if ($1 == "orientation") {
+					if ($2 == "horizontal") {
+						p = '${x:-1}'
+						pf = 2
+					} else {
+						p = '${y:-1}'
+						pf = 2
+					}
+				}
+
+				if (/^display_[0-9]_size/) { w = $2 }
+				if (/^display_[0-9]_xy/ && $pf > p) {
+					rw = int(w * (ww - 2 * wp) / 100)
+					rw -= 2 * ep
+					print int(rw / (f - 2) - 5)
+					exit
+				}
+			}
+		}' ~/.config/{rofi/large_list.rasi,orw/config})
+
 #~/.orw/scripts/notify.sh "of: $offset"
-torrent_id="15"
+torrent_id=""
 current=""
-full_path="Hornwood Fell"
+full_path=""
 
 depth="2"
 final_depth="0"

@@ -92,53 +92,7 @@ make_power_content() {
 
 	assign_args power
 
-	#local width=$((display_width * width_ratio / 100))
-	#local height=$((display_height * height_ratio / 100))
-	#local x=$((x + (display_width - power_bar_width) / 2))
-	#local y=$((y + (display_height - power_bar_height) / 2))
-	#local separator=$((width / (action_count + 1) * 2))
-	##local offset=$((height / 2 - close_offset))
-
-	#local geometry="${width}x${height}+${x}+${y}"
-	#local main_font="${main_font_type:-Iosevka Orw}:size=${main_font_size:-9}"
-
-	#eval $(awk '$1 == "#bar" { b = 1 }
-	#	b && $1 ~ "^(P?s[bf]g|.*c)" { print gensub(" ", "=", 1) }
-	#	b && $1 == "" { exit }' $colorscheme)
-
-	#power_bar_bg=${Psbg:-$sbg}
-	#power_bar_fg=${Psfg:-$sfg}
-	#power_bar_bg=$sbg
-	#power_bar_fg=$sfg
-	##power_bar_bg=${Psbg:-${sbg:3:7}}
-	##power_bar_fg=${Psfg:-${sfg:3:7}}
-
-	##echo $colorscheme, $sbg, $sfg, $Psbg, $Psfg, $power_bar_bg, $power_bar_fg
-
-	#echo $offset
-	#make_power_action close
-
-	#power_actions+="$(make_power_action 'close')"
-
-	#make_power_bar_script
-
-	#eval "power_bar_content=\"%{c}%{B$power_bar_bg}%{F$power_bar_fg}$power_bar_actions\""
-	#eval "power_bar_content=\"%{c}$power_bar_actions\""
-
-	#power_action="echo -e '$power_bar_content' | "
-	#power_action+="lemonbar -d -p -B $power_bar_bg -F $power_bar_fg "
-	#power_action+="-f '$power_bar_main_font' -g $power_bar_geometry -n power_bar | bash"
-
-	#(
-	#	echo -e "echo -e '$power_bar_content' | "
-	#	echo -e "lemonbar -d -p -B $power_bar_bg -F $power_bar_fg "
-	#	echo -e "-f '$power_bar_main_font' -g $power_bar_geometry -n power_bar | bash"
-	#) > power_bar.sh
-
 	power_content='$power_padding$power$power_padding'
-
-	#[[ ${joiner_modules[power]} ]] ||
-	#	power_content="$module_frame_start$Psbg$Psfg$power_content$module_frame_end"
 }
 
 set_power_actions() {
@@ -146,7 +100,8 @@ set_power_actions() {
 }
 
 get_power() {
-	label=POW icon=$(get_icon "Power")
+	label=POW
+	icon=$(get_icon "Power")
 	power=$icon
 	set_power_actions
 	print_module power
@@ -156,6 +111,3 @@ check_power() {
 	local action_{start,end}
 	get_power
 }
-
-#close="%{A:kill "$pid":} %{A}"
-#actions+="$offset%{A:kill "$pid":}${close_icon:-close}%{A}$offset"

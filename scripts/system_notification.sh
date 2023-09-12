@@ -47,4 +47,4 @@ read value level_value empty_value icon <<< $($command | \
 [[ $1 =~ mpd ]] && icon= replace_id=103
 
 [[ $theme == mini ]] && value="-v $value%" || bar="-b $level_value/$empty_value"
-~/.orw/scripts/notify.sh -r $replace_id -s $theme -i $icon "${bar:-$value}" &
+~/.orw/scripts/notify.sh -r $replace_id -s $theme -t 1200m -i $icon "${bar:-$value}" &> /dev/null &

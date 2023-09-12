@@ -80,7 +80,7 @@ rofi_width=$(awk '
 					exit
 				}
 			}
-		}' ~/.config/{rofi/sidebar_new.rasi,orw/config})
+		}' ~/.config/{rofi/sidebar.rasi,orw/config})
 
 dashed_separator=$(printf '━% .0s' $(eval echo {0..$rofi_width}))
 #~/.orw/scripts/notify.sh -p "$dashed_separator"

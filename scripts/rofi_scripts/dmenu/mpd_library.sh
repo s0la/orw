@@ -4,7 +4,6 @@ get_rofi_width() {
 	read x y <<< $(xdotool getactivewindow getwindowgeometry |
 		sed -n '2s/.*\s\([0-9]*\),\([0-9]*\).*/\1 \2/p')
 
-
 	rofi_width=$(awk '
 			function get_value() {
 				return gensub(".* ([0-9]+).*", "\\1", 1)
@@ -36,7 +35,7 @@ get_rofi_width() {
 						exit
 					}
 				}
-			}' ~/.config/{rofi/sidebar_new.rasi,orw/config})
+			}' ~/.config/{rofi/sidebar.rasi,orw/config})
 
 	dashed_separator=$(printf '━ %.0s' $(eval echo {0..$rofi_width}))
 }

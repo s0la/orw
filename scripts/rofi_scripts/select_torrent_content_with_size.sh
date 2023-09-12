@@ -185,11 +185,11 @@ offset=$(awk '
 		print int(iw / (f - 2) - 5)
 	}' ~/.config/rofi/large_list.rasi)
 
-torrent_id="65"
-current="done"
-full_path="Budgie - Discography/Albums"
+torrent_id="160"
+current="back"
+full_path="Humanity's Last Breath - Discography"
 
-depth="3"
+depth="2"
 final_depth="0"
 
 [[ $@ =~ ^set_torrent_id ]] && $@
