@@ -257,7 +257,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				if [[ $mode == tiling ]]; then
 					#tiling_workspace=$(grep "^tiling.*\b$workspace\b" ~/.orw/scripts/spy_windows.sh)
 					#if [[ $tiling_workspace ]]; then
-					if grep "^tiling.*\b$workspace\b" ~/.orw/scripts/spy_windows.sh; then
+					if grep "^tiling.*\b$workspace\b" ~/.orw/scripts/spy_windows.sh &> /dev/null; then
 						[[ $title == visualizer ]] &&
 							width=100 height=100 || width=350 height=250
 						unset pre
@@ -295,7 +295,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 				termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
 					-e "bash -c '${pre:-$0 -P ${progressbar-yes}} && \
-					$base_command ${command-new -s $title ncmpcpp}'"
+					$base_command ${command-new -s $title ncmpcpp}'" &> /dev/null
 
 				#termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
 				#	-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \
