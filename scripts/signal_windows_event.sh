@@ -1,6 +1,16 @@
 #!/bin/bash
 
+wait_to_proceed() {
+	while true; do
+		:
+	done &
+	wait
+}
+
+trap : USR1
+
 spy_windows_pid=$(ps -o pid= -C spy_windows.sh | head -1)
+#spy_windows_pid=$(ps -o pid= -C sw_inp_bak.sh | head -1)
 
 [[ $spy_windows_pid ]] || exit
 
@@ -26,6 +36,7 @@ case $1 in
 	resize_int) sig=53;;
 	rofi_toggle) sig=54;;
 	rofi_resize) sig=55;;
+	untile) sig=56;;
 	test) sig=63;;
 	kill)
 		pidof -x spy_windows.sh | xargs kill -9
@@ -33,3 +44,5 @@ case $1 in
 esac
 
 kill -s $sig $spy_windows_pid
+
+[[ $1 == mv ]] && wait_to_proceed
