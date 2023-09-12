@@ -28,14 +28,12 @@ list_launchers() {
 		}
 
 		END {
-			#for (l in rl) print l
-
 			for (t in at) {
 				if (t in rl) printf "[%s]=\"%s\" ", t, substr(at[t], 2)
 			}
 			print ""
 			for (li in al) print al[li]
-		}' <(cat $launchers_dir/dock_new) <(wmctrl -l)
+		}' <(cat $launchers_dir/dock_new) <(wmctrl -lG | sort -nk 2,2 -k 3,3 -k 4,4)
 }
 
 #load_launchers
@@ -66,6 +64,7 @@ load_launchers() {
 
 get_launchers() {
 	local properties="icon left middle right up down" {id,}s
+	local signal_event=~/.orw/scripts/signal_windows_event.sh
 	[[ $active_launcher ]] ||
 		active_launcher=$(printf '0x%x' $(xdotool getactivewindow))
 
@@ -99,9 +98,9 @@ get_launchers() {
 				case ${action#*_} in
 					left)
 						[[ ${ids[*]} == *$active_launcher* ]] &&
-							local left_action="~/sws_test.sh min" || 
+							local left_action="$signal_event min" || 
 							local left_action="wmctrl -a $launcher \\\|\\\| ${!action} \\\&"
-						actions_start="%{A:$left_action:}"
+						actions_start="%{A:$left_action &> /dev/null:}"
 						actions_end="%{A}"
 						continue
 						;;
@@ -111,7 +110,7 @@ get_launchers() {
 					down) action_index=5;;
 				esac
 
-				actions_start+="%{A${action_index}:${!action}:}"
+				actions_start+="%{A${action_index}:${!action} &> /dev/null:}"
 				actions_end+='%{A}'
 			fi
 		done
@@ -128,6 +127,9 @@ get_launchers() {
 					close_launcher=$active_launcher || close_launcher=${ids[0]}
 				actions_start+="%{A2:wmctrl -ic $close_launcher:}" actions_end+="%{A}"
 			fi
+
+			[[ $actions_start != *A3* && ${ids[*]} == *$active_launcher* ]] &&
+				actions_start+="%{A3:$signal_event max:}" actions_end+="%{A}"
 
 			if [[ ${ids[*]} == *$active_launcher* ]]; then
 				color=a
@@ -259,12 +261,14 @@ check_launchers() {
 			reload) load_launchers;;
 			active) active_launcher=$value;;
 			close)
+				#~/.orw/scripts/notify.sh -t 18 "$event: $value"
 				launcher=$(find_launcher_by_id $value)
 				[[ ${launcher_ids[$launcher]} ]] &&
 					launcher_ids[$launcher]="${launcher_ids[$launcher]/$value}"
 				;;
 			new_window)
 				active_launcher="${value%% *}" launcher_name="${value#* }"
+				#~/.orw/scripts/notify.sh -t 18 "LNC: $launcher_name: ${launcher_name%%[0-9]*} - $value"
 				launcher_name="${launcher_name%%[0-9]*}"
 				[[ ! ${launcher_ids[$launcher_name]} ]] &&
 					launcher_ids[$launcher_name]="$active_launcher" ||
