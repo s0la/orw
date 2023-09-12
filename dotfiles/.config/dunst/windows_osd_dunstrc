@@ -32,7 +32,13 @@
     #default_geometry = "294x400+841-80"
     #geometry = "294x400+841-80"
     #geometry = "420x400+--170-80"
-    geometry = "378x400-789-115"
+
+    #geometry = "356x400+811-115"
+
+	offset = 0x90
+	width = (0, 500)
+	height = (0, 300)
+	origin = bottom-center
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -279,9 +285,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#1a1f20"
-	foreground = "#b0bfac"
-	frame_color = "#4e586a"
+	background = "#1c1920"
+	foreground = "#bfafac"
+	frame_color = "#55626b"
 
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.

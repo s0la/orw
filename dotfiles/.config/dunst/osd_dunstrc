@@ -29,19 +29,25 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "100x96+430+720"
+
+    #geometry = "200x192+860+720"
+
+	offset = 0x150
+	width = 190
+	height = (0, 300)
+	origin = bottom-center
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
 
     # Shrink window if it's smaller than the width.  Will be ignored if
     # width is 0.
-    shrink = yes
+    shrink = no
 
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.).
-transparency = 20
+	transparency = 20
 
     # The height of the entire notification.  If the height is smaller
     # than the font height and padding combined, it will be raised
@@ -81,7 +87,7 @@ transparency = 20
     # for longer than idle_threshold seconds.
     # Set to 0 to disable.
     # Transient notifications ignore this setting.
-    idle_threshold = 120
+    idle_threshold = 0
 
     ### Text ###
 
@@ -276,9 +282,9 @@ transparency = 20
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#1a1f20"
-	foreground = "#b0bfac"
-	frame_color = "#4e586a"
+	background = "#1c1920"
+	foreground = "#bfafac"
+	frame_color = "#55626b"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

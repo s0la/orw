@@ -1,6 +1,6 @@
 #!/bin/bash
 
-time=5
+time=3
 
 while getopts :i:F:f:o:r:c:t:P:ps:b:v: flag; do
 	case $flag in
@@ -32,8 +32,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#101314"
-pbfg="#c8a789"
+sbg="#110f14"
+pbfg="#c89770"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -80,6 +80,28 @@ restore_default_config() {
 	#set_pid) &
 
 	#set_pid $!
+}
+
+restore_default_config() {
+	(
+		#echo SLEEP ${sleep_time:-$time} $style >> ~/d.log
+		#sleep $((${sleep_time:-$time} + 0))
+		sleep ${sleep_time:-$time}
+
+		while
+			displayed=$(dunstctl count displayed)
+			#echo "$displayed" >> ~/d.log
+			((displayed))
+		do
+			sleep 1
+		done
+
+		#ps -C dunst -o args= >> ~/d.log
+
+		pidof dunst | xargs -r kill -9 &> /dev/null
+		#echo STARTING DEFAULT >> ~/d.log
+		dunst &> /dev/null &
+	) &
 }
 
 running_pids=( $(pidof -o %PPID -x $0) )
@@ -214,7 +236,7 @@ if [[ $style ]]; then
 	case $style in
 		osd)
 			((icon_size)) || icon_size=57
-			((info_size)) || info_size=10
+			((info_size)) || info_size=5
 			icon="<span font='Iosevka Orw $icon_size' foreground='$fg'>$font_icon</span>"
 
 			if [[ $bar ]]; then
@@ -249,10 +271,19 @@ if [[ $style ]]; then
 			padding_height=3
 			message="<span>\n$icon\n\n\n${bar:-$info}</span>";;
 		vertical)
-			level=$(color_bar ' ┃ ' $level_value '\n')
-			empty=$(color_bar ' ┃ ' $empty_value '\n')
+			#level=$(color_bar "  ┃  " $level_value '\n')
+			#empty=$(color_bar "  ┃  " $empty_value '\n')
 
+			font='SFMono'
 			font='DejaVu Sans Mono'
+
+			bar_icon="<span font='$font 15'>┃</span>"
+			vert_padding="<span font='$font 12'> </span>"
+			bar_row="$vert_padding$vert_padding$bar_icon$vert_padding$vert_padding"
+			level=$(color_bar "$bar_row" $level_value '\n')
+			empty=$(color_bar "$bar_row" $empty_value '\n')
+			icon_padding="<span font='$font 11'> </span><span font='$font 9'> </span>"
+			font_icon="$icon_padding$font_icon$icon_padding"
 
 			#slider=true
 
@@ -262,6 +293,7 @@ if [[ $style ]]; then
 				slider_icon="<span font='$font 13'>  \\n</span>"
 				slider_icon="<span font='$font 13'>  \\n</span>"
 				slider_icon="<span font='$font 17'>  \\n</span>"
+				slider_icon="<span font='$font 17'>  \\n</span>"
 				sbg=$pbfg
 			fi
 
@@ -270,7 +302,10 @@ if [[ $style ]]; then
 			#level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
 			level_bar="<span font='$font 15' foreground='$pbfg'>$slider_icon$level</span>"
 
-			message="<span foreground='$fg' font='$font 13'>\n"$empty_bar\\n$level_bar"\n\n $font_icon \n</span>";;
+			message="<span foreground='$fg' font='$font 13'>\n"$empty_bar\\n$level_bar"\n\n$font_icon\n</span>"
+			#echo -e "$empty_bar,      $level_bar"
+			#echo -e "$message";;
+			;;
 		mini)
 			icon="<span foreground='$pbfg' font='Iosevka Orw 11'> $font_icon </span>"
 			info="<span foreground='$fg' font='Iosevka Orw 12'> ${value :-${@: -1}}</span>"
