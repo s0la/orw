@@ -233,8 +233,20 @@ get_tiling() {
 	#	label='TIL' || label='FLO'
 	#icon=$(get_icon "wm_mode_${label,,}")
 
+	if [[ -z $wm_label ]]; then
+		wm_label=$(awk '/^(direction|reverse|full)/ {
+							l = substr($NF, 1, 1)
+							if (l == "a") exit
+						} END { print l }' ~/.config/orw/config)
+		wm_icon=$(sed "s/./_&[^_]*/g" <<< "${wm_label/f}")
+	fi
+
 	[[ "$tiling_workspaces" == *$current_workspace* ]] &&
-		label=${wm_label^^} icon="tiling${wm_icon%[*}" || label='FLO' icon='floating'
+		label=${wm_label^^} icon="tiling${wm_icon%[*}" ||
+		label='FLO' icon='floating'
+	#~/.orw/scripts/notify.sh -t 11 "$label wm_mode_$icon $current_workspace: $tiling_workspaces" &> /dev/null
+	#echo "$label wm_mode_$icon $current_workspace: $tiling_workspaces" >> ~/files/t.log
+
 	icon=$(get_icon "wm_mode_$icon")
 
 	#~/.orw/scripts/notify.sh -t 11 "$label wm_mode_$icon $current_workspace: $tiling_workspaces" &> /dev/null
@@ -294,7 +306,7 @@ check_workspaces() {
 		#
 		#read event current_{workspace,window,workspace_windows} <<< "$workspace_status"
 
-		[[ $current_workspace ]] || ~/sws_test.sh info
+		[[ $current_workspace ]] || ~/.orw/scripts/signal_windows_event.sh info
 
 		read event value < $workspaces_fifo #&
 		#read_pid=$!
