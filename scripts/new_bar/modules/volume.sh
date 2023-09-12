@@ -12,7 +12,12 @@
 get_volume() {
 	label='VOL'
 	icon="$(get_icon "volume_icon")"
-	volume=$(pactl list sinks | sed -n 's/^\s\+Volume:[^%]* \(\w*\)%.*/\1%/p')
+	#volume=$(pactl list sinks | sed -n 's/^\s\+Volume:[^%]* \(\w*\)%.*/\1%/p')
+	volume=$(pactl list sinks | awk '
+		$1 == "Sink" { nr = NR + 2 }
+		NR == nr { c = $NF !~ "hdmi" }
+		c && /^\s*Volume/ { print $5; exit }')
+
 	#volume="%{A:$toggle_volume_buttons && pactl set-sink-volume 0 +0.01%:}$volume%{A}"
 	#local volume_buttons="%{A:sed -i 'y/01/10/' bar_config:}"
 	#local volume_down="%{A5:pactl set-sink-volume 0 -5%:}"
