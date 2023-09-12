@@ -1,7 +1,7 @@
 #!/bin/bash
 
 base_directory=~/Videos
-sub_directory='bar_manager'
+sub_directory='release2'
 
 while getopts :f:d:D: flag; do
 	((arg_count++))
@@ -30,7 +30,7 @@ read resolution position <<< $(awk '\
 shift $((arg_count * 2))
 [[ $@ ]] && filename="$@" || filename=$(date +"%Y-%m-%d-%H:%M")
 
-~/.orw/scripts/notify.sh -s osd  -i   'recording started' &> /dev/null &
+~/.orw/scripts/notify.sh -s osd -i   'recording started' &> /dev/null &
 
-ffmpeg -y -f x11grab -r ${fps-20} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
+ffmpeg -y -f x11grab -r ${fps-60} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
 	-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
