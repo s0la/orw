@@ -168,7 +168,7 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola/Music/jazz"
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
@@ -200,7 +200,8 @@ open_directory_icon=
 open_directory_icon=
 checkbox_icon=
 checkbox_checked_icon=
-#echo -e $back_icon
+
+printf "\0keep-selection\x1ftrue\n$back_icon\n"
 
 #~/.orw/scripts/notify.sh "o: $back_icon $options"
 
@@ -361,7 +362,8 @@ if [[ ${option% *} ]]; then
 
 			set_multiple_files "$current/"
 
-			~/.orw/scripts/sxiv_wrapper.sh "${files:-${regex:-'$current'/*}}"
+			~/.orw/scripts/sxiv_wrapper.sh -w 300 -h 500 \
+				"${files:-${regex:-'$current'/*}}"
 
 			un_set options regex
 			exit;;
@@ -594,7 +596,7 @@ if [[ -d "$current" && ! $options ]]; then
 	#echo -e 
 
 	#echo -en "\0keep-selection\x1ftrue\n"
-	echo -e $back_icon
+	#echo -e $back_icon
 	echo -e $options_icon
 	echo -e $bookmarks_icon
 	echo -e $open_directory_icon
