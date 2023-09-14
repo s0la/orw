@@ -5084,7 +5084,7 @@ while read change new_value; do
 				closing_ids=$(sort_by_workspaces)
 
 			for current_id in ${closing_ids:-$current_ids}; do
-				[[ ${input_ids[*]} != *$id* ]] &&
+				[[ ${input_ids[*]} != *$current_id* ]] &&
 					signal_event "launchers" "close" "$current_id"
 
 				closing_id_workspace=${workspaces[$current_id]%_*}
