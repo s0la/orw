@@ -81,6 +81,6 @@ else
 
 		set_position
 
-		termite -t DROPDOWN --class=dropdown &> /dev/null &
+		alacritty -t DROPDOWN --class=dropdown &> /dev/null &
 	fi
 fi

@@ -10,7 +10,7 @@ get_rss() {
 }
 
 set_rss_actions() {
-	actions_start='%{A:termite -t newsboat -e newsboat &> /dev/null &:}'
+	actions_start='%{A:alacritty -t newsboat -e newsboat &> /dev/null &:}'
 	actions_end='%{A}'
 }
 

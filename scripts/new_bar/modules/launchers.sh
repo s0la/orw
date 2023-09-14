@@ -120,8 +120,6 @@ get_launchers() {
 		if ((id_count)); then
 			color=p
 
-			#~/.orw/scripts/notify.sh -t 11 "${launcher_ids[firefox]}, ${launcher_ids[termite]}"
-
 			if [[ $actions_start != *A2* ]]; then
 				[[ ${ids[*]} == *$active_launcher* ]] &&
 					close_launcher=$active_launcher || close_launcher=${ids[0]}

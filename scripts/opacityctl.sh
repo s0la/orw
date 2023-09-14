@@ -1,7 +1,7 @@
 #!/bin/bash
 
 lock_conf=~/.orw/dotfiles/.config/i3lockrc
-term_conf=~/.orw/dotfiles/.config/termite/config
+term_conf=~/.orw/dotfiles/.config/alacritty/alacritty.yml
 dunst_conf=~/.orw/dotfiles/.config/dunst/*dunstrc
 picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 
@@ -13,7 +13,7 @@ if [[ $1 =~ bar|lock ]]; then
 	exit
 elif [[ $1 =~ term|dunst ]]; then
 	conf="$1_conf"
-	[[ $1 == term ]] && pattern='^background' || pattern='^\s*transparency'
+	[[ $1 == term ]] && pattern='opacity' || pattern='^\s*transparency'
 else
 	conf=picom_conf
 	if [[ $1 == shadow[-_]radius ]]; then
@@ -41,7 +41,6 @@ awk -i inplace '{ \
 			v = '$value'
 
 			if("'$1'" == "dunst") {
-				#$NF = 100 - (("'$sign'") ? 100 - $NF '$sign' v : v)
 				sub(/[0-9]+/, 100 - (("'$sign'") ? 100 - $NF '$sign' v : v))
 			} else {
 				if("'$1'" == "rofi" || "'$1'" ~ "shadow[-_]radius") {
@@ -49,19 +48,21 @@ awk -i inplace '{ \
 					f = "%d"
 				} else {
 					if(/^blur/) {
+						max = 100
 						pa = "?"
 						f = "%d"
 					} else {
 						v/=100
+						max = 1.0
 						f = "%.2f"
 					}
 
-					#cv = gensub(".*([0-9])(\\.[0-9]+)" pa ".?$", "\\1\\2", 1)
-					#cv = gensub("[^0-9]*([0-9.]+).?", "\\1", 1)
 					cv = gensub(".*([0-9]\\.[0-9]+).*", "\\1", 1)
 				}
 
-				sub(cv, sprintf(f, ("'$sign'") ? cv '$sign' v : v))
+				nv = ("'$sign'") ? cv '$sign' v : v
+				if (nv > max) nv = max
+				sub(cv, sprintf(f, nv))
 			}
 		}
 	}
@@ -69,7 +70,7 @@ awk -i inplace '{ \
 }' ${!conf}
 
 case $conf in
-	term*) killall -USR1 termite;;
+	#term*) killall -USR1 termite;;
 	dunst*)
 		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
 

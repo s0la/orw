@@ -4,7 +4,7 @@ read_keyboard_input() {
 	$(declare -F get_argument_count)
 
 	read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
-	termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null &
+	alacritty -t input --class=input -e bash -c "$read_command" &> /dev/null &
 
 	read input < $named_pipe
 	evaluate $input
@@ -76,7 +76,7 @@ read_keyboard_input() {
 		#read_command="read -rsn ${argument_count:-1} input && $write_command > $named_pipe"
 		read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
 		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" #&> /dev/null &
-		termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null &
+		alacritty -t input --class=input -e bash -c "$read_command" &> /dev/null &
 		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" & #&> /dev/null &
 
 		#read input_id input < $named_pipe

@@ -4879,9 +4879,11 @@ read_keyboard_input() {
 	#wmctrl -lG | awk '$2 == 2'
 
 	#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" #&> /dev/null &
-	termite -t input --class=input \
-		-e "bash -c '$read_command'" &> /dev/null &
-	#local pid=$!
+	alacritty -t input --class=input \
+		-e bash -c "$read_command" &> /dev/null &
+	#termite -t input --class=input \
+	#	-e "bash -c '$read_command'" &> /dev/null &
+	##local pid=$!
 
 	#while true; do
 	#	if [[ $input != d ]]; then

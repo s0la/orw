@@ -9,10 +9,10 @@ theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 running="$(wmctrl -l | awk '\
 	{
 		w = $NF
-		if(w == "vifm") {
+		if(w ~ "vifm[0-9]?") {
 			a = a ",3"
 			r = r " vifm_label=\"'$indicator' \""
-		} else if(w == "termite") {
+		} else if(w == "alacritty[0-9]?") {
 			a = a ",0"
 			r = r " term_label=\"'$indicator' \""
 		} else if(w == "DROPDOWN") {
@@ -43,7 +43,7 @@ if [[ $theme == icons ]]; then
 	tile=  vifm= term=  dropdown=${state:-} qb=
 else
 	[[ $running ]] && eval "$running empty='  '"
-	tile=tile vifm=vifm term=termite dropdown=dropdown qb=qutebrowser
+	term=alacritty dropdown=dropdown vifm=vifm qb=qutebrowser
 fi
 
 #~/.orw/scripts/notify.sh "OPENS" &
@@ -59,7 +59,6 @@ trap toggle_rofi EXIT
 
 app=$(cat <<- EOF | rofi -dmenu -i $running -theme main
 	${term_label-$empty}$term
-	${empty}$tile
 	${dropdown_label-$empty}$dropdown
 	${vifm_label-$empty}$vifm
 	${qb_label-$empty}$qb
@@ -104,8 +103,8 @@ run_term() {
 	#fi
 
 	#$run -t $title termite $class -t $title $command
-	eval termite $class -t $title "$command" &
-	#eval alacritty $class -t $title "$command" &
+	#eval termite $class -t $title "$command" &
+	eval alacritty $class -t $title "$command" &
 
 	#~/.orw/scripts/run.sh $title termite -t $title
 }
@@ -116,7 +115,7 @@ case "$app" in
 		get_title termite
 		~/.orw/scripts/tile_terminal.sh -t $title -b ${app#*$tile};;
 	*$term*)
-		get_title termite
+		get_title alacritty
 		get_command "${app#*$term}"
 		#echo termite $class -t $title "$command"
 		run_term;;

@@ -49,7 +49,7 @@ if [[ $article_index ]]; then
 			wmctrl -a qutebrowser
 		fi
 	else
-		termite -t newsboat -e 'newsboat'
+		alacritty -t newsboat -e newsboat
 	fi
 fi
 

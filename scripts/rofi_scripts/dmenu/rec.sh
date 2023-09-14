@@ -39,7 +39,7 @@ if [[ $action ]]; then
 				#~/.orw/scripts/set_geometry.sh -c input -x $x -y $y -w 300 -h 100
 				#termite -t rec_file_name_input --class=input -e "bash -c \"$command\"" &> /dev/null &
 				~/.orw/scripts/set_geometry.sh -t input -x $x -y $y -w 300 -h 100
-				termite -t rec_file_name_input -e "bash -c \"$command\"" &> /dev/null &
+				alacritty -t rec_file_name_input -e bash -c "$command" &> /dev/null &
 
 
 				read filename < $fifo

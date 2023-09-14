@@ -109,8 +109,8 @@ offset=$(awk '
 			if [[ ! $password ]]; then
 				killall rofi
 				~/.orw/scripts/set_geometry.sh -t network_input -w 300 -h 100
-				termite -t network_input -e \
-					"bash -c \"~/.orw/scripts/network_auth.sh ${network_name//\'/\\\'}\"" $> /dev/null
+				alacritty -t network_input -e \
+					bash -c "~/.orw/scripts/network_auth.sh ${network_name//\'/\\\'}" $> /dev/null
 				get_password
 			fi
 

@@ -28,12 +28,12 @@ if [[ $instance ]]; then
 
 	#[[ ! $title ]] && title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { c++ } END { print "vifm" c }')
 
-	termite -t ${title-vifm} --class=${class-custom_size} -e \
-		"bash -c \"sleep 0.5 && $run_command \\\"$args\\\"\"" &> /dev/null &
+	alacritty -t ${title-vifm} --class=${class-custom_size} -e \
+		bash -c "sleep 0.5 && $run_command \\\"$args\\\"" &> /dev/null &
 	exit
 
-	termite -t ${title-vifm} --class=${class-custom_size} -e \
-		"bash -c '$run_command $args'" &> /dev/null &
+	alacritty -t ${title-vifm} --class=${class-custom_size} -e \
+		bash -c "$run_command $args" &> /dev/null &
 else
 	eval $run_command $args
 fi

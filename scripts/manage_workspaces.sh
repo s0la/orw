@@ -23,7 +23,7 @@ else
 			awk '{ print int(($4 - '$width') / 2), int(($5 - '$height') / 2) }')
 
 		~/.orw/scripts/set_geometry.sh -t input -x $x -y $y -w 300 -h 100
-		termite -t workspace_name_input -e "bash -c \"$command\"" &> /dev/null &
+		alacritty -t workspace_name_input -e bash -c "$command" &> /dev/null &
 
 		read workspace_name < $fifo
 		rm $fifo

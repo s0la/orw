@@ -90,7 +90,7 @@ evaluate() {
 
 read_input() {
 	read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
-	termite -t input --class=input -e "bash -c '$read_command'" &> /dev/null &
+	alacritty -t input --class=input -e bash -c "$read_command" &> /dev/null &
 
 	read input < $named_pipe
 }

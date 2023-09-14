@@ -313,11 +313,12 @@ if [[ ${option% *} ]]; then
 		edit_text)
 			killall rofi
 			set_multiple_files "$current/"
-			termite -e "bash -c \"nvim -p ${files:-${regex:-'$current'}}\"" &
+			#termite -e "bash -c \"nvim -p ${files:-${regex:-'$current'}}\"" &
+			alacritty -e bash -c "nvim -p ${files:-${regex:-'$current'}}" &
 			un_set regex;;
 		open_in_terminal)
 			killall rofi
-			termite -e "bash -c \"cd '$current'\";bash"
+			alacritty -e bash -c "cd '$current'"\;bash
 			exit;;
 		$options_icon) set options options;;
 		 );;
