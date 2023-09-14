@@ -3362,14 +3362,37 @@ read ccc hex_{sbgi,pbgi,pfgi,a1i} <<< \
 			print ccc, sbgi - 1, pbgi - 1, pfgi - 1, a1i - 1
 		}' ~/.config/orw/colorschemes/colors)
 
-term_conf=~/.config/termite/config
+term_conf=~/.config/alacritty/alacritty.yml
 
 for color in hex_{sbg,pbg,pfg,a1}; do
 	eval "read color index <<< \${!$color*}"
 	#echo ${!index}, ${!color}
 	((${!index} >= ccc)) &&
-		sed -i "/color0/,/^$/ { /^$/ s/.*/color${!index} = ${!color}\n/ }" $term_conf
+		new_indexed_colors+=",\n{ index: ${!index}, color: '${!color}' }"
+		#sed -i "/color0/,/^$/ { /^$/ s/.*/color${!index} = ${!color}\n/ }" $term_conf
 done
+
+#awk '
+#	#BEGIN { print "'"$new_indexed_colors"'" }
+#	END {
+#		print "'"$new_indexed_colors"'"
+#		print
+#	}' $term_conf
+#exit
+
+[[ $new_indexed_colors ]] &&
+	awk -i inplace '
+		BEGIN { li = '$ccc' - 1 }
+
+		$0 ~ "index: " li "," {
+			nic = "'"$new_indexed_colors"'"
+			p = $0
+			sub("{.*", "", p)
+			gsub("\n", "\n" p, nic)
+			sub("$", nic)
+		}
+
+		{ print }' $term_conf #| tail -22
 
 #read {rgb,hex}_a5_dr <<< $(get_sbg $hex_a5 -18)
 #read {rgb,hex}_a5_br <<< $(get_sbg $hex_a5 +5)
@@ -4080,17 +4103,22 @@ replace_colors() {
 		echo -e "\n#$1\n$(set_$1 print)" || echo -e "\n#$1\n$output"
 }
 
-awk -i inplace '/^[^#]*ground/ {
-		if(/fore/) sub("#.*", "'$hex_fg'")
-		else sub("\\(.*,", "('${rgb_bg//;/,}'")
-	} { print }' ~/.config/termite/config
-killall -USR1 termite
+#awk -i inplace '/^[^#]*ground/ {
+#		if(/fore/) sub("#.*", "'$hex_fg'")
+#		else sub("\\(.*,", "('${rgb_bg//;/,}'")
+#	} { print }' $term_conf
+#killall -USR1 termite
 
-awk -i inplace '
-	/^\s*background/ { sub("0x\\w*", "0x'${hex_bg#\#}'") }
-	/^\s*foreground/ { sub("0x\\w*", "0x'${hex_fg#\#}'") }
-	{ print }
-	' ~/.config/alacritty/alacritty.yml
+awk -i inplace '/^\s*[^#]*ground/ {
+		sub("#\\w*", ($1 ~ "^b") ? "'$hex_bg'" : "'$hex_fg'")
+	} { print }' $term_conf
+exit
+
+#awk -i inplace '
+#	/^\s*background/ { sub("0x\\w*", "0x'${hex_bg#\#}'") }
+#	/^\s*foreground/ { sub("0x\\w*", "0x'${hex_fg#\#}'") }
+#	{ print }
+#	' ~/.config/alacritty/alacritty.yml
 
 colorscheme_name="${wallpaper_name%.*}"
 colorscheme=~/.orw/dotfiles/.config/orw/colorschemes/${colorscheme_name// /_}.ocs
