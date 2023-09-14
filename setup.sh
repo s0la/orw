@@ -40,7 +40,7 @@ install_picom() {
 	sudo tar xfC $HOME/Downloads/libev.tar.zst /
 	rm ~/Downloads/libev.tar.zst
 
-	git clone https://github.com/ibhagwan/picom ~/Downloads/picom
+	git clone https://github.com/pijulius/picom ~/Downloads/picom
 	cd ~/Downloads/picom
 	git submodule update --init --recursive
 
@@ -95,8 +95,35 @@ handle_failure() {
 function deps() {
 	echo 'installing dependencies..'
 
-	common_deps=( git openbox cmake wget neovim vifm tmux rofi xclip xdo xdotool wmctrl slop feh hsetroot sxiv mp{d,c} ncmpcpp w3m ffmpeg acpi jq fzf ripgrep newsboat )
 	failure_message="Failed to install dependencies, try installing them manually and run './setup.sh apps orw fonts man'"
+	common_deps=(
+		git
+		openbox
+		cmake
+		wget
+		neovim
+		vifm
+		tmux
+		rofi
+		xclip
+		xdo
+		xdotool
+		wmctrl
+		dunst
+		slop
+		feh
+		hsetroot
+		sxiv
+		mp{d,c}
+		ncmpcpp
+		w3m
+		ffmpeg
+		acpi
+		jq
+		fzf
+		ripgrep
+		newsboat
+	)
 
 	if [[ $(which apt 2> /dev/null) ]]; then
 		sudo apt update &> $output
@@ -133,7 +160,15 @@ function deps() {
 		#generate_mirrors
 
 		sudo pacman --noconfirm -Syy archlinux-keyring &> $output
-		sudo pacman --noconfirm -R lxappearance-obconf-gtk3 lxappearance-gtk3 thunar &> $output
+		for dep in lxappearance-{obconf-,}gtk3 thunar; do
+			which $dep &> /dev/null && sudo pacman --noconfirm -R $dep &> $output
+		done
+
+		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
+			alsa-lib alsa-plugins alsa-utils pipewire{,-pulse} xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
+			gtk-engine-murrine unzip alacritty dunst mpfr openssl wpa_supplicant meson uthash \
+			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
+			handle_failure "$failure_message"
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
@@ -159,6 +194,10 @@ function apps() {
 	##compton with kawase blur
 	#get_app install tryone144 compton "sed -i '/^ifneq/! { /MANPAGES/d }' Makefile"
 
+	python_dir=$(ls -d /usr/lib/python*)
+	[[ -f $python_dir/EXTERNALLY-MANAGED ]] &&
+		sudo mv $python_dir/EXTERNALLY-MANAGED $python_dir/EXTERNALLY-MANAGED.bak
+
 	#pynput
 	python -m pip install pynput &> /dev/null
 
@@ -170,7 +209,7 @@ function apps() {
 	sudo pip3 install neovim &> $output || handle_failure "Failed to install neovim python3."
 
 	#ueberzug installation
-	sudo pip3 install ueberzug &> $output || handle_failure "Failed to install ueberzug."
+	#sudo pip3 install ueberzug &> $output || handle_failure "Failed to install ueberzug."
 
 	#cava installation
 	get_app install karlstav cava ./autogen.sh ./configure || handle_failure "Failed to install cava."
@@ -179,7 +218,7 @@ function apps() {
 	get_app install krypt-n bar ~/.orw/scripts/add_borders_to_bar_source.sh || handle_failure "Failed to install bar."
 
 	#dunst installation
-	get_app install dunst-project dunst "make dunstify" "sudo cp dunstify /usr/local/bin"
+	#get_app install dunst-project dunst "make dunstify" "sudo cp dunstify /usr/local/bin"
 
 	##fff installation
 	#get_app install dylanaraps fff || handle_failure "Failed to install fff."
@@ -238,11 +277,6 @@ function orw() {
 	sudo ln -s $destination/dotfiles/services/* $services_dir
 
 	#installing neovim pugins
-
-	#plugin_path=$destination/dotfiles/.config/nvim/pack/plugins/start
-	#git clone https://github.com/ $plugin_path/fzf
-	#git clone https://github.com/nvim $plugin_path/deoplete
-
 	plugins=( 'junegunn/fzf.vim' 'Shougo/deoplete.nvim' 'voldikss/vim-floaterm' )
 
 	for plugin in ${plugins[*]}; do
