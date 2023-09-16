@@ -3,52 +3,56 @@
 shopt -s extglob
 
 directory=${0%/*}
-destination=~/.orw
+orw=~/.orw
 
 function files() {
 	echo 'copying files..'
 
-	[[ -d $destination  ]] || mkdir $destination
-	find $directory -maxdepth 1 -type d ! -name "*${directory##*/}" -exec cp -r {} $destination \;
+	[[ -d $orw  ]] || mkdir $orw
+	find $directory -maxdepth 1 -type d ! -name "*${directory##*/}" -exec cp -r {} $orw \;
 }
 
 get_app() {
 	echo "installing $3.."
 
-	(git clone https://github.com/$2/$3 ~/Downloads/$3
-	(( $? > 0 )) && return 1
-
-	cd ~/Downloads/$3
-	rm -rf .git
-
-	for arg in "${@:4}"; do
-		eval $arg
-	done
-
-	if [[ $1 == install ]]; then
-		make && sudo make install
+	(
+		git clone https://github.com/$2/$3 ~/Downloads/$3
 		(( $? > 0 )) && return 1
-	fi
 
-	cd && rm -rf ~/Downloads/$3) &> $output
+		cd ~/Downloads/$3
+		rm -rf .git
+
+		for arg in "${@:4}"; do
+			eval $arg
+		done
+
+		if [[ $1 == install ]]; then
+			make && sudo make install
+			(( $? > 0 )) && return 1
+		fi
+
+		cd && rm -rf ~/Downloads/$3
+	) &> $output
 }
 
 install_picom() {
 	echo 'installing picom..'
 
-	(wget https://www.archlinux.org/packages/community/x86_64/libev/download -O ~/Downloads/libev.tar.zst
-	sudo tar xfC $HOME/Downloads/libev.tar.zst /
-	rm ~/Downloads/libev.tar.zst
+	(
+		wget https://www.archlinux.org/packages/community/x86_64/libev/download -O ~/Downloads/libev.tar.zst
+		sudo tar xfC $HOME/Downloads/libev.tar.zst /
+		rm ~/Downloads/libev.tar.zst
 
-	git clone https://github.com/pijulius/picom ~/Downloads/picom
-	cd ~/Downloads/picom
-	git submodule update --init --recursive
+		git clone https://github.com/pijulius/picom ~/Downloads/picom
+		cd ~/Downloads/picom
+		git submodule update --init --recursive
 
-	meson --buildtype=release . build
-	ninja -C build
-	sudo ninja -C build install
+		meson --buildtype=release . build
+		ninja -C build
+		sudo ninja -C build install
 
-	cd && rm -rf ~/Downloads/picom) &> $output || handle_failure 'Failed to install picom'
+		cd && rm -rf ~/Downloads/picom
+	) &> $output || handle_failure 'Failed to install picom'
 }
 
 install_termite() {
@@ -101,6 +105,8 @@ function deps() {
 		openbox
 		cmake
 		wget
+		bc
+		alacritty
 		neovim
 		vifm
 		tmux
@@ -166,13 +172,7 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pipewire{,-pulse} xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip alacritty dunst mpfr openssl wpa_supplicant meson uthash \
-			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
-			handle_failure "$failure_message"
-
-		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
-			alsa-lib alsa-plugins alsa-utils pulseaudio xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip termite dunst mpfr openssl wpa_supplicant meson community/uthash \
+			gtk-engine-murrine unzip dunst mpfr openssl wpa_supplicant meson uthash \
 			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
 			handle_failure "$failure_message"
 
@@ -263,9 +263,9 @@ function orw() {
 	[[ -d ~/.icons ]] || mkdir ~/.icons
 	[[ -d ~/.themes ]] || mkdir ~/.themes
 
-	ln -s $destination/.fonts/* ~/.fonts
-	ln -s $destination/themes/icons ~/.icons/orw
-	ln -s $destination/themes/theme ~/.themes/orw
+	ln -s $orw/.fonts/* ~/.fonts
+	ln -s $orw/themes/icons ~/.icons/orw
+	ln -s $orw/themes/theme ~/.themes/orw
 
 	echo 'linking config files..'
 
@@ -274,23 +274,25 @@ function orw() {
 
 	services_dir=/etc/systemd/user
 	[[ ! -d $services_dir ]] && sudo mkdir $services_dir
-	sudo ln -s $destination/dotfiles/services/* $services_dir
+	sudo ln -s $orw/dotfiles/services/* $services_dir
 
 	#installing neovim pugins
+	local plugin_dir=$orw/dotfiles/.config/nvim/pack/plugins/start
 	plugins=( 'junegunn/fzf.vim' 'Shougo/deoplete.nvim' 'voldikss/vim-floaterm' )
 
 	for plugin in ${plugins[*]}; do
 		plugin_name=${plugin##*[/-]}
 		git clone https://github.com/$plugin \
-			$destination/dotfiles/.config/nvim/pack/plugins/start/${plugin_name%.*}
+			$plugin_dir/${plugin_name%.*} &> $output ||
+			handle_failure "failed to install neovim plugin: ${plugin_name%.*}"
 	done
 
 	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)
-	sed -i "s/$ex_user/$(whoami)/" $destination/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
+	sed -i "s/$ex_user/$(whoami)/" $orw/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
 
-	[[ ! -f ~/.config/orw/config ]] && $destination/scripts/generate_orw_config.sh
+	[[ ! -f ~/.config/orw/config ]] && $orw/scripts/generate_orw_config.sh
 
 	openbox --reconfigure
 }
@@ -302,7 +304,7 @@ function fonts() {
 
 function man() {
 	echo 'adding mans..'
-	sudo ln -s $destination/.man/* /usr/share/man/man1/
+	sudo ln -s $orw/.man/* /usr/share/man/man1/
 }
 
 arguments="$@"
