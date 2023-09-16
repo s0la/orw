@@ -209,7 +209,7 @@
     </keybind>
     <keybind key="A-t">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh tiling_toggle</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh tiling</command>
       </action>
     </keybind>
     <keybind key="A-S-t">
@@ -1095,8 +1095,8 @@
       <decor>no</decor>
 	  <focus>no</focus>
       <position force="yes">
-        <x>958</x>
-        <y>92</y>
+        <x>1344</x>
+        <y>640</y>
       </position>
       <size>
         <width>150</width>
@@ -1112,8 +1112,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>150</height>
-        <width>250</width>
+        <height>250</height>
+        <width>350</width>
       </size>
     </application>
 
@@ -1164,8 +1164,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>612</x>
-        <y>337</y>
+        <x>388</x>
+        <y>355</y>
       </position>
       <size>
         <width>130</width>
@@ -1191,8 +1191,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>1044</x>
-        <y>155</y>
+        <x>571</x>
+        <y>95</y>
       </position>
       <size>
         <width>100</width>

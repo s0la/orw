@@ -93,6 +93,18 @@ icon_x_up=
 icon_y_up=
 icon_y_down=
 
+wait_to_proceed() {
+	while true; do
+		sleep 0.1
+	done &
+	local while_pid=$!
+	wait $while_pid
+	kill $while_pid
+}
+
+trap : USR1
+#trap "~/.orw/scripts/notify.sh 'EXITING'" INT KILL EXIT
+
 set_offset() {
 	local index interactive=$(awk '$1 == "interactive" { print $NF == "true" }' $orw_conf)
 	#~/.orw/scripts/notify.sh -t 11 "INT: $interactive"
@@ -116,6 +128,7 @@ set_offset() {
 			[[ $option =~ ^($icon_x_up|$icon_y_up) ]] && direction=+ || direction=-
 			[[ $option =~ ^($icon_x_up|$icon_x_down) ]] && orientation=x || orientation=y
 			update_value $orientation 20
+			wait_to_proceed
 		done
 	fi
 }

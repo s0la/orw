@@ -822,7 +822,9 @@ get_workspace_windows() {
 	[[ $1 ]] &&
 		local display=$1 ||
 		display=${workspaces[$id]#*_}
-	display_properties=( ${displays[$display]} )
+
+	[[ ${FUNCNAME[*]: -3:1} != update_values ]] &&
+		display_properties=( ${displays[$display]} )
 
 	#echo $1: $id - ${properties[*]}, $display
 
@@ -1086,6 +1088,7 @@ get_display_properties() {
 	[[ -z $@ ]] &&
 		local properties=( ${properties[*]:1} ) ||
 		local properties=( $(get_windows $1 | cut -d ' ' -f 2-) )
+	[[ $2 ]] && echo GDP $@, $id: ${properties[*]}, $display, ${properties[*]:1}
 
 	#if [[ $@ ]]; then
 	#	echo $1, $id: ${properties[*]}
@@ -1101,6 +1104,7 @@ get_display_properties() {
 	if ((window_count)); then
 		for display in ${!displays[*]}; do
 			display_properties=( ${displays[$display]} )
+			#echo DISP: ${displays[$display]}, ${display_properties[*]}
 
 			#echo DIS: $display - ${displays[$display]}, $display_index: ${display_properties[*]} - ${display_properties[display_index]}
 			#echo $id: ${properties[display_index]}, ${properties[*]}
@@ -1468,11 +1472,18 @@ update_values() {
 
 					local current_display=$display
 
+					((rofi_opening_offset > 0)) &&
+						#local tiling_rofi_pid=$(pidof -x tiling.sh)
+						local tiling_rofi_pid=$(ps -C dmenu.sh -o pid=,args= |
+							awk '$NF == "tiling" { print $1; exit }')
+
 					while read display display_properties; do
 						if [[ ${displays[$display]} ]]; then
 							local adjust_windows=true
-							new_display_properties=( $display_properties )
-							current_display_properties=( ${displays[$display]} )
+							local new_display_properties=( $display_properties )
+							local current_display_properties=( ${displays[$display]} )
+
+							#echo ITER: ${current_display_properties[*]}, ${new_display_properties[*]}
 
 							for property_index in ${!new_display_properties[*]}; do
 								diff=$((${new_display_properties[property_index]} - \
@@ -1535,16 +1546,32 @@ update_values() {
 											windows[$window]="${all_windows[$window]}"
 									done
 
-									if ((workspace == current_workspace && diff != 2)); then
-										if [[ $rofi_state == opened && $rofi_opening_display -eq $display ]]; then
-											echo CWS OLD: ${properties[*]}
-											((properties[1]+=$rofi_opening_offset))
-											((diff % 2)) && ((properties[3]-=$rofi_opening_offset))
-											echo CWS: ${properties[*]}
-											#killall spy_windows.sh xprop
-											#exit
-										fi
+									if [[ $rofi_state == opened && $rofi_opening_display -eq $display ]] &&
+										((rofi_opening_offset > 0 && workspace == current_workspace )); then
+											if ((diff % 2)); then
+												echo CWS OLD: ${properties[*]}
+												((properties[1]+=$rofi_opening_offset))
+												((diff % 2)) && ((properties[3]-=$rofi_opening_offset))
+												echo CWS: ${properties[*]}
+											else
+												local open_rofi=true new_rofi_offset=$((rofi_opening_offset + value))
+												echo CLOSING ROFI: $rofi_opening_offset, $value, $new_rofi_offset
+												toggle_rofi $current_workspace no_change
+											fi
 									fi
+
+									#if ((workspace == current_workspace && diff != 2)); then
+									#	if [[ $rofi_state == opened && $rofi_opening_display -eq $display ]]; then
+									#		#local opened_rofi_offset=$rofi_opening_offset
+									#		echo CWS OLD: ${properties[*]}
+									#		((properties[1]+=$rofi_opening_offset))
+									#		((diff % 2)) && ((properties[3]-=$rofi_opening_offset))
+									#		echo CWS: ${properties[*]}
+									#		#toggle_rofi
+									#		#killall spy_windows.sh xprop
+									#		#exit
+									#	fi
+									#fi
 
 									windows[temp]="${properties[*]:1}"
 
@@ -1568,10 +1595,14 @@ update_values() {
 											all_windows[$w]="${window_properties[*]}"
 									done
 
-									if ((workspace == current_workspace && diff != 2)); then
+									if ((rofi_opening_offset > 0 &&
+										workspace == current_workspace && diff % 2)); then
 										if [[ $rofi_state == opened && $rofi_opening_display -eq $display ]]; then
 											((properties[1]-=$rofi_opening_offset))
 											((diff % 2)) && ((properties[3]+=$rofi_opening_offset))
+											#((${current_display_properties[0]} < rofi_opening_offset)) && toggle_rofi
+											#killall spy_windows.sh xprop
+											#exit
 										fi
 									fi
 								fi
@@ -1579,6 +1610,21 @@ update_values() {
 
 							((current_display_properties[$diff] += value))
 						done
+
+						#if [[ $rofi_state == opened ]]; then
+						#	echo $diff: ${current_display_properties[0]}, ${new_display_properties[*]}
+						#	#if ((${current_display_properties[0]} < rofi_opening_offset)); then
+						#	if ((rofi_opening_offset > 0)); then
+						#		local opened_rofi_offset=$rofi_opening_offset
+						#		local open_rofi=true
+						#		echo CLOSING ROFI
+						#		toggle_rofi
+						#	else
+						#		unset open_rofi
+						#	fi
+
+						#	echo $open_rofi: ${current_display_properties[0]}, $rofi_opening_offset
+						#fi
 
 						windows=()
 						id=$current_id
@@ -1595,13 +1641,37 @@ update_values() {
 							done
 						fi
 
+						#if ((${current_display_properties[0]} < opened_rofi_offset)); then
+						if [[ $open_rofi ]]; then
+							#echo PRE ${display_properties[*]}, $display_properties
+							set_rofi_windows $new_rofi_offset
+							#echo OPENING ROFI: $rofi_state, $display_properties
+							sleep 1 && toggle_rofi $current_workspace
+							kill -USR1 $tiling_rofi_pid
+							#echo ${display_properties[*]}, $display_properties
+							unset open_rofi
+							#killall spy_windows.sh xprop
+							#exit
+						fi
+
+						#killall spy_windows.sh xprop
+						#exit
+
+						#if ((workspace == current_workspace && diff != 2)); then
+						#	if [[ $rofi_state == opened && $rofi_opening_display -eq $display ]]; then
+								#((properties[1]-=$rofi_opening_offset))
+								#((diff % 2)) && ((properties[3]+=$rofi_opening_offset))
+						#	fi
+						#fi
+
 						displays[$display]="$display_properties"
 					done <<< $(sed 's/\(\([0-9]\+\s*\)\{5\}\)/\1\n/g' <<< "$diff_value")
 
 					workspace=$current_workspace
 					all_displays="$diff_value"
 					#update_displays
-					get_display_properties $id
+					#echo $id: ${properties[*]}, ${windows[$id]}
+					get_display_properties $id #print
 
 					#set_rofi_windows
 					#[[ $rofi_state == opened ]] && toggle_rofi $workspace
@@ -1616,6 +1686,7 @@ update_values() {
 					bar_config=$(grep -l '\-W' $(eval ls ~/.config/orw/bar/configs/$bars))
 
 					get_workspace_icons
+					unset current_display_properties
 				fi
 				;;
 			*)
@@ -1641,6 +1712,7 @@ update_values() {
 		esac
 	fi
 
+	#echo SETTING: ${current_display_properties[*]}
 	set_rofi_windows
 
 	unset event diff_{property,value}
@@ -3417,7 +3489,7 @@ set_aligned_windows() {
 		[[ $1 && $wid == $1 ]] && set_border_diff $wid
 		new_props="${props[*]}"
 
-		wmctrl -ir $wid -e 0,${new_props// /,} &
+		[[ $no_change ]] || wmctrl -ir $wid -e 0,${new_props// /,} &
 
 		all_windows[$wid]="${props[*]}"
 		windows[$wid]="${props[*]}"
@@ -3584,9 +3656,14 @@ set_rofi_windows() {
 	#	} END { if (p) print int(t) }' ~/.config/rofi/icons.rasi)
 
 	#local rofi_width
-	local rofi_window=( temp ${display_properties[*]} 0 0 )
+	#echo DIS: ${display_properties[*]}
+	local rofi_window=(
+		temp ${current_display_properties[*]:-${display_properties[*]}} 0 0
+	)
 	#rofi_offset=$((rofi_width - ${rofi_window[1]}))
-	rofi_offset=$(awk '
+	[[ $1 ]] &&
+		rofi_offset=$1 ||
+		rofi_offset=$(awk '
 		/width.*px/ {
 			sub("[^0-9]*$", "", $NF)
 			print int($NF) - '${rofi_window[1]}'
@@ -3637,7 +3714,7 @@ toggle_rofi() {
 	#	[[ ! $closing && (! $rofi_passing_state ||
 	#	$rofi_passing_state == $rofi_state) ]]; then
 		local rofi_windows_state current_rofi_workspace=$rofi_workspace
-		local {align,restore}_maxed
+		local {align,restore}_maxed no_change=$2
 
 		[[ $1 ]] &&
 			local workspace=$1
@@ -3678,6 +3755,7 @@ toggle_rofi() {
 					#echo ROFI 1, $id: ${properties[*]}
 					#list_windows
 					[[ $id != temp ]] && get_workspace_windows
+					#echo ROFI AFT: $display_properties - ${FUNCNAME[*]}
 					#echo ROFI 2, $id: ${properties[*]}
 					#list_windows
 
@@ -3702,6 +3780,12 @@ toggle_rofi() {
 
 						#echo ROFI ALIGN:
 						#list_windows
+
+						#if [[ $rofi_state == opened ]]; then
+						#	echo
+						#	get_alignment move print
+						#	echo
+						#fi
 
 						#if [[ $rofi_state == closed ]]; then
 						#	get_alignment move print
@@ -3761,7 +3845,7 @@ toggle_rofi() {
 
 						[[ $restore_maxed && $maxed_id ]] && toggle_maxed_window
 						unset windows[temp]
-						set_aligned_windows
+						set_aligned_windows $no_change
 						[[ $align_maxed && $maxed_id ]] && toggle_maxed_window
 					fi
 				fi
