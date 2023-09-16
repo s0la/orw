@@ -299,7 +299,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 
 				alacritty -t ${title:=ncmpcpp} --class=${class:-custom_size} \
 					-e bash -c "${pre:-$0 -P ${progressbar-yes}} && \
-					$base_command ${command-new -s $title ncmpcpp}" #&> /dev/null
+					$base_command ${command-new -s $title ncmpcpp}" &> /dev/null &
 
 				#termite -t ${title:=ncmpcpp} --class=${class:-custom_size} \
 				#	-e "bash -c '~/.orw/scripts/execute_on_terminal_startup.sh ${title-ncmpcpp} \

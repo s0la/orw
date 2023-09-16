@@ -116,9 +116,11 @@ case "$app" in
 		~/.orw/scripts/tile_terminal.sh -t $title -b ${app#*$tile};;
 	*$term*)
 		get_title alacritty
-		get_command "${app#*$term}"
-		#echo termite $class -t $title "$command"
-		run_term;;
+		#get_command "${app#*$term}"
+		##echo termite $class -t $title "$command"
+		#run_term
+		alacritty -t $title &
+		;;
 	*$vifm*)
 		get_title vifm
 		#get_command "sleep 0.5 \&\& vifm.sh ${app#*$vifm}"
@@ -138,18 +140,24 @@ case "$app" in
 
 		~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
 
-		command="-e ~/.orw/scripts/vifm.sh"
+		#command="-e ~/.orw/scripts/vifm.sh"
+		alacritty -t $title --class=custom_size -e ~/.orw/scripts/vifm.sh &
+		;;
 
 		#echo "termite $class -t $title '$command'"
 		#exit
-		run_term;;
+		#run_term;;
 	*$qb*)
 		get_title qutebrowser
 
 		#[[ ! $app =~ private ]] && args="${app#*$qb}" ||
 		#	args="-s content.private_browsing true"
 		#$run qutebrowser "$args";;
-		[[ ! $app =~ private ]] && qutebrowser ${app#*$qb} ||
-			qutebrowser -s content.private_browsing true;;
+		if [[ ! $app =~ private ]]; then
+			qutebrowser ${app#*$qb} &
+		else
+			qutebrowser -s content.private_browsing true &
+		fi
+		;;
 	#*$lock) ~/.orw/scripts/lock_screen.sh;;
 esac
