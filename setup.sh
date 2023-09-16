@@ -277,8 +277,14 @@ function orw() {
 	sudo ln -s $orw/dotfiles/services/* $services_dir
 
 	#installing neovim pugins
-	local plugin_dir=$orw/dotfiles/.config/nvim/pack/plugins/start
-	plugins=( 'junegunn/fzf.vim' 'Shougo/deoplete.nvim' 'voldikss/vim-floaterm' )
+	plugins=(
+		junegunn/fzf.vim
+		voldikss/vim-floaterm
+		neovim/nvim-lspconfig
+		hrsh7th/{nvim-cmp,cmp-nvim-lsp}
+	)
+
+	plugin_dir=$orw/dotfiles/.config/nvim/pack/plugins/start
 
 	for plugin in ${plugins[*]}; do
 		plugin_name=${plugin##*[/-]}
