@@ -207,7 +207,7 @@ remove_tiling_window() {
 	done
 
 	xdotool windowminimize $id
-	update_aligned_windows
+	update_aligned_windows $@
 
 	unset windows[$id]
 }
@@ -1171,6 +1171,7 @@ set_border_diff() {
 
 update_aligned_windows() {
 	local {new_,}props aligned_ids=${!all_aligned_windows[*]}
+	[[ ${@: -1} == no_change ]] && local no_change=true
 
 	[[ ${FUNCNAME[*]} == *set_align_event* ]] &&
 		local save_original_properties=true
@@ -1187,7 +1188,8 @@ update_aligned_windows() {
 				#echo AL: ${windows[$window_id]}, ${props[*]}
 
 				new_props="${props[*]::4}"
-				wmctrl -ir $window_id -e 0,${new_props// /,} #&
+				[[ $no_change ]] ||
+					wmctrl -ir $window_id -e 0,${new_props// /,}
 				all_windows[$window_id]="${props[*]}"
 				windows[$window_id]="${props[*]}"
 			fi
@@ -2602,33 +2604,17 @@ signal_event_event() {
 }
 
 set_tile_event() {
-	#echo TILE START
-	#list_windows
 	local tiling=true {align,full}_index choosen_alignment reverse
 	local original_properties=( ${properties[*]} )
 
-	#[[ $rofi_state == opened ]] &&
-	#	local rofi_passing_state=opened closing=true
 	[[ $rofi_state == opened ]] && toggle_rofi
 	remove_tiling_window
-	#unset closing
 	local windows_to_ignore=$id
 
-	update_aligned_windows
-
-
-	##[[ $rofi_passing_state ]] &&
-	#[[ $rofi_state == opened ]] &&
-	#	toggle_rofi || update_aligned_windows
-	#unset rofi_passing_state
-
-	#killall spy_windows.sh xprop
-	#exit
+	#update_aligned_windows
 
 	select_tiling_window
-	#echo TILE SELECT
-	#list_windows
-	get_workspace_windows
+	#get_workspace_windows
 
 	toggle_rofi
 	align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
@@ -2641,30 +2627,11 @@ set_tile_event() {
 		((!(align_index % 2))) && reverse=true
 	fi
 
-	#set_alignment_properties $choosen_alignment
-	#get_alignment '' print
-
-	#killall spy_windows.sh xprop
-	#exit
-
-	#echo TILE: $windows_to_ignore
-	#set_alignment_properties $choosen_alignment
-	#get_alignment '' print
-	#killall spy_windows.sh xprop
-	#exit
-
 	((full_index)) &&
 		make_full_window || align
-	#for w in ${!all_aligned_windows[*]}; do
-	#	echo TILE $w: ${all_aligned_windows[$w]}
-	#done
 	update_aligned_windows
 
 	wmctrl -ia ${original_properties[0]} &
-
-	#echo TILE LIST
-	#list_windows
-	#wmctrl -lG
 }
 
 set_min_event() {
@@ -2743,59 +2710,25 @@ set_move_event() {
 		remove_tiling_window || xdotool windowminimize $id
 
 	#local rofi_pid=$(pidof -x workspaces_group.sh)
-	echo ROFI: $rofi_state
+	#echo ROFI: $rofi_state
 
 	local rofi_pid=$(pidof -x signal_windows_event.sh)
 	#echo $rofi_pid
-	kill -USR1 $rofi_pid
+	[[ $rofi_pid ]] && kill -USR1 $rofi_pid
 
 	echo ROFI: $rofi_state
 
 	if [[ $rofi_state == opened ]]; then
 		local new_workspace=$(~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move)
-		echo $new_workspace
-		local windows_to_ignore=$id
+		#echo $new_workspace
+		#local windows_to_ignore=$id
 		toggle_rofi
 	fi
-
-	#if [[ ${tiling_workspaces[*]} == *$workspace* ]]; then
-	#	[[ $rofi_state == opened ]] &&
-	#		local rofi_passing_state=opened closing=true
-	#	echo REMOVE
-	#	remove_tiling_window
-	#	unset closing
-	#else
-	#	xdotool windowminimize $id
-	#fi
-
-	##if [[ $rofi_state == opened ]]; then
-	#if [[ $rofi_passing_state ]]; then
-	#	echo WORKSPACE
-	#	new_workspace=$(~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move)
-	#	local windows_to_ignore=$id
-	#	echo TOGGLE
-	#	toggle_rofi
-	#	unset rofi_passing_state
-	#else
-	#	update_aligned_windows
-	#fi
-
-	#list_windows
-	#killall spy_windows.sh xprop
-	#exit
 
 	if [[ $new_workspace ]]; then
 		wmctrl -ir $id -t $new_workspace
 		wmctrl -s $new_workspace
 	fi
-
-	#new_workspace=$(~/.orw/scripts/rofi_scripts/dmenu/workspaces.sh move)
-	#[[ ${tiling_workspaces[*]} == *$workspace* ]] && toggle_rofi
-
-	#wmctrl -ir $id -t $new_workspace
-	#wmctrl -s $new_workspace
-
-	#workspaces[$id]=$new_workspace
 
 	move_window=true
 	moving_id=$id
@@ -3345,7 +3278,7 @@ make_full_window() {
 	#exit
 
 	#windows[$id]="${properties[*]:1}"
-	get_alignment "" print
+	#get_alignment "" print
 	#killall sww.sh spy_window.sh xprop
 	#exit
 
@@ -3877,6 +3810,67 @@ resize_rofi() {
 }
 
 test() {
+	local size start {{align,full}_,}index choosen_alignment reverse
+
+	[[ $rofi_state != opened ]] && toggle_rofi
+	align_index=$(echo -e '\n\n\n\n\n\n\n' | rofi -dmenu -format i -theme main)
+	toggle_rofi
+
+	if [[ $align_index ]]; then
+		if ((align_index)); then
+			if ((align_index > 4)); then
+				case $align_index in
+					5) set_rotate_event;;
+					6) set_move_event;;
+					7) set_tile_event;;
+				esac
+			else
+				if [[ ${tiling_workspaces[*]} == *$workspace* ]]; then
+					remove_tiling_window no_change
+
+					((align_index > 2)) &&
+						choosen_alignment=v || choosen_alignment=h
+					((align_index % 2)) && reverse=true
+
+					local properties=( full ${display_properties[*]} ${properties[*]: -2} )
+					((properties[3] -= ${properties[1]} + ${properties[5]}))
+					((properties[4] -= ${properties[2]} + ${properties[6]}))
+
+					make_full_window
+					update_aligned_windows
+					wmctrl -ia $id &
+				else
+					echo ${display_properties[*]}
+
+					((align_index > 2)) &&
+						index=1 opposite_index=0 || index=0 opposite_index=1
+
+					local properties=( ${display_properties[*]} ${properties[*]: -2} )
+					echo ${properties[*]}
+					size=$(((${display_properties[index + 2]} - ${display_properties[index]}) / 2))
+					properties[index + 2]=$((size - ${properties[index + 4]}))
+					((!(align_index % 2))) && ((properties[index] += size))
+					((properties[opposite_index + 2] -= \
+						${properties[opposite_index]} + ${properties[opposite_index + 4]}))
+					local props="${properties[*]::4}"
+					echo ${properties[*]}: $props
+					wmctrl -ir $id -e 0,${props// /,} &
+				fi
+			fi
+		else
+			set_stretch_event
+		fi
+	fi
+
+	#local windows_to_ignore=$id
+
+	#update_aligned_windows
+
+	#killall spy_windows.sh xprop
+	#exit
+
+
+
 	for a in ${!alignments[*]}; do
 		echo $a: ${alignments[$a]} - ${windows[$a]}
 	done
@@ -4834,6 +4828,60 @@ set_untile_event() {
 	unset {all_,}windows[$id]
 }
 
+set_layout_event() {
+	local size start {{align,full}_,}index choosen_alignment reverse
+
+	[[ $rofi_state != opened ]] && toggle_rofi
+	align_index=$(echo -e '\n\n\n\n\n\n\n' | rofi -dmenu -format i -theme main)
+	toggle_rofi
+
+	if [[ $align_index ]]; then
+		if ((align_index)); then
+			if ((align_index > 4)); then
+				case $align_index in
+					5) set_rotate_event;;
+					6) set_move_event;;
+					7) set_tile_event;;
+				esac
+			else
+				if [[ ${tiling_workspaces[*]} == *$workspace* ]]; then
+					remove_tiling_window no_change
+
+					((align_index > 2)) &&
+						choosen_alignment=v || choosen_alignment=h
+					((align_index % 2)) && reverse=true
+
+					local properties=( full ${display_properties[*]} ${properties[*]: -2} )
+					((properties[3] -= ${properties[1]} + ${properties[5]}))
+					((properties[4] -= ${properties[2]} + ${properties[6]}))
+
+					make_full_window
+					update_aligned_windows
+					wmctrl -ia $id &
+				else
+					echo ${display_properties[*]}
+
+					((align_index > 2)) &&
+						index=1 opposite_index=0 || index=0 opposite_index=1
+
+					local properties=( ${display_properties[*]} ${properties[*]: -2} )
+					echo ${properties[*]}
+					size=$(((${display_properties[index + 2]} - ${display_properties[index]}) / 2))
+					properties[index + 2]=$((size - ${properties[index + 4]}))
+					((!(align_index % 2))) && ((properties[index] += size))
+					((properties[opposite_index + 2] -= \
+						${properties[opposite_index]} + ${properties[opposite_index + 4]}))
+					local props="${properties[*]::4}"
+					echo ${properties[*]}: $props
+					wmctrl -ir $id -e 0,${props// /,} &
+				fi
+			fi
+		else
+			set_stretch_event
+		fi
+	fi
+}
+
 trap test 63
 
 trap set_min_event 35
@@ -4858,12 +4906,13 @@ trap set_interactive_resize_event 53
 trap set_rofi_toggle_event 54
 trap set_rofi_resize_event 55
 trap set_untile_event 56
+trap set_layout_event 57
 trap save_state SIGKILL SIGINT SIGTERM
 
 declare -A {all_,}windows {all_,}aligned_windows workspaces
 declare -A displays alignments states
 
-tiling_workspaces=( 1 2 3 )
+tiling_workspaces=( 1 2 )
 workspace=$(xdotool get_desktop)
 
 read total_workspace_count workspace <<< \

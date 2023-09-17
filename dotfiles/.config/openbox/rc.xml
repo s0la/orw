@@ -284,7 +284,7 @@
     </keybind>
     <keybind key="A-S-w">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh window_management</command>
+        <command>~/.orw/scripts/signal_windows_event.sh layout</command>
       </action>
     </keybind>
     <keybind key="A-o">
@@ -1095,8 +1095,8 @@
       <decor>no</decor>
 	  <focus>no</focus>
       <position force="yes">
-        <x>1344</x>
-        <y>640</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>150</width>
@@ -1112,8 +1112,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>250</height>
-        <width>350</width>
+        <height>150</height>
+        <width>250</width>
       </size>
     </application>
 
@@ -1164,8 +1164,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>388</x>
-        <y>355</y>
+        <x>1553</x>
+        <y>222</y>
       </position>
       <size>
         <width>130</width>

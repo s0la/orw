@@ -213,14 +213,15 @@ while
 		$full_icon$sep$full
 		$offset_icon$sep$offset
 		$margin_icon$sep$margin
-		$interactive_icon$sep$interactive
-		$tile_icon$sep$move
-		$untile_icon$sep$untile
-		$move_icon$sep$move
 		$reverse_icon$sep$reverse
-		$rotate_icon$sep$rotate
+		$interactive_icon$sep$interactive
 	EOF
 	)
+
+		#$tile_icon$sep$move
+		#$untile_icon$sep$untile
+		#$move_icon$sep$move
+		#$rotate_icon$sep$rotate
 
 	[[ $action ]]
 do

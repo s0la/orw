@@ -37,6 +37,7 @@ case $1 in
 	rofi_toggle) sig=54;;
 	rofi_resize) sig=55;;
 	untile) sig=56;;
+	layout) sig=57;;
 	test) sig=63;;
 	kill)
 		pidof -x spy_windows.sh | xargs kill -9
