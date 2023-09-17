@@ -117,7 +117,7 @@ if ! shopt -oq posix; then
 fi
 
 color_content() {
-	echo "\[\033[${1}8;2;${2}2m\]"
+	echo "\[\033[${1}8;2;${2%;}m\]"
 }
 
 format_module() {
