@@ -32,8 +32,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#110f14"
-pbfg="#c89770"
+sbg="#0e1414"
+pbfg="#5ec1bf"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -236,7 +236,7 @@ if [[ $style ]]; then
 	case $style in
 		osd)
 			((icon_size)) || icon_size=57
-			((info_size)) || info_size=10
+			((info_size)) || info_size=5
 			icon="<span font='Iosevka Orw $icon_size' foreground='$fg'>$font_icon</span>"
 
 			if [[ $bar ]]; then

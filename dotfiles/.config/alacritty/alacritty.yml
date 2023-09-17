@@ -1,5 +1,8 @@
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
+env:
+  TERM: xterm-256color
+
 window:
     opacity: 1.00
 
@@ -33,10 +36,12 @@ font:
         family: Iosevka Orw
         family: SFMono
 
+live_config_reload: true
+
 colors:
     primary:
-        background: '#111412'
-        foreground: '#bfb3ac'
+        background: '#0e1414'
+        foreground: '#acbfb5'
 
     normal:
         black:   '0x494a4c'
@@ -293,5 +298,8 @@ colors:
           { index: 247, color: '#121820' },
           { index: 248, color: '#1a222c' },
           { index: 249, color: '#2c3745' },
-          { index: 250, color: '#c3977c' }
+          { index: 250, color: '#151920' },
+          { index: 251, color: '#1e232c' },
+          { index: 252, color: '#323945' },
+          { index: 253, color: '#cf6854' }
         ]
