@@ -195,20 +195,6 @@ colorscheme_dir=~/.orw/dotfiles/config/orw/colorschemes
 #echo $root_dir, $fifo, $bar_name
 #exit
 
-#fonts
-font_size=8
-icon_size=12
-
-font="SF Mono:style=Medium:size=$font_size"
-bold_font="SF Mono:style=Heavy:size=$font_size"
-
-font="Iosevka Orw:style=Semibold:size=$font_size"
-bold_font="Iosevka Orw:style=Heavy:size=$font_size"
-icon_font="material:size=$icon_size"
-bar_font="Iosevka Orw:size=8"
-bar_font="SFMono-Medium:size=11"
-font_offset=$((${font##*=} - ${bar_font##*=}))
-
 #joiner_modules=/tmp/${bar_name}_joiner_modules
 #active_joiner_modules=/tmp/active_joiner_modules
 #missing_joiner_modules=/tmp/missing_joiner_modules
@@ -2040,7 +2026,7 @@ assign_width_args() {
 	esac
 }
 
-while getopts :xywhspcrfFSjinemdvtDNPTCVOWARLX opt; do
+while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 	args=''
 	#[[ ! ${!OPTIND} == -[[:alpha:]] ]] &&
 	#	args="${!OPTIND}" && shift 1
@@ -2051,6 +2037,7 @@ while getopts :xywhspcrfFSjinemdvtDNPTCVOWARLX opt; do
 	fi
 
 	case $opt in
+		a) font_size=$args;;
 		r) bar_content+='%{r}';;
 		c)
 			[[ $colorscheme ]] &&
@@ -2229,6 +2216,24 @@ geometry="${bar_width}x${bar_height}+${bar_x}+${bar_y}"
 
 #assign_args power
 [[ $bar_content == *power* ]] && make_power_bar_script
+
+
+#fonts
+[[ $font_size ]] || font_size=8
+icon_size=$((font_size + font_size / 2))
+
+font="SFMono:style=Medium:size=$font_size"
+bold_font="SFMono:style=Heavy:size=$font_size"
+
+font="Iosevka Orw:style=Semibold:size=$font_size"
+bold_font="Iosevka Orw:style=Heavy:size=$font_size"
+icon_font="material:size=$icon_size"
+#bar_font="Iosevka Orw:size=8"
+bar_font="SFMono-Medium:size=11"
+bar_font="SFMono-Medium:size=$icon_size"
+#font_offset=$((${font##*=} - ${bar_font##*=}))
+font_offset=$((font_size - (icon_size - font_size / 5)))
+
 #echo POWER: $sbg, ${sbg:3:7}, $power_bar_bg, $power_bar_fg, $power_bar_content #, $power_bar_geometry
 #echo POWER: $power_bar_main_font $power_bar_content
 ##launch_power_bar
