@@ -4844,6 +4844,8 @@ set_layout_event() {
 					7) set_tile_event;;
 				esac
 			else
+				get_display_properties
+
 				if [[ ${tiling_workspaces[*]} == *$workspace* ]]; then
 					remove_tiling_window no_change
 
@@ -4859,21 +4861,24 @@ set_layout_event() {
 					update_aligned_windows
 					wmctrl -ia $id &
 				else
-					echo ${display_properties[*]}
+					#echo ${display_properties[*]}: $id, ${properties[*]}
 
 					((align_index > 2)) &&
 						index=1 opposite_index=0 || index=0 opposite_index=1
 
 					local properties=( ${display_properties[*]} ${properties[*]: -2} )
-					echo ${properties[*]}
+					#echo ${properties[*]}
 					size=$(((${display_properties[index + 2]} - ${display_properties[index]}) / 2))
 					properties[index + 2]=$((size - ${properties[index + 4]}))
 					((!(align_index % 2))) && ((properties[index] += size))
 					((properties[opposite_index + 2] -= \
 						${properties[opposite_index]} + ${properties[opposite_index + 4]}))
 					local props="${properties[*]::4}"
-					echo ${properties[*]}: $props
+					#echo ${properties[*]}: $props
 					wmctrl -ir $id -e 0,${props// /,} &
+					all_windows[$id]="${properties[*]}"
+					windows[$id]="${properties[*]}"
+					#echo END $id: ${properties[*]}
 				fi
 			fi
 		else
