@@ -30,4 +30,4 @@
 
 #~/.orw/scripts/new_bar/run.sh -y 10 -x 420 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
 #~/.orw/scripts/new_bar/run.sh -y 10 -x 410 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -v -j -i icons -p 10 -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15
-~/.orw/scripts/new_bar/run.sh -y 10 -x 415 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -j -j d:15,p:10 -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+~/.orw/scripts/new_bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -j -j d:15,p:10 -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
