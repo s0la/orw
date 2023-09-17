@@ -39,7 +39,7 @@ add_bar() {
 configs=~/.config/orw/bar/configs
 initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
 
-last_running=new_join,dock_new
+last_running=new_join
 
 #[[ $@ =~ -b ]] || get_bars
 
