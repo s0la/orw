@@ -2126,7 +2126,7 @@ else
 		most_vibrant=$(tr ' ' '\n' <<< ${light_accent_colors[*]} |
 			grep -v "^${darkest/ /\|}$" | sort -nr | head -1)
 		darkest=$(tr ' ' '\n' <<< ${light_accent_colors[*]} | 
-			grep -v $most_vibrant | sort -t ';' -nk 4,4 -k 3,3nr |
+			grep -v $most_vibrant | sort -t ';' -nk 1,1 -k 3,3nr |
 			head -$dark_count) #| sort -n$reverse_last)
 
 
@@ -3362,7 +3362,7 @@ read ccc hex_{sbgi,pbgi,pfgi,a1i} <<< \
 			print ccc, sbgi - 1, pbgi - 1, pfgi - 1, a1i - 1
 		}' ~/.config/orw/colorschemes/colors)
 
-term_conf=~/.config/alacritty/alacritty.yml
+term_conf=~/.orw/dotfiles/.config/alacritty/alacritty.yml
 
 for color in hex_{sbg,pbg,pfg,a1}; do
 	eval "read color index <<< \${!$color*}"
@@ -3380,6 +3380,8 @@ done
 #	}' $term_conf
 #exit
 
+#echo -e "$new_indexed_colors"
+
 [[ $new_indexed_colors ]] &&
 	awk -i inplace '
 		BEGIN { li = '$ccc' - 1 }
@@ -3393,6 +3395,8 @@ done
 		}
 
 		{ print }' $term_conf #| tail -22
+
+#exit
 
 #read {rgb,hex}_a5_dr <<< $(get_sbg $hex_a5 -18)
 #read {rgb,hex}_a5_br <<< $(get_sbg $hex_a5 +5)
@@ -4103,16 +4107,17 @@ replace_colors() {
 		echo -e "\n#$1\n$(set_$1 print)" || echo -e "\n#$1\n$output"
 }
 
-#awk -i inplace '/^[^#]*ground/ {
-#		if(/fore/) sub("#.*", "'$hex_fg'")
-#		else sub("\\(.*,", "('${rgb_bg//;/,}'")
-#	} { print }' $term_conf
-#killall -USR1 termite
+awk -i inplace '/^[^#]*ground/ {
+		if(/fore/) sub("#.*", "'$hex_fg'")
+		else sub("\\(.*,", "('${rgb_bg//;/,}'")
+	} { print }' ~/.config/termite/config
+killall -USR1 termite
 
 awk -i inplace '/^\s*[^#]*ground/ {
 		sub("#\\w*", ($1 ~ "^b") ? "'$hex_bg'" : "'$hex_fg'")
 	} { print }' $term_conf
-exit
+
+#exit
 
 #awk -i inplace '
 #	/^\s*background/ { sub("0x\\w*", "0x'${hex_bg#\#}'") }
