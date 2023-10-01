@@ -1891,7 +1891,7 @@ else
 								multiplier=0.4 || multiplier=0.7
 								#multiplier=0.4 || multiplier=1
 							multiplier=0.8
-							multiplier=1.2
+							#multiplier=1.2
 							#multiplier=2.2
 						else
 							value=$((value_diff + accent_deviation)) multiplier=1.6
@@ -2126,7 +2126,7 @@ else
 		most_vibrant=$(tr ' ' '\n' <<< ${light_accent_colors[*]} |
 			grep -v "^${darkest/ /\|}$" | sort -nr | head -1)
 		darkest=$(tr ' ' '\n' <<< ${light_accent_colors[*]} | 
-			grep -v $most_vibrant | sort -t ';' -nk 1,1 -k 3,3nr |
+			grep -v $most_vibrant | sort -t ';' -nk 4,4 -k 3,3nr |
 			head -$dark_count) #| sort -n$reverse_last)
 
 
@@ -2459,8 +2459,8 @@ else
 							if (!del && similar(ar1[i], ar2[ai]) && !(ar1[i] in sc)) sc[ar1[i]] = length(aac)
 
 							#if (del && similar(ar1[i], ar2[ai])) {
-							if (del && int(lab) <= ds) {
-								#print "HERE", i, ar1[i], ai, ar2[ai], aac[6], lab, ds
+							if (del && int(lab) <= ds && length(rac) < 2) {
+								#print "HERE", i, ar1[i], ai, ar2[ai], aac[6], lab, ds, length(ac), length(aac)
 								#ar2[ai] = aac[6]
 								#da[aac[6]] = 1
 								#delete aac[6]
@@ -2491,8 +2491,10 @@ else
 								#delete ar2[(acp[3] > arp[3] && ai > 1) ? ai : i]
 
 								#delete ar2[(acp[1] > arp[1] && ai > 1) ? ai : i]
-								delete ar2[((acp[1] > arp[1] ||
-									(acp[1] == arp[1] && acp[4] > arp[4])) && ai > 1) ? ai : i]
+								adi = ((acp[1] > arp[1] ||
+									(acp[1] == arp[1] && acp[4] > arp[4])) && ai > 1) ? ai : i
+								rac = ar2[adi]
+								delete ar2[adi]
 
 								#if (ar1[i] ~ "^71.*") print acp[1], arp[1], acp[4], arp[4]
 
@@ -2763,14 +2765,16 @@ else
 				#exit
 
 				#for (a in ac) print la, a, ac[a]
-				#exit
 
 				acl = length(ac)
 				bacl = length(bac)
 
 				if (acl < 3 && bacl) {
-					for (bai=1; bai < 3 - acl; bai++) ac[acl + bai] = bac[bai]
+					for (bai=1; bai < 4 - acl; bai++) ac[bai] = bac[bai]
 				}
+
+				#for (a in ac) print la, a, ac[a]
+				#exit
 
 				#print(get_next_color(ac))
 				#for (fai=2; fai<5; fai++) aac[fai] = get_next_color(ac)
@@ -3453,6 +3457,20 @@ set_ob() {
 			s $hex_a5_dr
 		EOF
 	#else
+
+		awk -i inplace '
+			BEGIN { split("'"$rgb_a5"'", ca, ";") }
+			/shadow-(red|green|blue)/ {
+				switch ($1) {
+					case /red/: c = ca[1]; break
+					case /green/: c = ca[2]; break
+					case /blue/: c = ca[3]; break
+				}
+
+				c = sprintf("%0.f", 100 * (c / 255))
+				sub("\\.[0-9]*", "." c)
+			} { print }' ~/.orw/dotfiles/.config/picom/picom.conf
+
 		awk -i inplace '
 			BEGIN {
 				menu = "(border|separator|bullet.image|(title|items).bg).*.color"
@@ -3693,14 +3711,21 @@ set_bash() {
 set_rofi() {
 	local {rgb,hex}_rofi_{s,a,}bg
 	read {rgb,hex}_rofi_bg <<< $(get_sbg $hex_bg +3 0)
-	read {rgb,hex}_rofi_sbg <<< $(get_sbg $hex_sbg +3 0)
+	#read {rgb,hex}_rofi_sbg <<< $(get_sbg $hex_sbg +3 0)
 	read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -5)
+	read {rgb,hex}_rofi_hpfg <<< $(get_sbg $hex_pbg +15)
 	read {rgb,hex}_rofi_pbg <<< $(get_sbg $hex_rofi_bg +5 0)
+
+	#hex_rofi_bg=$hex_bg
 
 	#echo $hex_rofi_abg, $hex_rofi_sbg, $hex_bg, $hex_sbg
 
 	cat <<- EOF
 		bg: $hex_rofi_bg;
+		dmbg: $hex_sbg;
+		dmfg: $hex_pfg;
+		dmsbg: $hex_pbg;
+		hpfg: $hex_rofi_hpfg;
 		tbg: argb:f0${hex_rofi_bg#\#};
 		tbg: argb:ea${hex_rofi_bg#\#};
 		tbg: argb:dd${hex_rofi_bg#\#};
@@ -4111,7 +4136,7 @@ awk -i inplace '/^[^#]*ground/ {
 		if(/fore/) sub("#.*", "'$hex_fg'")
 		else sub("\\(.*,", "('${rgb_bg//;/,}'")
 	} { print }' ~/.config/termite/config
-killall -USR1 termite
+pidof termite &> /dev/null && killall -USR1 termite
 
 awk -i inplace '/^\s*[^#]*ground/ {
 		sub("#\\w*", ($1 ~ "^b") ? "'$hex_bg'" : "'$hex_fg'")
