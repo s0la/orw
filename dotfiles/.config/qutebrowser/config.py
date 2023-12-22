@@ -1,9 +1,9 @@
-bg = '#172020'
-fg = '#2c3939'
-sbg = '#0e1414'
-sfg = '#5ec1bf'
-mfg = '#7c8da5'
-sbbg = '#0e1414'
+bg = '#272628'
+fg = '#414141'
+sbg = '#1b1a1c'
+sfg = '#c68982'
+mfg = '#8293a3'
+sbbg = '#1b1a1c'
 
 font_size = 8
 v_padding = 3
@@ -65,14 +65,16 @@ c.statusbar.padding = { 'top': v_padding, 'bottom': v_padding, 'left': v_padding
 c.colors.completion.category.bg = sbg
 c.colors.completion.category.border.bottom = sbg
 c.colors.completion.category.border.top = sbg
-c.colors.completion.category.fg = sfg
+c.colors.completion.category.fg = fg
+c.colors.completion.category.bg = bg
 c.colors.completion.even.bg = sbg
 c.colors.completion.fg = fg
 c.colors.completion.scrollbar.fg = sbg
 c.colors.completion.item.selected.bg = sbg
 c.colors.completion.item.selected.border.bottom = sbg
 c.colors.completion.item.selected.border.top = sbg
-c.colors.completion.item.selected.fg = sfg
+c.colors.completion.item.selected.fg = fg
+c.colors.completion.item.selected.bg = bg
 c.colors.completion.item.selected.match.fg = mfg
 c.colors.completion.match.fg = mfg
 c.colors.completion.odd.bg = sbg
@@ -86,7 +88,7 @@ c.colors.downloads.bar.bg = bg
 c.colors.downloads.error.bg = 'red'
 c.colors.downloads.error.fg = fg
 c.colors.downloads.start.bg = bg
-c.colors.downloads.start.fg = sfg
+c.colors.downloads.start.fg = fg
 c.colors.downloads.stop.bg = mfg
 c.colors.downloads.stop.fg = bg
 c.colors.downloads.system.bg = 'rgb'
@@ -169,3 +171,5 @@ c.colors.tabs.selected.odd.fg = sfg
 
 # Bindings
 config.bind('p', 'hint links spawn mpv {hint-url}')
+config.bind('<ctrl-k>', 'completion-item-focus prev', mode='command')
+config.bind('<ctrl-j>', 'completion-item-focus next', mode='command')

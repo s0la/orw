@@ -1,0 +1,102 @@
+/* list config */
+
+@import "theme"
+
+* {
+	font:                  "SFMono Medium 10";
+	font:                  "Iosevka Orw 9";
+	font:                  "SFMono Medium 8";
+
+	// lines:                 no-fixed-num-lines;
+	lines:                 8;
+
+	window-width:          35%;
+	window-height:         200px;
+	window-margin:         0px 0;
+	window-padding:        3% 2%;
+	window-location:       center;
+	window-orientation:    horizontal;
+
+	list-padding:          6px;
+	list-margin:           6px 0;
+
+	input-margin:          0 0 10px;
+	input-padding:         5px 8px;
+
+	entry-margin:          0 3px 0;
+
+	art-width:             300px;
+
+	element-padding:       8px 8px;
+}
+
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    background-color:            transparent;
+	// padding:        30px;
+    orientation:                 horizontal;
+    children:                    [  "box" , "listbox" ];
+}
+
+#window {
+	width:          @window-width;
+	border:         @window-border;
+	margin:         @window-margin;
+	padding:        0;
+	location:       @window-location;
+    background-color:            transparent;
+	border:         0;
+}
+
+box {
+	expand: false;
+	background-image:	         url("/tmp/rofi_cover_art.png");
+    orientation:                 vertical;
+	vertical-align:              5%;
+    enabled:                     true;
+    text-color:                  @fg;
+    width:                       @art-width;
+    children:                    [ "prompt" ];
+}
+
+listbox {
+	children:                    [ "inputbar", "listview" ];
+    orientation:                 vertical;
+	background-color:            @bg;
+	padding:                     10px 30px;
+}
+
+#listview {
+	background-color:   transparent;
+	scrollbar:      false;
+	dynamic:        true;
+	vertical-align: 0.5;
+	spacing:        0;
+}
+
+prompt {
+	margin:			200px 0 10px 20px;
+	background-color:   transparent;
+	font:			"Iosevka Orw 10";
+	width: 100%;
+	border-radius:	5px;
+	expand: false;
+	text-color: @lpc;
+}
+
+
+inputbar {
+	children:                    [ "entry" ];
+	background-color:            transparent;
+}
+
+#entry {
+	padding: @element-padding;
+	background-color: transparent;
+	color:            @lpc;
+}
+
+#element {
+	padding:        @element-padding;
+}

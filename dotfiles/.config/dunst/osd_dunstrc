@@ -32,9 +32,9 @@
 
     #geometry = "200x192+860+720"
 
-	offset = 0x150
+	offset = 0x200
 	width = 190
-	height = (0, 300)
+	height = 300
 	origin = bottom-center
 
     # Show how many messages are currently hidden (because of geometry).
@@ -47,12 +47,12 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.).
-	transparency = 20
+	transparency = 30
 
     # The height of the entire notification.  If the height is smaller
     # than the font height and padding combined, it will be raised
     # to the font height and padding.
-    notification_height = 0
+    #notification_height = 0
 
     # Draw a line of "separator_height" pixel height between two
     # notifications.
@@ -206,7 +206,7 @@
     # Print a notification on startup.
     # This is mainly for error detection, since dbus (re-)starts dunst
     # automatically after a crash.
-    startup_notification = false
+    #startup_notification = false
 
     # Manage dunst's desire for talking
     # Can be one of the following values:
@@ -215,7 +215,7 @@
     #  mesg: Important Messages
     #  info: all unimportant stuff
     # debug: all less than unimportant stuff
-    verbosity = mesg
+    #verbosity = mesg
 
     # Define the corner radius of the notification window
     # in pixel size. If the radius is 0, you have no rounded
@@ -259,32 +259,10 @@
     # where there are multiple screens with very different dpi values.
     per_monitor_dpi = false
 
-[shortcuts]
-
-    # Shortcuts are specified as [modifier+][modifier+]...key
-    # Available modifiers are "ctrl", "mod1" (the alt-key), "mod2",
-    # "mod3" and "mod4" (windows-key).
-    # Xev might be helpful to find names for keys.
-
-    # Close notification.
-    close = ctrl+space
-
-    # Close all notifications.
-    close_all = ctrl+shift+space
-
-    # Redisplay last message(s).
-    # On the US keyboard layout "grave" is normally above TAB and left
-    # of "1". Make sure this key actually exists on your keyboard layout,
-    # e.g. check output of 'xmodmap -pke'
-    history = ctrl+grave
-
-    # Context menu.
-    context = ctrl+shift+period
-
 [urgency_normal]
-	background = "#172020"
-	foreground = "#acbfb5"
-	frame_color = "#9c7da5"
+	background = "#272628"
+	foreground = "#b3acbf"
+	frame_color = "#626661"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

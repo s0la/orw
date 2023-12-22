@@ -3,55 +3,52 @@
 @import "theme"
 
 * {
-	font:                  "SFMono Medium 10";
-	font:                  "Iosevka Orw 9";
-	font:                  "SFMono Medium 8";
+	font:                        "Iosevka Orw 9";
+	font:                        "SFMono Medium 8";
 
-	// lines:                 no-fixed-num-lines;
-	lines:                 8;
+	lines:                       5;
 
-	window-width:          35%;
-	window-height:         200px;
-	window-margin:         0px 0;
-	window-padding:        3% 2%;
-	window-location:       center;
-	window-orientation:    horizontal;
+	window-width:                35%;
+	window-location:             center;
 
-	list-padding:          6px;
-	list-margin:           6px 0;
+	list-padding:                6px;
+	list-padding:                10px 30px;
+	list-margin:                 6px 0;
 
-	input-margin:          0 0 10px;
-	input-padding:         5px 8px;
+	input-margin:                0 0 10px;
+	input-padding:               5px 8px;
 
-	entry-margin:          0 3px 0;
+	entry-margin:                0 3px 0;
 
-	art-width:             300px;
+	art-width:                   300px;
 
-	element-padding:       8px 8px;
+	element-padding:             8px 8px;
+
+	vertical-prompt-margin:      273px 0 10px 20px;
+	horizontal-prompt-margin:    200px 0 10px 20px;
 }
 
 mainbox {
     enabled:                     true;
     spacing:                     0px;
     background-color:            transparent;
-	// padding:        30px;
-    orientation:                 horizontal;
+    orientation:                 vertical;
     children:                    [  "box" , "listbox" ];
 }
 
 #window {
-	width:          @window-width;
-	border:         @window-border;
-	margin:         @window-margin;
-	padding:        0;
-	location:       @window-location;
+	width:                       @window-width;
+	border:                      0;
+	margin:                      0;
+	padding:                     0;
+	location:                    @window-location;
     background-color:            transparent;
-	border:         0;
+	border:                      0;
 }
 
 box {
 	expand: false;
-	background-image:	         url("/tmp/rofi_cover_art.png");
+	background-image:            url("/tmp/rofi_cover_art.png");
     orientation:                 vertical;
 	vertical-align:              5%;
     enabled:                     true;
@@ -64,27 +61,26 @@ listbox {
 	children:                    [ "inputbar", "listview" ];
     orientation:                 vertical;
 	background-color:            @bg;
-	padding:                     10px 30px;
+	padding:                     @list-padding;
 }
 
 #listview {
-	background-color:   transparent;
-	scrollbar:      false;
-	dynamic:        true;
-	vertical-align: 0.5;
-	spacing:        0;
+	background-color:            transparent;
+	scrollbar:                   false;
+	dynamic:                     true;
+	vertical-align:              0.5;
+	spacing:                     0;
 }
 
 prompt {
-	margin:			200px 0 10px 20px;
-	background-color:   transparent;
-	font:			"Iosevka Orw 10";
-	width: 100%;
-	border-radius:	5px;
-	expand: false;
-	text-color: @lpc;
+	margin:                      @vertical-prompt-margin;
+	background-color:            transparent;
+	font:                        "SFMono 10";
+	width:                       100%;
+	border-radius:               5px;
+	expand:                      false;
+	text-color:                  @lpc;
 }
-
 
 inputbar {
 	children:                    [ "entry" ];
@@ -92,11 +88,11 @@ inputbar {
 }
 
 #entry {
-	padding: @element-padding;
-	background-color: transparent;
-	color:            @lpc;
+	padding:                     @element-padding;
+	background-color:            transparent;
+	color:                       @lpc;
 }
 
 #element {
-	padding:        @element-padding;
+	padding:                     @element-padding;
 }

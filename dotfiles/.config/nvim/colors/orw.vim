@@ -11,26 +11,26 @@ let s:dd = '#a66c6c'
 let s:dc = '#EBCB8B'
 
 let g:bg = 'none'
-let g:fg = '#bbcbc3'
-let g:ifg = '#aacac3'
-let g:vfg = '#7c8da5'
-let g:cfg = '#75a082'
-let g:ffg = '#9c7da5'
-let g:sfg = '#5ec1bf'
+let g:fg = '#c1bbcb'
+let g:sfg = '#c68982'
+let g:vfg = '#8293a3'
+let g:cfg = '#d0b59d'
+let g:ifg = '#a08cbf'
+let g:ffg = '#626661'
 let g:nbg = 'none'
-let g:nfg = '#212c2c'
-let g:lbg = '#172020'
-let g:lfg = '#5ec1bf'
-let g:syfg = '#75a082'
-let g:cmfg = '#2c3939'
-let g:slbg = '#172020'
-let g:slfg = '#2c3939'
-let g:fzfhl = '#5ec1bf'
-let g:bcbg = '#9c7da5'
-let g:bdbg = '#5ec1bf'
-let g:nmbg = '#aacac3'
-let g:imbg = '#7c8da5'
-let g:vmbg = '#75a082'
+let g:nfg = '#333334'
+let g:lbg = '#272628'
+let g:lfg = '#c68982'
+let g:syfg = '#d0b59d'
+let g:cmfg = '#414141'
+let g:slbg = '#272628'
+let g:slfg = '#414141'
+let g:fzfhl = '#c68982'
+let g:bcbg = '#626661'
+let g:bdbg = '#c68982'
+let g:nmbg = '#a08cbf'
+let g:imbg = '#8293a3'
+let g:vmbg = '#d0b59d'
 
 "let g:bcbg = '#666662'
 "let g:bdbg = '#7ec197'
@@ -39,7 +39,13 @@ let g:vmbg = '#75a082'
 "let g:imbg = '#4e4e4e'
 "let g:vmbg = '#4f565e'
 
+
+let s:term_config = "~/.config/alacritty/alacritty.yml"
+let s:bgc = system("awk -F \"'\" '/background/ { print $(NF - 1) }' " . s:term_config)
+let s:bgc = g:cmfg
+
 exe 'hi Error          guibg=none'
+exe 'hi MsgArea        guifg='.s:bgc
 exe 'hi MoreMsg        guifg='.g:sfg
 exe 'hi ErrorMsg       guibg=none                 guifg='.g:ffg
 exe 'hi Visual         guibg='.g:slbg

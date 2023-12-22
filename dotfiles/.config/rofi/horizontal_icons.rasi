@@ -7,31 +7,36 @@
 
 	font:                   "material 13";
 
-	window-orientation:     vertical;
+	window-orientation:     horizontal;
 
-	list-spacing:                5px;
+	list-spacing:           7px;
 
 	input-margin:           0 0 5px;
 
 	entry-margin:           0 5px;
 
-	element-padding:        27px 27px;
+	element-padding:        29px 29px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
-	x-offset:               6px;
-
-	window-location:        west;
-	window-padding:         5px 5px;
+	window-location:        center;
+	window-padding:         7px 7px;
 	// window-margin:          0 7px;
 	window-radius:          5px;
-	window-width:           81px;
+	window-width:           383px;
+
+	y-offset:               50px;
 
 	background-color: @ftbg;
+	sbg: #dddddd0d;
+	abg: #08080844;
 }
 
 configuration {
-	fixed-num-lines: false;
+	kb-row-up:        "";
+	kb-row-down:      "";
+	kb-row-left:      "Ctrl+k";
+	kb-row-right:     "Ctrl+j";
 }
 
 mainbox {
@@ -46,22 +51,22 @@ mainbox {
 	// margin:           @window-margin;
 	anchor:           @window-location;
 	location:         @window-location;
-	padding:          @window-padding;
+	padding:          @list-spacing;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
     background-color:            transparent;
-    // background-color:            @bg;
+    background-color:            @bg;
 }
 
 #horibox {
-	orientation: @window-orientation;
 	children:    [ listview ];
 }
 
 #listview {
-	layout:      @window-orientation;
+	flow:      @window-orientation;
 	spacing:     @list-spacing;
-	lines:       0.260417;
+	lines:       1;
+	columns: 4;
     background-color:            transparent;
 	/*background-color: argb:00000000;*/
 }
@@ -85,9 +90,12 @@ mainbox {
 	background-color: @bg;
 }
 
+#element-text {
+	horizontal-align: 0.50;
+}
+
 #element.normal.normal, element.alternate.normal {
-	background-color: @bg;
-	// background-color: transparent;
+	background-color: transparent;
 }
 
 #element-text normal.normal, element-text alternate.normal {
@@ -102,6 +110,6 @@ mainbox {
 
 #element.selected.active {
 	text-color:       @efg;
-	// background-color: @bg;
+	background-color: @abg;
 	border:           @element-border;
 }

@@ -3,33 +3,55 @@
 @import "theme"
 
 * {
-	window-width:         1920px;
 	window-border:        0px;
-	window-margin:        30px 0 0 0;
+	window-padding:        2px;
+	// window-margin:        52px 0 0 0;
 
-	element-padding:      6px 15px;
+	y-offset:             54px;
+
+	// element-padding:      1ch 3ch;
+	element-padding:      4px 15px;
 	element-border:       0 0 2px;
 
 	input-padding:        @element-padding;
 
-	entry-margin:         0 0 -1px;
-	entry-margin:         0 5px -1px;
+	// entry-margin:         0 1ch;
+	// entry-margin:         0 5px -1px;
+	entry-margin:         0 5px;
+	entry-width:          100px;
+
+	// prompt-padding:       0 1ch;
+	// prompt-margin:        0 0 0 1ch;
 
 	prompt-padding:       0px 3px;
 	prompt-margin:        0 0 0 3px;
 
-	colon-margin:         1px 3px -1px;
-	colon-margin:         0 0 0 5px;
+	// colon-margin:         0 0 0 1ch;
+	// colon-margin:         1px 3px -1px;
+
+	font: "Iosevka Orw 9";
+	font: "SFMono 9";
+
+	window-width:         1000px;
+	bg:      @dmbg;
+}
+
+configuration {
+	kb-row-up:        "";
+	kb-row-down:      "";
+	kb-row-left:      "Ctrl+k";
+	kb-row-right:     "Ctrl+j";
 }
 
 #window {
 	width:      @window-width;
 	border:     @window-border;
-	margin:     @window-margin;
+	// margin:     @window-margin;
 	padding:    0px;
 	anchor:     north;
 	location:   north;
 	children:   [ horibox ];
+	background-color: @bg;
 }
 
 #horibox {
@@ -39,17 +61,47 @@
 }
 
 #listview {
-	layout:      horizontal;
-	lines:       100;
+	// layout:       horizontal;
+	flow:      horizontal;
+	lines:       1;
+	columns:     8;
 	spacing:     0;
+	background-color: @bg;
+	// padding:    @window-padding;
 }
 
 #element {
 	padding:      @element-padding;
+	background-color: @bg;
+}
+
+#element-text {
+	horizontal-align: 0.50;
+}
+
+#element.normal.normal, element.alternate.normal {
+	padding:      @element-padding;
+	background-color: @bg;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color:        @dmfg;
+	background-color: @bg;
 }
 
 #element.selected.normal, element.selected.active {
 	border:       @element-border;
+	background-color: @sbg;
+	background-color: @dmsbg;
+}
+
+#element.normal.active {
+	//border:       @element-border;
+	background-color: @abg;
+}
+
+#element-text selected.normal, element-text selected.active {
+	color:            @dpc;
 }
 
 #inputbar {
@@ -58,19 +110,22 @@
 	padding:          @input-padding;
 	children:         [ textbox-prompt-colon, entry ];
 	background-color: @ibg;
+	background-color: @bg;
 }
 
 #entry {
-	width:            10em;
+	width:            @entry-width;
 	expand:           false;
 	background-color: @ibg;
 	margin:           @entry-margin;
+	background-color: @bg;
 }
 
 #prompt {
 	margin:           @prompt-margin;
 	padding:          @prompt-padding;
 	background-color: @ibg;
+	background-color: @bg;
 }
 
 #textbox-prompt-colon {
@@ -78,5 +133,6 @@
 	color:            @dpc;
 	expand:           false;
 	background-color: @ibg;
-	margin:           @colon-margin;
+	// margin:           @colon-margin;
+	background-color: @bg;
 }
