@@ -1,13 +1,13 @@
-@define-color bg #0e1414;
-@define-color pbg #212c2c;
-@define-color sbg #172020;
-@define-color bbg #5ec1bf;
-@define-color hlbg #131b1b;
-@define-color tbg rgba(23,32,32,0.90);
-@define-color fg #acbfb5;
-@define-color pfg #374545;
-@define-color sfg #2c3939;
-@define-color afg #7c8da5;
+@define-color bg #1b1a1c;
+@define-color pbg #333334;
+@define-color sbg #272628;
+@define-color bbg #8eb1a4;
+@define-color hlbg #222123;
+@define-color tbg rgba(27,26,28,0.90);
+@define-color fg #b3acbf;
+@define-color pfg #4d4d4d;
+@define-color sfg #414141;
+@define-color afg #cd887e;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
@@ -79,13 +79,38 @@ window.thunar toolbar * {
 	color: @pfg;
 }
 
-window.thunar toolbar button:hover {
-	background: @hlbg;
+window.thunar toolbar button {
 	border-radius: 1px;
 	box-shadow: none;
-	transition: 0;
 	border: none;
+}
+
+window.thunar toolbar button:hover {
+	background: @hlbg;
+	transition: 0;
 	color: @pfg;
+}
+
+/*path-bar of thunar*/
+/*
+window.thunar toolbar#location-toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:checked {
+	color: #ffffff;
+	background: linear-gradient(to right, #c50ed2, #8500f7);
+	border-radius: 20px 20px 20px 20px;
+
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+*/
+
+/*
+window.thunar toolbar#location-toolbar > toolitem > widget > widget.linked.path-bar > button.path-bar-button {
+*/
+
+window.thunar toolbar#location-toolbar > button {
+	background: @pbg;
+	outline: none;
+	border: none;
+	box-shadow: none;
 }
 
 .thunar toolbar entry {
@@ -113,3 +138,33 @@ window.thunar scrollbar:hover {
 window.thunar scrollbar.button:hover {
 	background-color: @afg;
 }
+
+/*
+.thunar toolbar {
+background-color: #282a36; }
+
+.thunar toolbar.horizontal button image {
+-gtk-icon-transform: scale(0.72); }
+
+scrolledwindow.sidebar treeview.view, scrollbar.right {
+	background: #232530;
+	padding: 1.5px;
+	border: none;
+box-shadow: none; }
+
+scrolledwindow.standard-view scrollbar.right {
+background-color: #282a36; }
+
+window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:hover, window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:checked, window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:selected, window.thunar paned > scrolledwindow treeview.view:hover, window.thunar paned > scrolledwindow treeview.view:checked, window.thunar paned > scrolledwindow treeview.view:selected {
+	background-color: transparent;
+	color: #cecece;
+box-shadow: none; }
+window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:checked:backdrop label, window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:selected:backdrop label, window.thunar paned > scrolledwindow treeview.view:checked:backdrop label, window.thunar paned > scrolledwindow treeview.view:selected:backdrop label {
+color: rgba(189, 147, 249, 0.4); }
+
+window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.path-bar-button {
+	background: none;
+	outline: none;
+	border: none;
+box-shadow: none; }
+*/

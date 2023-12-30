@@ -1,18 +1,18 @@
 #ob
-t #684747
-tb #684747
-b #684747
-c #684747
+t #714944
+tb #714944
+b #714944
+c #714944
 it #201f1c
 itb #201f1c
 ib #201f1c
 ic #201f1c
-cbt #7e5b5b
-mabt #7e5b5b
-mibt #7e5b5b
-cbth #513434
-mabth #513434
-mibth #513434
+cbt #875c57
+mabt #875c57
+mibt #875c57
+cbth #5a3632
+mabth #5a3632
+mibth #5a3632
 ibt #141311
 ibth #141311
 mbg #201f1c
@@ -28,7 +28,7 @@ bsfg #2c2b28
 osd #201f1c
 osdh #c8ac9c
 osdu #2c2b28
-s #513434
+s #5a3632
 
 #bar
 bg #2c2b28
@@ -37,20 +37,20 @@ bfc #d0141311
 bfc #2c2b28
 bbg #2c2b28
 jbg #141311
-jpfg #7e5b5b
-jsfg #513434
+jpfg #875c57
+jsfg #5a3632
 pbg #141311
 pfg #91a2a2
 sbg #141311
 sfg #454442
 pbefg #c8ac9c
 pbfg #454442
-mlfg #7f7872
+mlfg #626b67
 tbfg #454442
 Psbg #201f1c
 Psfg #393835
 Apfg #91a2a2
-Abfg #684747
+Abfg #714944
 Wsbg #2c2b28
 Wpbg #2c2b28
 Lsbg #d0141311
@@ -67,7 +67,7 @@ bg #201f1c
 fg #393835
 sbg #141311
 sfg #c8ac9c
-mfg #5e5c59
+mfg #595754
 sbbg #141311
 
 #term
@@ -79,34 +79,34 @@ bg default
 fg #454442
 sc #454442
 dc #454442
-ic #5e5c59
-sec #684747
-gcc #684747
+ic #595754
+sec #714944
+gcc #714944
 gdc #c8ac9c
-vc #7f7872
+vc #626b67
 
 #vim
 bg none
 fg #bbcbcb
-ifg #7f7872
-vfg #5e5c59
-cfg #714944
-ffg #684747
+ifg #626b67
+vfg #595754
+cfg #7f7872
+ffg #714944
 sfg #c8ac9c
 nbg none
 nfg #2c2b28
 lbg #201f1c
 lfg #c8ac9c
-syfg #714944
+syfg #7f7872
 cmfg #393835
 slbg #201f1c
 slfg #393835
 fzfhl #c8ac9c
-bcbg #684747
+bcbg #714944
 bdbg #c8ac9c
-nmbg #7f7872
-imbg #5e5c59
-vmbg #714944
+nmbg #626b67
+imbg #595754
+vmbg #7f7872
 
 #rofi
 bg #1b1a17
@@ -116,7 +116,7 @@ tbg #dd1b1a17
 mbg #f0141311
 msbg #70272621
 fg #393835
-bc #684747
+bc #714944
 bc #1b1a17
 ibg #1b1a17
 ibc #2c2b28
@@ -151,7 +151,7 @@ sbsbg #11111144
 bg terminal
 fg #393835
 bc #201f1c
-mc #684747
+mc #714944
 ibg #201f1c
 ifg #393835
 sfg #393835
@@ -163,7 +163,7 @@ cfg #c8ac9c
 #dunst
 bg #201f1c
 fg #acbfbf
-fc #684747
+fc #714944
 sbg #141311
 pbfg #c8ac9c
 
@@ -198,7 +198,7 @@ fg #c8ac9c
 tc #ffacbfbf
 rc #ffc8ac9c
 ic #dc141311
-wc #ff7e5b5b
+wc #ff875c57
 
 #nb
 fg #2c2b28

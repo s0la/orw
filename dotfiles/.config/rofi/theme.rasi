@@ -13,7 +13,7 @@
 	mbg: argb:f01b1a1c;
 	msbg: argb:702e2d2f;
 	fg: #414141;
-	bc: #626661;
+	bc: #63615a;
 	bc: #222123;
 	ibg: #222123;
 	ibc: #333334;
@@ -25,7 +25,7 @@
 	abg: #1a191bdd;
 	afg: #4d4d4d;
 	ebg: #222123;
-	efg: #c68982;
+	efg: #8eb1a4;
 	sbg: #e0e0e00e;
 	sbg: #fafafa0a;
 	sbg: #eeeeee0a;
@@ -33,15 +33,15 @@
 	sbg: #dddddd0d;
 	sbg: #2e2d2fb0;
 	sbg: #2e2d2fd0;
-	sfg: #c68982;
-	sul: #c68982;
+	sfg: #8eb1a4;
+	sul: #8eb1a4;
 	lpc: #b3acbf;
 	dpc: #b3acbf;
 	btc: #222123;
 	sbtc: #222123;
 	btbc: #222123;
 	ftbg: #00000000;
-	sbbg: #c6898288;
+	sbbg: #8eb1a488;
 	sbsbg: #11111144;
 
 	background-color: @bg;

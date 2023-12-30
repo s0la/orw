@@ -278,7 +278,7 @@ transparency = 20
 [urgency_normal]
 	background = "#272628"
 	foreground = "#b3acbf"
-	frame_color = "#626661"
+	frame_color = "#63615a"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

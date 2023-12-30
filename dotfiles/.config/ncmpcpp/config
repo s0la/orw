@@ -10,12 +10,12 @@ playlist_display_mode = "classic"
 message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
-now_playing_prefix = "$(208)"
+now_playing_prefix = "$(170)"
 now_playing_suffix = "$0"
-selected_item_prefix = "$(207)"
-#current_item_prefix = "$(207)"
-current_item_prefix = "$(207)$r"
-browser_playlist_prefix = "$207»$207 "
+selected_item_prefix = "$(173)"
+#current_item_prefix = "$(173)"
+current_item_prefix = "$(173)$r"
+browser_playlist_prefix = "$173»$173 "
 
 colors_enabled = "yes"
 cyclic_scrolling = "yes"
@@ -27,10 +27,10 @@ titles_visibility = "no"
 statusbar_visibility = "yes"
 display_remaining_time = "yes"
 
-volume_color = "207"
-statusbar_color = "207"
-header_window_color = "207"
-main_window_color = "207"
+volume_color = "173"
+statusbar_color = "173"
+header_window_color = "173"
+main_window_color = "173"
 empty_tag_color = "6"
 color2 = "4"
 
@@ -41,9 +41,9 @@ window_border_color = "white"
 active_window_border = "cyan"
 alternative_ui_separator_color = "black"
 
-progressbar_color = "206"
+progressbar_color = "172"
 progressbar_look = "━━━"
-progressbar_elapsed_color = "214"
+progressbar_elapsed_color = "188"
 
 visualizer_in_stereo = "no"
 visualizer_fifo_path = "/home/sola/.config/mpd/mpd.fifo"
@@ -51,6 +51,6 @@ visualizer_output_name = "mpd_fifo"
 visualizer_sync_interval = "30"
 visualizer_look = "○▋"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_color = 214,214,214,214,214,214,214,214,214,214,214
+visualizer_color = 188,188,188,188,188,188,188,188,188,188,188
 
 execute_on_song_change = "~/.orw/scripts/song_notification.sh &> /dev/null"

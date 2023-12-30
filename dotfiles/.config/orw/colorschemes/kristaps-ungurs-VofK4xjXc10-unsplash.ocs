@@ -45,7 +45,7 @@ sbg #11140f
 sfg #3f453a
 pbefg #98ba5c
 pbfg #3f453a
-mlfg #577945
+mlfg #4e6956
 tbfg #3f453a
 Psbg #1c2019
 Psfg #33392f
@@ -67,7 +67,7 @@ bg #1c2019
 fg #33392f
 sbg #11140f
 sfg #98ba5c
-mfg #84846c
+mfg #956f59
 sbbg #11140f
 
 #term
@@ -79,17 +79,17 @@ bg default
 fg #3f453a
 sc #3f453a
 dc #3f453a
-ic #84846c
+ic #956f59
 sec #655644
 gcc #655644
 gdc #98ba5c
-vc #577945
+vc #4e6956
 
 #vim
 bg none
 fg #c6cbbb
-ifg #577945
-vfg #84846c
+ifg #4e6956
+vfg #956f59
 cfg #b1a25c
 ffg #655644
 sfg #98ba5c
@@ -104,12 +104,15 @@ slfg #33392f
 fzfhl #98ba5c
 bcbg #655644
 bdbg #98ba5c
-nmbg #577945
-imbg #84846c
+nmbg #4e6956
+imbg #956f59
 vmbg #b1a25c
 
 #rofi
 bg #171b14
+dmbg #1c2019
+dmfg #3f453a
+dmsbg #272c23
 tbg #f0171b14
 tbg #ea171b14
 tbg #dd171b14

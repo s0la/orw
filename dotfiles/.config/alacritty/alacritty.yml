@@ -27,18 +27,15 @@ cursor:
 font:
     size: 8.5
 
+    normal:
+        style: Regular
+        family: SFMono
+
     glyph_offset:
         y: 0
 
-    normal:
-        style: Regular
-        family: Iosevka Orw
-        family: Maple Mono
-        family: SFMono
-
     bold:
         style: Heavy
-        family: Iosevka Orw
         family: SFMono
 
 colors:
@@ -218,54 +215,25 @@ colors:
           { index: 164, color: '#132445' },
           { index: 165, color: '#d46f5c' },
           { index: 166, color: '#191920' },
-          { index: 167, color: '#23232c' },
-          { index: 168, color: '#3a3a45' },
-          { index: 169, color: '#a59597' },
-          { index: 170, color: '#201f1e' },
-          { index: 171, color: '#2c2b2a' },
-          { index: 172, color: '#baae8d' },
-          { index: 173, color: '#20201f' },
-          { index: 174, color: '#ff976e' },
-          { index: 175, color: '#f04b67' },
-          { index: 176, color: '#b07b63' },
-          { index: 177, color: '#141520' },
-          { index: 178, color: '#1c1e2c' },
-          { index: 179, color: '#2f3245' },
-          { index: 180, color: '#cc5485' },
-          { index: 181, color: '#141720' },
-          { index: 182, color: '#1c202c' },
-          { index: 183, color: '#2f3545' },
-          { index: 184, color: '#c69367' },
-          { index: 185, color: '#181a25' },
-          { index: 186, color: '#212331' },
-          { index: 187, color: '#35384a' },
-          { index: 188, color: '#171b25' },
-          { index: 189, color: '#1f2531' },
-          { index: 190, color: '#323a4a' },
-          { index: 191, color: '#232521' },
-          { index: 192, color: '#2f312d' },
-          { index: 193, color: '#494a48' },
-          { index: 194, color: '#151f25' },
-          { index: 195, color: '#1d2a31' },
-          { index: 196, color: '#2f414a' },
-          { index: 197, color: '#191928' },
-          { index: 198, color: '#262634' },
-          { index: 199, color: '#3c3c4d' },
-          { index: 200, color: '#d1a59a' },
-          { index: 201, color: '#1c1d28' },
-          { index: 202, color: '#2a2b34' },
-          { index: 203, color: '#42434d' },
-          { index: 204, color: '#252825' },
-          { index: 205, color: '#272628' },
-          { index: 206, color: '#333334' },
-          { index: 207, color: '#4d4d4d' },
-          { index: 208, color: '#c67165' },
-          { index: 209, color: '#c68379' },
-          { index: 210, color: '#cd8d84' },
-          { index: 211, color: '#cd8b82' },
-          { index: 212, color: '#c6867e' },
-          { index: 213, color: '#c68982' },
-          { index: 214, color: '#c66f65' },
-          { index: 215, color: '#313431' },
-          { index: 216, color: '#4c4d4c' }
+          { index: 167, color: '#262828' },
+          { index: 168, color: '#333434' },
+          { index: 169, color: '#4d4d4d' },
+          { index: 170, color: '#c8caac' },
+          { index: 171, color: '#272628' },
+          { index: 172, color: '#333334' },
+          { index: 173, color: '#cd8f86' },
+          { index: 174, color: '#252825' },
+          { index: 175, color: '#313431' },
+          { index: 176, color: '#4c4d4c' },
+          { index: 177, color: '#b07b63' },
+          { index: 178, color: '#c67165' },
+          { index: 179, color: '#cd847b' },
+          { index: 180, color: '#cd887e' },
+          { index: 181, color: '#8cabaf' },
+          { index: 182, color: '#d0b198' },
+          { index: 183, color: '#a492bf' },
+          { index: 184, color: '#676160' },
+          { index: 185, color: '#92a6b7' },
+          { index: 186, color: '#90b6ab' },
+          { index: 187, color: '#8eb1a4' }
         ]

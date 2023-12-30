@@ -1,18 +1,18 @@
 #ob
-t #696e6b
-tb #696e6b
-b #696e6b
-c #696e6b
+t #828891
+tb #828891
+b #828891
+c #828891
 it #202020
 itb #202020
 ib #202020
 ic #202020
-cbt #848484
-mabt #848484
-mibt #848484
-cbth #4f5752
-mabth #4f5752
-mibth #4f5752
+cbt #9da1a7
+mabt #9da1a7
+mibt #9da1a7
+cbth #686f7a
+mabth #686f7a
+mibth #686f7a
 ibt #141414
 ibth #141414
 mbg #202020
@@ -28,7 +28,7 @@ bsfg #2c2c2c
 osd #202020
 osdh #cf6b75
 osdu #2c2c2c
-s #4f5752
+s #686f7a
 
 #bar
 bg #2c2c2c
@@ -37,20 +37,20 @@ bfc #d0141414
 bfc #2c2c2c
 bbg #2c2c2c
 jbg #141414
-jpfg #848484
-jsfg #4f5752
+jpfg #9da1a7
+jsfg #686f7a
 pbg #141414
 pfg #a29191
 sbg #141414
 sfg #454545
 pbefg #cf6b75
 pbfg #454545
-mlfg #a4c4b2
+mlfg #9c7c75
 tbfg #454545
 Psbg #202020
 Psfg #393939
 Apfg #a29191
-Abfg #696e6b
+Abfg #828891
 Wsbg #2c2c2c
 Wpbg #2c2c2c
 Lsbg #d0141414
@@ -67,7 +67,7 @@ bg #202020
 fg #393939
 sbg #141414
 sfg #cf6b75
-mfg #4bcdcf
+mfg #a4c4b2
 sbbg #141414
 
 #term
@@ -79,19 +79,19 @@ bg default
 fg #454545
 sc #454545
 dc #454545
-ic #4bcdcf
-sec #696e6b
-gcc #696e6b
+ic #a4c4b2
+sec #828891
+gcc #828891
 gdc #cf6b75
-vc #a4c4b2
+vc #9c7c75
 
 #vim
 bg none
 fg #cbbbbb
-ifg #a4c4b2
-vfg #4bcdcf
+ifg #9c7c75
+vfg #a4c4b2
 cfg #c39077
-ffg #696e6b
+ffg #828891
 sfg #cf6b75
 nbg none
 nfg #2c2c2c
@@ -102,21 +102,25 @@ cmfg #393939
 slbg #202020
 slfg #393939
 fzfhl #cf6b75
-bcbg #696e6b
+bcbg #828891
 bdbg #cf6b75
-nmbg #a4c4b2
-imbg #4bcdcf
+nmbg #9c7c75
+imbg #a4c4b2
 vmbg #c39077
 
 #rofi
 bg #1b1b1b
+dmbg #202020
+dmfg #454545
+dmsbg #2c2c2c
+hpfg #525252
 tbg #f01b1b1b
 tbg #ea1b1b1b
 tbg #dd1b1b1b
 mbg #f0141414
 msbg #70272727
 fg #393939
-bc #696e6b
+bc #828891
 bc #1b1b1b
 ibg #1b1b1b
 ibc #2c2c2c
@@ -151,7 +155,7 @@ sbsbg #11111144
 bg terminal
 fg #393939
 bc #202020
-mc #696e6b
+mc #828891
 ibg #202020
 ifg #393939
 sfg #393939
@@ -163,7 +167,7 @@ cfg #cf6b75
 #dunst
 bg #202020
 fg #bfacac
-fc #696e6b
+fc #828891
 sbg #141414
 pbfg #cf6b75
 
@@ -198,7 +202,7 @@ fg #cf6b75
 tc #ffbfacac
 rc #ffcf6b75
 ic #dc141414
-wc #ff848484
+wc #ff9da1a7
 
 #nb
 fg #2c2c2c

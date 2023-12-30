@@ -31,11 +31,13 @@ osdu #212c2c
 s #85658e
 
 #bar
-bg #212c2c
-fc #212c2c
+bg #00212c2c
+fc #00212c2c
+pfc #8c9db4
+sfc #6c7d95
 bfc #d00e1414
-bfc #212c2c
-bbg #212c2c
+bfc #00212c2c
+bbg #00212c2c
 jbg #0e1414
 jpfg #b395bb
 jsfg #85658e
@@ -51,8 +53,6 @@ Psbg #172020
 Psfg #2c3939
 Apfg #91a299
 Abfg #9c7da5
-Wsbg #212c2c
-Wpbg #212c2c
 Lsbg #d00e1414
 Lsfg #2c3939
 Lpbg #d00e1414
@@ -88,11 +88,11 @@ vc #aacac3
 #vim
 bg none
 fg #bbcbc3
-ifg #aacac3
+sfg #5ec1bf
 vfg #7c8da5
 cfg #75a082
+ifg #aacac3
 ffg #9c7da5
-sfg #5ec1bf
 nbg none
 nfg #212c2c
 lbg #172020
@@ -110,9 +110,14 @@ vmbg #75a082
 
 #rofi
 bg #131b1b
+dmbg #172020
+dmfg #374545
+dmsbg #212c2c
+hpfg #435252
 tbg #f0131b1b
 tbg #ea131b1b
 tbg #dd131b1b
+tbg #f0131b1b
 mbg #f00e1414
 msbg #701b2727
 fg #2c3939

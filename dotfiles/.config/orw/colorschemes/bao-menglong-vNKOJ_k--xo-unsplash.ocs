@@ -110,6 +110,9 @@ vmbg #676764
 
 #rofi
 bg #11141b
+dmbg #151920
+dmfg #323945
+dmsbg #1e232c
 tbg #f011141b
 tbg #ea11141b
 tbg #dd11141b

@@ -708,11 +708,11 @@ generate_ps1() {
 	fg="77;77;77;"
 	sc="77;77;77;"
 	dc="77;77;77;"
-	ic="130;147;163;"
-	sec="98;102;97;"
-	gcc="98;102;97;"
-	gdc="198;137;130;"
-	vc="160;140;191;"
+	ic="205;136;126;"
+	sec="99;97;90;"
+	gcc="99;97;90;"
+	gdc="142;177;164;"
+	vc="164;146;191;"
 
 	#clean="\[$(tput sgr0)\]"
 	clean='\[\033[0m\]'
@@ -758,7 +758,7 @@ generate_ps1() {
 			#[[ $dashed_separator ]] && all_modules+='\n'
 			#format_module -f $fg -b default -Bc "[ "
 
-			((content_length > 50)) &&
+			((content_length > 55)) &&
 				prompt_start='┌─' prompt_end='└─╼'
 
 			if [[ $prompt_start ]]; then

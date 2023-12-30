@@ -1,18 +1,18 @@
 #ob
-t #485755
-tb #485755
-b #485755
-c #485755
+t #505b47
+tb #505b47
+b #505b47
+c #505b47
 it #1f201f
 itb #1f201f
 ib #1f201f
 ic #1f201f
-cbt #5f6d6c
-mabt #5f6d6c
-mibt #5f6d6c
-cbth #32403e
-mabth #32403e
-mibth #32403e
+cbt #66715d
+mabt #66715d
+mibt #66715d
+cbth #3a4432
+mabth #3a4432
+mibth #3a4432
 ibt #131413
 ibth #131413
 mbg #1f201f
@@ -28,7 +28,7 @@ bsfg #2c2c2c
 osd #1f201f
 osdh #bab8c3
 osdu #2c2c2c
-s #32403e
+s #3a4432
 
 #bar
 bg #2c2c2c
@@ -37,8 +37,8 @@ bfc #d0131413
 bfc #2c2c2c
 bbg #2c2c2c
 jbg #131413
-jpfg #5f6d6c
-jsfg #32403e
+jpfg #66715d
+jsfg #3a4432
 pbg #131413
 pfg #a2a291
 sbg #131413
@@ -50,7 +50,7 @@ tbfg #454545
 Psbg #1f201f
 Psfg #393939
 Apfg #a2a291
-Abfg #485755
+Abfg #505b47
 Wsbg #2c2c2c
 Wpbg #2c2c2c
 Lsbg #d0131413
@@ -67,7 +67,7 @@ bg #1f201f
 fg #393939
 sbg #131413
 sfg #bab8c3
-mfg #505b47
+mfg #474b42
 sbbg #131413
 
 #term
@@ -79,9 +79,9 @@ bg default
 fg #454545
 sc #454545
 dc #454545
-ic #505b47
-sec #485755
-gcc #485755
+ic #474b42
+sec #505b47
+gcc #505b47
 gdc #bab8c3
 vc #747451
 
@@ -89,9 +89,9 @@ vc #747451
 bg none
 fg #cbcbbb
 ifg #747451
-vfg #505b47
+vfg #474b42
 cfg #929589
-ffg #485755
+ffg #505b47
 sfg #bab8c3
 nbg none
 nfg #2c2c2c
@@ -102,21 +102,24 @@ cmfg #393939
 slbg #1f201f
 slfg #393939
 fzfhl #bab8c3
-bcbg #485755
+bcbg #505b47
 bdbg #bab8c3
 nmbg #747451
-imbg #505b47
+imbg #474b42
 vmbg #929589
 
 #rofi
 bg #1a1b1a
+dmbg #1f201f
+dmfg #454545
+dmsbg #2c2c2c
 tbg #f01a1b1a
 tbg #ea1a1b1a
 tbg #dd1a1b1a
 mbg #f0131413
 msbg #70262726
 fg #393939
-bc #485755
+bc #505b47
 bc #1a1b1a
 ibg #1a1b1a
 ibc #2c2c2c
@@ -151,7 +154,7 @@ sbsbg #11111144
 bg terminal
 fg #393939
 bc #1f201f
-mc #485755
+mc #505b47
 ibg #1f201f
 ifg #393939
 sfg #393939
@@ -163,7 +166,7 @@ cfg #bab8c3
 #dunst
 bg #1f201f
 fg #bfbfac
-fc #485755
+fc #505b47
 sbg #131413
 pbfg #bab8c3
 
@@ -198,7 +201,7 @@ fg #bab8c3
 tc #ffbfbfac
 rc #ffbab8c3
 ic #dc131413
-wc #ff5f6d6c
+wc #ff66715d
 
 #nb
 fg #2c2c2c

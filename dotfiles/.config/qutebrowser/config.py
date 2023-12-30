@@ -1,8 +1,8 @@
 bg = '#272628'
 fg = '#414141'
 sbg = '#1b1a1c'
-sfg = '#c68982'
-mfg = '#8293a3'
+sfg = '#8eb1a4'
+mfg = '#cd887e'
 sbbg = '#1b1a1c'
 
 font_size = 8
@@ -66,7 +66,7 @@ c.colors.completion.category.bg = sbg
 c.colors.completion.category.border.bottom = sbg
 c.colors.completion.category.border.top = sbg
 c.colors.completion.category.fg = fg
-c.colors.completion.category.bg = bg
+#c.colors.completion.category.bg = bg
 c.colors.completion.even.bg = sbg
 c.colors.completion.fg = fg
 c.colors.completion.scrollbar.fg = sbg
