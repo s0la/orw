@@ -290,9 +290,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#272628"
-	foreground = "#b3acbf"
-	frame_color = "#63615a"
+	background = "#182825"
+	foreground = "#b8bfac"
+	frame_color = "#69826f"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

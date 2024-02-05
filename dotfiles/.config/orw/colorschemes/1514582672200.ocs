@@ -1,0 +1,242 @@
+#ob
+t #76516f
+tb #76516f
+b #76516f
+c #76516f
+it #282826
+itb #282826
+ib #282826
+ic #282826
+cbt #8c6685
+mabt #8c6685
+mibt #8c6685
+cbth #5f3d58
+mabth #5f3d58
+mibth #5f3d58
+ibt #1c1c1a
+ibth #1c1c1a
+mbg #282826
+mfg #414141
+mtbg #282826
+mtfg #4d4d4d
+msbg #343433
+msfg #898d93
+mb #282826
+ms #282826
+bfg #282826
+bsfg #343433
+osd #282826
+osdh #898d93
+osdu #343433
+s #5f3d58
+
+#bar
+bg #00343433
+fc #00343433
+pfc #8c6685
+sfc #5f3d58
+sfc #343433
+bfc #d01c1c1a
+bfc #00343433
+bbg #00343433
+jbg #1c1c1a
+jpfg #8c6685
+jsfg #5f3d58
+jpfg #a29498
+jsfg #4d4d4d
+pbg #1c1c1a
+pfg #a29498
+sbg #1c1c1a
+sfg #4d4d4d
+pbefg #898d93
+pbfg #4d4d4d
+mlfg #6c5e67
+tbfg #4d4d4d
+Psbg #282826
+Psfg #414141
+Apfg #a29498
+Abfg #76516f
+Acbfg #5f3d58
+Wsbg #00343433
+Wsbg #1c1c1a
+Wpbg #00343433
+Wpbg #1c1c1a
+Wsfg #4d4d4d
+Lsbg #d01c1c1a
+Lsbg #00343433
+Lsbg #1c1c1a
+Lsfg #414141
+Lpbg #d01c1c1a
+Lpbg #00343433
+Lpbg #1c1c1a
+Lpfg #696969
+Lpfg #696969
+Labg #d0282826
+Labg #d01c1c1a
+Labg #404040
+Labg #282826
+Lafg #a29498
+Lafg #898d93
+Lafg #bfacb2
+Lsfc #5f3d58
+Lsfc #343433
+
+#qb
+bg #282826
+fg #414141
+sbg #1c1c1a
+sfg #898d93
+mfg #898d93
+sbbg #1c1c1a
+
+#term
+fg #bfacb2
+bg #ff1c1c1a
+
+#bash
+bg default
+fg #343433
+sc #343433
+dc #343433
+ic #898d93
+sec #76516f
+gcc #76516f
+gdc #ca5670
+vc #6c5e67
+
+#vim
+bg none
+fg #cbbbc0
+sfg #ca5670
+vfg #898d93
+cfg #c19e7c
+ifg #6c5e67
+ffg #76516f
+nbg none
+nfg #343433
+lbg #282826
+lfg #898d93
+syfg #c19e7c
+cmfg #414141
+slbg #282826
+slfg #414141
+fzfhl #898d93
+bcbg #76516f
+bdbg #898d93
+nmbg #6c5e67
+imbg #ca5670
+vmbg #c19e7c
+
+#rofi
+bg #232321
+dmbg #282826
+dmfg #4d4d4d
+dmsbg #343433
+hpfg #5a5a5a
+tbg #f0232321
+tbg #ea232321
+tbg #dd232321
+tbg #f0232321
+mbg #f01c1c1a
+msbg #702f2f2d
+fg #414141
+bc #76516f
+bc #232321
+ibg #232321
+ibc #343433
+ibc #232321
+abg #08080855
+abg #08080866
+abg #08080844
+abg #1b1b19b0
+abg #1b1b19dd
+afg #4d4d4d
+ebg #232321
+efg #898d93
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #2f2f2db0
+sbg #2f2f2dd0
+sfg #898d93
+sul #898d93
+lpc #bfacb2
+dpc #bfacb2
+btc #232321
+sbtc #232321
+btbc #232321
+ftbg #00000000
+sbbg #898d9388
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #414141
+bc #282826
+mc #76516f
+ibg #282826
+ifg #414141
+sfg #414141
+wbg #282826
+wfg #414141
+cbg #343433
+cfg #898d93
+
+#dunst
+bg #282826
+fg #bfacb2
+fc #76516f
+sbg #1c1c1a
+pbfg #898d93
+
+#vifm
+fg #4d4d4d
+dfg #343433
+efg #4d4d4d
+cbg #282826
+cfg #898d93
+sfg #282826
+tfg #282826
+slbg #282826
+slfg #4d4d4d
+
+#ncmpcpp
+npp #4d4d4d
+np #4d4d4d
+sip #343433
+sc #343433
+mwc #343433
+etc #191e24
+c2 #DBBD7D
+pc #343433
+pec #898d93
+vc #898d93
+
+#sxiv
+bg #1c1c1a
+fg #898d93
+
+#lock
+tc #ffbfacb2
+rc #ff898d93
+ic #dc1c1c1a
+wc #ff8c6685
+
+#nb
+fg #343433
+pfg #282826
+pbg default
+ifg #4d4d4d
+ibg #343433
+Simple mixer control 'Master',0
+  Capabilities: pvolume pvolume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Limits: Playback 0 - 64
+  Mono: Playback 51 [80%] [-13.00dB] [off]
+Simple mixer control 'Master',0
+  Capabilities: pvolume pvolume-joined pswitch pswitch-joined
+  Playback channels: Mono
+  Limits: Playback 0 - 64
+  Mono: Playback 51 [80%] [-13.00dB] [on]

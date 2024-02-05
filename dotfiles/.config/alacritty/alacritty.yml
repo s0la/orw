@@ -4,7 +4,7 @@ live_config_reload: true
 draw_bold_text_with_bright_colors: true
 
 window:
-    opacity: 1.00
+    opacity: 0.98
 
     padding:
         x: 30
@@ -25,7 +25,7 @@ cursor:
   unfocused_hollow: false
 
 font:
-    size: 8.5
+    size: 7.5
 
     normal:
         style: Regular
@@ -40,8 +40,8 @@ font:
 
 colors:
     primary:
-        background: '#1b1a1c'
-        foreground: '#b3acbf'
+        background: '#101c1a'
+        foreground: '#b8bfac'
 
     normal:
         black:   '0x494a4c'
@@ -202,38 +202,72 @@ colors:
           { index: 151, color: '#1e201e' },
           { index: 152, color: '#2a2c2a' },
           { index: 153, color: '#9aacc1' },
-          { index: 154, color: '#151a20' },
-          { index: 155, color: '#1e242c' },
-          { index: 156, color: '#323a45' },
-          { index: 157, color: '#33e1ff' },
-          { index: 158, color: '#14201d' },
-          { index: 159, color: '#1c2c28' },
-          { index: 160, color: '#2f4540' },
-          { index: 161, color: '#f4b752' },
-          { index: 162, color: '#071020' },
-          { index: 163, color: '#0a162c' },
-          { index: 164, color: '#132445' },
-          { index: 165, color: '#d46f5c' },
-          { index: 166, color: '#191920' },
-          { index: 167, color: '#262828' },
-          { index: 168, color: '#333434' },
-          { index: 169, color: '#4d4d4d' },
-          { index: 170, color: '#c8caac' },
-          { index: 171, color: '#272628' },
-          { index: 172, color: '#333334' },
-          { index: 173, color: '#cd8f86' },
-          { index: 174, color: '#252825' },
-          { index: 175, color: '#313431' },
-          { index: 176, color: '#4c4d4c' },
-          { index: 177, color: '#b07b63' },
-          { index: 178, color: '#c67165' },
-          { index: 179, color: '#cd847b' },
-          { index: 180, color: '#cd887e' },
-          { index: 181, color: '#8cabaf' },
-          { index: 182, color: '#d0b198' },
-          { index: 183, color: '#a492bf' },
-          { index: 184, color: '#676160' },
-          { index: 185, color: '#92a6b7' },
-          { index: 186, color: '#90b6ab' },
-          { index: 187, color: '#8eb1a4' }
+          { index: 154, color: '#282816' },
+          { index: 155, color: '#34341e' },
+          { index: 156, color: '#4d4d30' },
+          { index: 157, color: '#5f7959' },
+          { index: 158, color: '#282828' },
+          { index: 159, color: '#343434' },
+          { index: 160, color: '#4d4d4d' },
+          { index: 161, color: '#c3a575' },
+          { index: 162, color: '#222824' },
+          { index: 163, color: '#2d3430' },
+          { index: 164, color: '#464d49' },
+          { index: 165, color: '#749893' },
+          { index: 166, color: '#6d8c88' },
+          { index: 167, color: '#789e99' },
+          { index: 168, color: '#729992' },
+          { index: 169, color: '#262826' },
+          { index: 170, color: '#333433' },
+          { index: 171, color: '#938561' },
+          { index: 172, color: '#696c60' },
+          { index: 173, color: '#779a92' },
+          { index: 174, color: '#152820' },
+          { index: 175, color: '#1c342a' },
+          { index: 176, color: '#2d4d40' },
+          { index: 177, color: '#9a5f8a' },
+          { index: 178, color: '#7a8293' },
+          { index: 179, color: '#1c1928' },
+          { index: 180, color: '#252234' },
+          { index: 181, color: '#3a364d' },
+          { index: 182, color: '#9ccfd8' },
+          { index: 183, color: '#738c89' },
+          { index: 184, color: '#262628' },
+          { index: 185, color: '#333334' },
+          { index: 186, color: '#222228' },
+          { index: 187, color: '#2d2d34' },
+          { index: 188, color: '#46464d' },
+          { index: 189, color: '#839062' },
+          { index: 190, color: '#171528' },
+          { index: 191, color: '#1f1c34' },
+          { index: 192, color: '#312d4d' },
+          { index: 193, color: '#1a1928' },
+          { index: 194, color: '#232234' },
+          { index: 195, color: '#37364d' },
+          { index: 196, color: '#a87e9b' },
+          { index: 197, color: '#222328' },
+          { index: 198, color: '#2d2f34' },
+          { index: 199, color: '#46484d' },
+          { index: 200, color: '#cf749a' },
+          { index: 201, color: '#272628' },
+          { index: 202, color: '#9a9e9b' },
+          { index: 203, color: '#262827' },
+          { index: 204, color: '#5e6969' },
+          { index: 205, color: '#152028' },
+          { index: 206, color: '#1c2a34' },
+          { index: 207, color: '#2d404d' },
+          { index: 208, color: '#7589c1' },
+          { index: 209, color: '#262825' },
+          { index: 210, color: '#323431' },
+          { index: 211, color: '#4d4d4c' },
+          { index: 212, color: '#4f5352' },
+          { index: 213, color: '#282726' },
+          { index: 214, color: '#343333' },
+          { index: 215, color: '#5c6069' },
+          { index: 216, color: '#7e9fa3' },
+          { index: 217, color: '#849b9b' },
+          { index: 218, color: '#182825' },
+          { index: 219, color: '#203430' },
+          { index: 220, color: '#334d48' },
+          { index: 221, color: '#77a599' }
         ]

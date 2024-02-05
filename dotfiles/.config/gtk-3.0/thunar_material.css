@@ -1,0 +1,70 @@
+/*thunar*/
+
+.thunar toolbar{
+	-gtk-icon-transform: scale(0.5);
+	margin-top: 0px;
+	/* margin-top: 0px;*/
+	padding-bottom: 6px;
+	padding-left: 8px;
+	padding-right: 8px;
+background-color: #272727; }
+
+/*buttons in toolbar*/
+
+.thunar toolbar.horizontal button image {
+
+	-gtk-icon-transform:scale(0.72);
+}
+
+scrolledwindow.sidebar treeview.view {
+	border: none;
+	background: #272727;
+	color: #c3c3c3;
+}
+
+/*path-bar of thunar*/
+window.thunar toolbar#location-toolbar > toolitem > widget > widget.linked.path-bar > button.toggle.path-bar-button:checked {
+	color: #c3c3c3;
+	background: #272727;
+	border-radius: 20px 20px 20px 20px;
+
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+window.thunar toolbar#location-toolbar > toolitem > widget > widget.linked.path-bar > button.path-bar-button {
+	background: none;
+	outline: none;
+	border: none;
+	box-shadow: none;
+}
+
+/*thunar sidepane*/
+
+window.thunar paned > scrolledwindow treeview.view:selected {
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	background: #272727;
+	-gtk-secondary-caret-color: #8ab4f8;
+}
+
+.thunar .shortcuts-pane .view:selected {
+	background-color: rgba (138,180,248,0.5)
+}
+
+/*thunar background*/
+
+.thunar .standard-view {
+	background-color: #272727;
+}
+
+/*thunar mouse selection*/
+
+.thunar .rubberband {
+	background-color: rgba (138,180,248,0.2);
+	border-width: 0px;
+}
+
+/*thunar status bar*/
+
+.thunar statusbar {
+	background-color: #272727;
+}

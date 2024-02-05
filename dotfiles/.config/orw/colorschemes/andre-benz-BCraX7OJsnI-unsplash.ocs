@@ -20,32 +20,35 @@ mfg #253b41
 mtbg #152428
 mtfg #2d464d
 msbg #1c2f34
-msfg #cf60b5
+msfg #8190a5
 mb #152428
 ms #152428
 bfg #152428
 bsfg #1c2f34
 osd #152428
-osdh #cf60b5
+osdh #8190a5
 osdu #1c2f34
 s #3c4349
 
 #bar
-bg #1c2f34
-fc #1c2f34
+bg #001c2f34
+fc #001c2f34
 pfc #6b7176
 sfc #3c4349
+sfc #1c2f34
 bfc #d00e191c
-bfc #1c2f34
-bbg #1c2f34
+bfc #001c2f34
+bbg #001c2f34
 jbg #0e191c
 jpfg #6b7176
 jsfg #3c4349
+jpfg #9794a2
+jsfg #2d464d
 pbg #0e191c
 pfg #9794a2
 sbg #0e191c
 sfg #2d464d
-pbefg #cf60b5
+pbefg #8190a5
 pbfg #2d464d
 mlfg #9a7275
 tbfg #2d464d
@@ -53,14 +56,18 @@ Psbg #152428
 Psfg #253b41
 Apfg #9794a2
 Abfg #535a60
-Wsbg #1c2f34
-Wpbg #1c2f34
+Acbfg #3c4349
+Wsbg #001c2f34
+Wsbg #0e191c
+Wpbg #001c2f34
+Wpbg #0e191c
+Wsfg #2d464d
 Lsbg #d00e191c
-Lsbg #1c2f34
+Lsbg #001c2f34
 Lsbg #0e191c
 Lsfg #253b41
 Lpbg #d00e191c
-Lpbg #1c2f34
+Lpbg #001c2f34
 Lpbg #0e191c
 Lpfg #426069
 Lpfg #426069
@@ -69,14 +76,16 @@ Labg #d00e191c
 Labg #243a40
 Labg #152428
 Lafg #9794a2
-Lafg #cf60b5
+Lafg #8190a5
 Lafg #b0acbf
+Lsfc #3c4349
+Lsfc #1c2f34
 
 #qb
 bg #152428
 fg #253b41
 sbg #0e191c
-sfg #cf60b5
+sfg #8190a5
 mfg #8190a5
 sbbg #0e191c
 
@@ -86,9 +95,9 @@ bg #ff0e191c
 
 #bash
 bg default
-fg #2d464d
-sc #2d464d
-dc #2d464d
+fg #1c2f34
+sc #1c2f34
+dc #1c2f34
 ic #8190a5
 sec #535a60
 gcc #535a60
@@ -106,16 +115,16 @@ ffg #535a60
 nbg none
 nfg #1c2f34
 lbg #152428
-lfg #cf60b5
+lfg #8190a5
 syfg #af9682
 cmfg #253b41
 slbg #152428
 slfg #253b41
-fzfhl #cf60b5
+fzfhl #8190a5
 bcbg #535a60
-bdbg #cf60b5
+bdbg #8190a5
 nmbg #9a7275
-imbg #8190a5
+imbg #cf60b5
 vmbg #af9682
 
 #rofi
@@ -143,7 +152,7 @@ abg #0d181bb0
 abg #0d181bdd
 afg #2d464d
 ebg #121f23
-efg #cf60b5
+efg #8190a5
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
@@ -151,15 +160,15 @@ sbg #cccccc0a
 sbg #dddddd0d
 sbg #192a2fb0
 sbg #192a2fd0
-sfg #cf60b5
-sul #cf60b5
+sfg #8190a5
+sul #8190a5
 lpc #b0acbf
 dpc #b0acbf
 btc #121f23
 sbtc #121f23
 btbc #121f23
 ftbg #00000000
-sbbg #cf60b588
+sbbg #8190a588
 sbsbg #11111144
 
 #tmux
@@ -173,21 +182,21 @@ sfg #253b41
 wbg #152428
 wfg #253b41
 cbg #1c2f34
-cfg #cf60b5
+cfg #8190a5
 
 #dunst
 bg #152428
 fg #b0acbf
 fc #535a60
 sbg #0e191c
-pbfg #cf60b5
+pbfg #8190a5
 
 #vifm
 fg #2d464d
 dfg #1c2f34
 efg #2d464d
 cbg #152428
-cfg #cf60b5
+cfg #8190a5
 sfg #152428
 tfg #152428
 slbg #152428
@@ -202,16 +211,16 @@ mwc #1c2f34
 etc #191e24
 c2 #DBBD7D
 pc #1c2f34
-pec #cf60b5
-vc #cf60b5
+pec #8190a5
+vc #8190a5
 
 #sxiv
 bg #0e191c
-fg #cf60b5
+fg #8190a5
 
 #lock
 tc #ffb0acbf
-rc #ffcf60b5
+rc #ff8190a5
 ic #dc0e191c
 wc #ff6b7176
 

@@ -97,7 +97,10 @@ bar_spacing = 1
 # Or defined by hex code '#xxxxxx' (hex code must be within ''). User defined colors requires a
 # terminal that can change color definitions such as Gnome-terminal or rxvt.
 ; background = black
-foreground = '#8eb1a4'
+foreground = '#77a599'
+gradient = 1
+gradient_color_1 = '#77a599'
+gradient_color_2 = '#e69364'
 
 # Gradient mode, only hex defined colors are supported, background must also be defined in hex
 # or remain commented out. 1 = on, 0 = off. Warning: for certain terminal emulators cava will
