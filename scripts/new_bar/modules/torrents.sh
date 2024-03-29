@@ -20,7 +20,7 @@ get_torrents_stats() {
 				ns = index($0, "Name")
 				ss = index($0, "Status")
 
-				pbs = "'"$torrents_progressbar_step"'"
+				pbs = "'"${torrents_progressbar_step:-10}"'"
 				pbi = "'"$torrents_progressbar_icon"'"
 				spbs = int(100 / pbs)
 			}
@@ -67,19 +67,26 @@ get_torrents() {
 
 	set_torrents_actions
 
-	if ((count)); then
-		eval torrents=\""$torrents_components"\"
-	fi
+	((count)) && eval torrents=\""$torrents_components"\"
 
 	print_module torrents
 }
 
 check_torrents() {
-	local pid actions_{start,end}
+	local pid actions_{start,end} quit
 
 	while true; do
 		pid=$(pidof transmission-daemon)
-		((pid)) && get_torrents
+
+		if ((pid)); then
+			unset quit
+			get_torrents
+		elif [[ ! $quit ]]; then
+			quit=true
+			unset torrents
+			print_module torrents
+		fi
+
 		sleep 60
 	done
 }
