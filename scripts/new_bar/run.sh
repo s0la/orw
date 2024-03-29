@@ -35,7 +35,9 @@ get_display_properties() {
 set_x() {
 	local bar_width="${1:-$bar_width}"
 
-	if ((bar_x)); then
+	if ((center_width)); then
+		bar_x=$((x + display_width / 2 - center_width))
+	elif ((bar_x)); then
 		((bar_x+=x))
 	else
 		if ((bar_width)); then
@@ -119,16 +121,47 @@ set_module_colors() {
 	#eval ${module_short}sfg="\${cjsfg:-\${${module_short}sfg:-\$sfg}}"
 }
 
+set_module_colors() {
+	local module_short=$1
+	eval ${module_short}pfc="\${${module_short}pfc:-\$pfc}"
+	eval ${module_short}sfc="\${${module_short}sfc:-\$sfc}"
+	eval ${module_short}pbg="\${${module_short}pbg:-\$pbg}"
+	eval ${module_short}sbg="\${${module_short}sbg:-\$sbg}"
+	eval ${module_short}pfg="\${${module_short}pfg:-\$pfg}"
+	eval ${module_short}sfg="\${${module_short}sfg:-\$sfg}"
+	#eval ${module_short}pfg="\${cjpfg:-\${${module_short}pfg:-\$pfg}}"
+	#eval ${module_short}sfg="\${cjsfg:-\${${module_short}sfg:-\$sfg}}"
+}
+
 set_module_frame() {
 	local short_module=$1 frame_type=${2:-$frame_type}
+	local frame_mode="\${${short_module}pfc:-\$${short_module}sfc}"
+
+	#if [[ $frame_type == all ]]; then
+	#	module_frame_start="%{B\$${short_module}fc}%{U\$${short_module}fc}$frame_start"
+	#	module_frame_end="%{B\$${short_module}fc}$frame_end%{B-}"
+	#else
+	#	module_frame_start="%{U\$${short_module}fc}$frame_start"
+	#	module_frame_end="$frame_end%{B-}"
+	#fi
 
 	if [[ $frame_type == all ]]; then
-		module_frame_start="%{B\$${short_module}fc}%{U\$${short_module}fc}$frame_start"
-		module_frame_end="%{B\$${short_module}fc}$frame_end%{B-}"
+		module_frame_start="%{B\$${short_module}sfc}%{U\$${short_module}sfc}$frame_start"
+		module_active_frame_start="%{B\$${short_module}pfc}%{U\$${short_module}pfc}$frame_start"
+		module_frame_end="%{B\$${short_module}sfc}$frame_end%{B-}"
 	else
-		module_frame_start="%{U\$${short_module}fc}$frame_start"
+		module_frame_start="%{U\$${short_module}sfc}$frame_start"
+		module_active_frame_start="%{U\$${short_module}pfc}$frame_start"
 		module_frame_end="$frame_end%{B-}"
 	fi
+
+	#if [[ $frame_type == all ]]; then
+	#	module_frame_start="%{B$frame_mode}%{U$frame_mode}$frame_start"
+	#	module_frame_end="%{B$frame_mode}$frame_end%{B-}"
+	#else
+	#	module_frame_start="%{U$frame_mode}$frame_start"
+	#	module_frame_end="$frame_end%{B-}"
+	#fi
 
 	#[[ $short_module == L ]] &&
 	#	~/.orw/scripts/notify.sh "$frame_type: $module_frame_start, $module_frame_end"
@@ -335,12 +368,21 @@ make_module() {
 }
 
 get_joiner_frame() {
+	#local module="$1" switch_bg="$2"
+	#local joiner_sbg="\$${module}sbg"
+	#local joiner_fc="%{B\$${module}fc}"
+
+	#joiner_start="$joiner_fc%{U\$${module}fc}$joiner_frame_start"
+	#joiner_end="%{B\$${module}fc}$joiner_frame_end%{B-}"
+
 	local module="$1" switch_bg="$2"
 	local joiner_sbg="\$${module}sbg"
-	local joiner_fc="%{B\$${module}fc}"
+	local frame_mode="\${${module}sfc:-\$${module}pfc}"
+	local joiner_fc="%{B$frame_mode}"
+	#local joiner_fc="%{B\$${module}fc}"
 
-	joiner_start="$joiner_fc%{U\$${module}fc}$joiner_frame_start"
-	joiner_end="%{B\$${module}fc}$joiner_frame_end%{B-}"
+	joiner_start="$joiner_fc%{U$frame_mode}$joiner_frame_start"
+	joiner_end="%{B$frame_mode}$joiner_frame_end%{B-}"
 
 	#if [[ $switch_bg == s ]]; then
 	#	joiner_next_bg="$joiner_sbg%{B-}"
@@ -1416,7 +1458,7 @@ print_module() {
 	#~/.orw/scripts/notify.sh -t 11 "LNCH: $launchers"
 
 	#[[ $module == volume ]] &&
-	#	~/.orw/scripts/notify.sh "VOL: $module"
+	#	~/.orw/scripts/notify.sh "VOL: ${!joiner_modules[*]},    $short"
 
 	#[[ ${joiner_modules[$short]} ]] || 
 	#	~/.orw/scripts/notify.sh "MODULE: $module, $short, ${!joiner_modules[*]}"
@@ -1721,13 +1763,14 @@ print_module() {
 	else
 		[[ ${!module} && $frame_type && ! ${multiframe_modules[*]} =~ $module ]] &&
 			output_content="$module_frame_start$output_content$module_frame_end"
-		[[ $short != $last_module ]] && output_content+="$bar_separator"
+		[[ $short != $last_module && ${!output_content} ]] &&
+			output_content+="$bar_separator"
 		eval echo \"${module^^}:"$output_content"\" > $fifo
+		#[[ $module == volume ]] &&
+		#	eval echo -e \"V: "$output_content"\" >> v.log
 		#eval modules_to_print=( \"${module^^}:"$output_content"\" )
-		
-		#[[ $module == power ]] &&
-		#	~/.orw/scripts/notify.sh -t 22 "$module: ${cjsfg:-$Tsfg}, ${output_content}"
 
+			#~/.orw/scripts/notify.sh -t 22 "$module: ${cjsfg:-$Tsfg}, ${output_content}"
 	fi
 }
 
@@ -1749,63 +1792,99 @@ print_module() {
 	#	~/.orw/scripts/notify.sh "MODULE: $module, $short, ${!joiner_modules[*]}"
 
 	if [[ ${!joiner_modules[*]} == *$short* ]]; then
-		if [[ ! $2 ]]; then
-			while [[ -f $joiner_lock_file ]]; do
-				sleep 0.05
-			done
+		#[[ ! $2 ]] && exec 11< $joiner_lock_file
 
-			#[[ $module == mpd ]] &&
-			#echo "MPD lock" >> mpd.log
-			#~/.orw/scripts/notify.sh "MPD lock"
+		#[[ ! $2 ]] && exec 11<$joiner_modules_file
+		#[[ ! $2 ]] && flock -n 11
 
-			[[ $module ]] && echo $module > $joiner_lock_file
-		fi
 
-		local joiner_group_index=${joiner_modules[$short]}
-		local joiner_group="${joiner_groups[joiner_group_index - 1]}"
 
-		#if [[ ! $2 && $module == mpd ]]; then
-		#	ls -l $joiner_modules_file
-		#	echo HERE ^
-		#	sed -n "${joiner_group_index}p" $joiner_modules_file
-		#	echo ^
-		#	#echo "MPD HERE: $(cat $joiner_lock_file)"
-		#fi >> mpd.log
 
-		#until [[ -r $joiner_modules_file ]]; do
-		#	sleep 0.01
-		#done
+		{
+			flock -x 11
 
-		#if [[ ! $2 && $module == mpd ]]; then
-		#	echo "MPD reading.."
-		#else
-		#	echo "$module: reading modules"
-		#fi >> mpd.log
 
-		local active_modules=$(sed -n "${joiner_group_index}p" $joiner_modules_file)
-		local new_active_modules=$active_modules
 
-		[[ ${active_modules: -1} == $short ]] && local end_module=true
-		[[ ${active_modules::1} == $short ]] && local start_module=true
 
-		[[ $short == [$active_modules] && ! "${!module}" ]] &&
-			new_active_modules="${active_modules/$short}"
-		[[ $short != [$active_modules] && "${!module}" ]] &&
-			new_active_modules="${joiner_group//[^$active_modules$short]}"
+			##OLD LOCK APPROACH
+			#if [[ ! $2 ]]; then
+			#	while [[ -f $joiner_lock_file ]]; do
+			#		sleep 0.05
+			#	done
 
-		#if [[ $new_active_modules != $active_modules ]]; then
-		if [[ ! $2 ]]; then
-			[[ $new_active_modules != $active_modules ]] &&
-				sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
+			#	#[[ $module == mpd ]] &&
+			#	#echo "MPD lock" >> mpd.log
+			#	#~/.orw/scripts/notify.sh "MPD lock"
 
-			if [[ -f $joiner_lock_file ]]; then
-				#grep "$module" $joiner_lock_file &> /dev/null && rm $joiner_lock_file
-				[[ -f $joiner_lock_file ]] && sed -i "/$module/d" $joiner_lock_file
-				[[ $(cat $joiner_lock_file) ]] || rm $joiner_lock_file
-			else
-				~/.orw/scripts/notify.sh "WRONG: $module"
+			#	[[ $module ]] && echo $module > $joiner_lock_file
+			#fi
+
+			local joiner_group_index=${joiner_modules[$short]}
+			local joiner_group="${joiner_groups[joiner_group_index - 1]}"
+
+			#if [[ ! $2 && $module == mpd ]]; then
+			#	ls -l $joiner_modules_file
+			#	echo HERE ^
+			#	sed -n "${joiner_group_index}p" $joiner_modules_file
+			#	echo ^
+			#	#echo "MPD HERE: $(cat $joiner_lock_file)"
+			#fi >> mpd.log
+
+			#until [[ -r $joiner_modules_file ]]; do
+			#	sleep 0.01
+			#done
+
+			#if [[ ! $2 && $module == mpd ]]; then
+			#	echo "MPD reading.."
+			#else
+			#	echo "$module: reading modules"
+			#fi >> mpd.log
+
+			local active_modules=$(sed -n "${joiner_group_index}p" $joiner_modules_file)
+			#local active_modules=$(flock $joiner_modules_file \
+			#	sed -n "${joiner_group_index}p" $joiner_modules_file)
+			local new_active_modules=$active_modules
+
+			[[ ${active_modules: -1} == $short ]] && local end_module=true
+			[[ ${active_modules::1} == $short ]] && local start_module=true
+
+			[[ $short == [$active_modules] && ! "${!module}" ]] &&
+				new_active_modules="${active_modules/$short}"
+			[[ $short != [$active_modules] && "${!module}" ]] &&
+				new_active_modules="${joiner_group//[^$active_modules$short]}"
+
+			if [[ ! $2 ]]; then
+				[[ $new_active_modules != $active_modules ]] &&
+					sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
+				#[[ -f $joiner_lock_file ]] && sed -i "/$module/d" $joiner_lock_file
+
+				#exec 11<&-
+				#flock -u 11
+
+				#[[ $(cat $joiner_lock_file) ]] || rm $joiner_lock_file
 			fi
-		fi
+
+
+
+		} 11< $joiner_modules_file
+
+
+
+
+		##OLD LOCK APPROACH
+		##if [[ $new_active_modules != $active_modules ]]; then
+		#if [[ ! $2 ]]; then
+		#	[[ $new_active_modules != $active_modules ]] &&
+		#		sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
+
+		#	if [[ -f $joiner_lock_file ]]; then
+		#		#grep "$module" $joiner_lock_file &> /dev/null && rm $joiner_lock_file
+		#		[[ -f $joiner_lock_file ]] && sed -i "/$module/d" $joiner_lock_file
+		#		[[ $(cat $joiner_lock_file) ]] || rm $joiner_lock_file
+		#	else
+		#		~/.orw/scripts/notify.sh "WRONG: $module"
+		#	fi
+		#fi
 
 		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{p,s}fg switch_bg
 		read joiner_{distance,frame_{start,end},padding} switch_bg <<< \
@@ -1913,10 +1992,14 @@ print_module() {
 			done
 		fi
 	else
-		[[ $short != $last_module ]] && local separator="$bar_separator"
+		[[ $short != $last_module && ${!module} ]] && local separator="$bar_separator"
 		[[ ${!module} && $frame_type && ! ${multiframe_modules[*]} =~ $module ]] &&
-			output_content="$module_frame_start$output_content$module_frame_end$separator"
-		eval echo \"${module^^}:"$output_content"\" > $fifo
+			#output_content="$module_frame_start$output_content$module_frame_end$separator"
+			output_content="$module_frame_start$output_content$module_frame_end"
+		eval echo \"${module^^}:"$output_content$separator"\" > $fifo
+
+		#[[ $module == volume ]] &&
+		#	~/.orw/scripts/notify.sh -t 22 "V: ${!output_content}"
 	fi
 }
 
@@ -2051,8 +2134,9 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 		s) bar_separator="%{B-}%{O$args}";;
 		p) padding="%{O$args}";;
 		f)
-			((frame_size)) ||
-				frame_size=${args#*:}
+			#((frame_size)) ||
+			#	frame_size=${args#*:}
+			frame_size=${args#*:}
 			set_frame
 			;;
 		F) bar_frame_width="$args";;
@@ -2079,13 +2163,13 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 				joiner_group=$(sed "s/-j.*//; s/\( [^-]*\)\?\(-[iOps]\?\|$\)//g" <<< \
 					"${@:joiner_start_index}")
 
-				joiner_start="%{B\$${joiner_group::1}fc}%{U\$${joiner_group::1}fc}$frame_start"
-				joiner_end="%{B\$${joiner_group::1}fc}$frame_end%{B-}"
+				joiner_start="%{B\$${joiner_group::1}sfc}%{U\$${joiner_group::1}fsc}$frame_start"
+				joiner_end="%{B\$${joiner_group::1}sfc}$frame_end%{B-}"
 
-				joiner_fc="%{B\$${joiner_group::1}fc}"
+				joiner_fc="%{B\$${joiner_group::1}sfc}"
 				joiner_sbg="%{B\$${joiner_group::1}sbg}"
 
-				joiner_fc="%{B\$${joiner_group::1}fc}"
+				joiner_fc="%{B\$${joiner_group::1}sfc}"
 				joiner_sbg="\$${joiner_group::1}sbg"
 
 				#for joiner_arg in ${args//,/ }; do
@@ -2169,6 +2253,8 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 				unset joiner{,_{group,{start,end}_index,distance,position}}
 			fi
 
+			exec 11< $joiner_modules_file
+
 			bar_content+="\$joiner_${#joiner_groups[*]}_${joiner_position:-end}"
 			;;
 		i)
@@ -2179,6 +2265,10 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 					unset icons ||
 					icons=true
 			fi
+			;;
+		C)
+			adjust_center=center_width
+			bar_content+='%{C}'
 			;;
 		*)
 			get_module $opt
@@ -2231,8 +2321,13 @@ icon_font="material:size=$icon_size"
 #bar_font="Iosevka Orw:size=8"
 bar_font="SFMono-Medium:size=11"
 bar_font="SFMono-Medium:size=$icon_size"
+bar_font="SFMono-Medium:size=11"
 #font_offset=$((${font##*=} - ${bar_font##*=}))
-font_offset=$((font_size - (icon_size - font_size / 5)))
+font_offset=$((font_size - (icon_size - font_size / 5) - ((frame_size + 1) / 2)))
+font_offset=-3
+
+#echo $font_offset, $frame_size, 
+#exit
 
 #echo POWER: $sbg, ${sbg:3:7}, $power_bar_bg, $power_bar_fg, $power_bar_content #, $power_bar_geometry
 #echo POWER: $power_bar_main_font $power_bar_content
@@ -2258,6 +2353,8 @@ remove_fifos() {
 	for fifo in ${fifos_to_remove[*]}; do
 		[[ -p $fifo ]] && rm $fifo
 	done
+
+	exec 11<&-
 }
 
 trap self_kill INT
@@ -2293,20 +2390,69 @@ bar_options='(A([0-9]?:?.*:$|$)|[BFU][#-]|[TO][0-9-]+$|[lcr]$|[+-][ou])'
 adjust_bar_width() {
 	while read content; do
 		if [[ $width == adjustable ]]; then
-			content_width=$(awk -F '%{|}' '
-				{
-					fs = sprintf("%.0f", '$font_size' / 1.4)
-					is = sprintf("%.0f", '$icon_size' * 1.8)
-					is = sprintf("%.0f", '$icon_size' * 1.3)
 
-					for(f = 1; f < NF; f++) {
-						if($f ~ /O[0-9]+$/) o += substr($f, 2)
-						else if($f !~ /^'$bar_options'/) {
-							if ($f ~ "^I") i = !i
-							else l += length($f) * ((i) ? is : ($f ~ "━") ? 9 : fs)
+			#awk -F '%{|}' '
+			#		{
+			#			fs = sprintf("%.0f", '$font_size' / 1.4)
+			#			is = sprintf("%.0f", '$icon_size' * 1.8)
+			#			is = sprintf("%.0f", '$icon_size' * 1.3)
+
+			#			for(f = 1; f < NF; f++) {
+			#				print "F", $f
+			#				if($f ~ /O[0-9]+$/) o += substr($f, 2)
+			#				else if($f ~ "C") c = !c
+			#				else if($f !~ /^'$bar_options'/) {
+			#					if ($f ~ "^I") i = !i
+			#					#else l += length($f) * ((i) ? is : ($f ~ "━") ? 10 : fs)
+			#					else {
+			#						ml = length($f) * ((i) ? is : ($f ~ "━") ? 10 : fs)
+			#						print "HERE", ml, f, "^" $f "^"
+			#						if (c) cl += ml
+			#						l += ml
+			#					}
+			#				}
+			#			}
+			#		} END { print int(o + l), cl }' <<< "$content"
+			#exit
+
+
+
+			old_width=$content_width
+			#content_width=$(awk -F '%{|}' '
+			read content_width $adjust_center <<< \
+				$(awk -F '%{|}' '
+					{
+						fs = sprintf("%.0f", '$font_size' / 1.4)
+						is = sprintf("%.0f", '$icon_size' * 1.8)
+						is = sprintf("%.0f", '$icon_size' * 1.3)
+
+						for(f = 1; f < NF; f++) {
+							if($f ~ /O[0-9]+$/) {
+								co = substr($f, 2)
+								if (c) cl += co
+								o += co
+							}
+							#else if($f == "C") c = !c
+							else if($f == "C") {
+								#if (!c) {
+								#	cl = l - cl / 2 + o
+								#}
+								#c = !c
+
+								if (c) cl = int(l - cl / 2 + o)
+								c = !c
+							} else if($f !~ /^'$bar_options'/) {
+								#if ($f ~ "^I[+-][0-9]") i = !i
+								if ($f ~ "^I[0-9-]?$") i = !i
+								#else l += length($f) * ((i) ? is : ($f ~ "━") ? 10 : fs)
+								else {
+									ml = length($f) * ((i) ? is : ($f ~ "━") ? 9 : fs)
+									if (c) cl += ml
+									l += ml
+								}
+							}
 						}
-					}
-				} END { print int(o + l) }' <<< "$content")
+					} END { print int(o + l), cl }' <<< "$content")
 
 			#echo $content
 			#awk -F '%{|}' '
@@ -2330,15 +2476,29 @@ adjust_bar_width() {
 			##continue
 			#exit
 
+			#echo ${!adjust_center}: $content_width
+			#return
+
 			#echo -e "$content"
 			#continue
 
-			unset bar_x
-			set_x $content_width
-			#~/.orw/scripts/notify.sh "CW: $bar_name $content_width $bar_height $bar_x $bar_y"
-			xdotool search --name "^$bar_name$" \
-				windowsize $content_width $bar_height \
-				windowmove $bar_x $bar_y
+			#unset bar_x
+			#set_x $content_width
+			#echo $conternt_width: $bar_x
+			#return
+
+			if ((old_width != content_width)); then
+				#~/.orw/scripts/notify.sh -t 3 "CW: $center_width"
+
+				unset bar_x
+				set_x $content_width
+				#~/.orw/scripts/notify.sh -t 11 "CW: $content_width $bar_x"
+				#~/.orw/scripts/notify.sh -t 11 "CW: $content_width $bar_x"
+				#~/.orw/scripts/notify.sh -t 11 "CW: $content_width $bar_x"
+				xdotool search --name "^$bar_name$" \
+					windowsize $content_width $bar_height \
+					windowmove $bar_x $bar_y
+			fi
 		fi
 
 		echo -e "$content"
@@ -2350,26 +2510,107 @@ adjust_bar_width() {
 #geometry='1000x30+500+20'
 
 waiting_icon=$(get_icon 'waiting_icon')
+#modules=( mpd )
 run_modules
 
 #echo $bar_content
+#((frame_size)) && module_frame_size="-u $frame_size"
+#IFS=':' read mod con < $fifo
+#eval ${mod,,}=\""$con"\"
+#echo $bar_content
+#eval echo -e \""$bar_content"\"
+#exit
 
+#modules=( date )
+#bar_content='%c$date'
 main_pid=$$
+
+#echo $geometry
+#exit
+
+#adjust_bar_width() {
+#	while read content; do
+#			#content_width=$(awk -F '%{|}' '
+#		#read content_width $adjust_center <<< \
+#			#$(awk -F '%{|}' '
+#			awk -F '%{|}' '
+#				{
+#					fs = sprintf("%.0f", '$font_size' / 1.4)
+#					is = sprintf("%.0f", '$icon_size' * 1.8)
+#					is = sprintf("%.0f", '$icon_size' * 1.3)
+#
+#					for(f = 1; f < NF; f++) {
+#						if($f ~ /O[0-9]+$/) { o += substr($f, 2); print "O", $f }
+#						#else if($f == "C") c = !c
+#						else if($f == "C") {
+#							print "HERE", $f
+#
+#							if (c) {
+#								cl = l + cl / 2 + o
+#							}
+#							print "hre", cl, l, o
+#							c = !c
+#
+#							#c = !c
+#							#if (c) {
+#							#	cl = l + o
+#							#} else {
+#							#	cl = l - cl / 2 + o
+#							#}
+#						} else if($f !~ /^'$bar_options'/) {
+#							#if ($f ~ "^I[+-][0-9]*$") i = !i
+#							if ($f ~ "^I[0-9-]?$") i = !i
+#							#else l += length($f) * ((i) ? is : ($f ~ "━") ? 10 : fs)
+#							else {
+#								ml = length($f) * ((i) ? is : ($f ~ "━") ? 10 : fs)
+#								if (c) cl += ml
+#								l += ml
+#								if (ml) {
+#									print $f " " ml " - " i " " is " " fs " " c " " cl
+#									#if (cl) print "CL:", cl
+#								}
+#							}
+#						}
+#					}
+#				} END { print o, l, cl }' <<< "$content"
+#	done
+#}
+#
+#while IFS=':' read module content; do
+#	eval ${module,,}=\""$content"\"
+#	#[[ $module == LAUNCHERS ]] && eval echo \""$content"\" >> l.log
+#	eval echo -e \""$bar_content"\"
+#	#eval echo -e \""$bar_content"\" >> rec.log
+#	#[[ $module == DISPLAY ]] &&
+#	#eval echo -e \"$module:   "$content"\" >> dis.log
+#	#[[ $module == VOLUME ]] &&
+#	#	eval echo \""L: $volume"\" >> v.log
+#done < $fifo | adjust_bar_width
+#exit
+
+#geometry="1700x26+100+900"
+#echo $geometry
+#exit
 
 while IFS=':' read module content; do
 	eval ${module,,}=\""$content"\"
 	#[[ $module == LAUNCHERS ]] && eval echo \""$content"\" >> l.log
+	#[[ $module == WORKSPACES ]] && sleep 3
 	eval echo -e \""$bar_content"\"
+	#((after_ws)) && ~/.orw/scripts/notify.sh "M: $module"
+	#[[ $module == WORKSPACES ]] && sleep 3 && after_ws=1
 	#eval echo -e \""$bar_content"\" >> rec.log
 	#[[ $module == DISPLAY ]] &&
 	#eval echo -e \"$module:   "$content"\" >> dis.log
+	#[[ $module == VOLUME ]] &&
+	#	eval echo \""L: $volume"\" >> v.log
 done < $fifo | adjust_bar_width |
 	lemonbar -d -B$bg -F$fg -u 0 \
 	-f "$font" -o $font_offset \
 	-f "$bold_font" -o $font_offset \
 	-f "$bar_font" -o $((font_offset + 1)) \
-	-f "$icon_font" -o $((font_offset + 1)) \
-	-a 150 -u $frame_size $bar_frame \
+	-f "$icon_font" -o $((font_offset + 0)) \
+	-a 150 -u ${frame_size:-0} $bar_frame \
 	-g "$geometry" -n "$bar_name" | bash &
 
 sleep 0.5
