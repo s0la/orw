@@ -20,6 +20,7 @@ nb_conf=$config/newsboat/config
 dunst_conf=$config/dunst/dunstrc
 sxiv_conf=$config/X11/xresources
 term_conf=$config/termite/config
+term_conf=$config/alacritty/alacritty.yml
 rofi_conf=$config/rofi/theme.rasi
 ncmpcpp_conf=$config/ncmpcpp/config
 vim_conf=$config/nvim/colors/orw.vim
@@ -85,11 +86,13 @@ save_color() {
 		prompt="${!var_name^^} is already defined, would you like to overwrite it? [y/N]"
 		read -rsn 1 -p "$prompt"$'\n' overwrite_color
 
-		[[ $overwrite_color == y ]] && sed -i "/^${!var_name} / s/#\w*$/#${!var: -6}/" $all_colors ||
+		[[ $overwrite_color == y ]] &&
+			sed -i "/^${!var_name} / s/#\w*$/#${!var: -6}/" $all_colors ||
 			read -p 'Enter new color name: ' $var_name
 	done
 
-	[[ $overwrite_color != y || $add_color ]] && echo "${!var_name} ${!var}" >> $all_colors
+	[[ $overwrite_color != y || $add_color ]] &&
+		echo "${!var_name} ${!var}" >> $all_colors
 	[[ $change_color_name ]] && sed -i "/^$existing_color /d" $all_colors
 
 	eval ${var}_index=$(wc -l < $all_colors)
@@ -104,7 +107,8 @@ function get_color() {
 	color=${1:-$color}
 
 	if [[ $color =~ ^(default|terminal|none)$ ]]; then
-		 [[ ${2:-$offset} && ${inherited_module:-$module} =~ ^(tmux|vim)$ ]] && color=$(parse_module bg term)
+		 [[ ${2:-$offset} && ${inherited_module:-$module} =~ ^(tmux|vim)$ ]] &&
+			 color=$(parse_module bg term)
 	else
 		get_color_properties
 
@@ -187,7 +191,8 @@ function ob() {
 		t) local pattern="\.${inactive}active.label.text";;
 		tb)
 			if [[ ! $whole_module ]]; then
-				[[ $inactive ]] && local patterns=( "inactive.*border" ) || ( property=b && ob )
+				[[ $inactive ]] &&
+					local patterns=( "inactive.*border" ) || ( property=b && ob )
 				local patterns+=( "\.${inactive}active.label.text" )
 			fi
 
@@ -1032,6 +1037,14 @@ function get_term() {
 			} else {
 				c = c " " $NF
 			}
+		}' $term_conf
+}
+
+function get_term() {
+	awk '
+		/background|forground/ {
+			gsub("'\''", "", $NF)
+			print substr($1, 0, 1) "g", $NF
 		}' $term_conf
 }
 
