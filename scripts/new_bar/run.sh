@@ -37,7 +37,7 @@ set_x() {
 
 	if ((center_width)); then
 		bar_x=$((x + display_width / 2 - center_width))
-	elif ((bar_x)); then
+	elif [[ $bar_x ]]; then
 		((bar_x+=x))
 	else
 		if ((bar_width)); then
@@ -168,9 +168,9 @@ set_module_frame() {
 }
 
 self_kill() {
-	[[ -p $fifo ]] && rm $fifo
 	kill $pid &> /dev/null
 	killall run.sh lemonbar
+	remove_fifos
 }
 
 update_colors() {
@@ -276,6 +276,7 @@ make_module() {
 	#	single_color_type=s
 	#else
 	#	single_color_type=p
+
 		set_module_frame $opt
 		mfs="$module_frame_start" mfe="$module_frame_end"
 		pbg="\$${opt}pbg" sbg="\$${opt}sbg"
@@ -381,6 +382,7 @@ get_joiner_frame() {
 	local joiner_fc="%{B$frame_mode}"
 	#local joiner_fc="%{B\$${module}fc}"
 
+	#~/.orw/scripts/notify.sh -t 11 "HERE $module, $joiner_frame_start"
 	joiner_start="$joiner_fc%{U$frame_mode}$joiner_frame_start"
 	joiner_end="%{B$frame_mode}$joiner_frame_end%{B-}"
 
@@ -428,7 +430,7 @@ get_joiner_frame() {
 	joiner_start+="$joiner_padding"
 	joiner_end="$joiner_padding$joiner_end"
 	#[[ $module == time ]] &&
-	#~/.orw/scripts/notify.sh "HERE $module, $joiner_start, $joiner_end"
+	#~/.orw/scripts/notify.sh -t 11 "HERE $module, $joiner_start, $joiner_end"
 
 }
 
@@ -1887,7 +1889,7 @@ print_module() {
 		#fi
 
 		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{p,s}fg switch_bg
-		read joiner_{distance,frame_{start,end},padding} switch_bg <<< \
+		read joiner_{distance,padding,frame_{start,end}} switch_bg <<< \
 			"${joiners[joiner_group_index - 1]}"
 
 		[[ ($new_active_modules &&
@@ -2015,14 +2017,14 @@ set_colors() {
 		/#bar/ { nr = NR }
 
 		nr && NR > nr {
-			if($1 ~ "^(b?bg|.*c)$") c = $2
+			if ($1 ~ "^(b?bg|.*c)$") c = $2
 			else {
 				l = length($1)
 				p = substr($1, l - 1, 1)
 				c = "%{" toupper(p) $2 "}"
 			}
 
-			if($1) print $1 "=\"" c "\""
+			if ($1) print $1 "=\"" c "\""
 		}
 
 		nr && (/^$/) { exit }' $colorscheme)
@@ -2209,10 +2211,11 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
 				#fi
 
 				#~/.orw/scripts/notify.sh -t 11 "$joiner_start   $joiner_end   $joiner_next_bg"
+				#~/.orw/scripts/notify.sh -t 11 "$frame_start, $frame_end, $joiner_padding"
 
 				joiner_groups+=( "${joiner_group//[- ]}" )
 				#joiners+=( "$joiner_distance $joiner_start $joiner_end $joiner_next_bg $switch_bg" )
-				joiners+=( "$joiner_distance $frame_start $frame_end $joiner_padding $switch_bg" )
+				joiners+=( "$joiner_distance $joiner_padding $frame_start $frame_end $switch_bg" )
 				#get_joiner_frame ${joiner_groups[-1]::1} $switch_bg
 				#echo "JOINER_${#joiner_groups[*]}_START:$joiner_start" > $fifo &
 				#echo "JOINER_${#joiner_groups[*]}_END:$joiner_end" > $fifo &
@@ -2292,7 +2295,7 @@ bar_content+='%{B-}'
 get_display_properties
 set_x
 
-((bar_y)) ||
+[[ $bar_y ]] ||
 	bar_y=$default_y_offset
 
 [[ $bottom_y ]] &&
@@ -2324,7 +2327,7 @@ bar_font="SFMono-Medium:size=$icon_size"
 bar_font="SFMono-Medium:size=11"
 #font_offset=$((${font##*=} - ${bar_font##*=}))
 font_offset=$((font_size - (icon_size - font_size / 5) - ((frame_size + 1) / 2)))
-font_offset=-3
+font_offset=-2
 
 #echo $font_offset, $frame_size, 
 #exit
@@ -2597,6 +2600,7 @@ while IFS=':' read module content; do
 	#[[ $module == LAUNCHERS ]] && eval echo \""$content"\" >> l.log
 	#[[ $module == WORKSPACES ]] && sleep 3
 	eval echo -e \""$bar_content"\"
+	#eval echo -e \""$bar_content"\" >> ~/bar_test.log
 	#((after_ws)) && ~/.orw/scripts/notify.sh "M: $module"
 	#[[ $module == WORKSPACES ]] && sleep 3 && after_ws=1
 	#eval echo -e \""$bar_content"\" >> rec.log
