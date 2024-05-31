@@ -91,8 +91,8 @@ else
 		case $arg in
 			"options")
 				set_options true
-				sed -i '/^options/ s/\w*$/true/' $0
-				echo -e 'load\nsave\nclear\nrefresh'
+				#sed -i '/^options/ s/\w*$/true/' $0
+				echo -e 'back\nload\nsave\nclear\nrefresh'
 				;;
 			refresh) set_options;;
 			clear|save*)
@@ -102,16 +102,26 @@ else
 				action="${arg%% *}ed"
 				[[ $arg =~ ' ' ]] && playlist="${arg#* }"
 				;;
-			load) mpc lsplaylists | grep -v .*.m3u;;
+			load)
+				echo back
+				mpc lsplaylists | grep -v .*.m3u
+				set_options load
+				;;
+			back)
+				[[ $options == load ]] &&
+					set_options true &&
+					echo -e 'back\nload\nsave\nclear\nrefresh' ||
+					set_options
+				;;
 			*)
 				if [[ $options ]]; then
 					set_options
+
 					playlist="$arg"
 					action="loaded"
 					mpc load "$playlist" > /dev/null
 				else
 					item="$arg"
-
 					item_index=$(mpc playlist | awk '/'"${item//[()]/\.}"'/ { print NR; exit }')
 					mpc -q play $item_index
 				fi;;
