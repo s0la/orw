@@ -13,10 +13,12 @@ get_volume() {
 	label='VOL'
 	icon="$(get_icon "volume_icon")"
 	#volume=$(pactl list sinks | sed -n 's/^\s\+Volume:[^%]* \(\w*\)%.*/\1%/p')
+
 	volume=$(pactl list sinks | awk '
 		$1 == "Sink" { nr = NR + 2 }
 		NR == nr { c = $NF !~ "hdmi" }
 		c && /^\s*Volume/ { print $5; exit }')
+	#volume=$(pactl list sinks | awk ' /RUNNING/ { c = 1 } c && $1 == "Volume:" { print $5; exit }')
 
 	#volume="%{A:$toggle_volume_buttons && pactl set-sink-volume 0 +0.01%:}$volume%{A}"
 	#local volume_buttons="%{A:sed -i 'y/01/10/' bar_config:}"
@@ -45,8 +47,9 @@ set_volume_actions() {
 	local action1="$toggle_volume_buttons && pactl set-sink-volume 0 +0.01% && $notify"
 	local action4="pactl set-sink-volume 0 +5% && $notify"
 	local action5="pactl set-sink-volume 0 -5% && $notify"
-	actions_start="%{A:$action1:}%{A4:$action4:}%{A5:$action5:}"
-	actions_end="%{A}%{A}%{A}"
+	local action2="amixer set Master toggle"
+	actions_start="%{A:$action1:}%{A2:$action2:}%{A4:$action4:}%{A5:$action5:}"
+	actions_end="%{A}%{A}%{A}%{A}"
 }
 
 check_volume() {
