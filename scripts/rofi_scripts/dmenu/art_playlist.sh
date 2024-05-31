@@ -1,8 +1,17 @@
 #!/bin/bash
 
+[[ $1 == h* ]] &&
+	width='window' lines=8 orientation=horizontal ||
+	width='art' lines=5 orientation=vertical
+
+theme_str="prompt { margin: @${orientation}-prompt-margin; } "
+theme_str+="mainbox { orientation: $orientation; } "
+theme_str+="window { width: @${width}-width; } "
+theme_str+="* { lines: $lines; }"
+
 while
-	#prompt=$(mpc current -f '%title%\n%artist%\n%album%' |
-	#	awk '{ print (length($0) > 20) ? substr($0, 0, 20) ".." : $0 }')
+	prompt=$(mpc current -f '%title%\n%artist%\n%album%' |
+		awk '{ print (length($0) > 20) ? substr($0, 0, 20) ".." : $0 }')
 	read index album <<< \
 		$(mpc current -f '%position% %album%' | sed 's/[()]//g')
 	cover="$HOME/Music/covers/${album// /_}.jpg"
@@ -23,9 +32,8 @@ while
 
 	read index <<< \
 		$(mpc playlist |
-		rofi -dmenu -format d -p '' -i $active -selected-row ${index:-0} -theme art)
-		#rofi -dmenu -format d -i $active -selected-row ${index:-0} -theme art)
-		#rofi -dmenu -format d -p "$prompt" $active -selected-row ${index:-0} -theme art)
+		rofi -dmenu -format d -p '' -i $active \
+		-theme-str "$theme_str" -selected-row ${index:-0} -theme art)
 
 	[[ $index ]]
 do
