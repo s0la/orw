@@ -33,7 +33,7 @@ list_launchers() {
 			}
 			print ""
 			for (li in al) print al[li]
-		}' <(cat $launchers_dir/dock_new) <(wmctrl -lG | sort -nk 2,2 -k 3,3 -k 4,4)
+		}' <(cat $launchers_dir/$bar_name) <(wmctrl -lG | sort -nk 2,2 -k 3,3 -k 4,4)
 }
 
 #load_launchers
@@ -74,6 +74,9 @@ get_launchers() {
 		declare -A launcher_ids
 		load_launchers
 	fi
+
+	#if [[ $frame == ]]; then
+	#fi
 
 	for launcher_index in ${!launcher_list[*]}; do
 		launcher=${launcher_list[launcher_index]}
@@ -116,6 +119,8 @@ get_launchers() {
 		done
 
 		color=s
+		((launcher_index)) || local start_padding=$launchers_padding
+		((launcher_index == ${#launcher_list[*]} - 1)) && local end_padding=$launchers_padding
 
 		if ((id_count)); then
 			color=p
@@ -149,15 +154,39 @@ get_launchers() {
 				actions_end+="%{A}%{A}"
 			fi
 
-			#actions_start="$launchers_frame_start$actions_start"
-			#actions_end+="$launchers_frame_end"
+			if [[ $launchers_frame_type == single && $color == [ap] ]]; then
+				#actions_start="$launchers_frame_start$actions_start"
+				#actions_end+="$launchers_frame_end"
+				#actions_start="\${L${color}fc:-\$Lpfc}$actions_start"
+				#actions_end+="$launchers_frame_end"
+				[[ $color == a ]] &&
+					frame_color=p || frame_color=s
+				actions_start="${launchers_frame_start/L*fc/L${frame_color}fc}$start_padding$actions_start"
+				actions_end+="$end_padding$launchers_frame_end"
+				unset {start,end}_padding
+				#~/.orw/scripts/notify.sh -t 11 "L: $actions_start"
+
+				#echo "L: $actions_start,    $actions_end" >> l.log
+			fi
 		fi
+
+		#case $color in
+		#	a) local frame_mode=${!module_active_frame_start};;
+		#	p) local frame_mode=${!module_frame_start};;
+		#	s) unset frame_mode
+		#esac
+
+		#if [[ $padding ]]; then
+		#	((launcher_index)) || local padding_start_frame=$frame_mode
+		#	((launcher_index == ${#launcher_list[*]} - 1)) &&
+		#		unset frame_mode_end || local frame_mode_end=$module_frame_end
+		#fi
 
 		((launcher_index)) && launchers+="$launcher_separator"
 		launcher="$actions_start$launcher_offset${!icon}$launcher_offset$actions_end"
-		launchers+="\$L${color}bg\$L${color}fg$launcher"
+		launchers+="\$L${color}bg\$L${color}fg$start_padding$launcher$end_padding"
 
-		unset launcher action_index actions_{start,end}
+		unset launcher action_index actions_{start,end} start_padding
 	done
 }
 
@@ -181,8 +210,15 @@ make_launchers_content() {
 	if [[ $frame_type ]]; then
 		launchers_frame_type=$frame_type
 		launchers_frame_start=$module_frame_start
+		launchers_active_frame_start=$module_active_frame_start
 		launchers_frame_end=$module_frame_end
+
+		[[ $frame_type == all ]] &&
+			local frame_start=$module_frame_start frame_end=$module_frame_end
 	fi
+
+	[[ -f $launchers_dir/$bar_name ]] ||
+		cp ~/.orw/scripts/new_bar/launchers $launchers_dir/$bar_name
 
 	assign_args launchers
 
@@ -192,8 +228,9 @@ make_launchers_content() {
 
 	[[ ! $launcher_separator &&
 		(($frame_type == all) || ${joiner_groups[*]} =~ (^| )L|L( |$)) ]] &&
-		launchers_content='$Lsbg$Lsfg$launchers_padding$launchers$launchers_padding' ||
-		launchers_content='$launchers'
+		#launchers_content='$Lsbg$Lsfg$launchers_padding$launchers$launchers_padding' ||
+		launchers_content="$frame_start\$Lsbg\$Lsfg\$launchers$frame_end" ||
+			launchers_content='$launchers'
 }
 
 find_launcher_by_id() {
@@ -254,6 +291,7 @@ check_launchers() {
 	while true; do
 		read event value < $launchers_fifo
 		#~/.orw/scripts/notify.sh -t 11 "LNC: $event $value"
+		#echo "LNC: $event - $value" >> ~/e.log
 
 		case $event in
 			reload) load_launchers;;
@@ -261,8 +299,9 @@ check_launchers() {
 			close)
 				#~/.orw/scripts/notify.sh -t 18 "$event: $value"
 				launcher=$(find_launcher_by_id $value)
-				[[ ${launcher_ids[$launcher]} ]] &&
-					launcher_ids[$launcher]="${launcher_ids[$launcher]/$value}"
+				[[ $launcher && ${launcher_ids[$launcher]} ]] &&
+					launcher_ids[$launcher]="${launcher_ids[$launcher]/$value}" #||
+					#~/.orw/scripts/notify.sh -t 18 "$event: $value"
 				;;
 			new_window)
 				active_launcher="${value%% *}" launcher_name="${value#* }"

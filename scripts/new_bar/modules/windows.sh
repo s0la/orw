@@ -21,6 +21,7 @@ assign_windows_args() {
 				show_buttons=true
 			;;
 		s) window_separator="%{O$value}";;
+		p) window_padding="%{O$value}";;
 	esac
 }
 
@@ -34,6 +35,7 @@ make_windows_content() {
 	if [[ $frame_type ]]; then
 		windows_frame_type=$frame_type
 		windows_frame_start=$module_frame_start
+		windows_active_frame_start=$module_active_frame_start
 		windows_frame_end=$module_frame_end
 	fi
 
@@ -89,7 +91,8 @@ make_windows_content() {
 		local min_button="%{A:$signal min:}${min_button:-$button}%{A}"
 		local max_button="%{A:$signal max:}${max_button:-$button}%{A}"
 		local close_button="%{A:wmctrl -ic \$current_window:}${close_button:-$button}%{A}"
-		window_buttons="$jpfg$close_button$Abfg$max_button$jsfg$min_button"
+		#window_buttons="$jpfg$close_button$Abfg$max_button$jsfg$min_button"
+		window_buttons="%{F$pfc}$min_button$Abfg$max_button$Acbfg$close_button"
 		cwc=$(~/.orw/scripts/convert_colors.sh -hV +11 ${jpfg:3:7})
 		cwfg="%{F$cwc}"
 	fi
