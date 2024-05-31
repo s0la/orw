@@ -5,6 +5,7 @@
 * {
 	font:                        "Iosevka Orw 9";
 	font:                        "SFMono Medium 8";
+	font:                        "SFMono Medium 7";
 
 	lines:                       5;
 

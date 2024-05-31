@@ -5,6 +5,7 @@
 * {
 	font:                  "Iosevka Orw 9";
 	font:                  "SFMono Medium 9";
+	font:                  "SFMono Medium 7";
 
 	lines:                 6;
 
@@ -17,7 +18,6 @@
 	list-padding:          6px 6px;
 	list-margin:           6px 0;
 
-	/*input-border:          0 0 2px;*/
 	input-margin:          0 0 10px;
 	input-padding:         5px 8px;
 
@@ -39,7 +39,6 @@
 }
 
 #listview {
-	//margin:         @list-margin;
 	scrollbar:      false;
 	dynamic:        true;
 	vertical-align: 0.5;
@@ -48,7 +47,6 @@
 
 #inputbar {
 	border:           @input-border;
-	// margin:           @element-padding;
 	margin:           @input-margin;
 	padding:          @input-padding;
 	children:         [ prompt, entry ];

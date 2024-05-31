@@ -5,6 +5,7 @@
 * {
 	font:   "Iosevka Orw 9";
 	font:                  "SFMono Medium 9";
+	font:                  "SFMono Medium 7";
 
 	window-width:    35%;
 	window-height:   35%;
