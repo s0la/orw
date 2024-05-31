@@ -1,7 +1,7 @@
 #!/bin/bash
 
 lock_conf=~/.orw/dotfiles/.config/i3lockrc
-term_conf=~/.orw/dotfiles/.config/alacritty/alacritty.yml
+term_conf=~/.orw/dotfiles/.config/alacritty/alacritty.toml
 dunst_conf=~/.orw/dotfiles/.config/dunst/*dunstrc
 picom_conf=~/.orw/dotfiles/.config/picom/picom.conf
 
