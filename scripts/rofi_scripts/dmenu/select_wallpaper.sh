@@ -29,6 +29,6 @@ if [[ -z $@ ]]; then
 	#		sub("'"${root//\'}"'/?", ""); print i, $0 }'
 else
 	wall="$@"
-	eval ~/.orw/scripts/wallctl.sh -s "$root/$wall"
+	eval ~/.orw/scripts/wallctl.sh -s "$root/'$wall'"
 	#eval ~/.orw/scripts/wallctl.sh -s "$root/${wall:2}"
 fi
