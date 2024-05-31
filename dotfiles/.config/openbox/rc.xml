@@ -58,7 +58,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Roboto</name>
-      <size>10</size>
+      <size>8</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -189,7 +189,7 @@
     </keybind>
     <keybind key="A-e">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/rofi_script.sh execute</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh execute</command>
       </action>
     </keybind>
     <keybind key="A-z">
@@ -254,12 +254,7 @@
     </keybind>
     <keybind key="A-S-r">
       <action name="Execute">
-        <command>rofi -show run -theme list</command>
-      </action>
-    </keybind>
-    <keybind key="A-S-r">
-      <action name="Execute">
-        <command>rofi -show run -theme list</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh run</command>
       </action>
     </keybind>
     <keybind key="A-r">
@@ -269,7 +264,7 @@
     </keybind>
     <keybind key="A-s">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/dmenu/wallpapers.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/dmenu/dmenu.sh wallpapers</command>
       </action>
     </keybind>
     <keybind key="A-S-s">
@@ -387,11 +382,13 @@
         <command>~/.orw/scripts/resize.sh b +1 edge</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-S-h">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh r -1</command>
       </action>
     </keybind>
+	-->
     <!--
     <keybind key="A-C-h">
       <action name="Execute">
@@ -459,11 +456,13 @@
         <command>~/.orw/scripts/resize.sh l -50</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-S-l">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh r +1</command>
       </action>
     </keybind>
+	-->
     <keybind key="A-C-l">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh r +50</command>
@@ -474,11 +473,13 @@
         <command>~/.orw/scripts/resize.sh r -50</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-S-k">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh r +1</command>
       </action>
     </keybind>
+	-->
     <keybind key="A-C-k">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh t +50</command>
@@ -489,11 +490,13 @@
         <command>~/.orw/scripts/resize.sh t -50</command>
       </action>
     </keybind>
+	<!--
     <keybind key="C-S-j">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh r +1</command>
       </action>
     </keybind>
+	-->
     <keybind key="A-C-j">
       <action name="Execute">
         <command>~/.orw/scripts/resize.sh b +50</command>
@@ -1092,15 +1095,15 @@
 
     <application class="*">
       <layer>below</layer>
-      <decor>no</decor>
+      <decor>yes</decor>
 	  <focus>no</focus>
       <position force="yes">
         <x>center</x>
         <y>center</y>
       </position>
       <size>
-        <width>150</width>
-        <height>150</height>
+        <width>0</width>
+        <height>0</height>
       </size>
     </application>
 
@@ -1112,8 +1115,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>150</height>
-        <width>250</width>
+        <height>100</height>
+        <width>100</width>
       </size>
     </application>
 
@@ -1149,8 +1152,8 @@
       <desktop>all</desktop>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>200</x>
-        <y>52</y>
+        <x>480</x>
+        <y>44</y>
       </position>
       <size>
         <width>960</width>
@@ -1164,8 +1167,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>1553</x>
-        <y>222</y>
+        <x>914</x>
+        <y>359</y>
       </position>
       <size>
         <width>130</width>
@@ -1186,13 +1189,27 @@
       </size>
     </application>
 
+    <application title="color_preview">
+      <focus>yes</focus>
+      <decor>no</decor>
+      <layer>above</layer>
+      <position force="yes">
+        <x>717</x>
+        <y>341</y>
+      </position>
+      <size>
+        <width>300</width>
+        <height>130</height>
+      </size>
+    </application>
+
     <application title="image_preview">
       <focus>no</focus>
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>571</x>
-        <y>95</y>
+        <x>763</x>
+        <y>58</y>
       </position>
       <size>
         <width>100</width>

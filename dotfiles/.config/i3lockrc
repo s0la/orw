@@ -1,9 +1,9 @@
-tc=b8bfacff
-rc=77a599ff
-ic=101c1adc
-wc=819887ff
+tc=b3acbfff
+rc=8aa5b4ff
+ic=141314dc
+wc=696567ff
 
-blur=6
+blur=5
 width=7
 delta=35
 radius=125

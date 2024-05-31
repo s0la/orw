@@ -7,16 +7,16 @@ it #282828
 itb #282828
 ib #282828
 ic #282828
-cbt #876257
-mabt #876257
-mibt #876257
-cbth #5a3b32
-mabth #5a3b32
-mibth #5a3b32
+cbt #343434
+mabt #343434
+mibt #343434
+cbth #282828
+mabth #282828
+mibth #282828
 ibt #1b1b1c
 ibth #1b1b1c
 mbg #282828
-mfg #414141
+mfg #4d4d4d
 mtbg #282828
 mtfg #4d4d4d
 msbg #343434
@@ -28,20 +28,22 @@ bsfg #343434
 osd #282828
 osdh #a6b7c4
 osdu #343434
-s #5a3b32
+s #282828
 
 #bar
-bg #00343434
-fc #00343434
-pfc #876257
+bg #343434
+fc #343434
+pfc #b4c4d0
 sfc #5a3b32
-sfc #343434
+sfc #1b1b1c
 bfc #d01b1b1c
-bfc #00343434
-bbg #00343434
+bfc #343434
+bbg #343434
 jbg #1b1b1c
 jpfg #876257
 jsfg #5a3b32
+jpfg #a29494
+jsfg #4d4d4d
 pbg #1b1b1c
 pfg #a29494
 sbg #1b1b1c
@@ -54,16 +56,18 @@ Psbg #282828
 Psfg #414141
 Apfg #a29494
 Abfg #714e44
-Wsbg #00343434
+Acbfg #5a3b32
+Wsbg #343434
 Wsbg #1b1b1c
-Wpbg #00343434
+Wpbg #343434
 Wpbg #1b1b1c
+Wsfg #4d4d4d
 Lsbg #d01b1b1c
-Lsbg #00343434
+Lsbg #343434
 Lsbg #1b1b1c
 Lsfg #414141
 Lpbg #d01b1b1c
-Lpbg #00343434
+Lpbg #343434
 Lpbg #1b1b1c
 Lpfg #696969
 Lpfg #696969
@@ -74,7 +78,7 @@ Labg #282828
 Lafg #a29494
 Lafg #a6b7c4
 Lafg #bfacac
-Lsfc #5a3b32
+Lsfc #677b8b
 
 #qb
 bg #282828
@@ -90,9 +94,9 @@ bg #ff1b1b1c
 
 #bash
 bg default
-fg #4d4d4d
-sc #4d4d4d
-dc #4d4d4d
+fg #343434
+sc #343434
+dc #343434
 ic #a6b7c4
 sec #714e44
 gcc #714e44

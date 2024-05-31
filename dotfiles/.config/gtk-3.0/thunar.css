@@ -1,13 +1,13 @@
-@define-color bg #101c1a;
-@define-color pbg #203430;
-@define-color sbg #182825;
-@define-color bbg #77a599;
-@define-color hlbg #142321;
-@define-color tbg rgba(16,28,26,0.90);
-@define-color fg #b8bfac;
-@define-color pfg #334d48;
-@define-color sfg #2a413d;
-@define-color afg #77a599;
+@define-color bg #141314;
+@define-color pbg #2c2c2c;
+@define-color sbg #201f20;
+@define-color bbg #8aa5b4;
+@define-color hlbg #1b1a1b;
+@define-color tbg rgba(20,19,20,0.90);
+@define-color fg #b3acbf;
+@define-color pfg #525252;
+@define-color sfg #3e3e3e;
+@define-color afg #8aa5b4;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
@@ -22,6 +22,7 @@ window.thunar treeview {
 window.thunar paned grid {
 	background: @tbg;
 	padding: 0 20px;
+	padding: 0;
 }
 
 window.thunar grid *:selected,
@@ -37,6 +38,7 @@ window.thunar .sidebar {
 }
 
 window.thunar .standard-view .view {
+	background: none;
 	background: none;
 	padding: 0px 5px;
 	color: @fg;

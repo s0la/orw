@@ -62,7 +62,7 @@ let g:fzf_colors = {
   \ 'fg+':     ['fg', 'fzf_fgp'],
   \ 'info':    ['bg', 'fzf_bg'],
   \ 'prompt':  ['bg', 'fzf_bg'],
-  \ 'border':  ['fg', 'Comment'],
+  \ 'border':  ['fg', 'fzf_bfg'],
   \ 'gutter':  ['bg', 'fzf_bg'],
   \ 'header':  ['bg', 'fzf_bg'],
   \ 'marker':  ['fg', 'fzf_pfg'],
@@ -83,7 +83,7 @@ let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 " let g:fzf_layout = {'up':'~30%', 'window': { 'width': 1.0, 'height': 0.3, 'border': 'sharp' } }
 
 " let custom_bindings = 'up:space-k,down:space-j'
-let $FZF_DEFAULT_OPTS="--layout reverse --margin=2,5"
+let $FZF_DEFAULT_OPTS="--layout reverse --margin=2,5 --scrollbar="
 command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, 
 	\{ 'options': '--prompt="" --bind=tab:down,ctrl-p:up' },
 	\ <bang>0)

@@ -20,7 +20,7 @@
 	list-padding:          6px;
 	list-margin:           6px 0;
 
-	input-margin:          0 0 10px;
+	input-margin:          1 1 10px;
 	input-padding:         5px 8px;
 
 	entry-margin:          0 3px 0;

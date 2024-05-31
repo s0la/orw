@@ -2,7 +2,7 @@
 # Any customization should be done in ~/.gtkrc-2.0.mine instead.
 
 include "/home/sola/.gtkrc-2.0.mine"
-gtk-theme-name="Materia-dark-compact"
+gtk-theme-name="Fluent-grey-Dark"
 gtk-icon-theme-name="orw"
 gtk-font-name="Roboto 9"
 gtk-cursor-theme-name="phinger-cursors"

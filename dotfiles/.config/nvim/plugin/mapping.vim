@@ -34,6 +34,12 @@ inoremap <silent> <C-k> <C-o>:resize -3<cr>
 inoremap <silent> <C-h> <C-o>:vert resize +3<cr>
 inoremap <silent> <C-l> <C-o>:vert resize -3<cr>
 
+"insert mode
+"inoremap ,, <C-x><C-o><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
+inoremap <silent> <C-j> <C-n><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
+"inoremap ,: <C-x><C-f><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
+"inoremap ,= <C-x><C-l><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
+
 "fzf
 map <leader>f :Files<CR>
 map <leader>b :Buffers<CR>

@@ -1,10 +1,10 @@
 # Configuration for Alacritty, the GPU enhanced terminal emulator.
 
 live_config_reload: true
-draw_bold_text_with_bright_colors: true
+colors.draw_bold_text_with_bright_colors: true
 
 window:
-    opacity: 0.98
+    opacity: 1.00
 
     padding:
         x: 30
@@ -40,8 +40,8 @@ font:
 
 colors:
     primary:
-        background: '#101c1a'
-        foreground: '#b8bfac'
+        background: '#121414'
+        foreground: '#acb5bf'
 
     normal:
         black:   '0x494a4c'
@@ -65,14 +65,38 @@ colors:
 
     indexed_colors: [
           { index: 16, color: '#B3836B' },
+          { index: 17, color: '#262528' },
+          { index: 18, color: '#323134' },
+          { index: 19, color: '#4d4c4d' },
+          { index: 20, color: '#535a66' },
+          { index: 21, color: '#151c28' },
+          { index: 22, color: '#1c2534' },
+          { index: 23, color: '#2d394d' },
+          { index: 24, color: '#e4ae9a' },
+          { index: 25, color: '#192528' },
+          { index: 26, color: '#223134' },
+          { index: 27, color: '#36494d' },
+          { index: 28, color: '#c6b875' },
           { index: 17, color: '#8fa398' },
           { index: 18, color: '#7FA891' },
           { index: 19, color: '#89b2a8' },
           { index: 20, color: '#807773' },
+          { index: 21, color: '#151c28' },
+          { index: 22, color: '#1c2534' },
+          { index: 23, color: '#2d394d' },
+          { index: 24, color: '#e4ae9a' },
+          { index: 25, color: '#192528' },
+          { index: 26, color: '#223134' },
+          { index: 27, color: '#36494d' },
+          { index: 28, color: '#c6b875' },
           { index: 21, color: '#5f6a73' },
           { index: 22, color: '#756367' },
           { index: 23, color: '#b2adae' },
           { index: 24, color: '#1a1f20' },
+          { index: 25, color: '#192528' },
+          { index: 26, color: '#223134' },
+          { index: 27, color: '#36494d' },
+          { index: 28, color: '#c6b875' },
           { index: 25, color: '#252b2c' },
           { index: 26, color: '#3d4445' },
           { index: 27, color: '#c8a789' },
@@ -209,65 +233,5 @@ colors:
           { index: 158, color: '#282828' },
           { index: 159, color: '#343434' },
           { index: 160, color: '#4d4d4d' },
-          { index: 161, color: '#c3a575' },
-          { index: 162, color: '#222824' },
-          { index: 163, color: '#2d3430' },
-          { index: 164, color: '#464d49' },
-          { index: 165, color: '#749893' },
-          { index: 166, color: '#6d8c88' },
-          { index: 167, color: '#789e99' },
-          { index: 168, color: '#729992' },
-          { index: 169, color: '#262826' },
-          { index: 170, color: '#333433' },
-          { index: 171, color: '#938561' },
-          { index: 172, color: '#696c60' },
-          { index: 173, color: '#779a92' },
-          { index: 174, color: '#152820' },
-          { index: 175, color: '#1c342a' },
-          { index: 176, color: '#2d4d40' },
-          { index: 177, color: '#9a5f8a' },
-          { index: 178, color: '#7a8293' },
-          { index: 179, color: '#1c1928' },
-          { index: 180, color: '#252234' },
-          { index: 181, color: '#3a364d' },
-          { index: 182, color: '#9ccfd8' },
-          { index: 183, color: '#738c89' },
-          { index: 184, color: '#262628' },
-          { index: 185, color: '#333334' },
-          { index: 186, color: '#222228' },
-          { index: 187, color: '#2d2d34' },
-          { index: 188, color: '#46464d' },
-          { index: 189, color: '#839062' },
-          { index: 190, color: '#171528' },
-          { index: 191, color: '#1f1c34' },
-          { index: 192, color: '#312d4d' },
-          { index: 193, color: '#1a1928' },
-          { index: 194, color: '#232234' },
-          { index: 195, color: '#37364d' },
-          { index: 196, color: '#a87e9b' },
-          { index: 197, color: '#222328' },
-          { index: 198, color: '#2d2f34' },
-          { index: 199, color: '#46484d' },
-          { index: 200, color: '#cf749a' },
-          { index: 201, color: '#272628' },
-          { index: 202, color: '#9a9e9b' },
-          { index: 203, color: '#262827' },
-          { index: 204, color: '#5e6969' },
-          { index: 205, color: '#152028' },
-          { index: 206, color: '#1c2a34' },
-          { index: 207, color: '#2d404d' },
-          { index: 208, color: '#7589c1' },
-          { index: 209, color: '#262825' },
-          { index: 210, color: '#323431' },
-          { index: 211, color: '#4d4d4c' },
-          { index: 212, color: '#4f5352' },
-          { index: 213, color: '#282726' },
-          { index: 214, color: '#343333' },
-          { index: 215, color: '#5c6069' },
-          { index: 216, color: '#7e9fa3' },
-          { index: 217, color: '#849b9b' },
-          { index: 218, color: '#182825' },
-          { index: 219, color: '#203430' },
-          { index: 220, color: '#334d48' },
-          { index: 221, color: '#77a599' }
+          { index: 161, color: '#c3a575' }
         ]

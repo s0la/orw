@@ -57,8 +57,8 @@ cursor_shape = block
 #highlight = #2f2f2f
 
 #colors
-foreground = #acbfb5
-background = rgba(14,20,20,1.00)
+foreground = #b3acbf
+background = rgba(20,19,20,1.00)
 
 #palette
 color0 = #494a4c

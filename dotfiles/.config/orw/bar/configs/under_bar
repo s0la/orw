@@ -1,0 +1,1 @@
+~/.orw/scripts/new_bar/run.sh -y 10 -x 415 -h 26 -a 8 -f u:3 -s 7 -c auto_generated -n under_bar -c -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -O 10 -W i:i,o:3,p:6 -p 15 -O 10 -i icons -T P:16d -i only -j d:4,p:10 -N -X -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15

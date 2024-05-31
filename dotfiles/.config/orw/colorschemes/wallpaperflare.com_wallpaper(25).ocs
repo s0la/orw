@@ -1,22 +1,22 @@
 #ob
-t #3b373d
-tb #3b373d
-b #3b373d
-c #3b373d
+t #504649
+tb #504649
+b #504649
+c #504649
 it #281f24
 itb #281f24
 ib #281f24
 ic #281f24
-cbt #524f53
-mabt #524f53
-mibt #524f53
-cbth #242026
-mabth #242026
-mibth #242026
+cbt #34292f
+mabt #34292f
+mibt #34292f
+cbth #281f24
+mabth #281f24
+mibth #281f24
 ibt #1c1519
 ibth #1c1519
 mbg #281f24
-mfg #41363c
+mfg #4d4047
 mtbg #281f24
 mtfg #4d4047
 msbg #34292f
@@ -28,20 +28,20 @@ bsfg #34292f
 osd #281f24
 osdh #7bacc8
 osdu #34292f
-s #242026
+s #281f24
 
 #bar
-bg #0034292f
-fc #0034292f
-pfc #524f53
-sfc #242026
-sfc #34292f
+bg #34292f
+fc #34292f
+pfc #87b8d4
+sfc #392f32
+sfc #1c1519
 bfc #d01c1519
-bfc #0034292f
-bbg #0034292f
+bfc #34292f
+bbg #34292f
 jbg #1c1519
-jpfg #524f53
-jsfg #242026
+jpfg #665e60
+jsfg #392f32
 jpfg #949ca2
 jsfg #4d4047
 pbg #1c1519
@@ -55,19 +55,19 @@ tbfg #4d4047
 Psbg #281f24
 Psfg #41363c
 Apfg #949ca2
-Abfg #3b373d
-Acbfg #242026
-Wsbg #0034292f
+Abfg #504649
+Acbfg #392f32
+Wsbg #34292f
 Wsbg #1c1519
-Wpbg #0034292f
+Wpbg #34292f
 Wpbg #1c1519
 Wsfg #4d4047
 Lsbg #d01c1519
-Lsbg #0034292f
+Lsbg #34292f
 Lsbg #1c1519
 Lsfg #41363c
 Lpbg #d01c1519
-Lpbg #0034292f
+Lpbg #34292f
 Lpbg #1c1519
 Lpfg #695c63
 Lpfg #695c63
@@ -78,8 +78,7 @@ Labg #281f24
 Lafg #949ca2
 Lafg #7bacc8
 Lafg #acb7bf
-Lsfc #242026
-Lsfc #34292f
+Lsfc #48758f
 
 #qb
 bg #281f24
@@ -99,8 +98,8 @@ fg #34292f
 sc #34292f
 dc #34292f
 ic #7bacc8
-sec #3b373d
-gcc #3b373d
+sec #504649
+gcc #504649
 gdc #d49e67
 vc #5c626b
 
@@ -109,23 +108,23 @@ bg none
 fg #bbc4cb
 sfg #d49e67
 vfg #7bacc8
-cfg #a86245
+cfg #995b63
 ifg #5c626b
-ffg #3b373d
+ffg #504649
 nbg none
 nfg #34292f
 lbg #281f24
 lfg #7bacc8
-syfg #a86245
+syfg #995b63
 cmfg #41363c
 slbg #281f24
 slfg #41363c
 fzfhl #7bacc8
-bcbg #3b373d
+bcbg #504649
 bdbg #7bacc8
 nmbg #5c626b
 imbg #d49e67
-vmbg #a86245
+vmbg #995b63
 
 #rofi
 bg #231b1f
@@ -140,7 +139,7 @@ tbg #f0231b1f
 mbg #f01c1519
 msbg #702f252a
 fg #41363c
-bc #3b373d
+bc #504649
 bc #231b1f
 ibg #231b1f
 ibc #34292f
@@ -175,7 +174,7 @@ sbsbg #11111144
 bg terminal
 fg #41363c
 bc #281f24
-mc #3b373d
+mc #504649
 ibg #281f24
 ifg #41363c
 sfg #41363c
@@ -187,7 +186,7 @@ cfg #7bacc8
 #dunst
 bg #281f24
 fg #acb7bf
-fc #3b373d
+fc #504649
 sbg #1c1519
 pbfg #7bacc8
 
@@ -222,7 +221,7 @@ fg #7bacc8
 tc #ffacb7bf
 rc #ff7bacc8
 ic #dc1c1519
-wc #ff524f53
+wc #ff665e60
 
 #nb
 fg #34292f

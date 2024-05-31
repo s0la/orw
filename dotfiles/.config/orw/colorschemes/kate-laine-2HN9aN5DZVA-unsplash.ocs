@@ -7,67 +7,86 @@ it #201d19
 itb #201d19
 ib #201d19
 ic #201d19
-cbt #626466
-mabt #626466
-mibt #626466
-cbth #313439
-mabth #313439
-mibth #313439
+cbt #2c2823
+mabt #2c2823
+mibt #2c2823
+cbth #201d19
+mabth #201d19
+mibth #201d19
 ibt #14120f
 ibth #14120f
 mbg #201d19
-mfg #39352f
+mfg #45403a
 mtbg #201d19
 mtfg #45403a
 msbg #2c2823
-msfg #c7ae84
+msfg #7f9591
 mb #201d19
 ms #201d19
 bfg #201d19
 bsfg #2c2823
 osd #201d19
-osdh #c7ae84
+osdh #7f9591
 osdu #2c2823
-s #313439
+s #201d19
 
 #bar
 bg #2c2823
 fc #2c2823
+pfc #8da19d
+sfc #313439
+sfc #14120f
 bfc #d014120f
 bfc #2c2823
 bbg #2c2823
 jbg #14120f
 jpfg #626466
 jsfg #313439
+jpfg #9da294
+jsfg #45403a
 pbg #14120f
-pfg #9ca291
+pfg #9da294
 sbg #14120f
 sfg #45403a
-pbefg #c7ae84
+pbefg #baa176
 pbfg #45403a
-mlfg #8a8a76
+mlfg #99996f
 tbfg #45403a
 Psbg #201d19
 Psfg #39352f
-Apfg #9ca291
+Apfg #9da294
 Abfg #494c50
+Acbfg #313439
 Wsbg #2c2823
+Wsbg #14120f
 Wpbg #2c2823
+Wpbg #14120f
+Wsfg #45403a
+Wsfc #445c58
 Lsbg #d014120f
+Lsbg #2c2823
+Lsbg #14120f
 Lsfg #39352f
 Lpbg #d014120f
-Lpfg #7a643e
+Lpbg #2c2823
+Lpbg #14120f
+Lpfg #615c56
+Lpfg #615c56
 Labg #d0201d19
 Labg #d014120f
-Lafg #9ca291
-Lafg #c7ae84
+Labg #38342e
+Labg #201d19
+Lafg #9da294
+Lafg #7f9591
+Lafg #b8bfac
+Lsfc #445c58
 
 #qb
 bg #201d19
 fg #39352f
 sbg #14120f
-sfg #c7ae84
-mfg #80a39d
+sfg #7f9591
+mfg #7f9591
 sbbg #14120f
 
 #term
@@ -76,73 +95,80 @@ bg #ff14120f
 
 #bash
 bg default
-fg #45403a
-sc #45403a
-dc #45403a
-ic #80a39d
+fg #2c2823
+sc #2c2823
+dc #2c2823
+ic #7f9591
 sec #494c50
 gcc #494c50
-gdc #c7ae84
-vc #8a8a76
+gdc #baa176
+vc #99996f
 
 #vim
 bg none
 fg #c5cbbb
-ifg #8a8a76
-vfg #80a39d
-cfg #bcc4ae
+sfg #baa176
+vfg #7f9591
+cfg #b8c4a4
+ifg #99996f
 ffg #494c50
-sfg #c7ae84
 nbg none
 nfg #2c2823
 lbg #201d19
-lfg #c7ae84
-syfg #bcc4ae
+lfg #7f9591
+syfg #b8c4a4
 cmfg #39352f
 slbg #201d19
 slfg #39352f
-fzfhl #c7ae84
+fzfhl #7f9591
 bcbg #494c50
-bdbg #c7ae84
-nmbg #8a8a76
-imbg #80a39d
-vmbg #bcc4ae
+bdbg #7f9591
+nmbg #99996f
+imbg #baa176
+vmbg #b8c4a4
 
 #rofi
-bg #1b1814
-tbg #f01b1814
-tbg #ea1b1814
-tbg #dd1b1814
+bg #1b1815
+dmbg #201d19
+dmfg #45403a
+dmsbg #2c2823
+hpfg #524d47
+tbg #f01b1815
+tbg #ea1b1815
+tbg #dd1b1815
+tbg #f01b1815
 mbg #f014120f
-msbg #7027231d
+msbg #7027231f
 fg #39352f
 bc #494c50
-bc #1b1814
-ibg #1b1814
+bc #1b1815
+ibg #1b1815
 ibc #2c2823
-ibc #1b1814
-abg #181512b0
+ibc #1b1815
 abg #08080855
 abg #08080866
 abg #08080844
+abg #13110eb0
+abg #13110edd
 afg #45403a
-ebg #1b1814
-efg #c7ae84
-sbg #27231db0
+ebg #1b1815
+efg #7f9591
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
 sbg #cccccc0a
 sbg #dddddd0d
-sfg #c7ae84
-sul #c7ae84
+sbg #27231fb0
+sbg #27231fd0
+sfg #7f9591
+sul #7f9591
 lpc #b8bfac
 dpc #b8bfac
-btc #1b1814
-sbtc #1b1814
-btbc #1b1814
+btc #1b1815
+sbtc #1b1815
+btbc #1b1815
 ftbg #00000000
-sbbg #c7ae8488
+sbbg #7f959188
 sbsbg #11111144
 
 #tmux
@@ -156,21 +182,21 @@ sfg #39352f
 wbg #201d19
 wfg #39352f
 cbg #2c2823
-cfg #c7ae84
+cfg #7f9591
 
 #dunst
 bg #201d19
 fg #b8bfac
 fc #494c50
 sbg #14120f
-pbfg #c7ae84
+pbfg #7f9591
 
 #vifm
 fg #45403a
 dfg #2c2823
 efg #45403a
 cbg #201d19
-cfg #c7ae84
+cfg #7f9591
 sfg #201d19
 tfg #201d19
 slbg #201d19
@@ -185,16 +211,16 @@ mwc #2c2823
 etc #191e24
 c2 #DBBD7D
 pc #2c2823
-pec #c7ae84
-vc #c7ae84
+pec #7f9591
+vc #7f9591
 
 #sxiv
 bg #14120f
-fg #c7ae84
+fg #7f9591
 
 #lock
 tc #ffb8bfac
-rc #ffc7ae84
+rc #ff7f9591
 ic #dc14120f
 wc #ff626466
 

@@ -19,7 +19,7 @@ path=~/.orw/scripts
 $path/wallctl.sh -r &
 #$path/mpd_notifier.sh &
 $path/barctl.sh
-$path/spy_windows.sh &
+$path/spy_windows.sh &>> ~/w.log &
 
 #mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
 #[[ $mode == floating ]] || $path/tile_windows.sh &

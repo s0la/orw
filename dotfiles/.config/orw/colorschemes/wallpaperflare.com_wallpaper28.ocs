@@ -31,14 +31,14 @@ osdu #343333
 s #5d405d
 
 #bar
-bg #00343333
-fc #00343333
+bg #343333
+fc #343333
 pfc #8a6b8a
 sfc #5d405d
-sfc #343333
+sfc #1c1b1a
 bfc #d01c1b1a
-bfc #00343333
-bbg #00343333
+bfc #343333
+bbg #343333
 jbg #1c1b1a
 jpfg #8a6b8a
 jsfg #5d405d
@@ -57,17 +57,17 @@ Psfg #414141
 Apfg #a2a294
 Abfg #745574
 Acbfg #5d405d
-Wsbg #00343333
+Wsbg #343333
 Wsbg #1c1b1a
-Wpbg #00343333
+Wpbg #343333
 Wpbg #1c1b1a
 Wsfg #4d4d4d
 Lsbg #d01c1b1a
-Lsbg #00343333
+Lsbg #343333
 Lsbg #1c1b1a
 Lsfg #414141
 Lpbg #d01c1b1a
-Lpbg #00343333
+Lpbg #343333
 Lpbg #1c1b1a
 Lpfg #696969
 Lpfg #696969
@@ -79,7 +79,6 @@ Lafg #a2a294
 Lafg #849b9b
 Lafg #bfbfac
 Lsfc #5d405d
-Lsfc #343333
 
 #qb
 bg #282726

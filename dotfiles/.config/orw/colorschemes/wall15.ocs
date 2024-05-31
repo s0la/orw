@@ -1,0 +1,232 @@
+#ob
+t #5d5464
+tb #5d5464
+b #5d5464
+c #5d5464
+it #232028
+itb #232028
+ib #232028
+ic #232028
+cbt #2e2b34
+mabt #2e2b34
+mibt #2e2b34
+cbth #232028
+mabth #232028
+mibth #232028
+ibt #18161c
+ibth #18161c
+mbg #232028
+mfg #47434d
+mtbg #232028
+mtfg #47434d
+msbg #2e2b34
+msfg #6c7699
+mb #232028
+ms #232028
+bfg #232028
+bsfg #2e2b34
+osd #232028
+osdh #6c7699
+osdu #2e2b34
+s #232028
+
+#bar
+bg #2e2b34
+fc #2e2b34
+pfc #7882a5
+sfc #463d4d
+sfc #18161c
+bfc #d018161c
+bfc #2e2b34
+bbg #2e2b34
+jbg #18161c
+jpfg #746c7a
+jsfg #463d4d
+jpfg #a2949e
+jsfg #47434d
+pbg #18161c
+pfg #a2949e
+sbg #18161c
+sfg #47434d
+pbefg #6c7699
+pbfg #47434d
+mlfg #aaa3c6
+tbfg #47434d
+Psbg #232028
+Psfg #3b3741
+Apfg #a2949e
+Abfg #5d5464
+Acbfg #463d4d
+Wsbg #2e2b34
+Wsbg #18161c
+Wpbg #2e2b34
+Wpbg #18161c
+Wsfg #47434d
+Lsbg #d018161c
+Lsbg #2e2b34
+Lsbg #18161c
+Lsfg #3b3741
+Lpbg #d018161c
+Lpbg #2e2b34
+Lpbg #18161c
+Lpfg #646069
+Lpfg #646069
+Labg #d0232028
+Labg #d018161c
+Labg #3a3640
+Labg #232028
+Lafg #a2949e
+Lafg #6c7699
+Lafg #bfacb9
+Lsfc #394260
+
+#qb
+bg #232028
+fg #3b3741
+sbg #18161c
+sfg #6c7699
+mfg #6c7699
+sbbg #18161c
+
+#term
+fg #bfacb9
+bg #ff18161c
+
+#bash
+bg default
+fg #2e2b34
+sc #2e2b34
+dc #2e2b34
+ic #6c7699
+sec #5d5464
+gcc #5d5464
+gdc #d3a89c
+vc #aaa3c6
+
+#vim
+bg none
+fg #cbbbc6
+sfg #d3a89c
+vfg #6c7699
+cfg #835f64
+ifg #aaa3c6
+ffg #5d5464
+nbg none
+nfg #2e2b34
+lbg #232028
+lfg #6c7699
+syfg #835f64
+cmfg #3b3741
+slbg #232028
+slfg #3b3741
+fzfhl #6c7699
+bcbg #5d5464
+bdbg #6c7699
+nmbg #aaa3c6
+imbg #d3a89c
+vmbg #835f64
+
+#rofi
+bg #1e1c23
+dmbg #232028
+dmfg #47434d
+dmsbg #2e2b34
+hpfg #54505a
+tbg #f01e1c23
+tbg #ea1e1c23
+tbg #dd1e1c23
+tbg #f01e1c23
+mbg #f018161c
+msbg #7029272f
+fg #3b3741
+bc #5d5464
+bc #1e1c23
+ibg #1e1c23
+ibc #2e2b34
+ibc #1e1c23
+abg #08080855
+abg #08080866
+abg #08080844
+abg #17151bb0
+abg #17151bdd
+afg #47434d
+ebg #1e1c23
+efg #6c7699
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #29272fb0
+sbg #29272fd0
+sfg #6c7699
+sul #6c7699
+lpc #bfacb9
+dpc #bfacb9
+btc #1e1c23
+sbtc #1e1c23
+btbc #1e1c23
+ftbg #00000000
+sbbg #6c769988
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #3b3741
+bc #232028
+mc #5d5464
+ibg #232028
+ifg #3b3741
+sfg #3b3741
+wbg #232028
+wfg #3b3741
+cbg #2e2b34
+cfg #6c7699
+
+#dunst
+bg #232028
+fg #bfacb9
+fc #5d5464
+sbg #18161c
+pbfg #6c7699
+
+#vifm
+fg #47434d
+dfg #2e2b34
+efg #47434d
+cbg #232028
+cfg #6c7699
+sfg #232028
+tfg #232028
+slbg #232028
+slfg #47434d
+
+#ncmpcpp
+npp #47434d
+np #47434d
+sip #2e2b34
+sc #2e2b34
+mwc #2e2b34
+etc #191e24
+c2 #DBBD7D
+pc #2e2b34
+pec #6c7699
+vc #6c7699
+
+#sxiv
+bg #18161c
+fg #6c7699
+
+#lock
+tc #ffbfacb9
+rc #ff6c7699
+ic #dc18161c
+wc #ff746c7a
+
+#nb
+fg #2e2b34
+pfg #232028
+pbg default
+ifg #47434d
+ibg #2e2b34
+[GFX1-]: Managed to allocate after flush.

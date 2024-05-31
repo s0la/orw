@@ -16,7 +16,7 @@ mibth #405260
 ibt #151c1a
 ibth #151c1a
 mbg #1f2826
-mfg #36413e
+mfg #404d4b
 mtbg #1f2826
 mtfg #404d4b
 msbg #293432
@@ -31,55 +31,54 @@ osdu #293432
 s #405260
 
 #bar
-bg #00293432
-fc #00293432
+bg #151c1a
+fc 
 pfc #6b7e8d
 sfc #405260
-sfc #293432
-bfc #d0151c1a
-bfc #00293432
-bbg #00293432
-jbg #151c1a
+sfc #1f2826
+bfc #d01f2826
+bfc #151c1a
+bbg 
+jbg #1f2826
 jpfg #6b7e8d
 jsfg #405260
 jpfg #a0a294
 jsfg #404d4b
-pbg #151c1a
+pbg #1f2826
 pfg #a0a294
-sbg #151c1a
+sbg #1f2826
 sfg #404d4b
 pbefg #6da58f
 pbfg #404d4b
-mlfg #8c705d
+mlfg #dea752
 tbfg #404d4b
 Psbg #1f2826
 Psfg #36413e
 Apfg #a0a294
 Abfg #556877
 Acbfg #405260
-Wsbg #00293432
-Wsbg #151c1a
-Wpbg #00293432
-Wpbg #151c1a
+Wsbg 
+Wsbg #1f2826
+Wpbg 
+Wpbg #1f2826
 Wsfg #404d4b
-Lsbg #d0151c1a
-Lsbg #00293432
-Lsbg #151c1a
+Lsbg #d01f2826
+Lsbg 
+Lsbg #1f2826
 Lsfg #36413e
-Lpbg #d0151c1a
-Lpbg #00293432
-Lpbg #151c1a
+Lpbg #d01f2826
+Lpbg 
+Lpbg #1f2826
 Lpfg #5c6967
 Lpfg #5c6967
 Labg #d01f2826
-Labg #d0151c1a
+Labg #d01f2826
 Labg #34403e
 Labg #1f2826
 Lafg #a0a294
 Lafg #6da58f
 Lafg #bcbfac
 Lsfc #405260
-Lsfc #293432
 
 #qb
 bg #1f2826
@@ -102,30 +101,30 @@ ic #6da58f
 sec #556877
 gcc #556877
 gdc #fce34b
-vc #8c705d
+vc #dea752
 
 #vim
 bg none
 fg #c9cbbb
 sfg #fce34b
 vfg #6da58f
-cfg #dea752
-ifg #8c705d
+cfg #8c705d
+ifg #dea752
 ffg #556877
 nbg none
 nfg #293432
 lbg #1f2826
 lfg #6da58f
-syfg #dea752
+syfg #8c705d
 cmfg #36413e
 slbg #1f2826
 slfg #36413e
 fzfhl #6da58f
 bcbg #556877
 bdbg #6da58f
-nmbg #8c705d
+nmbg #dea752
 imbg #fce34b
-vmbg #dea752
+vmbg #8c705d
 
 #rofi
 bg #1b2321

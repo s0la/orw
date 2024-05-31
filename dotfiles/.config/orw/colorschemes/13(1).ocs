@@ -1,0 +1,231 @@
+#ob
+t #5a9ab3
+tb #5a9ab3
+b #5a9ab3
+c #5a9ab3
+it #162328
+itb #162328
+ib #162328
+ic #162328
+cbt #6db0c9
+mabt #6db0c9
+mibt #6db0c9
+cbth #48849c
+mabth #48849c
+mibth #48849c
+ibt #0f181c
+ibth #0f181c
+mbg #162328
+mfg #30454d
+mtbg #162328
+mtfg #30454d
+msbg #1e2e34
+msfg #71909e
+mb #162328
+ms #162328
+bfg #162328
+bsfg #1e2e34
+osd #162328
+osdh #71909e
+osdu #1e2e34
+s #48849c
+
+#bar
+bg #1e2e34
+fc #1e2e34
+pfc #7d9caa
+sfc #48849c
+sfc #0f181c
+bfc #d00f181c
+bfc #1e2e34
+bbg #1e2e34
+jbg #0f181c
+jpfg #6db0c9
+jsfg #48849c
+jpfg #94a294
+jsfg #30454d
+pbg #0f181c
+pfg #94a294
+sbg #0f181c
+sfg #30454d
+pbefg #71909e
+pbfg #30454d
+mlfg #bca587
+tbfg #30454d
+Psbg #162328
+Psfg #273a41
+Apfg #94a294
+Abfg #5a9ab3
+Acbfg #48849c
+Wsbg #1e2e34
+Wsbg #0f181c
+Wpbg #1e2e34
+Wpbg #0f181c
+Wsfg #30454d
+Lsbg #d00f181c
+Lsbg #1e2e34
+Lsbg #0f181c
+Lsfg #273a41
+Lpbg #d00f181c
+Lpbg #1e2e34
+Lpbg #0f181c
+Lpfg #465f69
+Lpfg #465f69
+Labg #d0162328
+Labg #d00f181c
+Labg #263940
+Labg #162328
+Lafg #94a294
+Lafg #71909e
+Lafg #acbfac
+Lsfc #3d5965
+
+#qb
+bg #162328
+fg #273a41
+sbg #0f181c
+sfg #71909e
+mfg #71909e
+sbbg #0f181c
+
+#term
+fg #acbfac
+bg #ff0f181c
+
+#bash
+bg default
+fg #1e2e34
+sc #1e2e34
+dc #1e2e34
+ic #71909e
+sec #5a9ab3
+gcc #5a9ab3
+gdc #e4b195
+vc #bca587
+
+#vim
+bg none
+fg #bbcbbb
+sfg #e4b195
+vfg #71909e
+cfg #cbb075
+ifg #bca587
+ffg #5a9ab3
+nbg none
+nfg #1e2e34
+lbg #162328
+lfg #71909e
+syfg #cbb075
+cmfg #273a41
+slbg #162328
+slfg #273a41
+fzfhl #71909e
+bcbg #5a9ab3
+bdbg #71909e
+nmbg #bca587
+imbg #e4b195
+vmbg #cbb075
+
+#rofi
+bg #131e23
+dmbg #162328
+dmfg #30454d
+dmsbg #1e2e34
+hpfg #3a515a
+tbg #f0131e23
+tbg #ea131e23
+tbg #dd131e23
+tbg #f0131e23
+mbg #f00f181c
+msbg #701a292f
+fg #273a41
+bc #5a9ab3
+bc #131e23
+ibg #131e23
+ibc #1e2e34
+ibc #131e23
+abg #08080855
+abg #08080866
+abg #08080844
+abg #0e171bb0
+abg #0e171bdd
+afg #30454d
+ebg #131e23
+efg #71909e
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #1a292fb0
+sbg #1a292fd0
+sfg #71909e
+sul #71909e
+lpc #acbfac
+dpc #acbfac
+btc #131e23
+sbtc #131e23
+btbc #131e23
+ftbg #00000000
+sbbg #71909e88
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #273a41
+bc #162328
+mc #5a9ab3
+ibg #162328
+ifg #273a41
+sfg #273a41
+wbg #162328
+wfg #273a41
+cbg #1e2e34
+cfg #71909e
+
+#dunst
+bg #162328
+fg #acbfac
+fc #5a9ab3
+sbg #0f181c
+pbfg #71909e
+
+#vifm
+fg #30454d
+dfg #1e2e34
+efg #30454d
+cbg #162328
+cfg #71909e
+sfg #162328
+tfg #162328
+slbg #162328
+slfg #30454d
+
+#ncmpcpp
+npp #30454d
+np #30454d
+sip #1e2e34
+sc #1e2e34
+mwc #1e2e34
+etc #191e24
+c2 #DBBD7D
+pc #1e2e34
+pec #71909e
+vc #71909e
+
+#sxiv
+bg #0f181c
+fg #71909e
+
+#lock
+tc #ffacbfac
+rc #ff71909e
+ic #dc0f181c
+wc #ff6db0c9
+
+#nb
+fg #1e2e34
+pfg #162328
+pbg default
+ifg #30454d
+ibg #1e2e34
