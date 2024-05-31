@@ -1,9 +1,9 @@
 #!/bin/bash
 
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh playback
-[[ $theme != icons ]] &&
+[[ ! $style =~ icons|dmenu ]] &&
 	toggle=play stop=stop next=next prev=prev rand=random up=volume_up down=volume_down controls=controls pl=playlist sep=' '
 
 icon_prev=
@@ -42,20 +42,23 @@ handle_volume() {
 	[[ ${volume%% *} == $icon_up ]] && direction=+ || direction=-
 
 	mpc -q volume $direction$((${multiplier:-1} * 5))
-	~/.orw/scripts/system_notification.sh mpd_volume &
+	~/.orw/scripts/system_notification.sh mpd_volume osd &
 }
 
 #toggle_rofi() {
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+item_count=8
+set_theme_str
+
+toggle
+trap toggle EXIT
 
 while
 	active=$(mpc | awk 'END { if($6 == "on") print "-a 4" }')
 
-	read row action <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${row:-1} $active -theme main
+	read row action <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -theme-str "$theme_str" -selected-row ${row:-1} $active -theme main
 		$icon_prev$sep$prev
 		$icon_toggle$sep$toggle
 		$icon_stop$sep$stop
@@ -92,7 +95,8 @@ while
 				#[[ $song ]] && ~/.orw/scripts/play_song_from_playlist.sh "${song:${#empty}}";;
 				#~/.orw/scripts/rofi_scripts/dmenu/mpd_playlist.sh;;
 				
-				~/.orw/scripts/rofi_scripts/mpd_songs_group.sh play;;
+				#~/.orw/scripts/rofi_scripts/mpd_songs_group.sh play;;
+				~/.orw/scripts/rofi_scripts/dmenu/art_playlist.sh &;;
 			#$icon_pl*)
 			#	indicator='●'
 			#	mpc playlist | awk '{ p = ($0 == "'"$current_song"'") ? "'$indicator' " : "'"$empty"'"; print p $0 }';;

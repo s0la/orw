@@ -3,13 +3,13 @@
 current_workspace=$(xdotool get_desktop)
 
 mode=$(awk '/^mode/ { print $NF }' ~/.config/orw/config)
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+style=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 declare -A workspace_icons
 workspace_icons=( [web]=  [development]=  [media]=  [upwork]=$ )
 
-if [[ $theme == icons ]]; then
-	icons=~/.orw/scripts/bar/icons
+if [[ $style =~ icons|dmenu ]]; then
+	icons=~/.orw/scripts/new_bar/icons
 	#active="-a $current_workspace"
 	active="-a ${2:-$current_workspace}"
 else
@@ -17,6 +17,8 @@ else
 	indicator='●  '
 	empty='   '
 fi
+
+active="-a ${2:-$current_workspace}"
 
 workspaces=( $(awk '
 		/<\/?names>/ { wn = (wn + 1) % 2 }
@@ -26,7 +28,7 @@ workspaces=( $(awk '
 			awn = awn "|" cwn
 		}
 
-		FILENAME ~ ".*icons$" && $0 ~ "Workspace_(" substr(awn, 2) ")_icon" {
+		FILENAME ~ ".*(icons|dmenu)$" && $0 ~ "Workspace_(" substr(awn, 2) ")_icon" {
 			awi = awi " " gensub("[^}]*}([^%]*).*", "\\1", 1)
 		} END { print (awi) ? awi : gensub("\\|", " ", "g", awn) }' ~/.config/openbox/rc.xml $icons) )
 
@@ -150,7 +152,7 @@ window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 manage=
 if [[ $manage ]]; then
 	#[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
-	[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( add remove )
+	[[ $style =~ icons|dmenu ]] && workspaces+=(    ) || workspaces+=( add remove )
 	#[[ $theme == icons ]] && workspaces+=(    ) || workspaces+=( " tmp" )
 fi
 
@@ -164,7 +166,7 @@ fi
 
 for workspace_index in ${!workspaces[*]}; do
 	((workspace_index)) && all_workspaces+='\n'
-	((workspace_index == current_workspace)) && prefix="$indicator" || prefix="$empty"
+	#((workspace_index == current_workspace)) && prefix="$indicator" || prefix="$empty"
 	((workspace_index == ${#workspaces[*]} - 1)) && unset prefix
 	all_workspaces+="$prefix${workspaces[workspace_index]}"
 done
@@ -183,11 +185,18 @@ done
 #	/^tiling_workspace/ { print (/'$current_workspace'/) }' \
 #		~/.orw/scripts/spy_windows.sh)
 
-[[ $move ]] || toggle_rofi
+[[ $move ]] || toggle
+
+#echo "$theme"
+#theme='-theme-str "window { width: 200px; }"'
+
+item_count=${#workspaces[*]}
+set_theme_str
 
 #chosen_workspace=$(echo -e "$all_workspaces" | rofi -dmenu $active -theme main)
-read chosen_{index,workspace} <<< $(echo	-e "$all_workspaces" |
-	rofi -dmenu -format 'i s' -selected-row $current_workspace $active -theme main)
+read chosen_{index,workspace} <<< $(echo -e "$all_workspaces" |
+	rofi -dmenu -format 'i s' -selected-row $current_workspace \
+	-theme-str "$theme_str" $active -theme main)
 
 #echo -e "$all_workspaces"
 
@@ -195,7 +204,7 @@ read chosen_{index,workspace} <<< $(echo	-e "$all_workspaces" |
 
 if [[ -z $chosen_workspace || $chosen_index -eq $current_workspace ]]; then
 	#echo TOGGLING >> ~/w.log
-	toggle_rofi
+	toggle
 	exit 0
 fi
 
@@ -211,7 +220,7 @@ else
 		((workspace_count++))
 		wmctrl -n $workspace_count
 	else
-		[[ $theme == icons ]] &&
+		[[ $style =~ icons|dmenu ]] &&
 			new_workspace_name="${chosen_workspace##* }" || new_workspace_name="${desktop:-${chosen_workspace##* }}"
 
 		for new_workspace_index in ${!workspaces[*]}; do
@@ -239,7 +248,7 @@ else
 			wmctrl -i -r $window_id -t $new_workspace_index
 			#exit
 
-			[[ $theme == icons && $chosen_workspace !=   ]] &&
+			[[ $style =~ icons|dmenu && $chosen_workspace !=   ]] &&
 				temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
 				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
 				#temp_workspace_regex='^(||||)$' || temp_workspace_regex='^tmp[0-9]+?$'
@@ -272,7 +281,7 @@ else
 					workspace_to_remove=$(wmctrl -d | \
 						awk '$1 == "'$current_workspace_index'" {
 							if ($NF - 1) tn = $NF - 1
-							print ("'$theme'" == "icons") ? "tmp" tn : "'$current_workspace_name'" }')
+							print ("'$style'" =~ "icons|dmenu") ? "tmp" tn : "'$current_workspace_name'" }')
 					wmctrl -n $((workspace_count - 1))
 					~/.orw/scripts/notify.sh -p "Temporary workspace <b>$workspace_to_remove</b> has been removed."
 				fi

@@ -5,14 +5,18 @@ icon_x_up=
 icon_y_up=
 icon_y_down=
 
-toggle_rofi
-trap toggle_rofi EXIT
+toggle
+trap toggle EXIT
+
+#item_count=2
+#set_theme_str
 
 while
-	index=$(echo -e '\n' | rofi -dmenu -format i -selected-row $index -theme main)
+	index=$(echo -e '\n' |
+		rofi -dmenu -format i -theme-str "$theme_str" -selected-row $index -theme main)
 	((index)) &&
 		direction=- || direction=+
 	[[ $index ]]
 do
-	~/.orw/scripts/opacityctl.sh term ${direction}4
+	~/.orw/scripts/opacityctl.sh term ${direction}2
 done

@@ -25,7 +25,7 @@ maxed=$(awk '$1 == "'$id'" { m = ($NF == "maxed") } END { if(m) print "-a 1" }' 
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
+toggle
 #trap toggle_rofi EXIT
 
 action=$(cat <<- EOF | rofi -dmenu $maxed -theme main

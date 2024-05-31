@@ -1,6 +1,6 @@
 #!/bin/bash
 
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
 
 running="$(wmctrl -lG | awk '\
@@ -40,13 +40,13 @@ running="$(wmctrl -lG | awk '\
 		print r, a
 	}')"
 
-if [[ $theme == icons ]]; then
+if [[ $style =~ icons|dmenu ]]; then
 	[[ $running ]] && active="-a ${running#*,}"
 	#default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 	default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 	default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 		default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
-	else
+else
 	indicator='●'
 	[[ $running ]] && eval "$running empty='  '"
 	default_label=default vertical_label=vertical split_label=split cover_label=cover visualizer_label=visualizer dual_h_label='dual horizontal' dual_v_label='dual vertical'
@@ -56,10 +56,13 @@ fi
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+toggle
+trap toggle EXIT
 
-mode=$(cat <<- EOF | rofi -dmenu $active -theme main
+item_count=7
+set_theme_str
+
+mode=$(cat <<- EOF | rofi -dmenu -theme-str "$theme_str" $active -theme main
 	${default-$empty}${default_label}
 	${vertical-$empty}${vertical_label}
 	${split-$empty}${split_label}

@@ -20,8 +20,8 @@ icon_default=
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+toggle
+trap toggle EXIT
 
 while
 	active=$(awk '/^[^#].*[0-9]+%/ {

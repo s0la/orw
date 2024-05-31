@@ -3,7 +3,7 @@
 theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 orw_conf=~/.config/orw/config
 
-[[ $theme != icons ]] &&
+[[ ! $style =~ icons|dmenu ]] &&
 	wm_mode=wm_mode full=full use_ratio=use_ratio move=move interactive=interactive \
 	offset=offset margin=margin reverse=reverse direction=direction sep=' '
 
@@ -35,12 +35,12 @@ get_state() {
 				r = ""
 				r = ""
 				rev = ($NF == "true")
-				if(rev) a = a ",7"
+				if(rev) a = a ",4"
 			} else if (/^interactive/) {
 				i = ""
 				i = ""
 				i = ""
-				if ($NF == "true") a = a ",4"
+				if ($NF == "true") a = a ",5"
 			}
 		} END {
 			o = ""; m = ""
@@ -63,12 +63,7 @@ get_state() {
 
 id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
-#toggle_rofi() {
-#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-#}
-
-toggle_rofi
-#trap toggle_rofi EXIT
+toggle
 
 update_value() {
 	local property=$1 value=$2
@@ -76,11 +71,13 @@ update_value() {
 }
 
 set_margin() {
-	local index
+	local index direction theme_str item_count=2
+	set_theme_str
 
 	while
 		read index margin_direction <<< $(echo -e '\n' |
-			rofi -dmenu -format 'i s' -selected-row ${index:-1} -theme main)
+			rofi -dmenu -format 'i s' -theme-str "$theme_str" \
+			-selected-row ${index:-1} -theme main)
 		[[ $margin_direction ]]
 	do
 		[[ $margin_direction ==  ]] && direction=+ || direction=-
@@ -103,18 +100,18 @@ wait_to_proceed() {
 }
 
 trap : USR1
-#trap "~/.orw/scripts/notify.sh 'EXITING'" INT KILL EXIT
 
 set_offset() {
-	local index interactive=$(awk '$1 == "interactive" { print $NF == "true" }' $orw_conf)
-	#~/.orw/scripts/notify.sh -t 11 "INT: $interactive"
+	local index direction theme_str item_count=4
+	local interactive=$(awk '$1 == "interactive" { print $NF == "true" }' $orw_conf)
+	set_theme_str
 
 	if ((interactive)); then
 		~/.orw/scripts/signal_windows_event.sh offset_int
 		exit
 	else
 		while
-			read index option <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${index:-0} -theme main
+			read index option <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -theme-str "$theme_str" -selected-row ${index:-0} -theme main
 				$icon_x_down$sep$x_down
 				$icon_x_up$sep$x_up
 				$icon_y_up$sep$y_up
@@ -122,26 +119,32 @@ set_offset() {
 			EOF
 			)
 
-			[[ $option ]]
+			[[ $index ]]
 		do
 			[[ $option =~ [0-9]+ ]] && value=${@##* }
 			[[ $option =~ ^($icon_x_up|$icon_y_up) ]] && direction=+ || direction=-
 			[[ $option =~ ^($icon_x_up|$icon_x_down) ]] && orientation=x || orientation=y
 			update_value $orientation 20
-			wait_to_proceed
+			[[ $style =~ vertical_icons|dmenu ]] && wait_to_proceed
+			#[[ ($style == icons && $orientation == x) ||
+			#	($style == dmenu && $orientation == y) ]] && wait_to_proceed
 		done
 	fi
 }
 
 set_direction() {
-	read new_{active_direction,direction_icon} <<< \
-		$(echo -e '\n\n' | rofi -dmenu -a $active_direction -format 'i s' -theme main)
+	local direction theme_str item_count=3
+	set_theme_str
 
-	if [[ $new_direction_icon ]]; then
-		case $new_direction_icon in
-			) direction=auto;; 
-			) direction=h;;
-			) direction=v;;
+	read new_{active_direction,direction_icon} <<< \
+		$(echo -e '\n\n' | rofi -dmenu -format 'i s' \
+		-theme-str "$theme_str" -a $active_direction -theme main)
+
+	if [[ $new_active_direction ]]; then
+		case $new_active_direction in
+			0) direction=auto;; 
+			1) direction=h;;
+			2) direction=v;;
 		esac
 
 		active_direction=$new_active_direction
@@ -204,11 +207,13 @@ set_interactive() {
 	~/.orw/scripts/notify.sh -s osd -i ${!icon} "$property: ${state^^}"
 }
 
+item_count=6
+set_theme_str
+
 while
 	get_state
-		#$wm_icon$sep$wm_mode
 	read index action <<< \
-		$(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row $index $active -theme main
+		$(cat <<- EOF | rofi -dmenu -format 'i s' -theme-str "$theme_str" -selected-row $index $active -theme main
 		$direction_icon$sep$direction
 		$full_icon$sep$full
 		$offset_icon$sep$offset
@@ -244,14 +249,14 @@ do
 		*$reverse_icon*) set_value reverse;;
 		*$direction_icon*) set_direction;;
 		*$wm_icon*)
-			[[ $theme == icons ]] &&
+			[[ $style =~ icons|dmenu ]] &&
 				wm_mode_icons=(           ) &&
 				wm_mode_icons=(   $twm_icon       ) &&
 				wm_mode_icons=(   $twm_icon       ) &&
 
 			wm_modes=( floating tiling auto stack selection )
 
-			[[ $theme == icons ]] && rep=wm_mode_icons || rep=wm_modes
+			[[ $style =~ icons|dmenu ]] && rep=wm_mode_icons || rep=wm_modes
 			eval modes=( \${$rep[*]} )
 
 			mode_index=$(for mode in ${modes[*]}; do
@@ -263,7 +268,7 @@ do
 	esac
 done
 
-toggle_rofi
+toggle
 exit
 
 ~/.orw/scripts/signal_windows_event.sh update

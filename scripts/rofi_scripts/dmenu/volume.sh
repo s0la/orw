@@ -32,8 +32,8 @@ icon_mute=
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+toggle
+trap toggle EXIT
 
 while
 	active=$(amixer -D pulse get Master | awk '/Playback.*%/ { if($NF ~ "off") print "-a 1" }')

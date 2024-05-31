@@ -3,7 +3,7 @@
 indicator='●'
 
 config=~/.config/orw/config
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh apps
 
 running="$(wmctrl -l | awk '\
@@ -24,7 +24,7 @@ running="$(wmctrl -l | awk '\
 		}
 	} END { print r, "a=" a }')"
 
-if [[ $theme == icons ]]; then
+if [[ $style =~ icons|dmenu ]]; then
 	#id=$(wmctrl -l | awk '/DROPDOWN/ { print $1 }')
 
 	#if [[ $id ]]; then
@@ -54,10 +54,13 @@ fi
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+toggle
+trap toggle EXIT
 
-app=$(cat <<- EOF | rofi -dmenu -i $running -theme main
+item_count=4
+set_theme_str
+
+app=$(cat <<- EOF | rofi -dmenu -i -theme-str "$theme_str" $running -theme main
 	${term_label-$empty}$term
 	${dropdown_label-$empty}$dropdown
 	${vifm_label-$empty}$vifm

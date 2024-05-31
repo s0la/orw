@@ -1,7 +1,7 @@
 #!/bin/bash
 
 config=~/.config/orw/config
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh wallpapers
 
 get_directory() {
@@ -10,7 +10,7 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
-if [[ $theme == icons ]]; then
+if [[ $style =~ icons|dmenu ]]; then
 	#auto=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print ($2 == "active") ? "" : "" }')
 	#auto=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { if($2 == "active") print "-a 5" }')
 	active=$(systemctl --user is-active change_wallpaper.timer | awk '{ if(/^active/) print "-a 4" }')
@@ -58,7 +58,8 @@ fi
 #)
 
 list_actions() {
-	read row action <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${row:-1} $active -theme main
+	#echo $item_count: $theme_str
+	read row action <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -theme-str "$theme_str" -selected-row ${row:-1} $active -theme main
 		$prev
 		$rand
 		$next
@@ -90,15 +91,13 @@ wallctl=~/.orw/scripts/wallctl.sh
 #fi
 
 
-toggle_rofi() {
-	#~/.orw/scripts/notify.sh "SIG" &
-	~/.orw/scripts/signal_windows_event.sh rofi_toggle
-}
+#toggle() {
+#	#~/.orw/scripts/notify.sh "SIG" &
+#	~/.orw/scripts/signal_windows_event.sh rofi_toggle
+#}
 
-toggle_rofi
-trap toggle_rofi EXIT
-
-list_actions
+toggle
+trap toggle EXIT
 
 #~/.orw/scripts/notify.sh "a: ^$action^ ^$categories^"
 #exit
@@ -138,6 +137,11 @@ list_actions
 #
 #	[[ $selected_wallpaper ]] &&  eval $wallctl -s "$root/'${selected_wallpaper:2}'"
 #else
+
+item_count=8
+set_theme_str
+list_actions
+
 while
 	if [[ $action ]]; then
 		case "$action" in

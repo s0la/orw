@@ -1,8 +1,9 @@
 #!/bin/bash
 
-theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
+#theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 #[[ $theme =~ dmenu|icons ]] && ~/.orw/scripts/set_rofi_geometry.sh power
-[[ $theme != icons ]] && lock=lock loggout=loggout reboot=reboot off=poweroff sep=' '
+[[ ! $style =~ icons|dmenu ]] &&
+	lock=lock loggout=loggout reboot=reboot suspend=suspend off=poweroff sep=' '
 
 icon_lock=
 icon_logout=
@@ -21,37 +22,55 @@ icon_logout=
 icon_reboot=
 icon_off=
 icon_off=
-
+icon_suspend=
 #toggle_rofi() {
 #	~/.orw/scripts/signal_windows_event.sh rofi_toggle
 #}
 
-toggle_rofi
-trap toggle_rofi EXIT
+#icon_lock='*'
+#icon_lock='*'
+#icon_logout='*'
+#icon_reboot='*'
+#icon_off='*'
+#icon_off='*'
+#icon_suspend='*'
 
-action=$(cat <<- EOF | rofi -dmenu -theme main
-	$icon_lock$sep$lock
-	$icon_logout$sep$loggout
-	$icon_reboot$sep$reboot
-	$icon_off$sep$off
-EOF
-)
+toggle
+trap toggle EXIT
 
-if [[ $action ]]; then
+while
+	item_count=5
+	set_theme_str
+
+	action=$(cat <<- EOF | rofi -dmenu -theme-str "$theme_str" -theme main
+		$icon_lock$sep$lock
+		$icon_logout$sep$loggout
+		$icon_reboot$sep$reboot
+		$icon_suspend$sep$suspend
+		$icon_off$sep$off
+	EOF
+	)
+
+	[[ $action ]]
+do
 	yes_icon=
 	no_icon=
 	yes_icon=
 	no_icon=
 
-	[[ $theme != icons ]] &&
-		yes_label=yes no_label=no ||
-#		~/.orw/scripts/set_rofi_geometry.sh power 2
+	[[ $style != *icons ]] &&
+		yes_label=yes no_label=no
 
 	if [[ $action =~ $icon_lock ]]; then
-		sleep 0.1
+		#sleep 0.1
 		~/.orw/scripts/lock_screen.sh
+		exit
 	else
-		confirmation=$(echo -e "$yes_icon$yes_label\n$no_icon$no_label" | rofi -dmenu -theme main)
+		item_count=2
+		set_theme_str
+
+		confirmation=$(echo -e "$yes_icon$yes_label\n$no_icon$no_label" |
+			rofi -dmenu -theme-str "$theme_str" -theme main)
 
 		[[ $confirmation == "$yes_icon$yes_label" ]] &&
 			case "$action" in
@@ -59,6 +78,6 @@ if [[ $action ]]; then
 				$icon_reboot*) systemctl reboot;;
 				$icon_suspend) systemctl suspend;;
 				$icon_off*) systemctl poweroff ;;
-			esac
+			esac && exit
 	fi
-fi
+done
