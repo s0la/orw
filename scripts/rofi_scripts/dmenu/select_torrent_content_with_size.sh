@@ -196,7 +196,7 @@ offset=$(awk '
 				if (/^display_[0-9]_xy/ && $pf > p) {
 					rw = int(w * (ww - 2 * wp) / 100)
 					rw -= 2 * ep
-					print int(rw / (f - 2) - 5)
+					print int(rw / (f - 1) - 5)
 					exit
 				}
 			}
