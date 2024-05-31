@@ -49,6 +49,7 @@ get_mpd_stats() {
 					et = ert[1]
 					tt = ert[2]
 					ft = "%{T2}" et "┃%{T-}" tt
+					ft = "%{T2}" et "|%{T-}" tt
 
 					es = get_seconds(et)
 					ts = get_seconds(tt)
@@ -60,6 +61,7 @@ get_mpd_stats() {
 					ns = "┃"
 					ns = "│"
 					ns = "|"
+					ns = "┃"
 					fn = a ns t
 					nsl = length(ns)
 					fnl = length(fn)
@@ -350,10 +352,13 @@ make_mpd_content() {
 		esac
 	done
 
+	#echo $mpd_components
+
 	#mpd_content='$padding$mpd$padding'
 	[[ ${joiner_modules[m]} ]] ||
-		local mpd_padding=$padding
-	mpd_content="\$mpd_padding\$mpd\$mpd_padding"
+		local mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs=$mfs mpd_fe=$mfe
+	#mpd_content="\$mpd_padding\$mpd\$mpd_padding"
+	mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding$mpd_fe"
 	#~/.orw/scripts/notify.sh "MPD: $mpd_content"
 }
 
