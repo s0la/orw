@@ -1,27 +1,27 @@
 #qutebrowser
 name="qutebrowser"
-icon="%{I+5}%{I-}"
+icon="%{I}%{I-}"
 left="qutebrowser"
 middle="~/Desktop/wq"
 
-#termite
-name="termite"
-icon="%{I+5}%{I-}"
-left="termite -t termite"
+#alacritty
+name="alacritty"
+icon="%{I}%{I-}"
+left="alacritty -t alacritty"
 
 #DROPDOWN
 #name="DROPDOWN"
-#icon="%{I+5}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/dropdown.sh"
 
 #vifm
 name="vifm"
-icon="%{I+5}%{I-}"
+icon="%{I}%{I-}"
 left="~/.orw/scripts/vifm.sh -i"
 
 #bar_mwc
 #name="bar_mwc"
-#icon="%{I+5}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh controls"
 #middle="~/.orw/scripts/widgets.sh controls -k"
 #right="mpc -q toggle"
@@ -30,36 +30,42 @@ left="~/.orw/scripts/vifm.sh -i"
 
 #cover_art_widget
 #name="cover_art_widget"
-#icon="%{I+5}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh cover"
 #middle="~/.orw/scripts/widgets.sh cover -k"
 
 #input
 #name="input"
-#icon="\\${Lsfg:-\\$sfg}%{I+5}%{I-}"
+#icon="\\${Lsfg:-\\$sfg}%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh toggle_input"
 
 #ncmpcpp
 #name="ncmpcpp"
-#icon="%{I+5}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh playlist"
+#middle="~/.orw/scripts/widgets.sh playlist -k"
+
+#ncmpcpp_with_cover_art
+#name="ncmpcpp_with_cover_art"
+#icon="%{I1}%{I-}"
+#left="~/.orw/scripts/ncmpcpp.sh -c"
 #middle="~/.orw/scripts/widgets.sh playlist -k"
 
 #visualizer
 #name="visualizer"
-#icon="%{I+5}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh visualizer"
 #middle="~/.orw/scripts/widgets.sh visualizer -k"
 
 #bar_wwi
 #name="bar_wwi"
-#icon="%{I+1}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/widgets.sh weather"
 #middle="~/.orw/scripts/widgets.sh weather -k"
 
 #wallctl
 #name="wallctl"
-#icon="%{I+2}%{I-}"
+#icon="%{I}%{I-}"
 #left="~/.orw/scripts/wallctl.sh -v"
 #middle="~/.orw/scripts/wallctl.sh -A"
 #up="~/.orw/scripts/wallctl.sh -o prev"
@@ -67,5 +73,5 @@ left="~/.orw/scripts/vifm.sh -i"
 
 #lock_screen
 name="lock_screen"
-icon="%{I+3}%{I-}"
+icon="%{I}%{I-}"
 left="~/.orw/scripts/lock_screen.sh"
