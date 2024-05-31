@@ -1,11 +1,16 @@
 #!/bin/bash
 
-count=$3
+username=$1
+password=$2
+count=${3:-5}
 length=${4:-55}
+email_auth=~/.orw/scripts/auth/email
+[[ -z $@ ]] &&
+	read username {,app_}password <<< $(awk '{ print $NF }' $email_auth | xargs)
 
 while read -r mail_info; do
 	all_mail_info+="$mail_info\n\n"
-done <<< $(curl -u "$1":"$2" --silent "https://mail.google.com/mail/feed/atom" |
+done <<< $(curl -u "$username":"${app_password:-$password}" --silent "https://mail.google.com/mail/feed/atom" |
 	xmllint --format - 2> /dev/null | awk -F '[<>]' '
 		/^ *<(name|title)/ && ! /Inbox/ {
 			if('$count' && c && c > '$count') exit
