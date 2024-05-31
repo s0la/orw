@@ -7,9 +7,10 @@ configuration {
 }
 
 * {
+	font:                  "SFMono Medium 7";
 	font:                  "SFMono Medium 10";
 	font:                  "Iosevka Orw 9";
-	font:                  "SFMono Medium 9";
+	font:                  "SFMono Medium 7";
 
 	lines:                 7;
 
@@ -27,9 +28,9 @@ configuration {
 
 	entry-margin:          0 3px 0;
 
-	switcher-width:        4%;
+	switcher-width:        3.3%;
 
-	element-padding:       8px 8px;
+	element-padding:       5px 5px;
 }
 
 mainbox {
@@ -58,7 +59,7 @@ box {
     enabled:                     true;
     text-color:                  @fg;
     width:                       @switcher-width;
-    padding:                     0.5%;
+    padding:                     0.25%;
     children:                    [  "space" , "mode-switcher", "space" ];
 }
 
@@ -103,7 +104,7 @@ inputbar {
 }
 
 #button {
-	font: "material 11";
+	font: "material 10";
 	expand: false;
 	padding: 2% 0;
 }

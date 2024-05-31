@@ -1,6 +1,4 @@
 
-@theme "/dev/null"
-
 @import "theme"
 
 mainbox {
@@ -16,7 +14,7 @@ window {
 prompt {
   padding:          10px;
   background-color: @tbg;
-  font:             "SFMono Medium 8";
+  font:             "SFMono Medium 7";
   border-radius:    5px;
   expand:           false;
   text-color:       @lpc;
@@ -27,28 +25,40 @@ inputbar {
   children:         [ prompt ];
   expand:           false;
   border-radius:    8px 8px 0px 0px;
-  // padding:          155px 10px 10px 10px;
-  padding:          10px 10px 155px 10px;
-  // padding:       218px 10px 10px 10px;
+  // padding:          10px 10px 155px 10px;
+  padding:          10px 10px 183px 10px;
+}
+
+#space {
+	width: 35px;
+	expand: false;
+	background-color:            transparent;
 }
 
 listview {
   layout:            horizontal;
-  padding:           7px;
-  background-color:  @mbg;
+  padding:           2px 40px;
+  background-color:  @tbg;
   transparency:      "real";
+}
+
+box {
+	expand: false;
+    orientation:                 horizontal;
+	background-color:            inherit;
+    children:                    [  "space" , "listview", "space" ];
 }
 
 mainbox { children: [ inputbar, listview ]; }
 
 element {
-  margin: 3px;
+  margin: 2px;
   border-radius:	5px;
 }
 
 element-text {
-  padding:		15px;
-  font:			"remix 14";
+  padding:		11px;
+  font:			"remix 12";
   background-color: inherit;
 }
 

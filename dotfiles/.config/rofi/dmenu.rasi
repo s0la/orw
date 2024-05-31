@@ -4,33 +4,23 @@
 
 * {
 	window-border:        0px;
-	window-padding:        2px;
-	// window-margin:        52px 0 0 0;
+	window-padding:       0px;
 
-	y-offset:             54px;
+	y-offset:             34px;
 
-	// element-padding:      1ch 3ch;
-	element-padding:      4px 15px;
+	element-padding:      5px 15px;
 	element-border:       0 0 2px;
 
 	input-padding:        @element-padding;
 
-	// entry-margin:         0 1ch;
-	// entry-margin:         0 5px -1px;
 	entry-margin:         0 5px;
 	entry-width:          100px;
-
-	// prompt-padding:       0 1ch;
-	// prompt-margin:        0 0 0 1ch;
 
 	prompt-padding:       0px 3px;
 	prompt-margin:        0 0 0 3px;
 
-	// colon-margin:         0 0 0 1ch;
-	// colon-margin:         1px 3px -1px;
-
 	font: "Iosevka Orw 9";
-	font: "SFMono 9";
+	font: "SFMono 7";
 
 	window-width:         1000px;
 	bg:      @dmbg;

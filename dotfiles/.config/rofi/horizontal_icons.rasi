@@ -5,31 +5,32 @@
 * {
 	bg: @tbg;
 
-	font:                   "material 13";
+	font:                   "material 9";
 
 	window-orientation:     horizontal;
 
-	list-spacing:           7px;
+	list-spacing:           3px;
 
 	input-margin:           0 0 5px;
 
 	entry-margin:           0 5px;
 
-	element-padding:        29px 29px;
+	element-padding:        20px 20px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
 	window-location:        center;
-	window-padding:         7px 7px;
+	window-padding:         3px 3px;
 	// window-margin:          0 7px;
 	window-radius:          5px;
-	window-width:           383px;
+	window-width:           339px;
 
 	y-offset:               50px;
 
 	background-color: @ftbg;
 	sbg: #dddddd0d;
 	abg: #08080844;
+	abg: #03030333;
 }
 
 configuration {
@@ -52,6 +53,7 @@ mainbox {
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @list-spacing;
+	padding:          @window-padding;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
     background-color:            transparent;
@@ -99,7 +101,7 @@ mainbox {
 }
 
 #element-text normal.normal, element-text alternate.normal {
-	color: @hpfg;
+	color: @fg;
 }
 
 #element.selected.normal {
