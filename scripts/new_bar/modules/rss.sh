@@ -34,7 +34,8 @@ check_rss() {
 			get_rss
 		fi
 
-		((old_rss && old_rss < rss)) &&
+		#((old_rss && old_rss < rss)) &&
+		((rss && old_rss < rss)) &&
 			~/.orw/scripts/notify.sh -r 501 -s osd -i ${icon//[[:ascii:]]} \
 			"New feeds: $rss" &> /dev/null
 
