@@ -2,7 +2,7 @@
 
 time=3
 
-while getopts :i:F:f:o:r:c:t:P:ps:b:v: flag; do
+while getopts :i:F:f:o:r:c:t:P:ps:b:v:T flag; do
 	case $flag in
 		p) padding='\n';;
 		v) value=$OPTARG;;
@@ -12,6 +12,7 @@ while getopts :i:F:f:o:r:c:t:P:ps:b:v: flag; do
 		r) replace="-r $OPTARG";;
 		P) padding_height=$OPTARG;;
 		c) config="-config $OPTARG";;
+		T) no_top=true;;
 		b)
 			bar=true
 			level_value=${OPTARG%/*}
@@ -32,8 +33,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#0e1414"
-pbfg="#5ec1bf"
+sbg="#2c2c2c"
+pbfg="#8aa5b4"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -226,7 +227,7 @@ else
 		dunst &> /dev/null &
 	#fi
 
-	bottom_padding=true
+	[[ $style != *osd* ]] && bottom_padding=true
 fi
 
 if [[ $style ]]; then
@@ -236,7 +237,7 @@ if [[ $style ]]; then
 	case $style in
 		osd)
 			((icon_size)) || icon_size=57
-			((info_size)) || info_size=5
+			((info_size)) || info_size=10
 			icon="<span font='Iosevka Orw $icon_size' foreground='$fg'>$font_icon</span>"
 
 			if [[ $bar ]]; then
@@ -261,11 +262,13 @@ if [[ $style ]]; then
 				bar="<span font='Iosevka Orw $info_size' foreground='$pbfg'>$level<span foreground='$sbg'>$empty</span></span>"
 			else
 				info_offset=$(awk '{
-					m = $0
+					m = ("'"$no_top"'") ? $0 : "<b>" toupper($0) "</b>"
 					l = length(m)
 					d = (20 - l) / 2
 					printf("%*.s%s%*.s", d, " ", m, d, " ") }' <<< "${value:-${@: -1}}")
-				info="<span font='Iosevka Orw $info_size' foreground='$fg'><b>${info_offset^^}</b></span>"
+				#info="<span font='Iosevka Orw $info_size' foreground='$fg'><b>${info_offset^^}</b></span>"
+				#info="<span font='Iosevka Orw $info_size' foreground='$fg'><b>$info_offset</b></span>"
+				info="<span font='Iosevka Orw $info_size' foreground='$fg'>$info_offset</span>"
 			fi
 
 			padding_height=3
@@ -297,7 +300,8 @@ if [[ $style ]]; then
 				sbg=$pbfg
 			fi
 
-			empty_bar="<span font='$font 15' foreground='$sbg'>$empty</span>"
+
+						empty_bar="<span font='$font 15' foreground='$sbg'>$empty</span>"
 			#empty_bar="<span font='$font 15' foreground='$pbfg'>$empty</span>"
 			#level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
 			level_bar="<span font='$font 15' foreground='$pbfg'>$slider_icon$level</span>"
