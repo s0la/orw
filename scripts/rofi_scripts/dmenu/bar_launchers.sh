@@ -92,6 +92,8 @@ resize_launchers() {
 		} { print }' $launchers
 }
 
+pattern='^(( | )([an]|$)|( | )[0-9]?$| | |.* (toggle|resize|move)$)'
+
 if [[ -z $@ ]]; then
 	list_launchers
 
@@ -102,7 +104,7 @@ else
 		for bar in ${bars[*]}; do
 			echo $bar
 		done
-	elif [[ $@ =~ ^(( | )([an]|$)|( | )[0-9]?$| | |.* (toggle|resize|move)$) ]]; then
+	elif [[ $@ =~ $pattern ]]; then
 		if [[ $@ == ' ' ]]; then
 			continue
 		elif [[ $@ =~ ( | ) ]]; then
