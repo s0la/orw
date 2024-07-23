@@ -3,11 +3,11 @@ bind-key k up
 bind-key l open
 bind-key h quit
 
-color listnormal color65 default
-color listfocus color178 color108
-color listnormal_unread color178 default
-color listfocus_unread color182 color108
-color info color178 color108
+color listnormal color25 default
+color listfocus color124 color24
+color listnormal_unread color124 default
+color listfocus_unread color119 color24
+color info color124 color24
 
 highlight article ".*" default default
 

@@ -16,9 +16,9 @@ mibth #201c20
 ibt #141114
 ibth #141114
 mbg #201c20
-mfg #454245
+mfg #525052
 mtbg #201c20
-mtfg #454245
+mtfg #525052
 msbg #2c282c
 msfg #5ea0ae
 mb #201c20
@@ -31,45 +31,50 @@ osdu #2c282c
 s #201c20
 
 #bar
-bg #201c20
-fc #201c20
-pfc #201c20
-sfc #201c20
-sfc #201c20
-pfc #201c20
-sfc #201c20
-sfc #141114
-bfc #201c20
-bfc #201c20
-bbg #201c20
-jbg #201c20
+bg #1b171b
+fc #1b171b
+pfc #1b171b
+sfc #1b171b
+sfc #1b171b
+pfc #1b171b
+sfc #1b171b
+sfc #3e3a3e
+bfc #1b171b
+bfc #1b171b
+bbg #1b171b
+bbg #141114
+jbg #1b171b
 jpfg #70706d
 jsfg #43433b
 jpfg #94a297
-jsfg #454245
-pbg #201c20
+jsfg #525052
+pbg #1b171b
 pfg #94a297
 pfg #94a297
-sbg #201c20
-sfg #454245
+sbg #1b171b
+sfg #525052
 pbefg #5ea0ae
-pbfg #454245
+pbfg #525052
 mlfg #a2aa79
-msbg #201c20
+msbg #1b171b
 mpfg #94a297
-tbfg #454245
+mpbg #2c282c
+tbfg #525052
 Apfg #94a297
 Abfg #5a5a54
 Acbfg #43433b
-Wsfg #454245
+Wsfg #525052
 Wpfg #94a297
 Wpfc #326a75
-Nsbg #141114
-Nsfc #141114
+Wsbg #2c282c
+Wpbg #2c282c
+Nsbg #2c282c
+Tsbg #2c282c
+Tpbg #2c282c
 
 #qb
 bg #201c20
-fg #393539
+fg #3e3a3e
 sbg #141114
 sfg #5ea0ae
 mfg #5ea0ae
@@ -103,9 +108,9 @@ nfg #2c282c
 lbg #201c20
 lfg #5ea0ae
 syfg #835575
-cmfg #393539
+cmfg #3e3a3e
 slbg #201c20
-slfg #393539
+slfg #3e3a3e
 fzfhl #5ea0ae
 bcbg #5a5a54
 bdbg #5ea0ae
@@ -115,8 +120,9 @@ vmbg #835575
 
 #rofi
 bg #1b171b
+dmbg #1b171b
 dmbg #201c20
-dmfg #454245
+dmfg #525052
 dmsbg #2c282c
 hpfg #525052
 tbg #f01b171b
@@ -125,7 +131,7 @@ tbg #dd1b171b
 tbg #f01b171b
 mbg #f0141114
 msbg #70272227
-fg #393539
+fg #3e3a3e
 bc #5a5a54
 bc #1b171b
 ibg #1b171b
@@ -136,7 +142,7 @@ abg #08080866
 abg #08080844
 abg #131013b0
 abg #131013dd
-afg #454245
+afg #525052
 ebg #1b171b
 efg #5ea0ae
 sbg #e0e0e00e
@@ -154,43 +160,43 @@ btc #1b171b
 sbtc #1b171b
 btbc #1b171b
 ftbg #00000000
-sbbg #5ea0ae88
+sbbg #5ea0aeaa
 sbsbg #11111144
 
 #tmux
 bg terminal
-fg #393539
+fg #3e3a3e
 bc #201c20
 mc #5a5a54
 ibg #201c20
-ifg #393539
-sfg #393539
+ifg #3e3a3e
+sfg #3e3a3e
 wbg #201c20
-wfg #393539
+wfg #3e3a3e
 cbg #2c282c
 cfg #5ea0ae
 
 #dunst
-bg #201c20
+bg #1b171b
 fg #acbfb0
 fc #5a5a54
-sbg #141114
+sbg #2c282c
 pbfg #5ea0ae
 
 #vifm
-fg #454245
+fg #525052
 dfg #2c282c
-efg #454245
+efg #525052
 cbg #201c20
 cfg #5ea0ae
 sfg #201c20
 tfg #201c20
 slbg #201c20
-slfg #454245
+slfg #525052
 
 #ncmpcpp
-npp #454245
-np #454245
+npp #525052
+np #525052
 sip #2c282c
 sc #2c282c
 mwc #2c282c
@@ -214,5 +220,5 @@ wc #ff70706d
 fg #2c282c
 pfg #201c20
 pbg default
-ifg #454245
+ifg #525052
 ibg #2c282c

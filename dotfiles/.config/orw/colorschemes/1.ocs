@@ -1,0 +1,224 @@
+#ob
+t #585960
+tb #585960
+b #585960
+c #585960
+it #202020
+itb #202020
+ib #202020
+ic #202020
+cbt #2c2c2c
+mabt #2c2c2c
+mibt #2c2c2c
+cbth #202020
+mabth #202020
+mibth #202020
+ibt #141414
+ibth #141414
+mbg #202020
+mfg #525252
+mtbg #202020
+mtfg #525252
+msbg #2c2c2c
+msfg #58684c
+mb #202020
+ms #202020
+bfg #202020
+bsfg #2c2c2c
+osd #202020
+osdh #58684c
+osdu #2c2c2c
+s #202020
+
+#bar
+bg #1b1b1b
+fc #1b1b1b
+pfc #1b1b1b
+sfc #1b1b1b
+sfc #1b1b1b
+pfc #1b1b1b
+sfc #1b1b1b
+sfc #3e3e3e
+bfc #1b1b1b
+bfc #1b1b1b
+bbg #1b1b1b
+bbg #141414
+jbg #1b1b1b
+jpfg #717276
+jsfg #404149
+jpfg #a29494
+jsfg #525252
+pbg #1b1b1b
+pfg #a29494
+pfg #a29494
+sbg #1b1b1b
+sfg #525252
+pbefg #58684c
+pbfg #525252
+mlfg #ebcf4e
+msbg #1b1b1b
+mpfg #a29494
+mpbg #2c2c2c
+tbfg #525252
+Apfg #a29494
+Abfg #585960
+Acbfg #404149
+Wsfg #525252
+Wpfg #a29494
+Wpfc #252f1d
+Wsbg #2c2c2c
+Wpbg #2c2c2c
+Nsbg #2c2c2c
+Tsbg #2c2c2c
+Tpbg #2c2c2c
+
+#qb
+bg #202020
+fg #3e3e3e
+sbg #141414
+sfg #58684c
+mfg #58684c
+sbbg #141414
+
+#term
+fg #bfacac
+bg #ff141414
+
+#bash
+bg default
+fg #2c2c2c
+sc #2c2c2c
+dc #2c2c2c
+ic #58684c
+sec #585960
+gcc #585960
+gdc #f0ff40
+vc #ebcf4e
+
+#vim
+bg none
+fg #cbbbbb
+sfg #f0ff40
+vfg #58684c
+cfg #c3aaa3
+ifg #ebcf4e
+ffg #585960
+nbg none
+nfg #2c2c2c
+lbg #202020
+lfg #58684c
+syfg #c3aaa3
+cmfg #3e3e3e
+slbg #202020
+slfg #3e3e3e
+fzfhl #58684c
+bcbg #585960
+bdbg #58684c
+nmbg #ebcf4e
+imbg #f0ff40
+vmbg #c3aaa3
+
+#rofi
+bg #1b1b1b
+dmbg #1b1b1b
+dmbg #202020
+dmfg #525252
+dmsbg #2c2c2c
+hpfg #525252
+tbg #f01b1b1b
+tbg #ea1b1b1b
+tbg #dd1b1b1b
+tbg #f01b1b1b
+mbg #f0141414
+msbg #70272727
+fg #3e3e3e
+bc #585960
+bc #1b1b1b
+ibg #1b1b1b
+ibc #2c2c2c
+ibc #1b1b1b
+abg #08080855
+abg #08080866
+abg #08080844
+abg #131212b0
+abg #131212dd
+afg #525252
+ebg #1b1b1b
+efg #58684c
+sbg #e0e0e00e
+sbg #fafafa0a
+sbg #eeeeee0a
+sbg #cccccc0a
+sbg #dddddd0d
+sbg #272727b0
+sbg #272727d0
+sfg #58684c
+sul #58684c
+lpc #bfacac
+dpc #bfacac
+btc #1b1b1b
+sbtc #1b1b1b
+btbc #1b1b1b
+ftbg #00000000
+sbbg #58684caa
+sbsbg #11111144
+
+#tmux
+bg terminal
+fg #3e3e3e
+bc #202020
+mc #585960
+ibg #202020
+ifg #3e3e3e
+sfg #3e3e3e
+wbg #202020
+wfg #3e3e3e
+cbg #2c2c2c
+cfg #58684c
+
+#dunst
+bg #1b1b1b
+fg #bfacac
+fc #585960
+sbg #2c2c2c
+pbfg #58684c
+
+#vifm
+fg #525252
+dfg #2c2c2c
+efg #525252
+cbg #202020
+cfg #58684c
+sfg #202020
+tfg #202020
+slbg #202020
+slfg #525252
+
+#ncmpcpp
+npp #525252
+np #525252
+sip #2c2c2c
+sc #2c2c2c
+mwc #2c2c2c
+etc #191e24
+c2 #DBBD7D
+pc #2c2c2c
+pec #58684c
+vc #58684c
+
+#sxiv
+bg #141414
+fg #58684c
+
+#lock
+tc #ffbfacac
+rc #ff58684c
+ic #dc141414
+wc #ff717276
+
+#nb
+fg #2c2c2c
+pfg #202020
+pbg default
+ifg #525252
+ibg #2c2c2c

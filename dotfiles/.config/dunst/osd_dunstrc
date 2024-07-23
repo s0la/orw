@@ -260,9 +260,9 @@
     per_monitor_dpi = false
 
 [urgency_normal]
-	background = "#1b1a1b"
-	foreground = "#b3acbf"
-	frame_color = "#534c50"
+	background = "#161a1b"
+	foreground = "#acb6bf"
+	frame_color = "#7986a3"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

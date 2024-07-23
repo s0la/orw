@@ -1,8 +1,8 @@
 #ob
-t #876064
-tb #876064
-b #876064
-c #876064
+t #875f63
+tb #875f63
+b #875f63
+c #875f63
 it #201212
 itb #201212
 ib #201212
@@ -16,77 +16,71 @@ mibth #201212
 ibt #140b0b
 ibth #140b0b
 mbg #201212
-mfg #452c2c
+mfg #523636
 mtbg #201212
-mtfg #452c2c
+mtfg #523636
 msbg #2c1a1a
-msfg #b085a1
+msfg #a2c89a
 mb #201212
 ms #201212
 bfg #201212
 bsfg #2c1a1a
 osd #201212
-osdh #b085a1
+osdh #a2c89a
 osdu #2c1a1a
 s #201212
 
 #bar
-bg #2c1a1a
-fc #2c1a1a
-pfc #bc92ad
-sfc #704b4e
-sfc #140b0b
-bfc #d0140b0b
-bfc #2c1a1a
-bbg #2c1a1a
-jbg #140b0b
-jpfg #9d767a
-jsfg #704b4e
+bg #1b0f0f
+fc #1b0f0f
+pfc #1b0f0f
+sfc #1b0f0f
+sfc #1b0f0f
+pfc #1b0f0f
+sfc #1b0f0f
+sfc #3e2626
+bfc #1b0f0f
+bfc #1b0f0f
+bbg #1b0f0f
+bbg #140b0b
+jbg #1b0f0f
+jpfg #9d7579
+jsfg #704a4e
 jpfg #9ea294
-jsfg #452c2c
-pbg #140b0b
+jsfg #523636
+pbg #1b0f0f
 pfg #9ea294
-sbg #140b0b
-sfg #452c2c
-pbefg #cd9974
-pbfg #452c2c
+pfg #9ea294
+sbg #1b0f0f
+sfg #523636
+pbefg #a2c89a
+pbfg #523636
 mlfg #d6d69c
-tbfg #452c2c
-Psbg #201212
-Psfg #392323
+msbg #1b0f0f
+mpfg #9ea294
+mpbg #2c1a1a
+tbfg #523636
 Apfg #9ea294
-Abfg #876064
-Acbfg #704b4e
+Abfg #875f63
+Acbfg #704a4e
+Wsfg #523636
+Wpfg #9ea294
+Wpfc #678f5e
 Wsbg #2c1a1a
-Wsbg #140b0b
 Wpbg #2c1a1a
-Wpbg #140b0b
-Wsfg #452c2c
-Wsfc #774d69
-Lsbg #d0140b0b
-Lsbg #2c1a1a
-Lsbg #140b0b
-Lsfg #392323
-Lpbg #d0140b0b
-Lpbg #2c1a1a
-Lpbg #140b0b
-Lpfg #614242
-Lpfg #614242
-Labg #d0201212
-Labg #d0140b0b
-Labg #382222
-Labg #201212
-Lafg #9ea294
-Lafg #b085a1
-Lafg #b9bfac
-Lsfc #774d69
+Nsbg #2c1a1a
+Tsbg #2c1a1a
+Tpbg #2c1a1a
+Ppbg #a2c89a
+Psfg #678f5e
+Psfc #c2e4bb
 
 #qb
 bg #201212
-fg #392323
+fg #3e2626
 sbg #140b0b
-sfg #b085a1
-mfg #b085a1
+sfg #a2c89a
+mfg #a2c89a
 sbbg #140b0b
 
 #term
@@ -98,39 +92,40 @@ bg default
 fg #2c1a1a
 sc #2c1a1a
 dc #2c1a1a
-ic #b085a1
-sec #876064
-gcc #876064
-gdc #cd9974
+ic #a2c89a
+sec #875f63
+gcc #875f63
+gdc #d27156
 vc #d6d69c
 
 #vim
 bg none
-fg #c6cbbb
-sfg #cd9974
-vfg #b085a1
-cfg #a3c89a
+fg #d5d8cd
+sfg #d27156
+vfg #a2c89a
+cfg #b085a1
 ifg #d6d69c
-ffg #876064
+ffg #875f63
 nbg none
 nfg #2c1a1a
 lbg #201212
-lfg #b085a1
-syfg #a3c89a
-cmfg #392323
+lfg #a2c89a
+syfg #b085a1
+cmfg #3e2626
 slbg #201212
-slfg #392323
-fzfhl #b085a1
-bcbg #876064
-bdbg #b085a1
+slfg #3e2626
+fzfhl #a2c89a
+bcbg #875f63
+bdbg #a2c89a
 nmbg #d6d69c
-imbg #cd9974
-vmbg #a3c89a
+imbg #d27156
+vmbg #b085a1
 
 #rofi
 bg #1b0f0f
+dmbg #1b0f0f
 dmbg #201212
-dmfg #452c2c
+dmfg #523636
 dmsbg #2c1a1a
 hpfg #523636
 tbg #f01b0f0f
@@ -139,8 +134,8 @@ tbg #dd1b0f0f
 tbg #f01b0f0f
 mbg #f0140b0b
 msbg #70271616
-fg #392323
-bc #876064
+fg #3e2626
+bc #875f63
 bc #1b0f0f
 ibg #1b0f0f
 ibc #2c1a1a
@@ -150,9 +145,9 @@ abg #08080866
 abg #08080844
 abg #130a0ab0
 abg #130a0add
-afg #452c2c
+afg #523636
 ebg #1b0f0f
-efg #b085a1
+efg #a2c89a
 sbg #e0e0e00e
 sbg #fafafa0a
 sbg #eeeeee0a
@@ -160,73 +155,73 @@ sbg #cccccc0a
 sbg #dddddd0d
 sbg #271616b0
 sbg #271616d0
-sfg #b085a1
-sul #b085a1
+sfg #a2c89a
+sul #a2c89a
 lpc #b9bfac
 dpc #b9bfac
 btc #1b0f0f
 sbtc #1b0f0f
 btbc #1b0f0f
 ftbg #00000000
-sbbg #b085a188
+sbbg #a2c89aaa
 sbsbg #11111144
 
 #tmux
 bg terminal
-fg #392323
+fg #3e2626
 bc #201212
-mc #876064
+mc #875f63
 ibg #201212
-ifg #392323
-sfg #392323
+ifg #3e2626
+sfg #3e2626
 wbg #201212
-wfg #392323
+wfg #3e2626
 cbg #2c1a1a
-cfg #b085a1
+cfg #a2c89a
 
 #dunst
-bg #201212
+bg #1b0f0f
 fg #b9bfac
-fc #876064
-sbg #140b0b
-pbfg #b085a1
+fc #875f63
+sbg #2c1a1a
+pbfg #a2c89a
 
 #vifm
-fg #452c2c
+fg #523636
 dfg #2c1a1a
-efg #452c2c
+efg #523636
 cbg #201212
-cfg #b085a1
+cfg #a2c89a
 sfg #201212
 tfg #201212
 slbg #201212
-slfg #452c2c
+slfg #523636
 
 #ncmpcpp
-npp #452c2c
-np #452c2c
+npp #523636
+np #523636
 sip #2c1a1a
 sc #2c1a1a
 mwc #2c1a1a
 etc #191e24
 c2 #DBBD7D
 pc #2c1a1a
-pec #b085a1
-vc #b085a1
+pec #a2c89a
+vc #a2c89a
 
 #sxiv
 bg #140b0b
-fg #b085a1
+fg #a2c89a
 
 #lock
 tc #ffb9bfac
-rc #ffb085a1
+rc #ffa2c89a
 ic #dc140b0b
-wc #ff9d767a
+wc #ff9d7579
 
 #nb
 fg #2c1a1a
 pfg #201212
 pbg default
-ifg #452c2c
+ifg #523636
 ibg #2c1a1a

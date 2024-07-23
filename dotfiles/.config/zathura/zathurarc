@@ -1,17 +1,17 @@
 set recolor   
-set recolor-lightcolor          "#141314"
-set recolor-darkcolor           "#b3acbf"
+set recolor-lightcolor          "#101314"
+set recolor-darkcolor           "#acb6bf"
 set recolor-keephue
 
-set default-fg                  "#b3acbf"
-set default-bg                  "#141314"
+set default-fg                  "#acb6bf"
+set default-bg                  "#101314"
 
-set completion-bg               "#141314"
-set completion-fg               "#b3acbf"
+set completion-bg               "#101314"
+set completion-fg               "#acb6bf"
 set completion-highlight-bg     ""
-set completion-highlight-fg     "#141314"
-set completion-group-bg         "#141314"
-set completion-group-fg         "#b3acbf"
+set completion-highlight-fg     "#101314"
+set completion-group-bg         "#101314"
+set completion-group-fg         "#acb6bf"
 
-set statusbar-fg                "#525252"
-set statusbar-bg                "#201f20"
+set statusbar-fg                "#4a5152"
+set statusbar-bg                "#1a1f20"

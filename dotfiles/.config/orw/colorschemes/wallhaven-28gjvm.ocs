@@ -1,8 +1,8 @@
 #ob
-t #494552
-tb #494552
-b #494552
-c #494552
+t #4e4957
+tb #4e4957
+b #4e4957
+c #4e4957
 it #1c1c20
 itb #1c1c20
 ib #1c1c20
@@ -16,9 +16,9 @@ mibth #1c1c20
 ibt #111114
 ibth #111114
 mbg #1c1c20
-mfg #424245
+mfg #505052
 mtbg #1c1c20
-mtfg #424245
+mtfg #505052
 msbg #28282c
 msfg #a8b4c4
 mb #1c1c20
@@ -31,45 +31,50 @@ osdu #28282c
 s #1c1c20
 
 #bar
-bg #1c1c20
-fc #1c1c20
-pfc #1c1c20
-sfc #1c1c20
-sfc #1c1c20
-pfc #1c1c20
-sfc #1c1c20
-sfc #111114
-bfc #1c1c20
-bfc #1c1c20
-bbg #1c1c20
-jbg #1c1c20
-jpfg #605c68
-jsfg #322f3b
+bg #17171b
+fc #17171b
+pfc #17171b
+sfc #17171b
+sfc #17171b
+pfc #17171b
+sfc #17171b
+sfc #3a3a3e
+bfc #17171b
+bfc #17171b
+bbg #17171b
+bbg #111114
+jbg #17171b
+jpfg #65606d
+jsfg #373340
 jpfg #949ca2
-jsfg #424245
-pbg #1c1c20
+jsfg #505052
+pbg #17171b
 pfg #949ca2
 pfg #949ca2
-sbg #1c1c20
-sfg #424245
+sbg #17171b
+sfg #505052
 pbefg #a8b4c4
-pbfg #424245
+pbfg #505052
 mlfg #cca8b8
-msbg #1c1c20
+msbg #17171b
 mpfg #949ca2
-tbfg #424245
+mpbg #28282c
+tbfg #505052
 Apfg #949ca2
-Abfg #494552
-Acbfg #322f3b
-Wsfg #424245
+Abfg #4e4957
+Acbfg #373340
+Wsfg #505052
 Wpfg #949ca2
 Wpfc #68778b
-Nsbg #111114
-Nsfc #111114
+Wsbg #28282c
+Wpbg #28282c
+Nsbg #28282c
+Tsbg #28282c
+Tpbg #28282c
 
 #qb
 bg #1c1c20
-fg #353539
+fg #3a3a3e
 sbg #111114
 sfg #a8b4c4
 mfg #a8b4c4
@@ -85,8 +90,8 @@ fg #28282c
 sc #28282c
 dc #28282c
 ic #a8b4c4
-sec #494552
-gcc #494552
+sec #4e4957
+gcc #4e4957
 gdc #f04b67
 vc #cca8b8
 
@@ -97,17 +102,17 @@ sfg #f04b67
 vfg #a8b4c4
 cfg #cd8d70
 ifg #cca8b8
-ffg #494552
+ffg #4e4957
 nbg none
 nfg #28282c
 lbg #1c1c20
 lfg #a8b4c4
 syfg #cd8d70
-cmfg #353539
+cmfg #3a3a3e
 slbg #1c1c20
-slfg #353539
+slfg #3a3a3e
 fzfhl #a8b4c4
-bcbg #494552
+bcbg #4e4957
 bdbg #a8b4c4
 nmbg #cca8b8
 imbg #f04b67
@@ -115,8 +120,9 @@ vmbg #cd8d70
 
 #rofi
 bg #17171b
+dmbg #17171b
 dmbg #1c1c20
-dmfg #424245
+dmfg #505052
 dmsbg #28282c
 hpfg #505052
 tbg #f017171b
@@ -125,8 +131,8 @@ tbg #dd17171b
 tbg #f017171b
 mbg #f0111114
 msbg #70222227
-fg #353539
-bc #494552
+fg #3a3a3e
+bc #4e4957
 bc #17171b
 ibg #17171b
 ibc #28282c
@@ -136,7 +142,7 @@ abg #08080866
 abg #08080844
 abg #101013b0
 abg #101013dd
-afg #424245
+afg #505052
 ebg #17171b
 efg #a8b4c4
 sbg #e0e0e00e
@@ -154,43 +160,43 @@ btc #17171b
 sbtc #17171b
 btbc #17171b
 ftbg #00000000
-sbbg #a8b4c488
+sbbg #a8b4c4aa
 sbsbg #11111144
 
 #tmux
 bg terminal
-fg #353539
+fg #3a3a3e
 bc #1c1c20
-mc #494552
+mc #4e4957
 ibg #1c1c20
-ifg #353539
-sfg #353539
+ifg #3a3a3e
+sfg #3a3a3e
 wbg #1c1c20
-wfg #353539
+wfg #3a3a3e
 cbg #28282c
 cfg #a8b4c4
 
 #dunst
-bg #1c1c20
+bg #17171b
 fg #acb6bf
-fc #494552
-sbg #111114
+fc #4e4957
+sbg #28282c
 pbfg #a8b4c4
 
 #vifm
-fg #424245
+fg #505052
 dfg #28282c
-efg #424245
+efg #505052
 cbg #1c1c20
 cfg #a8b4c4
 sfg #1c1c20
 tfg #1c1c20
 slbg #1c1c20
-slfg #424245
+slfg #505052
 
 #ncmpcpp
-npp #424245
-np #424245
+npp #505052
+np #505052
 sip #28282c
 sc #28282c
 mwc #28282c
@@ -208,11 +214,11 @@ fg #a8b4c4
 tc #ffacb6bf
 rc #ffa8b4c4
 ic #dc111114
-wc #ff605c68
+wc #ff65606d
 
 #nb
 fg #28282c
 pfg #1c1c20
 pbg default
-ifg #424245
+ifg #505052
 ibg #28282c

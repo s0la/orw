@@ -1,0 +1,5 @@
+#~/.orw/scripts/bar/run.sh -x c -y 20,b -w 240 -h 40 -F 5 -f u:20 -a 8,o:-12 -c auto_generated -n mpwc -c -m S:f,P:b,P:-,b:S3o5ptno5
+#~/.orw/scripts/bar/run.sh -x c -y 20,b -w 270 -h 50 -p 0 -a 10,o:-11 -c auto_generated -n mpwc -c -m S:f,R:s,b:S3pctcn 
+
+#~/.orw/scripts/bar/run.sh -x c -y 20,b -w 250 -h 25 -F 10 -f a:1 -p 0 -a 9,o:1 -c auto_generated -n mpwc -c -m S:f,S:b,R:s,b:S3o5pctcno2
+~/.orw/scripts/bar/run.sh -x c -y 10,b -w 270 -h 35 -p 0 -a 9,o:-8 -c auto_generated -n mpwc -c -m S:f,R:s,b:S3o5pctcno2

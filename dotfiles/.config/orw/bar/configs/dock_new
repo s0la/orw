@@ -1,3 +1,3 @@
-#~/.orw/scripts/new_bar/run.sh -y 10,b -h 40 -w a -x c -f u:2 -c auto_generated -n dock_new -m p:s10bo20,S,b:S2cptn,o:10,i:s20d
-#~/.orw/scripts/new_bar/run.sh -y 10,b -h 50 -w a -x c -F 5 -f a:2 -c auto_generated -n dock_new -L p:10,o:20
-~/.orw/scripts/new_bar/run.sh -y 10,b -h 60 -w a -x c -a 10 -f a:2 -c auto_generated -n dock_new -L p:20,o:20
+#~/.orw/scripts/bar/run.sh -y 10,b -h 40 -w a -x c -f u:2 -c auto_generated -n dock_new -m p:s10bo20,S,b:S2cptn,o:10,i:s20d
+#~/.orw/scripts/bar/run.sh -y 10,b -h 50 -w a -x c -F 5 -f a:2 -c auto_generated -n dock_new -L p:10,o:20
+~/.orw/scripts/bar/run.sh -y 10,b -h 60 -w a -x c -a 10 -f a:2 -c auto_generated -n dock_new -L p:20,o:20

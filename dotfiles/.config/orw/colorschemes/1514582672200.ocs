@@ -31,43 +31,49 @@ osdu #2c2c2c
 s #20201f
 
 #bar
-bg #141413
-fc #141413
-pfc #141413
-sfc #141413
-sfc #141413
-pfc #141413
-sfc #141413
-sfc #141413
-bfc #141413
-bfc #141413
+bg #1b1b1a
+fc #1b1b1a
+pfc #1b1b1a
+sfc #1b1b1a
+sfc #1b1b1a
+pfc #1b1b1a
+sfc #1b1b1a
+sfc #3e3e3e
+bfc #1b1b1a
+bfc #1b1b1a
+bbg #1b1b1a
 bbg #141413
-jbg #141413
+jbg #1b1b1a
 jpfg #625e59
 jsfg #35302b
-jpfg #a29498
+jpfg #a29499
 jsfg #525252
-pbg #141413
-pfg #a29498
-pfg #a29498
-sbg #141413
+pbg #1b1b1a
+pfg #a29499
+pfg #a29499
+sbg #1b1b1a
 sfg #525252
 pbefg #688f96
 pbfg #525252
 mlfg #a59b7d
-msbg #141413
-mpfg #a29498
+msbg #1b1b1a
+mpfg #a29499
+mpbg #2c2c2c
 tbfg #525252
-Apfg #a29498
+Apfg #a29499
 Abfg #4c4742
 Acbfg #35302b
 Wsfg #525252
-Wpfg #a29498
+Wpfg #a29499
 Wpfc #36575d
 Wsbg #2c2c2c
 Wpbg #2c2c2c
 Nsbg #2c2c2c
-Nsfc #2c2c2c
+Tsbg #2c2c2c
+Tpbg #2c2c2c
+Ppbg #688f96
+Psfg #36575d
+Psfc #84abb2
 
 #qb
 bg #20201f
@@ -78,7 +84,7 @@ mfg #688f96
 sbbg #141413
 
 #term
-fg #bfacb2
+fg #bfacb3
 bg #ff141413
 
 #bash
@@ -94,7 +100,7 @@ vc #a59b7d
 
 #vim
 bg none
-fg #cbbbc0
+fg #d8cdd1
 sfg #c3a757
 vfg #688f96
 cfg #c6a5b1
@@ -117,6 +123,7 @@ vmbg #c6a5b1
 
 #rofi
 bg #1b1b1a
+dmbg #1b1b1a
 dmbg #20201f
 dmfg #525252
 dmsbg #2c2c2c
@@ -150,8 +157,8 @@ sbg #272727b0
 sbg #272727d0
 sfg #688f96
 sul #688f96
-lpc #bfacb2
-dpc #bfacb2
+lpc #bfacb3
+dpc #bfacb3
 btc #1b1b1a
 sbtc #1b1b1a
 btbc #1b1b1a
@@ -174,7 +181,7 @@ cfg #688f96
 
 #dunst
 bg #1b1b1a
-fg #bfacb2
+fg #bfacb3
 fc #4c4742
 sbg #2c2c2c
 pbfg #688f96
@@ -207,7 +214,7 @@ bg #141413
 fg #688f96
 
 #lock
-tc #ffbfacb2
+tc #ffbfacb3
 rc #ff688f96
 ic #dc141413
 wc #ff625e59

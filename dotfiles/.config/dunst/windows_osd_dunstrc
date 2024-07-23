@@ -285,9 +285,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#1b1a1b"
-	foreground = "#b3acbf"
-	frame_color = "#534c50"
+	background = "#161a1b"
+	foreground = "#acb6bf"
+	frame_color = "#7986a3"
 
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
