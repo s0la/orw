@@ -1,15 +1,10 @@
 #!/bin/bash
 
-first_arg=${@%% *}
-[[ $@ && ! -f ~/.config/orw/colorschemes/$first_arg.ocs ]] && module=$first_arg && shift
+ocs_root=$HOME/.config/orw/colorschemes
 
-if [[ -z $@ || ($# -eq 1 && $module) ]]; then
-	for color in ~/.config/orw/colorschemes/$module*.ocs; do
-		color=${color##*/}
-		echo ${color%.*}
-	done
-else
-	killall rofi
-	colorscheme=${@%% *}
-	~/.orw/scripts/rice_and_shine.sh -C $@
-fi
+while read preview; do
+	echo -en "${preview##*/}\x00icon\x1f${preview}\n"
+done <<< $(ls $ocs_root/previews/*) |
+	rofi -dmenu -show-icons -l 5 -theme list \
+	-theme-str 'element-icon { size: 100px; } element { padding: 0; margin: 10px; }' |
+	sed "s/.png$//" | xargs echo ~/.orw/scripts/rice_and_shine.sh -tC

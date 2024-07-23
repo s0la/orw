@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-#fifo=~/.config/ncmpcpp/cover_art_fifo.fifo
 fifo=/tmp/cover_art_fifo.fifo
 
 if [ -p $fifo ]; then

@@ -16,12 +16,8 @@ named_pipe=/tmp/keyboard_input
 [[ -p $named_pipe ]] && rm $named_pipe
 mkfifo $named_pipe
 
-#read window_x window_y <<< $(~/.orw/scripts/get_window_position.sh)
 input_size=60
 padding=$(awk '/padding/ { print $NF * 2; exit }' ~/.config/gtk-3.0/gtk.css)
-
-#[[ ! "${BASH_SOURCE[0]}" =~ "$0" ]] &&
-#	read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 
 get_window_properties() {
 	xwininfo -int -id $(xdotool getactivewindow) | awk '
@@ -32,7 +28,6 @@ get_window_properties() {
 }
 
 if [[ "${BASH_SOURCE[0]}" =~ "$0" ]]; then
-	#read window_x window_y window_width window_height <<< $(~/.orw/scripts/windowctl.sh -p | cut -d ' ' -f 3-)
 	read window_x window_y window_width window_height <<< $(get_window_properties)
 
 	read size input_x input_y <<< $(awk '\
@@ -57,8 +52,6 @@ if [[ "${BASH_SOURCE[0]}" =~ "$0" ]]; then
 		}' ~/.config/orw/config)
 else
 	size=$((input_size + padding))
-	#input_x=$((x - display_x + (w - size) / 2))
-	#input_y=$((y - display_y + (h - size) / 2))
 	input_x=$((x - display_x))
 	input_y=$((y - display_y))
 fi
@@ -66,20 +59,14 @@ fi
 source ~/.orw/scripts/${1}_input_template.sh "${@:2}"
 
 $(declare -F prepare)
-#read_keyboard_input
 
 read_keyboard_input() {
 	while [[ ! $stop ]]; do
 		$(declare -F get_argument_count)
 
-		#write_command='printf "0x%x %s" $(xdotool getactivewindow) $input'
-		#read_command="read -rsn ${argument_count:-1} input && $write_command > $named_pipe"
 		read_command="read -rsn ${argument_count:-1} input && echo \$input > $named_pipe"
-		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" #&> /dev/null &
 		alacritty -t input --class=input -e bash -c "$read_command" &> /dev/null &
-		#LIBGL_ALWAYS_SOFTWARE=1 alacritty -t input --class=input -e bash -c "$read_command" & #&> /dev/null &
 
-		#read input_id input < $named_pipe
 		read input < $named_pipe
 		evaluate $input
 
@@ -95,13 +82,3 @@ if [[ ${@: -1} != source ]]; then
 	read_keyboard_input
 	execute
 fi
-
-
-#read_keyboard_input
-#execute
-
-#	[[ ! $stop ]]
-#do
-#	continue
-#done
-

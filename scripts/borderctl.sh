@@ -19,7 +19,7 @@ while getopts :c: flag; do
 done
 
 [[ $1 =~ ^r && ! $mode ]] &&
-	mode=$(awk -F '"' 'END { print $(NF - 1) ".rasi" }' $rofi_path/main.rasi)
+	mode=$(awk -F '"' 'END { print $(NF - 1) }' $rofi_path/main.rasi)
 
 if [[ $2 =~ [0-9]+ ]]; then
 	sign=${2%%[0-9]*}
@@ -32,20 +32,7 @@ if [[ $3 ]]; then
 fi
 
 case $1 in
-	#[xy]*)
-	#	awk -i inplace '{
-	#		if(/^'${1:0:1}'_offset/) {
-	#			nv = '$new_value'
-	#			cv = gensub(".* ", "", 1)
-	#			sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
-	#		}
-	#		print
-	#	}' ~/.config/orw/config;;
-
 	w*)
-		#[[ ${1:1:1} == [xy] ]] && pattern=${1:0:1}_offset || pattern=ratio
-		#[[ ${1: -1} == [xy] ]] && pattern=${1: -1}_offset || pattern=ratio
-
 		get_icon() {
 			icon=$(awk '
 				/^part/ { p = $NF }
@@ -63,69 +50,27 @@ case $1 in
 				}' ~/.config/orw/config)
 		}
 
-		offset_tiled_windows() {
-			#if [[ $mode != floating ]]; then
-				if [[ ! $sign ]]; then
-					#((new_value > value)) && max_value=$new_value || max_value=$value
-					local sign opposite_sign
-					((new_value > value)) &&
-						sign=- opposite_sign=+ delta_value=$((new_value - value)) ||
-						sign=+ opposite_sign=- delta_value=$((value - new_value))
-				fi
-
-				~/.orw/scripts/offset_tiled_windows.sh \
-					-${property:0:1} ${opposite_sign:-$sign}${delta_value:-${check_value:-$new_value}}
-					#${property:0:1} ${sign:-$opposite_sign}${delta_value:-${check_value:-$new_value}}
-			#fi
-		}
-
 		property="${1: -1}"
 		[[ $property == [xy] ]] && property+=_offset
 
 		read property value <<< $(awk '/^'$property'/ { print; exit }' $orw_conf)
-		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { print; exit }' $orw_conf)
-		#read property value <<< $(awk '/^'${1: -1}'(_offset)?/ { o = $0 } END { print o }' $orw_conf)
 
 		if [[ $property == m* ]]; then
 			awk -i inplace '/^margin/ { $NF '$sign'= '${new_value}' } { print }' ~/.config/orw/config
 			~/.orw/scripts/signal_windows_event.sh update
 			exit
 		elif [[ $property =~ offset ]]; then
-			#read mode offset <<< $(awk '/^(mode|offset)/ { print $NF }' $orw_conf | xargs)
-
-			#[[ $offset == true ]] &&
-			#	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
-
-			##[[ $mode != floating ]] && offset_tiled_windows
-			#offset_tiled_windows
-
-			#[[ $offset == true ]] &&
-			#	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value && exit
-
-			##if [[ $offset == true ]]; then
-			##	value=$(sed -n "s/^$property=//p" ~/.config/orw/offsets)
-			##	offset_tiled_windows
-			##	~/.orw/scripts/windowctl.sh -o -${property:0:1} $sign$new_value
-			##	exit
-			##fi
-
 			min=0
 		else
 			read part ratio <<< $(awk '/^(part|ratio)/ { print $NF }' $orw_conf | xargs)
 			min=1
 		fi
 
-		#[[ $property == part ]] && ratio=$(awk '/^ratio/ { print $NF }' $orw_conf)
-
 		[[ $sign ]] && check_value=$((value $sign new_value)) || check_value=$new_value
 
 		style='-s osd'
-		#if ((check_value > 0 && (ratio && check_value < ratio || !ratio))); then
-		if ((check_value >= min)); then
-			#[[ $property == part && $check_value -ge $ratio ]] &&
-			#	check_value=$value message="<b>${property^}</b> must be lower then <b>$ratio</b>"
-			#[[ $property == ratio && $check_value -le $part ]] && $0 wp $((ratio / 2))
 
+		if ((check_value >= min)); then
 			message="<b>${property/_/ }</b> changed to <b>$check_value</b>"
 			message="${property^^}: $check_value"
 
@@ -147,44 +92,18 @@ case $1 in
 				fi
 			fi
 
-			#[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
-
-			#[[ $property =~ offset ]] && offset_tiled_windows ||
-			#	message+="\nCurrent ratio: <b>($new_ratio)</b>"
-
-			#[[ ! $property =~ offset ]] && message+="\nCurrent ratio: <b>($new_ratio)</b>"
-				#message+="\nCurrent ratio: <b>($new_ratio)</b>"
-
 			sed -i "/$property/ s/$value/$check_value/" $orw_conf
 			[[ ! $property =~ (offset|margin) ]] && get_icon && message="RATIO: $new_ratio"
 		else
-			#message="<b>${property^} cannot be changed further!"
-			#message="<b>$check_value</b> is out of range <b>(1..$((ratio - 1)))</b>!"
 			message="<b>$check_value</b> must be higher than <b>$min</b>!"
 		fi
 
-		#ratio=$(awk '/^(part|ratio)/ { if(!p) p = $NF; else { print p "/" $NF; exit } }' $orw_conf)
 		[[ ! $3 ]] && ~/.orw/scripts/notify.sh -pr 22 $style -i ${icon:-} "$message"
 		~/.orw/scripts/signal_windows_event.sh update
 		exit
-		#checking_value=$((value $sign $new_value))
-
-		awk -i inplace '{
-			if(/^'${1: -1}'/ && ! set) {
-				set = 1
-				nv = '$new_value'
-				cv = gensub(".* ", "", 1)
-
-				if("'$sign'") nrv = cv '$sign' nv
-				if($1 == "part") max = '$ratio'
-
-				sub(cv, (nrv > 0) ? nrv : nv)
-			}
-
-			print
-		}' ~/.config/orw/config;;
+		;;
 	r*)
-		[[ $1 == rl ]] && config=config.rasi
+		[[ $1 == rl ]] && rofi_config=config.rasi
 
 		awk -i inplace '\
 			$1 ~ "^'${1:1:1}'[^-]*:" {
@@ -194,18 +113,20 @@ case $1 in
 			}
 
 			$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
-				if($1 ~ ".*-padding") {
+				if ($1 ~ ".*-padding") {
+					w = 2
 					fv = '$new_value'
-					sv = '${second_arg-0}'
+					sv = '${second_arg:=$new_value}'
 					av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
 					split(av, v)
 
 					v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
-					v2 = ("'$second_arg'") ? ("'$second_sign'") ? v[2] '$second_sign' sv : \
-						sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
+					v2 = ("'$second_arg'") ? ("'${second_sign:=$sign}'") ? \
+						v[2] '$second_sign' sv : sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
 
 					sub(/([0-9px]+ ?){2}/, v1 "px " v2 "px")
 				} else {
+					w = (/margin/)
 					u = ($1 ~ "width") ? "%" : "px"
 
 					nv = '$new_value'
@@ -213,7 +134,16 @@ case $1 in
 					cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
 					sub(cv "(%|px)", ("'$sign'") ? cv '$sign' nv u : nv u)
 				}
-			} { print }' $rofi_path/${rofi_conf:-$mode};;
+			}
+
+			w && FILENAME ~ "icons" && $1 == "window-width:" {
+				cv = $NF
+				gsub("[^0-9]", "", cv)
+				nv = cv '${second_sign}' w * '$second_arg'
+				sub(cv, nv)
+			}
+
+			{ print }' $rofi_path/${rofi_conf:-$mode};;
 	tm*)
 		[[ $1 == tms ]] &&
 			pattern=separator || pattern='window.*format'
@@ -271,7 +201,6 @@ case $1 in
 			print
 		}' $openbox_conf;;
 	d*)
-		#[[ $1 == dp ]] && pattern=padding || pattern=frame_width
 		[[ $mode ]] && dunst_conf="${dunst_conf%/*}/${mode}_dunstrc"
 
 		if [[ $1 =~ df ]]; then
@@ -356,11 +285,7 @@ case $1 in
 			}
 			print
 		}' $theme_conf $gtkrc2
-
-	#[[ $1 != [mj]* ]] && ~/sws_test.sh update
 esac
-
-#[[ $ob_reload ]] && openbox --reconfigure || exit 0
 
 if [[ $ob_reload ]]; then
 	 openbox --reconfigure

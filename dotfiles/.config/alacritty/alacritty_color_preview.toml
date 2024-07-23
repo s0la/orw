@@ -1,0 +1,36 @@
+live_config_reload = true
+
+[cursor]
+unfocused_hollow = false
+
+[font]
+size = 10
+
+[font.bold]
+family = "SFMono"
+style = "Heavy"
+
+[font.glyph_offset]
+y = 0
+
+[font.normal]
+family = "SFMono"
+style = "Regular"
+
+[window]
+opacity = 1.0
+
+[window.dimensions]
+columns = 20
+lines = 3
+
+[window.padding]
+x = 10
+y = 10
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[colors.primary]
+background = "#998bb1"
+foreground = "#cbb5f0"

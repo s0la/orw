@@ -38,19 +38,11 @@ ob_conf=$themes/theme/openbox-3/themerc
 firefox_conf=$themes/firefox/userChrome.css
 notify_conf=$themes/theme/xfce-notify-4.0/gtk.css
 
-#bar_conf=$root/scripts/bar/generate_bar.sh
 bar_conf=$colorschemes/orw_default.ocs
 
 update_colors=~/.orw/scripts/update_colors.sh
 pick_color=~/.orw/scripts/pick_color.sh
-#colorctl=~/.orw/scripts/colorctl.sh
 colorctl=~/.orw/scripts/convert_colors.sh
-
-#                  
-#       
-icon=
-icon="<span font='Iosevka Orw 12'>$icon   </span>"
-icon=''
 
 function log() {
 	shift
@@ -129,27 +121,6 @@ function get_color() {
 	fi
 
 	if [[ $transparency_level || $transparency_offset ]]; then
-		#transparency_hex=$(([[ $edit_colorscheme ]] && cat $edit_colorscheme || get_$module) | \
-		#	awk -Wposix '/^('${property//\*/\.\*}') / {
-		#			c = $NF
-		#			l = length(c)
-		#			exit
-		#		} END {
-		#			tl = "'$transparency_level'"
-
-		#			if(!tl) {
-		#				if(length(tl)) tl = 0
-		#				else {
-		#					tl = (l && l > 7) ? sprintf("%d", "0x" substr(c, 2, 2)) : 255
-		#					ntl = int(tl '$transparency_offset' * 2.55)
-		#				}
-		#			}
-
-		#			t = ntl ? ntl : int(tl * 2.55)
-		#			printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
-		#		}')
-
-		#echo $color
 		transparency_hex=$(awk -Wposix '{
 				c = $0
 				l = length(c)
@@ -168,8 +139,6 @@ function get_color() {
 				printf("%.2x\n", (t > 0) ? (t > 255) ? 255 : t : 0)
 			}' <<< $color)
 
-		#echo $transparency_hex
-		#exit
 		color="#$transparency_hex${color: -6}"
 	fi
 }
@@ -249,7 +218,6 @@ function ob() {
 		osdh) local pattern='osd.hilight';;
 		osdu) local pattern='osd.unhilight';;
 		s)
-			#read red green blue <<< $($colorctl -cps ' ' -h ${new_color:-$color})
 			read red green blue <<< $($colorctl -chd ' ' ${new_color:-$color})
 
 			awk -i inplace \
@@ -310,14 +278,9 @@ function gtk() {
 		ff) folder fill;;
 		fs) folder stroke;;
 		*)
-			#if [[ $property == active ]]; then
-			#	[[ $(which convert) ]] &&
-			#		convert -size 2x2 xc:\#${color: -6} ${gtk_conf%/*}/apps/assets/underline.png
-			#		exit
-			#fi
 			if [[ $property == active && $(which convert) ]]; then
-				convert -size 2x2 xc:$color ${gtk_conf%/*}/apps/assets/active.png
-				convert -size 2x2 xc:$(offset_color $color ${secondary_shade_offset-+30}) ${gtk_conf%/*}/apps/assets/hover.png
+				magick -size 2x2 xc:$color ${gtk_conf%/*}/apps/assets/active.png
+				magick -size 2x2 xc:$(offset_color $color ${secondary_shade_offset-+30}) ${gtk_conf%/*}/apps/assets/hover.png
 			fi
 
 			sed -i "/\<${property}_color\>/ s/#\w\{6\}/#${color: -6}/" $gtk_conf
@@ -339,28 +302,6 @@ function dunst() {
 	esac
 
 		[[ $pattern ]] && sed -i "/urgency_${urgency:-normal}/,/^$/ { /$pattern/ s/#\w*/#${color: -6}/ }" ${dunst_conf%/*}/*
-
-	#if [[ $property == pbfg ]]; then
-	#	sed -i "/^pbe\?fg/ s/#\w*/#${color: -6}/" ~/.orw/scripts/notify.sh
-	#else
-	#	[[ $property =~ ^c ]] && urgency=critical property=${property:1}
-
-	#	#case $property in
-	#	#	*bg) local pattern=background;;
-	#	#	*fg) local pattern=foreground;;
-	#	#	*fc) local pattern=frame_color;;
-	#	#	*)
-	#	#esac
-
-	#	case $property in
-	#		bg) local pattern=background;;
-	#		fg) local pattern=foreground;;
-	#		fc) local pattern=frame_color;;
-	#		*)
-	#	esac
-
-	#	sed -i "/urgency_${urgency:-normal}/,/^$/ { /$pattern/ s/#\w*/#${color: -6}/ }" ${dunst_conf%/*}/*
-	#fi
 }
 
 function term() {
@@ -375,11 +316,8 @@ function term() {
 					}' <<< ${color:1:2})
 			fi
 
-			#rgb=$($colorctl -c -h "#${color: -6}")
 			rgb=$($colorctl -ch "#${color: -6}")
-			#sed -i "/^background/ s/\([0-9,]\+\),$term_pattern/${rgb//[^0-9]/,}$term_transparency/" $term_conf;;
 			sed -i "/^background/ s/[0-9].*,/${rgb//[^0-9]/,}/" $term_conf;;
-			#sed -i "/^background/ s/\([0-9,]\+\),/$rgb/" $term_conf;;
 		fg) sed -i "/^foreground/ s/#.*/#${color: -6}/" $term_conf;;
 		colors)
 			awk -i inplace 'NR == FNR { a[ci++] = $1; next } \
@@ -407,9 +345,6 @@ function vim() {
 function vifm() {
 	reload_vifm=true
 	get_color_properties
-
-	#[[ $color =~ \# ]] && local color=$((color_index - 1 ))
-	#sed -i "/^let \$$property / s/\w*$/$color/" $vifm_conf
 
 	awk -i inplace '{ if(/let \$'$property'/ && ! d++)
 			sub("[^ ]?\\w+.?$", ("'$color'" ~ "^#") ? '$color_index' - 1 : "'\''default'\''")
@@ -473,25 +408,9 @@ get_bar_configs() {
 					}
 				} END { for(ci in aca) printf "%s ", "'"$colorschemes"'/" aca[ci] ".ocs "
 			}' $bar_configs)
-
-			#[[ $bar_colorschemes ]] || bar_colorschemes=$colorschemes/orw_default.ocs
-		#else
-		#	bar_colorschemes=$colorschemes/orw_default.ocs
 		fi
 	fi
 }
-
-#function set_bar() {
-#	awk '
-#		NR == FNR {
-#			p[$1] = $2
-#			ap = ((ap) ? ap "|" : "") $1
-#			next
-#		} {
-#			anp = ((anp) ? anp "|" : "") $1
-#			print $1, ($1 ~ "^(" ap ")") ? p[$1] : $2
-#		} END { for(np in p) if(np !~ anp) print np, p[np] }' <(echo -e 'fc sola\nsfg car\nsola car') .config/orw/colorschemes/bar_sep.ocs
-#}
 
 function set_bar() {
 	[[ $bar_colorschemes ]] || get_bar_configs
@@ -507,7 +426,6 @@ function set_bar() {
 			for(np in p) if(np !~ anp) print np, p[np] 
 		}
 
-		#NR != FNR && /^#bar/ { b = 1 }
 		/^#bar/ { b = 1 }
 
 		b {
@@ -516,26 +434,9 @@ function set_bar() {
 		}
 
 		{ print }' <(cat) $bar_colorschemes
-		#{ print }' ~/bar/test{1,2,3}
-
-		#END { for(np in p) if(np !~ anp) print np, p[np] }' <(echo -e 'fc sola\nsfg car\nsola car') .config/orw/colorschemes/bar_sep.ocs
 }
 
-#set_qb() {
-#	awk -i inplace '
-#		NR == FNR { p[$1] = $2 }
-#		NR > FNR {
-#			cp = $1
-#			gsub("[-:]", "", cp)
-#			if (cp in p) sub("#\\w*", p[cp], $NF)
-#
-#			#if (!e && $1 ~ "--") e = ";"
-#			#if (cp in p) $NF = p[cp] e
-#		} { print }' <(cat) $qb_conf ${qb_conf%/*}/home.css
-#}
-
 set_bash() {
-	#awk '
 	awk -i inplace '
 		function hex_to_rgb() {
 			for (i=0; i<3; i++) rgb[i] = strtonum("0x" substr($NF, 2 + i * 2, 2))
@@ -578,10 +479,6 @@ set_rofi() {
 }
 
 set_ob() {
-	#while read property color; do
-	#	ob #$property $color
-	#done
-	
 	if [[ $property =~ ^i ]]; then
 		local inactive=in
 		property=${property:1}
@@ -597,7 +494,6 @@ set_ob() {
 		NR > FNR {
 			if (/active.label.text.*#/) { change("t") }
 			if (/active.(title|button.*(bg|disabled.image)).*#/) { change("tb") }
-			#if (/active.*button(.*bg|disabled.image).*#/) { change("tb") }
 			if (/active.*border.*#/) { change("b") }
 			if (/active.*client.*#/) { change("c") }
 			if (/active.button.(close|max|iconify).((un)?pressed|hover).*#/) {
@@ -621,15 +517,6 @@ set_ob() {
 			{ read s; { echo $s >&1; cat > $ob_conf; } })
 
 		read red green blue <<< $($colorctl -chd ' ' $shadow_color)
-
-		#awk -i inplace \
-		#	'/shadow-(red|green|blue)/ {
-		#		if(/red/) c = '$red'
-		#		else if(/green/) c = '$green'
-		#		else c = '$blue'
-
-		#		sub(/[0-9.]+/, c / 255)
-		#	} { print }' $picom_conf
 }
 
 set_tmux() {
@@ -680,13 +567,13 @@ set_ncmpcpp() {
 
 set_dunst() {
 	while read property color; do
-		dunst #$color $property
+		dunst
 	done
 }
 
 set_term() {
 	while read property color; do
-		term #$property $color
+		term
 	done
 }
 
@@ -701,7 +588,6 @@ set_lock() {
 
 function bar() {
 	reload_bar=true
-	#bar_modules=${bar_conf%/*}/module_colors
 	get_bar_configs
 
 	if [[ $transparency ]]; then
@@ -711,14 +597,6 @@ function bar() {
 		local hex_range=6
 	fi
 
-	#local default_bar_configs="$bar_conf $bar_modules"
-
-
-
-
-	#new approach - affect currently used colorschemes
-	#sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" $bar_colorschemes
-
 	if [[ $bar_colorschemes ]]; then
 		[[ $whole_module ]] || local containing_files=$(grep -l "^$property" $bar_colorschemes | xargs)
 
@@ -726,52 +604,14 @@ function bar() {
 			sed -i "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/" ${containing_files:-$bar_colorschemes}
 		else
 			for bar_colorscheme in $bar_colorschemes; do
-				#sed -i "/^#bar/a $property #${color: -$hex_range}" $bar_colorscheme
 				awk -i inplace '
 					BEGIN { np = "'$property' #'${color: -$hex_range}'" }
 
 					/^#bar/ { nr = NR }
 					nr && /^$/ { print np; nr = 0 } { print } ENDFILE { if(nr) print np }' $bar_colorscheme
-					#nr && /^($|#)/ { print np; nr = 0 } { print } ENDFILE { if(nr) print np }' $bar_colorscheme
-					#nr && /^$/ { print np; nr = 0 } { print } ENDFILE { if(nr) print np }' $bar_colorscheme
-
-					#BEGIN { np = "'$property' #'${color: -$hex_range}'" }
-					#/^#bar/ { nr = NR } NR == nr + 1 { print np }' $bar_colorscheme
-
-				#echo "$property #${color: -$hex_range}" >> $bar_colorscheme
 			done
 		fi
 	fi
-
-	#exit
-
-	#if sed -n "/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/p" $bar_colorschemes; then
-	#	echo exist
-	#else
-	#	for bar_colorscheme in $bar_colorschemes; do
-	#		echo "$property #${color: -$hex_range}" $bar_colorscheme
-	#	done
-	#fi
-
-
-
-
-	##if [[ $(grep "^${property}" $bar_conf $bar_modules) ]]; then
-	#if [[ $(eval grep "^${property}" "${edit_colorscheme:-$default_bar_configs}") ]]; then
-	#	eval "sed -i '/^$property/ s/${pattern:-#\w*}/${group:-#}${color: -$hex_range}/' ${edit_colorscheme:-$default_bar_configs}"
-	#	#echo $property $color "${edit_colorscheme:-$default_bar_configs}"
-	#else
-	#	if [[ $edit_colorscheme ]]; then
-	#		echo "$property #${color: -$hex_range}" >> $edit_colorscheme
-	#	else
-	#		color_type=${property: -2:1}
-	#		[[ $property =~ [bf]g$ ]] && local color_format="%{${color_type^}#${color: -$hex_range}}"
-	#		echo "$property=\"${color_format:-#${color: -$hex_range}}\"" >> $bar_modules
-	#	fi
-
-	#	#echo "$property=\"${color_format:-#${color: -$hex_range}}\"" >> ${edit_colorscheme:-$bar_modules}
-	#	#echo $property $color ${edit_colorscheme:-$bar_modules}
-	#fi
 }
 
 check_ncmpcpp_mode() {
@@ -889,12 +729,7 @@ function fff() {
 		sel*) col=3;;
 	esac
 
-	#col_index=${base_colors[${color_name#br_}]}
-	#((!col_index)) && col_index=9
-
 	sed -i "/FFF_COL$col/ s/[0-9]$/$((col_index - 1))/" $fff_conf
-
-	#export FFF_COL$col=$((col_index - 1))
 }
 
 function qb() {
@@ -968,38 +803,6 @@ function get_ob() {
 		else if(/^osd.unhilight.*#/) print i "osdu", $NF
 		else if(/^shadow-(red|green|blue)/) rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
 		} END { print "s #" rgb }' $ob_conf $picom_conf
-
-		#read red green blue <<< $(awk -F '[ ;]' '/^shadow-(red|green|blue)/) {
-		#	rgb = rgb " " int($(NF - 1) * 255)
-		#} END { print rgb }' $picom_conf)
-
-	#cat <<- EOF
-	#	t $(get_ob_property '.*\.active.label.text')
-	#	tb $(get_ob_property '.*\.active.*title.bg')
-	#	b $(get_ob_property '.*\.active.*border')
-	#	c $(get_ob_property '.*\.active.client')
-	#	it $(get_ob_property '.*inactive.label.text')
-	#	itb $(get_ob_property '.*\.inactive.*title.bg')
-	#	ib $(get_ob_property '.*\.inactive.*border')
-	#	ic $(get_ob_property '.*\.inactive.client')
-	#	$(get_buttons)
-	#	$(get_buttons hover)
-	#	ibt $(get_ob_property '.*\.inactive.*unpressed.*image')
-	#	ibth $(get_ob_property '.*\.inactive.*hover.*image')
-	#	mbg $(get_ob_property '^menu.items.bg')
-	#	mfg $(get_ob_property '^menu.items.text')
-	#	mtbg $(get_ob_property '^menu.title.bg')
-	#	mtfg $(get_ob_property '^menu.title.text')
-	#	msbg $(get_ob_property '^menu.*active.bg')
-	#	msfg $(get_ob_property '^menu.*active.text')
-	#	mb $(get_ob_property 'menu.border')
-	#	ms $(get_ob_property '^menu.separator')
-	#	bfg $(get_ob_property '.*bullet.image')
-	#	bsfg $(get_ob_property '.*bullet.selected.image')
-	#	osd $(get_ob_property '^osd.bg.color')
-	#	osdh $(get_ob_property '^osd.hilight')
-	#	osdu $(get_ob_property '^osd.unhilight')
-	#EOF
 }
 
 function get_gtk() {
@@ -1019,7 +822,6 @@ function get_dunst() {
 		else if(/foreground/) print "fg", $2; \
 		else if(/frame/) { print "fc", $2; exit } } }' ${dunst_conf%/*}/dunstrc
 	awk '/^\w*[bf]g/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' ~/.orw/scripts/notify.sh
-	#awk '/^pbfg/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' ~/.orw/scripts/notify.sh
 }
 
 function get_term() {
@@ -1049,7 +851,6 @@ function get_term() {
 }
 
 get_vim() {
-	#sed -n '/let.*g:bg/,/^$/ s/.*g:\([^ ]*\).*\(#\w*\).*/\1 \2/p' $vim_conf
 	sed -n "s/^let.*g:\([^ ]*\).*'\(.*\)'.*/\1 \2/p" $vim_conf
 }
 
@@ -1076,29 +877,9 @@ get_nb() {
 }
 
 function get_bar() {
-	#bar_modules=${bar_conf%/*}/module_colors
-	#awk '/^\w{1,4}[cg]=/ { print gensub("(.*)=.*(#\\w*).*", "\\1 \\2", 1) }' $bar_conf $bar_modules
-
-	#get_bars
 	get_bar_configs
-
-	#bars=$(awk -F '=' '/^last_running/ {
-	#	ab = $NF
-	#	if(ab ~ ",") { s = "{"; e = "}" }
-	#	print s ab e }' ~/.orw/scripts/barctl.sh)
-
-	#colorschemes=$(awk '{
-	#		c = gensub(/.*-c ([^ ]{3,}) .*/, "\\1", 1)
-	#		if(ac !~ c) ac = ac "," c
-	#	} END {
-	#		if(ac ~ "[a-z],") { s = "{"; e = "}" }
-	#		print s substr(ac, 2) e }' $(eval ls ~/.config/orw/bar/configs/$bars))
-
-	#eval grep -hv '^#' ~/.config/orw/colorschemes/$colorschemes.ocs | sort -k 1,1 -u
-
-	#[[ $bar_colorschemes ]] && grep -hv '^#' $bar_colorschemes | sort -k 1,1 -u
-	#[[ $bar_colorschemes ]] && sed -n '/^#bar/,/^$/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
-	[[ $bar_colorschemes ]] && sed -n '/^#bar/,/^\($\|#\)/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
+	[[ $bar_colorschemes ]] &&
+		sed -n '/^#bar/,/^\($\|#\)/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
 }
 
 function get_ncmpcpp() {
@@ -1111,8 +892,6 @@ function get_ncmpcpp() {
 
 		sed -n "/main\|now_playing\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
 			{ /^#/! s/\(\w\)[^_]*\(_\)\?\([2weipt]\)\?.*\([2pc]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf)
-		#sed -n "/main\|empty\|color2\|selected\|progressbar\|statusbar\|visualizer_color/ \
-		#	{ /^#/! s/\(\w\)[^_]*\(_\)\?\(e\)\?.*\([2ic]\).*=[^0-9]*\([0-9]\+\).*/\1\3\4 \5/p }" $ncmpcpp_conf )
 }
 
 function repeat_pattern() {
@@ -1190,8 +969,6 @@ shadow() {
 		} { print }' ~/.config/picom/picom.conf
 }
 
-#all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash lock firefox $wall )
-#all_modules=( ob gtk dunst term vim vifm bar ncmpcpp tmux rofi bash qb lock $wall )
 all_modules=( ob dunst term vim vifm bar ncmpcpp tmux rofi bash qb nb lock $wall sxiv )
 
 while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
@@ -1256,44 +1033,9 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 
 			if [[ ! $color ]]; then
 				display_color_preview() {
-					convert -size 100x100 xc:$color $preview
+					magick -size 100x100 xc:$color $preview
 					feh -g 100x100 --title 'image_preview' $preview &
 				}
-
-			#	echo "Pick a color:"
-			#	color=$($pick_color | awk '{ print tolower($0) }')
-			#	#color=${color,,}
-
-			#	read -srn 1 -p $'Offset color? [y/N]\n' offset_color
-
-			#	if [[ $offset_color == y ]]; then
-			#		preview=/tmp/color_preview.png
-
-			#		read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - 100), $4 + ($2 - $1) }')
-			#		~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
-			#		display_color_preview
-
-			#		while
-			#			read -rsn 1 -p $'Whole/properties/done? [w/p/D]\n' offset_type
-			#			[[ $offset_type == w ]]
-			#		do
-			#			read -p 'Enter offset: ' offset
-			#			#color=$($colorctl -o $offset -h $color)
-			#			color=$($colorctl -hv $offset $color)
-
-			#			kill $!
-			#			display_color_preview
-			#		done
-
-			#		kill $!
-
-			#		[[ $offset_type == p ]] && $colorctl -P $color
-
-			#		fifo=/tmp/color_preview.fifo
-			#		read color < $fifo
-			#		unset offset
-			#	fi
-			#fi
 
 				fifo=/tmp/color_preview.fifo
 				[[ -e $fifo ]] || mkfifo $fifo
@@ -1301,7 +1043,6 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 
 				read color < $fifo
 				[[ -e $fifo ]] && rm $fifo
-				#echo $color
 			fi
 
 			get_color $color $pick_offset
@@ -1324,28 +1065,6 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				unset color offset color_index
 			fi;;
 		e) edit_colorscheme=~/.config/orw/colorschemes/$OPTARG.ocs;;
-			#colorscheme_name=$OPTARG
-
-			#[[ $color ]] || get_color $(parse_module)
-			#colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
-
-			#if [[ ! ${property//[A-Za-z_]/} ]]; then
-			#	grep -h "^$property" $colorscheme &> /dev/null ||
-			#		(echo "$property $color" >> $colorscheme && exit)
-			#fi
-
-			#awk -i inplace '/^('${property//\*/\.\*/}') / { $NF = "'$color'" } { print }' $colorscheme
-
-			#bar=$(ps aux | awk '\
-			#		BEGIN { b = "" }
-			#		/-c '$colorscheme_name'/ { 
-			#			n = gensub(".*-n (\\w*).*", "\\1", 1)
-			#			if(b !~ n) b = b "," n
-			#		}
-			#		END { print substr(b, 2) }')
-
-			#[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-			#exit;;
 		R)
 			replace_color=true
 			[[ ${!OPTIND} =~ ^a ]] && replace_all_modules=( ${all_modules[*]} ) && shift;;
@@ -1354,8 +1073,6 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			[[ $module =~ ':' ]] && multiple_modules=true
 
 			if [[ $module =~ bar ]]; then
-				#assign_value bar_colorscheme ${!OPTIND} && shift
-				#bar_colorscheme=~/.config/orw/colorschemes/$bar_colorscheme.ocs
 				assign_value bar_configs ${!OPTIND} && shift
 
 				if [[ $bar_configs ]]; then
@@ -1366,12 +1083,6 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 					fi
 
 					bar_colorschemes=$colorschemes/${bar_colorscheme:-$bar_configs}.ocs
-					#if [[ -f $bar_configs_path/$bar_config ]]; then
-					#	bar_configs=$bar_configs_path/$bar_configs.ocs
-					#fi
-					#[[ $bar_colorscheme ]] || bar_modules=${bar_conf%/*}/module_colors
-				#else 
-				#	bar_modules=${bar_conf%/*}/module_colors
 				fi
 			fi
 
@@ -1386,7 +1097,6 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 		C)
 			arg=${!OPTIND}
 			[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$bar_conf
-			#[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$colorschemes/orw_default.ocs
 			[[ ! -f $colorscheme ]] && echo "colorscheme doesn't exist, please try again." && exit 1;;
 		M) inherited_module=$OPTARG;;
 		P)
@@ -1420,8 +1130,6 @@ function inherit() {
 if [[ ! $color && ! $backup ]]; then
 	if [[ $new_color ]]; then
 		unset transparency_{level,offset}
-		#[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
-		#[[ $bar_colorscheme ]] && colorscheme=$bar_colorscheme
 		[[ $bar_colorschemes ]] && colorscheme=$bar_colorschemes
 	fi
 
@@ -1431,8 +1139,6 @@ if [[ ! $color && ! $backup ]]; then
 		new_color=$color new_color_index=$color_index new_color_name=$color_name
 		unset inherited_module inherited_property colorscheme color offset transparency_{level,offset}
 
-		#[[ $edit_colorscheme ]] && colorscheme=$edit_colorscheme
-		#[[ $bar_colorscheme ]] && colorscheme=$bar_colorscheme
 		[[ $bar_colorschemes ]] && colorscheme=$bar_colorschemes
 
 		inherit
@@ -1452,58 +1158,11 @@ multiple_properties() {
 
 		while read -r property color; do
 			$module
-		#done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$colorschemes/orw_default.ocs} $bar_modules | \
 		done <<< $(sed -n "/#$module\|\".*\"/,/^$/p" ${colorscheme:-$bar_conf} | \
 			awk -F '[= ]' 'BEGIN { c = "'$color'" }
 				$1 ~ "^('${property//\*/.*}')$" { print $1, gensub(".*(#\\w*).*", "\\1", 1, c ? c : $NF) }' | sort -uk1,1)
 	fi
 }
-
-#if [[ $edit_colorscheme ]]; then
-#if [[ $bar_colorscheme ]]; then
-#	#colorscheme_name=${edit_colorscheme##*/}
-#	colorscheme_name=${bar_colorscheme##*/}
-#
-#	bar=$(ps aux | awk '\
-#		BEGIN { b = "" }
-#			/-c '${colorscheme_name%.*}'/ { 
-#				n = gensub(".*-n (\\w*).*", "\\1", 1)
-#				if(b !~ n) b = b "," n
-#			}
-#		END { print substr(b, 2) }')
-#
-#	if [[ $new_color ]]; then
-#		if [[ $transparency ]]; then
-#			if ((${#new_color} < 8)); then
-#				#color=${color: -6}
-#				((${#color} > 8)) &&
-#					new_color=${color:0:3}${new_color: -6} ||
-#					color=${color: -6}
-#			fi
-#		else
-#			new_color=${new_color: -6}
-#		fi
-#
-#		current_color=${color#\#}
-#		new_color=${new_color#\#}
-#		edit_pattern=.*
-#
-#		awk -i inplace '/^('${edit_pattern:-${property//\*/\.\*}}') / {
-#			sub("'${current_color:-.*}'", "'${new_color:-$color}'", $NF)
-#		} { print }' $bar_colorscheme
-#		#} { print }' $edit_colorscheme
-#	else
-#		if [[ ${property//[A-Za-z_]/} ]]; then
-#			multiple_properties
-#		else
-#			[[ $color ]] || get_color $(parse_module)
-#			bar
-#		fi
-#	fi
-#
-#	[[ $bar ]] && ~/.orw/scripts/barctl.sh -b $bar
-#	exit
-#fi
 
 if [[ $backup ]]; then
 	[[ ! -d $colorschemes ]] && mkdir $colorschemes
@@ -1528,7 +1187,6 @@ if [[ $backup ]]; then
 	add_notification
 
 	for backup_module in ${backup_modules[*]}; do
-		#echo -e "#$backup_module\n$(get_$backup_module)\n" >> $colorschemes/$filename &
 		{ echo -e "#$backup_module\n$(get_$backup_module)\n"; } >> $colorschemes/$filename &
 	done
 
@@ -1600,7 +1258,6 @@ if [[ $replace_color ]]; then
 				sed -i "/^foreground/ s/${color: -6}/${new_color: -6}/" $cava_conf
 			fi
 
-			#sed -i "$pattern s/\<\($all_indexes\)\>/$new_index/g" ${!config_file}*
 			sed -i "$pattern s/\<$prefix\($all_indexes\)\>/$prefix$new_index/g" ${!config_file}*
 		else
 			if [[ $replace_module == term ]]; then
@@ -1638,8 +1295,6 @@ if [[ $replace_color ]]; then
 
 				case $replace_module in
 					bash)
-						#rgb_color=$($colorctl -c -s ';' -h $color)
-						#new_rgb_color=$($colorctl -c -s ';' -h $new_color)
 						rgb_color=$($colorctl -chd ';' $color)
 						new_rgb_color=$($colorctl -chd ';' $new_color)
 						sed -i "s/$rgb_color/$new_rgb_color/" $bash_conf;;
@@ -1660,18 +1315,9 @@ if [[ $replace_color ]]; then
 						fi
 
 						if [[ $replace_module == ob ]]; then
-							#shadow_color=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
-							#		rgb = rgb sprintf("%.2x", int($(NF - 1) * 255))
-							#	} END { print "#" rgb }' $picom_conf)
-
 							replace_shadow=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
 									rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
 								} END { print ("#" rgb == "'$color'") }' $picom_conf)
-
-							#shadow_color=$(awk -F '[ ;]' '/^shadow-(red|green|blue)/ {
-							#		rgb = rgb sprintf("%.2x", sprintf("%.0f", $(NF - 1) * 255))
-							#	} END { print "#" rgb }' $picom_conf)
-							#echo $replace_shadow $shadow_color $color
 
 							((replace_shadow)) && property=s && ob
 						elif [[ $replace_module == qb ]]; then
@@ -1681,47 +1327,13 @@ if [[ $replace_color ]]; then
 						elif [[ $replace_module == bar ]]; then
 							replace_config="$bar_conf $bar_module_colors"
 
-							#running_bars=$(ps aux |
-							#	awk '/lemonbar.*-n \w*$/ {
-							#		if(c) { s = ","; bs = "{"; be = "}" }
-							#		rb = rb gensub(".* (\\w*)$", s "\\1", 1)
-							#		c++
-							#	} END { print bs rb be }')
-
-							#if [[ $running_bars ]]; then
-							#	running_bar_configs="$(eval ls ~/.config/orw/bar/configs/$running_bars)"
-							#	bar_colorschemes=$(awk '{
-							#			if(c) { s = ","; bs = "{"; be = "}" }
-							#			cs = cs gensub(".*-c ([^-]\\w*).*", s "\\1", 1)
-							#			c++
-							#		} END { print "~/.config/orw/colorschemes/" bs cs be ".ocs" }' \
-							#			$running_bar_configs)
-
-							#	#[[ $bar_colorschemes ]] &&
-							#	#	eval sed -i "s/${color#\#}/${new_color#\#}/" $bar_colorschemes
-
-							#	[[ $bar_colorschemes ]] && replace_config+=" $bar_colorschemes" reload_bar=true
-							#		#replace_config=$bar_colorschemes || replace_config="$bar_conf $bar_module_colors"
-							#	#if [[ $bar_colorschemes ]]; then
-							#	#	eval sed -i "s/${color#\#}/${new_color#\#}/" $bar_colorschemes
-
-							#	#	~/.orw/scripts/barctl.sh -b ${running_bars//[{\}]/} &
-							#	#	continue
-							#	#fi
-							#fi
-
 							get_bar_configs
-							#[[ $bar_colorschemes ]] && replace_config+=" $bar_colorschemes"
+
 							[[ $bar_colorschemes ]] && replace_config="$bar_colorschemes"
 						fi
 
-						#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
-						#sed -i "s/${color#\#}/${new_color#\#}/" ${!config_file} $bar_module_colors
 						eval sed -i "s/${color#\#}/${new_color#\#}/" "$replace_config"
 				esac
-
-					#[[ $replace_module == bar ]] && bar_module_colors=$bar_modules || bar_module_colors=''
-					#sed -i "s/$color/$new_color/" ${!config_file} $bar_module_colors
 			fi
 		fi
 	done
@@ -1763,37 +1375,17 @@ else
 
 		[[ $module ]] && notification="<b>${modules^}</b> $module_count " || notification="Colorscheme "
 
-		#for module in ${module:-$(sed -n 's/^#//p' $colorscheme)}; do
-		#	[[ $module == bar ]] && set_bar ||
-		#		while read -r property color; do
-		#			$module
-		#		done <<< $(sed "/^#$module/,/^\($\|#\)/!d;//d" $colorscheme)
-		#	#done <<< $(sed "/^#$module/,/^\w*$/!d;//d" $colorscheme)
-		#done
-
 		set_modules=$(declare -F |
 			awk '/\sset_\w*$/ {
 					sub(".*_", "", $NF)
 					m = m "|" $NF
 				} END { print substr(m, 2) }')
 
-		#set_modules='term|tmux|ncmpcpp'
-		#set_modules=ncmpcpp
-
 		for module in ${module:-$(sed -n 's/^#//p' $colorscheme)}; do
-			#set_$module
 			[[ $module =~ $set_modules ]] || continue
-			#echo $module
 			eval reload_$module=true
-			#[[ $module != rofi ]] && continue
-			#[[ $module == dunst ]] &&
 
 			sed -n "/^#$module/,/^$/ { /^\(#\|$\)/!p }" $colorscheme | set_$module &> /dev/null &
-
-			#[[ $module == bar ]] && set_bar ||
-			#	while read -r property color; do
-			#		$module
-			#	done <<< $(sed "/^#$module/,/^\($\|#\)/!d;//d" $colorscheme)
 		done
 		wait
 	else
@@ -1811,7 +1403,6 @@ reload_bash() {
 	while read bash_pid; do
 		kill -USR1 $bash_pid
 		kill -SIGINT $bash_pid
-	#done <<< $(ps aux | awk '$NF == "/bin/bash" { print $2 }')
 	done <<< $(ps aux | awk '
 		$NF ~ "bash$" && $7 ~ "/[1-9].?" {
 			if (ot !~ $7) {
@@ -1822,18 +1413,11 @@ reload_bash() {
 }
 
 if [[ ${reload-yes} == yes ]]; then
-	#if [[ $reload_ob ]]; then $(which openbox) --reconfigure & fi
-	#if [[ $reload_bar ]]; then ~/.orw/scripts/barctl.sh &> /dev/null & fi
-	#if [[ $reload_vim ]]; then ~/.orw/scripts/source_neovim_colors.py & fi
-	#if [[ $reload_ncmpcpp ]]; then ~/.orw/scripts/ncmpcpp.sh -a & fi
-	#if [[ $reload_term ]]; then killall -USR1 termite & fi
-	#if [[ $reload_sxiv ]]; then xrdb -load $sxiv_conf & fi
 	[[ $reload_ob ]] && $(which openbox) --reconfigure &
 	[[ $reload_bar ]] && ~/.orw/scripts/barctl.sh &> /dev/null &
 	[[ $reload_vim ]] && ~/.orw/scripts/reload_neovim_colors.sh &> /dev/null &
 	[[ $reload_ncmpcpp ]] && ~/.orw/scripts/ncmpcpp.sh -a &
 	[[ $reload_term ]] && killall -USR1 termite
-	#[[ $reload_sxiv ]] && xrdb -load $sxiv_conf
 	[[ $reload_sxiv ]] && xrdb -merge $sxiv_conf
 	[[ $reload_bash ]] && reload_bash &
 
@@ -1857,12 +1441,9 @@ if [[ ${reload-yes} == yes ]]; then
 
 	if [[ $reload_dunst ]]; then
 		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
-		#command=$(ps -C dunst -o args= | awk '$1 == "dunst" { $1 = "'$(which dunst)'" } { print }')
 
 		killall dunst
 		$command &> /dev/null &
-		#killall dunst
-		#/usr/local/bin/dunst &> /dev/null &
 	fi
 fi
 

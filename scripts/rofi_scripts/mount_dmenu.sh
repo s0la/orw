@@ -16,7 +16,6 @@ mount() {
 
 if ! $(mount); then
 	mount_point=$(find /mnt -maxdepth 1 -type d | $rofi | sed "s|^\~|$HOME|")
-	#mount_point=${mount_point//\~/$HOME}
 
 	if [[ ! -d $mount_point ]]; then
 		confirmation=$(echo -e 'yes\nno' |\

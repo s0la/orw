@@ -32,5 +32,6 @@ shift $((arg_count * 2))
 
 ~/.orw/scripts/notify.sh -s osd -i   'recording started' &> /dev/null &
 
-ffmpeg -y -f x11grab -r ${fps-60} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
-	-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+ffmpeg -y -f x11grab -r ${fps-30} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
+	-c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4

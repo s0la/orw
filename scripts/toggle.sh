@@ -160,9 +160,7 @@ rofi() {
 				print substr(wo, 2)
 			}' $conf | { read -r wo; { echo "$wo" >&1; cat > $conf; } })
 
-		#if [[ $1 =~ ^or && $no == horizontal && $no != $co ]]; then
 		if [[ $option =~ ^or && $no != $co ]]; then
-			#sed -i "/^\s*last_margin/ s/[0-9.]\+%/$lm/" $0
 			sed -i "/^\s*last_${co:0:1}_margin/ s/[0-9.]\+px/$lm/" $0
 			sed -i "/^\s*last_${co:0:1}_location/ s/\w*$/$ll/" $0
 		fi
@@ -181,16 +179,7 @@ rofi() {
 				sed -i "/font/ s/[0-9]\+/$((font $sign 4))/" $path/theme.rasi
 			fi
 
-			#border_width=$(awk '/^\s*[a-z]+-border/ { ba[++bai] = gensub(/.*([0-9]+)px.*/, "\\1", 1) }
-			#				END {
-			#					for(bai in ba) { cb = ba[bai]; if(cb > mb) mb = cb }
-			#					print mb }' $path/$current_mode.rasi)
-
 			border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
-
-			#if [[ $new_mode == dmenu ]]; then
-			#[[ $new_mode == dmenu ]] &&
-
 			border_color=$(awk -F '[ ;]' '\
 				/^\s*(b[cg]|ibc)/ {
 					if(!bg) bg = $(NF - 1)
@@ -207,33 +196,12 @@ rofi() {
 					property=rib || property=rwb
 			fi
 
-			#if [[ $new_mode == list ]]; then
-			#	[[ $border_color == bc ]] && property=rwb || property=rib
-			#fi
-
-			#else
-			#	border_width=$(awk '/^border/ { print $NF }' ~/.orw/themes/theme/openbox-3/themerc)
-			#	theme=theme
-			#	color=sbg
-			#fi
-
-			#[[ $new_mode =~ list ]] && width=$border_width || width=0
-			#[[ $new_mode =~ dmenu ]] && property=bc || property=sbg
-
-			#[[ $new_mode == dmenu ]] &&
-			#	width=0 color=$dmenu_color property=reb ||
-			#	width=$border_width color=sbg property=rwb
-
-			#[[ $new_mode == dmenu ]] && border_width=0 property=reb
-
 			sed -i "/import/ s/ .*/ \"$new_mode\"/" ~/.config/rofi/main.rasi
 
-			#~/.orw/scripts/borderctl.sh -c list rbw $width
 			~/.orw/scripts/borderctl.sh -c $new_mode $property $border_width
 			~/.orw/scripts/rice_and_shine.sh -m rofi -p dpc,sul -P ${border_color:-sbg}
 		else
 			if [[ $current_mode == icons && $# -gt 1 ]]; then
-				#awk '/children.*listview/ { print gensub(/(\[).*(listview.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1) }' $path/icons.rasi
 				awk -i inplace '{
 					if(/ horibox /) {
 						$0 = gensub(/(\[).*(horibox.*)/, (/inputbar/) ? "\\1 \\2" : "\\1 inputbar, \\2", 1)
@@ -282,21 +250,6 @@ tmux() {
 	$(which tmux) source-file $tmux_conf
 }
 
-restart_tiling() {
-	#if pidof -x tile_windows.sh &> /dev/null; then
-	#	[[ ${1:-$mode} == floating ]] && killall tile_windows.sh ||
-	#		~/.orw/scripts/tile_windows.sh &> /dev/null &
-	#fi
-
-	pid=( $(pidof -x tile_windows.sh) )
-
-	if [[ ${1:-$mode} == floating ]]; then
-		((${#pid[*]})) && kill ${pid[*]}
-	else
-		((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
-	fi
-}
-
 titlebar() {
 	awk -i inplace '/name="\*"/ { nr = NR + 1 }
 		{
@@ -306,26 +259,10 @@ titlebar() {
 			}
 		} { print }' $openbox_conf
 
-	#new_state=$(awk -i inplace '/name="\*"/ { nr = NR + 1 }
-	#	{
-	#		if(nr == NR) {
-	#			s = gensub(".*>(.*)<.*", "\\1", 1)
-	#			ns = (s == "no") ? "yes" : "no"
-	#			sub(s, ns)
-	#		}
-	#	} { o = o "\n" $0 }
-	#	END {
-	#		print ns
-	#		print sub(o, 2)
-	#	}' $openbox_conf | { read -r o; { echo "$o" >&1; cat > $openbox_conf; } })
-
 	openbox --reconfigure
 	reconfigured=true
 
 	read {x,y}_border <<< $(~/.orw/scripts/print_borders.sh open)
-	#awk -i inplace '/^[xy]_border/ {
-	#	sub($NF, (/^x/) ? '$x_border' : '$y_border')
-	#} { print }' $orw_conf
 
 	eval $(awk -i inplace '\
 			/^mode/ { m = $NF }
@@ -335,8 +272,6 @@ titlebar() {
 				print "mode=" m
 				print substr(wo, 2)
 			}' $orw_conf | { read -r wo; { echo "$wo" >&1; cat > $orw_conf; } })
-
-	restart_tiling
 }
 
 ncmpcpp() {
@@ -346,48 +281,16 @@ ncmpcpp() {
 	mode=$(awk '/^song_list/ { print /[0-9]+/ ? "single" : "dual" }' ~/.config/ncmpcpp/config)
 
 	if [[ ${1:-$mode} == single ]]; then
-		#sed -i '/suffix/ s/0[^"]*/0/' $configs
 		sed -i '/suffix/ s/"./"/' $configs
 		sed -i '/^song_list/ s/".*"/"{%a - %t} $R {%l}"/' $configs
 	else
 		read npp mc <<< $(sed -n '/\(main_window\|now_playing_prefix\)/ s/[^0-9]*\([0-9]\+\).*/\1/p' $config | xargs)
-
-		#sed -i '/suffix/ s/0/0●/' $configs
 		sed -i '/suffix/ s/"/"●/' $configs
 		sed -i "/^song_list/ s/\".*\"/\"\$($npp){%a} \$($mc) {%t} \$R \"/" $configs
 	fi
 
 	~/.orw/scripts/ncmpcpp.sh -a
 }
-
-#bar_and_rofi() {
-#	awk -i inplace '{
-#		if(!s) s = (/^'$2'.*-exclude/)
-#		if(s && /'${1^}'/) {
-#			if($1 == "#") sub($1, "")
-#			else sub(/^/, "#")
-#			s = 0
-#		}
-#	} { print }' $picom_conf
-#}
-
-#blur() {
-#	if [[ $1 ]]; then
-#		bar_and_rofi $1 blur
-#		#[[ $1 == bar ]] && pattern=Bar || pattern='^[^o]*Rofi'
-#
-#		#state=$(awk '/'$pattern'/ { print ($1 == "#") ? "false" : "true" }' $picom_conf)
-#
-#		#[[ ${2:-$state} == true ]] && replace="/$pattern/ s/^/#/" || replace="/$pattern/ s/#//"
-#		#eval sed -i "'$replace'" $picom_conf
-#	else
-#		state=$(awk '/^blur-background / { print (/true/) ? "false" : "true" }' $picom_conf)
-#		sed -i "/^blur-background/ s/ \w\+/ ${1:-$state}/" $picom_conf
-#	fi
-#
-#	#killall picom
-#	#picom --experimental-backends &> /dev/null &
-#}
 
 blur_and_shadow() {
 	if [[ $1 =~ bar|rofi ]]; then
@@ -477,42 +380,21 @@ wm() {
 
 			END { print wmm, m, s, i }' $orw_conf)
 
-		#~/.orw/scripts/notify.sh -pr 222 "<b>${1^^}</b> is <b>$state</b>"
-		#case $1 in
-		#	direction) [[ $mode == h ]] && icon=  || icon=;;
-		#	direction) [[ $mode == h ]] && icon=  || icon=;;
-		#	offset) [[ $mode == true ]] && icon=  || icon=;;
-		#	*) icon=
-		#esac
-
-		#case $1 in
-		#	direction) [[ $mode == h ]] && icon=  || icon=;;
-		#	#offset) [[ $mode == true ]] && icon=  || icon=;;
-		#	offset)
 		if [[ $1 == offset ]]; then
 			icon=
 
-			#if [[ $wm_mode != floating ]]; then
-				#[[ $mode == true ]] && offset_config=${orw_conf%/*}/offsets
-				#eval $(awk '/_offset/ { print gensub(" ", "=", 1) }' ${offset_config:-$orw_conf} | xargs)
-				offset_file=${orw_conf%/*}/offsets
-				[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
-					{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
-				read default_{x,y}_offset <<< $(awk '/[xy]_offset/ { print $NF }' $orw_conf | xargs)
+			offset_file=${orw_conf%/*}/offsets
+			[[ -f $offset_file ]] && eval $(grep offset $offset_file | xargs) ||
+				{ ~/.orw/scripts/notify.sh "No offset specified, use windowctl to specify offset." && exit; }
+			read default_{x,y}_offset <<< $(awk '/[xy]_offset/ { print $NF }' $orw_conf | xargs)
 
-				delta_x=$((x_offset - default_x_offset))
-				delta_y=$((y_offset - default_y_offset))
+			delta_x=$((x_offset - default_x_offset))
+			delta_y=$((y_offset - default_y_offset))
 
-				[[ $mode == true ]] && sign=+ || sign=-
+			[[ $mode == true ]] && sign=+ || sign=-
 
-				~/.orw/scripts/offset_tiled_windows.sh -x $sign$delta_x -y $sign$delta_y
-				#~/.orw/scripts/offset_tiled_windows.sh x $sign$delta_x
-				#~/.orw/scripts/offset_tiled_windows.sh y $sign$delta_y
-			#fi
+			~/.orw/scripts/offset_tiled_windows.sh -x $sign$delta_x -y $sign$delta_y
 		fi
-		#	full) icon=;;
-		#	*) icon=;;
-		#esac
 
 		~/.orw/scripts/notify.sh -r 105 -s osd -i $icon "$1: $mode"
 
@@ -534,21 +416,6 @@ wm() {
 		sed -i "0,/monitor/ { /monitor/ s/>.*</>$monitor</ }" $openbox_conf
 		sed -i "/class.*\(tiling\|\*\)/ s/\".*\"/\"$pattern\"/" $openbox_conf
 
-		#[[ $2 ]] || ~/.orw/scripts/notify.sh -pr 333 "<b>WM</b> switched to <b>$mode</b> mode"
-
-		#pid=( $(pidof -x listen_windows.sh) )
-
-		restart_tiling
-		#pid=( $(pidof -x tile_windows.sh) )
-
-		#if [[ $mode == floating ]]; then
-		#	opacity=100
-		#	((${#pid[*]})) && kill ${pid[*]}
-		#else
-		#	#((${#pid[*]})) || ~/.orw/scripts/listen_windows.sh &
-		#	((${#pid[*]})) || ~/.orw/scripts/tile_windows.sh &
-		#fi
-
 		[[ $mode == floating ]] && opacity=100
 		~/.orw/scripts/opacityctl.sh ao ${opacity:-0}
 
@@ -561,19 +428,6 @@ wm() {
 		fi
 
 		if [[ ! $2 ]]; then
-			#[[ $mode == floating ]] && icon= || icon=
-			#[[ $mode == floating ]] && icon= || icon=
-			#[[ $mode == floating ]] && icon= || icon=
-
-			#case $mode in
-			#	tiling) icon=;;
-			#	stack) icon=;;
-			#	auto)
-			#		id=$(printf '0x%.8x' $(xdotool getactivewindow))
-			#		icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
-			#	*) icon=;;
-			#esac
-
 			case $mode in
 				tiling)
 					icon=
@@ -581,8 +435,6 @@ wm() {
 				stack) icon=;;
 				stack) icon=;;
 				auto) icon=;;
-					#id=$(printf '0x%.8x' $(xdotool getactivewindow))
-					#icon=$(wmctrl -lG | awk '$1 == "'$id'" { print ($5 > $6) ? "" : "" }');;
 				*) icon=;;
 			esac
 
@@ -595,7 +447,6 @@ notify() {
 	notify_conf=~/.orw/scripts/system_notification.sh
 	mode=$(awk -F '=' '/^theme/ { print ("'$1'") ? "'$1'" : ($NF == "osd") ? "vertical" : "osd" }' $notify_conf)
 
-	#~/.orw/scripts/notify.sh "System notification theme changed to <b>$mode</b>"
 	~/.orw/scripts/notify.sh "System notification theme changed to <b>$mode</b>"
 
 	sed -i "/^theme/ s/\w*$/$mode/" $notify_conf

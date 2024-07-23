@@ -1,6 +1,5 @@
 #!/bin/bash
 
-#xdotool keydown Super + Shift sleep 0.500 key h + l
 xdotool keydown Super + Shift sleep 0.1 key h sleep 0.1 key l
 
 ~/.orw/scripts/listen_input.py

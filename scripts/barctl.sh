@@ -21,29 +21,14 @@ lower_bars() {
 	done
 }
 
-monitor_memory_consumption() {
-	current_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
-
-	((current_memory_usage > initial_memory_usage)) && 
-		memory_usage_delta=$((current_memory_usage - initial_memory_usage)) ||
-		memory_usage_delta=$(((initial_memory_usage - current_memory_usage) * 2))
-
-	((memory_usage_delta >= ${memory_tolerance:-10})) && $0
-}
-
 add_bar() {
 	[[ $last_running ]] && separator=,
 	sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
 }
 
 configs=~/.config/orw/bar/configs
-initial_memory_usage=$(${0%/*}/check_memory_consumption.sh Xorg)
+last_running=under_join
 
-last_running=new_join
-
-#[[ $@ =~ -b ]] || get_bars
-
-#while getopts :ds:I:gb:m:E:e:r:R:klLnc: flag; do
 while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
 		g)
@@ -52,7 +37,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 			[[ -f $configs/$bar ]] && overwrite=-o
 			~/bar_new/run.sh ${@:2} $overwrite
-			#~/.orw/scripts/bar/generate_bar.sh ${@:2} $overwrite
 
 			add_bar
 			exit
@@ -88,10 +72,8 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 					print (ab) ? ab : "none", gensub(",", " ", "g", (nb) ? nb : ub)
 				}')
 
-			#[[ $current_running != ${last_running:-none} ]] && recalculate_offsets=true
 			[[ $current_running == none ]] && unset current_running
 			[[ $current_running != $last_running ]] && recalculate_offsets=true
-			#[[ $last_running == none ]] && unset last_running
 
 			bars=( $bar_array )
 			bar_count=${#bars[*]}
@@ -121,18 +103,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 			[[ $edit_flag =~ y ]] && recalculate_offsets=true
 
-				#awk -i inplace '
-				#	{
-				#		f = "-'$flag'"
-				#		a = "'"$args"'"
-				#		if(a) a = " " a
-				#		sf = "'"$suffix"'"
-
-				#		if(!sf && "-" f "[^-]*$") pf = " "
-				#		$0 = gensub("'"$pattern"'", "\\1" pf f a sf "\\2", 1)
-				#		print
-				#	}' $edit_config
-
 			((bar_count)) || get_bars
 			((bar_count > 1)) && all_bars="${bars[*]}" || bar=$bars
 
@@ -144,7 +114,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 				}
 
 				function replace_value() {
-					#system("~/.orw/scripts/notify.sh \"^" nv "\"")
 					$0 = gensub("(([^-]*-[^" f "])*[^" f "]*" f ")((([0-9]+)?([^0-9]*)){" ai "})[0-9]+(.*)", "\\1\\3" nv "\\7", 1)
 				}
 
@@ -159,7 +128,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 					split(e_a, aa)
 					split(e_f, fa, ",")
-					#split(i_f, fa, ",")
 				} {
 					if(e_a ~ /[+-][0-9]?/) {
 						if(i_c && NR == FNR) {
@@ -188,16 +156,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 						if(i_c && NR == FNR) {
 							if(i_f) split(i_f, ia, ","); else ia = fa
 
-							#for(iai in ia) naa[iai] = gensub(".*-" ia[iai] " ([^-]*).*", "\\1", 1)
-							#for(iai in ia) naa[iai] = gensub("(([^-]*-[^" ia[iai] "])*[^-]*-" ia[iai] ") ([^-]*).*", "\\3", 1)
-
-							#for(iai in ia) {
-							#	iv = gensub("(([^-]*-[^" ia[iai] "])*[^-]*-" ia[iai] ") ([^-]*).*", "\\3", 1)
-							#	sub("\\s*$", "", iv)
-							#	naa[iai] = iv
-							#}
-
-							#for(iai in ia) naa[iai] = gensub("(([^-]*-[^" ia[iai] "])*[^-]*-" ia[iai] ") ([^-]*).*", "\\3", 1)
 							for(iai in ia) {
 								naa[iai] = gensub("(([^-]*-[^" ia[iai] "])*[^-]*-" ia[iai] ") ([^-]*).*", "\\3", 1)
 								if("'$move'") sub(" -" ia[iai] "[^-]*", "")
@@ -209,10 +167,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 						for(fi in fa) {
 							f = fa[fi]
-
-							#if(length(naa)) {
-							#	if(length(naa[fi])) p = naa[fi]
-							#} else p = e_a
 
 							p = (length(naa) && length(naa[fi])) ? naa[fi] : e_a
 							sub("\\s*$", "", p)
@@ -228,20 +182,12 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 									sub(s_m, f_m)
 									sub(f_m, s_m)
-									#print
-									#exit
-
-									#o_m = $(gensub(".*(-" f "[^-]*).*", "\\1", 1)
-									#n_m = $(gensub(".*(-" n_f "[^-]*).*", "\\1", 1)
 								} else {
 									if(p) p = " " p
 									if(!sf && $0 ~ "-" f "[^-]*$") pf = " "; else sf = " "
 
-									#print "here " f, "^" pf "^ ^" sh "^ ^" p "^"
-
 									if("'$flag'" == "r") {
 										r_f = (p) ? "-" n_f p sf : p = gensub(".*(-" n_f "[^-]*).*", "\\1", 1)
-										#print "r_f: ^" r_f "^"
 										sub("-" e_f "[^-]*", r_f)
 									} else {
 										$0 = gensub("'"$pattern"'", "\\1" pf "-" n_f p sf "\\2", 1)
@@ -257,14 +203,11 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 					print
 				}' $inherit_config $edit_config
-			#exit
 
 			break;;
 		R)
-			#modules="$OPTARG"
 			modules="${OPTARG//\*/\.\*}"
 			colorscheme_name="${!OPTIND}"
-			#[[ ! $modules =~ '^' ]] && modules="${modules//\*/\.\*}"
 
 			if [[ $colorscheme_name ]]; then
 				colorscheme=~/.config/orw/colorschemes/$colorscheme_name.ocs
@@ -283,77 +226,14 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 		k)
 			if [[ $bars ]]; then
 				for bar in "${bars[@]}"; do
-					#read y_end bottom display <<< $(awk '
-					#	function get_value(module) {
-					#		if($0 ~ "-" module) {
-					#			return gensub("(([^-]*-[^" module "]*)*)[^-]*-" module "[^0-9]*([0-9]+) .*", "\\3", 1)
-					#		}
-					#	}
-
-					#	END {
-					#		ye = get_value("y") + get_value("h") + get_value("f") + get_value("F") * 2
-					#		s = get_value("S")
-					#		print ye, (/-y b/), s
-					#	}' $configs/$bar)
-
-					#read is_last_bar display <<< $(awk -F '[_ ]' '
-					#	$1 == "primary" { d = ('${display:-0}') ? '${display:-0}' : $NF }
-					#	$2 == d && $3 == "offset" { print $('$bottom' + 4) == '$y_end', d }' ~/.config/orw/config)
-
 					kill_bar
-
-					#if ((is_last_bar)); then
-					#	delta=$(~/.orw/scripts/assign_bars_to_displays.sh -o | \
-					#		awk '$1 == "display_'$display'" { print '$y_end' - $('$bottom' + 2) }')
-
-					#	if ((bottom)); then
-					#		((delta > max_bottom_delta)) && max_bottom_delta=$delta
-					#	else
-					#		((delta > max_top_delta)) && max_top_delta=$delta
-					#	fi
-
-					#	#if ((bottom)); then
-					#	#	((y_end > max_y_bottom_end)) && max_y_bottom_end=$y_end
-					#	#else
-					#	#	((y_end > max_y_top_end)) && max_y_top_end=$y_end
-					#	#fi
-					#fi
 				done
-
-				#sws_pid=$(ps aux |
-				#	awk '/bash.*sws.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
-				#kill -SIGCONT $sws_pid
-				#exit
-
-				##[[ $recalculate_offsets ]] && ~/.orw/scripts/assign_bars_to_displays.sh &
-
-				##offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
-				##										END { print gensub("\\<0\\>", "", "g", wo) }')
-
-				##offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -d | awk '{ wo = wo " " $0 }
-				#offsets=$(~/.orw/scripts/get_bar_offset.sh -d | awk '{ wo = wo " " $0 }
-				#	END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
-				#	#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
-
-				##[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "+${offsets#,}"
-				#[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
-				#exit
-				#echo top delta: $max_top_delta
-				#echo bottom delta: $max_bottom_delta
-				#exit
 			else
-				#ps -C barctl.sh o pid= --sort=-start_time | awk 'NR > 1' | xargs kill &> /dev/null
-				#kill_running_script
-				#sleep 0.1
 				killall run.sh lemonbar
 				bars=( ${last_running//,/ } )
-				#killall generate_bar.sh lemonbar
 			fi
 
 			killed=true;;
-
-			#~/.orw/scripts/assign_bars_to_displays.sh
-			#exit;;
 		l)
 			get_bars
 			lower_bars
@@ -361,34 +241,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 		L)
 			~/.orw/scripts/add_bar_launcher.sh ${@:2}
 			exit;;
-		#a)
-		#	read position flag args <<< ${@:OPTIND}
-		#	[[ ${#position} == 2 && ${position:0:1} == b ]] &&
-		#		pattern="(.*)(-${position: -1}.*)" suffix=" " ||
-		#		pattern="(.*-${position: -1}[^-]*)(.*)"
-
-		#		((bar_count)) || get_bars
-		#		((bar_count > 1)) && all_bars="${bars[*]}" || bar=$bars
-
-		#		edit_config=$(eval echo $configs/${bar:-{${all_bars// /,}\}})
-
-		#		#awk '{ print (/-d[^-]*$/) }' ~/.config/orw/bar/configs/moun
-		#		#exit
-
-		#		#awk '{ print gensub("'"$pattern"'", "\\1   SOLA   \\2", 1) }' $edit_config
-		#		#awk '{ print gensub("'"$pattern"'", "\\1-'$flag' '"$args"' \\2", 1) }' $edit_config
-
-		#		awk -i inplace '
-		#			{
-		#				f = "-'$flag'"
-		#				a = "'"$args"'"
-		#				if(a) a = " " a
-		#				sf = "'"$suffix"'"
-
-		#				if(!sf && "-" f "[^-]*$") pf = " "
-		#				$0 = gensub("'"$pattern"'", "\\1" pf f a sf "\\2", 1)
-		#				print
-		#			}' $edit_config;;
 		n) no_reload=true;;
 		c)
 			config=$OPTARG
@@ -396,16 +248,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 			config_path=~/.config/orw/bar/configs
 
 			shift
-
-			#cp $config_path/$config $config_path/$clone_config
-			#sed -n "s/\(.*c\).*/\\1/1p" $config_path/$config
-			#sed -n "s/\(\([^-]*-[^c]\)*[^-]*-c\)/\\1 bar_$clone_config/p" $config_path/$config
-
-			#awk '{
-			#	$0 = gensub("(([^-]*-[^c])*[^-]*-c)", "\\1 bar_'$clone_config'", 1)
-			#	$0 = gensub("(.*-n)( [^ ]*)", "\\1 '$clone_config'", 1, $0)
-			#	print
-			#}' $config_path/$config > $config_path/$clone_config
 
 			awk '{
 				$0 = gensub(/(-c).(\w*)[^-]*/, "\\1,bar_'$clone_config' \\2 ", 1)
@@ -437,17 +279,9 @@ check_new_bars() {
 	declare -A displays
 	local current_bars="${current_running//,/ }"
 
-	#echo BARS: ${bars[@]:-$current_bars}
-	#exit
-
-	#read default_{x,y}_offset <<< $(awk '/^[xy]_offset/ { print $NF }' ~/.config/orw/config)
 	read default_y_offset <<< $(awk '/^y_offset/ { print $NF }' ~/.config/orw/config)
 
-	#for bar in ${bars[*]}; do
-	#for bar in $current_bars; do
 	for bar in ${current_bars:-${bars[@]}}; do
-	#for bar in ${bars[@]:-$current_bars}; do
-		#if [[ ! $last_running =~ (^|,)$bar(,|$) ]]; then
 			read display bottom offset <<< $(awk '
 				function get_flag(flag) {
 					if(match($0, "-" flag "[^-]*")) return substr($0, RSTART + 3, RLENGTH - 3)
@@ -489,50 +323,17 @@ check_new_bars() {
 					#print b, y + h + f + F, y, h, f, F
 					print s, b, y + h + f + F
 				}' ~/.config/orw/bar/configs/$bar)
-		#fi
-
-		#((offset)) || offset=$default_y_offset
-		#echo $display, $bottom, $offset
 
 		((!${#displays[$display]})) &&
 			display_offsets=( 0 0 ) ||
 			read -a display_offsets <<< ${displays[$display]}
 
-		#echo ${displays[$display]}, ${display_offsets[bottom]}
-
 		if [[ ! $killed || ($killed && ! ${bars[*]} =~ $bar) ]]; then
-			#((offset > ${display_offsets[bottom]:-0})) && display_offsets[bottom]=$offset
 			((offset > ${display_offsets[bottom]:-0})) && display_offsets[bottom]=$offset
 		fi
 
 		displays[$display]="${display_offsets[*]}"
-		#echo $display, ${display_offsets[*]}, ${displays[$display]}
-
-		#echo $bar, ${display_offsets[*]}, ${displays[*]}
 	done
-
-	#for d in ${!displays[*]}; do
-	#	echo $d, ${displays[$d]}
-	#done
-	#exit
-
-	#awk -F '[_ ]' '
-	#	{
-	#		if (NR == FNR) { d[$1] = $2 " " $3; next }
-	#		else if ($1 == "display" && $3 == "offset" && $2 in d &&
-	#			$(NF - 1) " " $NF != d[$2]) {
-	#			printf "display_%d_offset %s\n", $2, d[$2]
-	#			uv = 1
-	#			next
-	#		}
-
-	#		print
-	#	} END { print uv }' <(
-	#		for d in ${!displays[*]}; do
-	#			echo $d ${displays[$d]}
-	#		done
-	#	) ~/.config/orw/config 2> /dev/null
-	#exit
 
 	update_values=$(awk -i inplace -F '[_ ]' '
 		{
@@ -553,13 +354,10 @@ check_new_bars() {
 			done
 		) ~/.config/orw/config 2> /dev/null)
 
-	#((diff)) && ~/sws_test.sh update && exit
 	((update_values)) && ~/.orw/scripts/signal_windows_event.sh update
 
 	[[ $killed ]] && exit
 	return
-
-
 
 	awk -i inplace -F '[_ ]' '{
 			if (NR == FNR) d[$1] = $2 " " $3
@@ -581,26 +379,16 @@ check_new_bars() {
 			done
 		) ~/.config/orw/config &> /dev/null
 
-		#sw_pid=$(ps aux |
-		#	awk '/bash.*sw.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
-		#kill -SIGCONT $sw_pid
 		~/.orw/scripts/signal_windows_event.sh update
 
 		[[ $killed ]] && exit
 }
 
 check_new_bars
-#exit
 
 if [[ ! $no_reload ]]; then
 	current_pid=$$
-	#ps -C barctl.sh o pid= --sort=-start_time | grep -v $current_pid | xargs kill 2> /dev/null
 	kill_running_script
-
-	#while true; do
-	#	monitor_memory_consumption
-	#	sleep ${check_interval:-100}
-	#done &
 
 	[[ ! $bars ]] && get_bars
 
@@ -608,14 +396,6 @@ if [[ ! $no_reload ]]; then
 		kill_bar
 		bash $configs/$bar &
 	done
-
-	##sleep 1
-	##last_bar_pid=$!
-	#[[ $recalculate_offsets ]] &&
-	#	#offsets=$(~/.orw/scripts/assign_bars_to_displays.sh -dc ${#bars[*]} | \
-	#	offsets=$(~/.orw/scripts/get_bar_offset.sh -dc ${#bars[*]} | \
-	#		awk '{ wo = wo " " $0 } END { gsub("\\<0\\>| ", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
-	#		#END { gsub(" ?\\<0\\> ?", ",", wo); print gensub(",{2,}", ",", "g", wo) }')
 
 	exit
 
@@ -625,15 +405,6 @@ if [[ ! $no_reload ]]; then
 			sleep 0.1
 		done
 
-		#ps -C lemonbar -o pid=
-		#xwininfo -name ocsgen_dock
-		#exit
-
 		~/.orw/scripts/signal_windows_event.sh update
-		#sws_pid=$(ps aux |
-		#	awk '/bash.*sws.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
-		#kill -SIGCONT $sws_pid
 	fi
-
-	#[[ ${offsets//,/} ]] && ~/.orw/scripts/offset_tiled_windows.sh -y "${offsets#,}"
 fi

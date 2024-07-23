@@ -1,7 +1,6 @@
 #!/bin/bash
 
 config=~/.config/orw/config
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
 
 get_directory() {
 	read depth directory <<< $(awk '\
@@ -9,53 +8,81 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
-#[[ $theme == icons ]] && next= prev= rand= restore= view= auto= ||
-	#next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
-
-if [[ $theme == icons ]]; then
-	auto=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print ($2 == "active") ? "" : "" }')
-	prev= next= rand= restore= view= 
-	prev= next= rand= restore= view= 
+if [[ $style =~ icons|dmenu ]]; then
+	active=$(systemctl --user is-active change_wallpaper.timer | awk '{ if(/^active/) print "-a 4" }')
+	icons='arrow_\(left\|right\).*empty\|random\|reload\|list\|categories\|grid\|time'
+	read prev next categories select restore random view auto <<< \
+		$(sed -n "s/^\($icons\)=//p" ~/.orw/scripts/icons | xargs)
 else
-	next=next prev=prev rand=rand index=index restore=restore view=view_all interval=interval auto=autochange nl=\n
+	next=next prev=prev rand=rand restore=restore select=select categories=categories view=view auto=autochange nl=\n
 fi
 
-if [[ -z $@ ]]; then
-	echo -e "$prev\n$next\n$rand\n$view\n$index$nl$restore\n$interval$nl$auto"
-else
-	wallctl=~/.orw/scripts/wallctl.sh
+list_actions() {
+	read row action <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -theme-str "$theme_str" -selected-row ${row:-1} $active -theme main
+		$prev
+		$random
+		$next
+		$restore
+		$auto
+		$categories
+		$select
+		$view
+	EOF
+	)
+}
 
-	if [[ $@ =~ select ]]; then
-		indicator='●'
-		indicator=''
+wallctl=~/.orw/scripts/wallctl.sh
 
-		get_directory
+toggle
+trap toggle EXIT
 
-		current_desktop=$(xdotool get_desktop)
-		current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+item_count=8
+set_theme_str
+list_actions
 
-		((depth)) && maxdepth="-maxdepth $depth"
+while
+	if [[ $action ]]; then
+		case "$action" in
+			$select)
+				indicator=''
+				indicator='●'
 
-		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort -t '/' -k 1 |\
-			awk '{ i = (/'"${current_wallpaper##*/}"'$/) ? "'$indicator'" : " "
-				sub("'"${root//\'}"'/?", ""); print i, $0 }'
-	else
-		killall rofi
+				get_directory
 
-		case "$@" in
-			$next*) $wallctl -o next ${@#*$next };;
-			$prev*) $wallctl -o prev ${@#*$prev };;
-			$rand*) $wallctl -o rand ${@#*$rand };;
+				current_desktop=$(xdotool get_desktop)
+				current_wallpaper=$(grep "^desktop_$current_desktop" $config | cut -d '"' -f 2)
+				current_wallpaper=$(sed -n "/^desktop_$current_desktop/ { s/[()]/\\\&/g; s/[^\"]*.\([^\"]*\).*/\1/p }" $config)
+
+				((depth)) && maxdepth="-maxdepth $depth"
+				read row wallpapers <<< $(eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+					sort -t '/' -k 1 | \
+					awk '{
+							if(/'"${current_wallpaper##*/}"'$/) {
+								r = NR - 1
+								i = "'$indicator'"
+							} else i = " "
+
+							sub("'"${root//\'}"'/?", "")
+							aw = aw "\\\\n" i " " $0
+						} END { print r, substr(aw, 2) }')
+
+				selected_wallpaper=$(echo -e "$wallpapers" | rofi -dmenu -selected-row $row -i -theme large_list)
+				[[ $selected_wallpaper ]] && eval $wallctl -s "$root/'${selected_wallpaper:2}'";;
+			$next*) $wallctl -o next ${action#*$next } &;;
+			$prev*) $wallctl -o prev ${action#*$prev } &;;
+			$random*) $wallctl -o rand ${action#*$random } &;;
 			$restore*) $wallctl -r;;
 			$auto*) $wallctl -A;;
 			$view*) $wallctl -v;;
-			$interval*) $wallctl -I ${@#* };;
-			$index*) $wallctl -i ${@##* };;
-			*.*)
-				wall="$@"
-				get_directory
-				eval $wallctl -s "$root/${wall:2}";;
-			*) $wallctl -o $@;;
+			$categories*)
+				killall rofi
+				rofi -modi "categories:${0%/*}/wallpaper_category_selection.sh" -show categories -theme large_list;;
+			$index*) $wallctl -i ${action##* };;
+			*) $wallctl -o $action;;
 		esac
 	fi
-fi
+
+	[[ $action =~ $select|$prev|$next|$random ]]
+do
+	list_actions
+done

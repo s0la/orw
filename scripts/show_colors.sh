@@ -1,6 +1,5 @@
 #!/bin/bash
 
-colorctl=~/.orw/scripts/colorctl.sh
 colorctl=~/.orw/scripts/convert_colors.sh
 all_colors=~/.config/orw/colorschemes/colors
 
@@ -19,8 +18,6 @@ while getopts :sb:d:l:f:c: flag; do
 done
 
 clean="$(tput sgr0)"
-#dark=$($colorctl -cs ';' -h ${hex_dark-'#404040'})
-#bright=$($colorctl -cs ';' -h ${hex_bright-'#bbbbbb'})
 dark=$($colorctl -chd ';' ${hex_dark-'#404040'})
 bright=$($colorctl -chd ';' ${hex_bright-'#bbbbbb'})
 

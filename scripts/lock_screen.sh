@@ -4,9 +4,6 @@ source ~/.orw/dotfiles/.config/i3lockrc
 
 blank=33000000
 
-#khl="$(~/.orw/scripts/colorctl.sh -o -$delta -h ${rc:0:6})${rc: -2}"
-#bshl="$(~/.orw/scripts/colorctl.sh -o +$delta -h ${rc:0:6})${rc: -2}"
-
 khl="$(~/.orw/scripts/convert_colors.sh -hv -$delta ${rc:0:6})${rc: -2}"
 bshl="$(~/.orw/scripts/convert_colors.sh -hv +$delta ${rc:0:6})${rc: -2}"
 

@@ -1,31 +1,36 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-
-if [[ $theme != icons ]]; then
+if [[ $style =~ icons|dmenu ]]; then
+	read up down default <<< \
+		$(sed -n 's/^\(arrow_\(up\|down\).*empty\|brightness\).*=//p' ~/.orw/scripts/icons | xargs)
+else
 	default='default' up='brightness up' down='brightness down' sep=' '
 fi
 
-icon_up=
-icon_down=
-icon_default=
+toggle
+trap toggle EXIT
 
-if [[ -z $@ ]]; then
-	cat <<- EOF
-		$icon_up$sep$up
-		$icon_default$sep$default
-		$icon_down$sep$down
+while
+	active=$(awk '/^[^#].*[0-9]+%/ {
+		l = gensub(/.* ([0-9]+)%.*/, "\\1", 1)
+		if(l == 50) print "-a 1" }' ~/.orw/scripts/system_notification.sh)
+
+	read row brightness <<< $(cat <<- EOF | rofi -dmenu -i -format 'i s' -selected-row ${row:-0} $active -theme main
+		$up
+		$default
+		$down
 	EOF
-else
-	case $@ in
-		$icon_default*) default_value=50;;
+	)
+
+	[[ $brightness ]]
+do
+	case $brightness in
+		$default*) default_value=50;;
 		*)
-			[[ $1 == $icon_up ]] && direction=+ || direction=-
-			[[ $@ =~ [0-9]+ ]] && mulitplier=${@: -1}
+			[[ $brightness =~ $up ]] && direction=+ || direction=-
+			[[ $brightness =~ [0-9]+ ]] && mulitplier=${brightness: -1}
 			[[ $mulitplier ]] && value=$((mulitplier * 10))
 	esac
 
-	killall rofi
-	#~/.orw/scripts/brightnessctl.sh -s $direction${default_value:-${value:-10}}
 	~/Desktop/set_brightness.sh $direction ${default_value:-10}
-fi
+done

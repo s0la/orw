@@ -26,8 +26,6 @@ run_command="~/.config/vifm/scripts/run_with_image_preview --server-name $title"
 if [[ $instance ]]; then
 	~/.orw/scripts/set_geometry.sh -c size -w ${width:-400} -h ${height:-500}
 
-	#[[ ! $title ]] && title=$(wmctrl -l | awk '$NF ~ "^vifm[0-9]+?" { c++ } END { print "vifm" c }')
-
 	alacritty -t ${title-vifm} --class=${class-custom_size} -e \
 		bash -c "sleep 0.5 && $run_command \\\"$args\\\"" &> /dev/null &
 	exit

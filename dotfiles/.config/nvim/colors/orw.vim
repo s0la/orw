@@ -11,26 +11,26 @@ let s:dd = '#a66c6c'
 let s:dc = '#EBCB8B'
 
 let g:bg = 'none'
-let g:fg = '#c1bbcb'
-let g:sfg = '#c67065'
-let g:vfg = '#8aa5b4'
-let g:cfg = '#b7a5d3'
-let g:ifg = '#d0af93'
-let g:ffg = '#534c50'
+let g:fg = '#cdd3d8'
+let g:sfg = '#df8477'
+let g:vfg = '#5daeb3'
+let g:cfg = '#d0a3da'
+let g:ifg = '#b8c1a1'
+let g:ffg = '#7986a3'
 let g:nbg = 'none'
-let g:nfg = '#2c2c2c'
-let g:lbg = '#201f20'
-let g:lfg = '#8aa5b4'
-let g:syfg = '#b7a5d3'
-let g:cmfg = '#3e3e3e'
-let g:slbg = '#201f20'
-let g:slfg = '#3e3e3e'
-let g:fzfhl = '#8aa5b4'
-let g:bcbg = '#534c50'
-let g:bdbg = '#8aa5b4'
-let g:nmbg = '#d0af93'
-let g:imbg = '#c67065'
-let g:vmbg = '#b7a5d3'
+let g:nfg = '#252b2c'
+let g:lbg = '#1a1f20'
+let g:lfg = '#5daeb3'
+let g:syfg = '#d0a3da'
+let g:cmfg = '#363d3e'
+let g:slbg = '#1a1f20'
+let g:slfg = '#363d3e'
+let g:fzfhl = '#5daeb3'
+let g:bcbg = '#7986a3'
+let g:bdbg = '#5daeb3'
+let g:nmbg = '#b8c1a1'
+let g:imbg = '#df8477'
+let g:vmbg = '#d0a3da'
 
 "let g:bcbg = '#666662'
 "let g:bdbg = '#7ec197'
@@ -44,6 +44,12 @@ let s:term_config = "~/.config/alacritty/alacritty.yml"
 let s:bgc = system("awk -F \"'\" '/background/ { print $(NF - 1) }' " . s:term_config)
 let s:bgc = g:cmfg
 
+" augroup fix_colors
+" 	autocmd!
+" 	autocmd ColorScheme * highlight! link @variable Identifier
+" 	autocmd ColorScheme * highlight! link @lsp.type.variable Identifier
+" augroup end
+
 exe 'hi Error          guibg=none'
 exe 'hi MsgArea        guifg='.s:bgc
 exe 'hi MoreMsg        guifg='.g:sfg
@@ -51,7 +57,6 @@ exe 'hi ErrorMsg       guibg=none                 guifg='.g:ffg
 exe 'hi Visual         guibg='.g:slbg
 exe 'hi Normal         guifg='.g:fg             .' guibg=none'
 exe 'hi Underlined     guifg='.g:fg
-"exe 'hi NonText        guifg='.g:cmfg
 exe 'hi NonText        guifg='.g:lbg
 exe 'hi SpecialKey     guifg='.g:nfg            .' guibg='.g:lbg
 

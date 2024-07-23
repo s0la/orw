@@ -10,7 +10,6 @@ wait_to_proceed() {
 trap : USR1
 
 spy_windows_pid=$(ps -o pid= -C spy_windows.sh | head -1)
-#spy_windows_pid=$(ps -o pid= -C sw_inp_bak.sh | head -1)
 
 [[ $spy_windows_pid ]] || exit
 
@@ -30,6 +29,8 @@ case $1 in
 	ws) sig=48;;
 	toggle_ws) sig=49;;
 	mouse_move) sig=50;;
+	mouse_split) sig=59;;
+	mouse_split_reverse) sig=60;;
 	mouse_resize) sig=51;;
 	swap_resize) sig=38;;
 	offset_int) sig=52;;

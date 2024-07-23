@@ -19,10 +19,6 @@ else
 	if [[ $1 == shadow[-_]radius ]]; then
 		pattern="shadow-(radius|offset)"
 	else
-		#[[ $1 == rofi ]] &&
-		#	pattern="opacity-rule.*Rofi" ||
-		#	pattern="^\s*${1:0:1}\w*[-_]${1:1}\w* "
-
 		[[ $1 == rofi ]] &&
 			pattern="[0-9]:class.*Rofi" ||
 			pattern="^\s*${1:0:1}\w*[-_]${1:1}\w* "
@@ -70,15 +66,9 @@ awk -i inplace '{ \
 }' ${!conf}
 
 case $conf in
-	#term*) killall -USR1 termite;;
 	dunst*)
 		command=$(ps -C dunst -o args= | awk '{ if($1 == "dunst") $1 = "'$(which dunst)'"; print }')
 
 		killall dunst
 		$command &> /dev/null &;;
-		#$(which dunst) &> /dev/null &;;
-	#picom*)
-	#	killall picom
-	#	picom -b &> /dev/null
-	#	#picom --experimental-backends &> /dev/null &
 esac

@@ -36,7 +36,6 @@ configuration {
 #window {
 	width:      @window-width;
 	border:     @window-border;
-	// margin:     @window-margin;
 	padding:    0px;
 	anchor:     north;
 	location:   north;
@@ -51,13 +50,11 @@ configuration {
 }
 
 #listview {
-	// layout:       horizontal;
 	flow:      horizontal;
 	lines:       1;
 	columns:     8;
 	spacing:     0;
 	background-color: @bg;
-	// padding:    @window-padding;
 }
 
 #element {
@@ -86,7 +83,6 @@ configuration {
 }
 
 #element.normal.active {
-	//border:       @element-border;
 	background-color: @abg;
 }
 
@@ -123,6 +119,5 @@ configuration {
 	color:            @dpc;
 	expand:           false;
 	background-color: @ibg;
-	// margin:           @colon-margin;
 	background-color: @bg;
 }

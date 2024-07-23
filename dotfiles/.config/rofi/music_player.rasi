@@ -25,7 +25,6 @@ inputbar {
   children:         [ prompt ];
   expand:           false;
   border-radius:    8px 8px 0px 0px;
-  // padding:          10px 10px 155px 10px;
   padding:          10px 10px 183px 10px;
 }
 
@@ -37,7 +36,7 @@ inputbar {
 
 listview {
   layout:            horizontal;
-  padding:           2px 40px;
+  padding:           2px 35px;
   background-color:  @tbg;
   transparency:      "real";
 }
@@ -57,7 +56,7 @@ element {
 }
 
 element-text {
-  padding:		11px;
+  padding:		9px 12px;
   font:			"remix 12";
   background-color: inherit;
 }
@@ -72,12 +71,9 @@ element-text {
 
 #element.selected.normal {
 	background-color: argb:00000000;
-	// background-color: @sbg;
 }
 
 #element-text selected.normal {
 	text-color:       @sfg;
 	background-color: @msbg;
-	// background-color: argb:10000000;
-	// background-color: @sbg;
 }

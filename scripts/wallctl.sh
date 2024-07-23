@@ -148,7 +148,7 @@ change_color() {
 				read -p 'Offset: ' offset
 
 				local original_color=$color
-				color=$(~/.orw/scripts/colorctl.sh -o $offset -ph "$color")
+				color=$(~/.orw/scripts/convert_colors.sh -hv $offset "$color")
 
 				echo "Color $original_color offseted by ${offset#[+-]}%, now $color.";;
 			n)
@@ -211,8 +211,8 @@ fetch_preview() {
 		thumb=/tmp/thumb.jpg
 		curl -s "$thumb_url" --output $thumb
 
-		color=$(convert $thumb -resize 1x1 txt:- | awk 'END { print $3 }')
-		convert $thumb -gravity south -background $color -splice 0x15 $thumb
+		color=$(magick $thumb -resize 1x1 txt:- | awk 'END { print $3 }')
+		magick $thumb -gravity south -background $color -splice 0x15 $thumb
 
 		read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - '${thumb_width-300}'), $4 + ($2 - $1) }')
 		~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
@@ -231,7 +231,7 @@ try_wall() {
 
 	if [[ $apply_color == o ]]; then
 		read -p "Offset: " offset
-		color=$(~/.orw/scripts/colorctl.sh -o $offset -ph "$color")
+		color=$(~/.orw/scripts/convert_colors.sh -hv $offset "$color")
 	fi
 
 	if [[ ! -f $wallpaper_path ]]; then
@@ -255,8 +255,6 @@ current_desktop=$(xdotool get_desktop)
 
 read depth directory <<< $(awk '\
 	/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
-#read orientation display_count <<< $(awk -F '[_ ]' '\
-#	/^orientation/ { o = $NF } /^display_[0-9]_name/ { dc++ } END { print o, dc }' $config)
 read orientation all_displays <<< $(awk -F '[_ ]' '\
 	/^orientation/ { o = $NF } /^display_[0-9]_name/ { ad = ad " " $NF } END { print o, ad }' $config)
 displays=( $all_displays )
@@ -338,25 +336,6 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			tail="$(make_tail "$directory")"
 			directory="'$root'/$tail"
 
-			#new_depth=$(eval find $directory -type d | awk '\
-			#	function get_depth(dir) {
-			#		return gensub("[^/]*/?", "/", "g", dir ? dir : $0)
-			#	}
-
-			#	BEGIN {
-			#		d = get_depth("'"$directory"'")
-			#		dd = length(d)
-			#	} {
-			#		cp = get_depth()
-			#		cd = length(cp) - dd
-			#		if(cd > md) md = cd
-			#	} END {
-			#		if("'"$tail"'" ~ "\\{.*\\}") md++
-			#		if(md) print ++md
-			#		#print dd, cp, cd
-			#	}'
-
-			#((new_depth)) && set depth $new_depth
 			set directory
 			set depth 0;;
 		M)
@@ -375,7 +354,6 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			directory="${directory/$common_root/}"
 			modify_directories="${modify_directories/$common_root/}"
 			directories="'$common_root'/{$directory,'${modify_directories%/[[:alnum:]\{]*}'/$modify_tail}"
-			#directories="'$common_root'/{${directory/$common_root?(\')\//},${modify_directories/$common_root?(\')\//}}"
 
 			[[ $modify == remove ]] && remove='| uniq -u'
 
@@ -413,7 +391,6 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			service=true
 
 			assign_value state ${!OPTIND} && shift
-			#current_state=$(systemctl --user status change_wallpaper.timer | awk '/Active/ { print $2 }')
 			current_state=$(systemctl --user is-active change_wallpaper.timer)
 
 			if [[ ${current_state:-$state} == 'inactive' ]]; then
@@ -740,13 +717,11 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				continue
 			done;;
 		v)
-			#if((depth)); then
-				if ((depth != 1)); then
-					((depth)) && maxdepth="-maxdepth $depth"
-					directories="$(eval find "$directory" "$maxdepth" -type d | \
-						awk '{ ad = ad " " "'\''" $0 "'\''" } END { print ad }')"
-				fi
-			#fi
+			if ((depth != 1)); then
+				((depth)) && maxdepth="-maxdepth $depth"
+				directories="$(eval find "$directory" "$maxdepth" -type d | \
+					awk '{ ad = ad " " "'\''" $0 "'\''" } END { print ad }')"
+			fi
 
 			~/.orw/scripts/sxiv_wrapper.sh "${directories:-$directory}" &
 			exit;;
@@ -755,7 +730,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			client_id='?client_id=33e9e4c0f8d42b5542446f1c8c291480cb91231dbadc5ce285f285bf76975752'
 
 			format_output() {
-				#The ONLY way of fetching all urls that doesn't make feh throw error!!! 
+				#The ONLY way of fetching all urls that doesn't make feh throw an error!!! 
 				awk '{ l = NR % '$1';
 						if(!l) {
 							sq = ""
@@ -946,18 +921,20 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				((${#url_history[*]})) && back='/back to photo' back_option='/b' || unset back{,_option} 
 
 				clear
-				echo "You are currently browsing through $results_info.."
-				echo -e "Page $page, image $((index_in_range + 1)) of $image_count..\n"
+				cat <<- EOF
+					You are currently browsing through $results_info..
+					Page $page, image $((index_in_range + 1)) of $image_count..
 
-				echo io $image_order
+					o $image_order
 
-				echo "* Try image (${width}x${height})? [t]"
-				echo "* Go to home page$back/next? [h${back:0:2}/n]"
-				echo "* More photos from $name/related (photos/collections)? [m/r/R]"
-				echo "* Change search parameter (user/collection)/${search_parameter:-user}_id/query? [s/i/q]"
-				echo "* Order/image order/page/results per page)? [O/o/p/P]"
-				echo "* Tags/color? [T/C]"
-				echo "* Exit? [e]"
+					* Try image (${width}x${height})? [t]
+					* Go to home page$back/next? [h${back:0:2}/n]
+					* More photos from $name/related (photos/collections)? [m/r/R]
+					* Change search parameter (user/collection)/${search_parameter:-user}_id/query? [s/i/q]
+					* Order/image order/page/results per page)? [O/o/p/P]
+					* Tags/color? [T/C]
+					* Exit? [e]
+				EOF
 
 				read -srn 1 -p $'\n' choice
 
@@ -1171,13 +1148,6 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			(systemctl --user $boot change_wallpaper.timer
 			systemctl --user $new_state change_wallpaper.timer) &> /dev/null
 
-			#[[ $new_state == start ]] && notification_icon= || notification_icon=
-			#set_notification_icon
-
-			#$notify -p "$icon Wallpaper auto-changer has been ${new_state}ed."
-			#[[ $new_state == start ]] && icon= || icon=
-
-			#[[ $new_state == start ]] && icon= || icon=
 			[[ $new_state == start ]] && icon= || icon=
 
 			message="Auto-changer ${new_state}ed"
@@ -1186,15 +1156,10 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			systemctl --user daemon-reload
 			systemctl --user restart change_wallpaper.timer
 
-			#notification_icon=
-			#set_notification_icon
-
-			#$notify -p "$icon Wallpaper auto-changer $service_property has been set to ${order:-$interval ${unit:-min}}."
 			icon=
 			icon=
 			icon=
 			message="$service_property: ${order:-$interval ${unit:-min}}"
-			#message="$(offset_message "$message")"
 			~/.orw/scripts/notify.sh -s osd -i $icon "$message"
 		fi
 
@@ -1250,7 +1215,6 @@ else
 		if [[ ${wallpaper//\"/} =~ ^# ]]; then
 			((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
 		else
-			#wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/'$wallpaper'"
 			wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
 			set_aspect "$wallpaper_path"
 
@@ -1271,5 +1235,4 @@ else
 	fi
 
 	eval "feh $wallpapers_to_set" &> /dev/null
-	#eval "hsetroot -cover ${wallpapers_to_set#* }" &> /dev/null &
 fi

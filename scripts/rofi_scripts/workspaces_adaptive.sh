@@ -40,16 +40,12 @@ else
 		wmctrl -i -r $window_id -t $new_workspace_index
 
 		if [[ $new_workspace_name =~ ^tmp[0-9]+?$ ]]; then
-			#[[ $current_workspace_name =~ ^tmp[0-9]+?$ ]] || save=-s
 			$windowctl -D $new_workspace_index -i $window_id $save -g
 			$windowctl -g
 			sleep 0.4
-			#sleep 0.08
 		fi
 
 		if [[ $current_workspace_name =~ ^tmp[0-9]+?$ ]]; then
-			#[[ $new_workspace_name =~ ^tmp ]] || $windowctl -D $new_workspace_index -i $window_id -r
-			#[[ $new_workspace_name =~ ^tmp ]] || $windowctl -D $new_workspace_index -i $window_id -g
 			[[ $new_workspace_name =~ ^tmp ]] || $windowctl -D $new_workspace_index -i $window_id -R
 
 			window_count=$(wmctrl -l | awk '$2 == '$current_workspace_index' { wc++ } END { print wc }')

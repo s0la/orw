@@ -5,8 +5,7 @@ check_visualizer() {
 }
 
 check_controls() {
-	#controls_running=$(ps aux | awk '/lemonbar/ && $NF == "mwc" { print "true" }')
-	controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^(n_)?mwc$" { print "true" }')
+	controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^h?mp?wc$" { print "true" }')
 }
 
 check_cover() {
@@ -78,7 +77,6 @@ set_cover_geometry() {
 }
 
 get_window_properties() {
-	#xwininfo -int -id $(wmctrl -l | awk '$NF == "'$1'" { print $1 }') |
 	wmctrl -l | awk '$NF == "'$1'" { print $1 }' |
 		xargs -r xwininfo -id | awk '
 			/Absolute/ { if(/X/) x = $NF; else y = $NF }
@@ -98,7 +96,8 @@ cover() {
 		openbox --reconfigure
 	}
 
-	previous_geometry='63x63+770+952'
+	local title='cover_art_widget' 
+	previous_geometry='70x70'
 	previous_bg='#e80a0a0a'
 
 	check_cover
@@ -116,18 +115,36 @@ cover() {
 
 			if [[ $controls_running ]]; then
 				border=$(awk '/^border/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
-				size=$(awk '{
-					for(fi = 1; fi <= 3; fi++)
-						s += gensub("([^-]*([^Ffh]*[^0-9]*)([0-9]*)){" fi "}.*", "\\3", 1)
-					} END { print s - '$border' }' ~/.config/orw/bar/configs/n_mw*)
+				horizontal=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw" { print ($NF ~ /^h/); exit }')
 
-				#read x y <<< $(~/.orw/scripts/windowctl.sh -n mwi -p |\
-				#	awk '{ print ($4 >= 300) ? $2 : $2 - '$(($size / 3 * 2))', $3 }')
+				if ((horizontal)); then
+					((size)) || size=$(awk '{
+							s = $0
+							gsub("^.*-h\\s*|\\s*", "", s)
+							print s - '$border' 
+						}' ~/.config/orw/bar/configs/hmpwc)
 
-				#read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2, $3, $5 - '$border' }')
-				read x y size <<< $(get_window_properties n_nwc | awk '{ print $1, $2, $4 - '$border' }')
-				#read x y size <<< $(~/.orw/scripts/windowctl.sh -n n_mwc -p | awk '{ print $2 - $5, $3, $5 - '$border' }')
-				geometry="${size}x${size}+${x}+${y}"
+					local bar_name_start=h bar_name_end=c sub_size=$((size / 3))
+				else
+					((size)) || size=$(awk '
+						function get_value(property) {
+							l = $0
+							gsub("^.*-[" property "]\\s*|\\s.*", "", l)
+							return l
+						}
+
+						/^[^#]/ {
+							gsub("^.*-[Hhf]\\s*|\\s.*", "")
+							s += $NF
+						} END { print s - '$border' }' ~/.config/orw/bar/configs/mpw*)
+				fi
+
+				read x y <<< $(xwininfo -name ${bar_name_start}mpw${bar_name_end:-i} |
+					awk '/Absolute/ { if (/X/) $NF -= '${sub_size:-$size}'; print $NF }' | xargs)
+				~/.orw/scripts/set_geometry.sh -t $title -x $x -y $y
+				openbox --reconfigure
+
+				geometry="${size}x${size}"
 			else
 				[[ $input == true ]] && get_geometry_input cover
 			fi
@@ -137,20 +154,17 @@ cover() {
 
 		replace default
 
-		feh --title cover_art_widget -.g ${geometry:-$previous_geometry} --image-bg $bg "$cover" &
+		feh --title $title -.g ${geometry:-$previous_geometry} --image-bg $bg "$cover" &
 
 		write geometry
 		write bg
 		sleep 0.1
-		replace
 	fi
 
 	[[ $cover_pid ]] && kill $cover_pid
 }
 
 get_display() {
-	#read -a window_properties <<< $(~/.orw/scripts/windowctl.sh -n $1 -p)
-	#display=$(~/.orw/scripts/get_display.sh ${window_properties[3]} ${window_properties[4]} | awk '{ print $1 }')
 	read -a window_properties <<< $(get_window_properties $1)
 	display=$(~/.orw/scripts/get_display.sh \
 		${window_properties[2]} ${window_properties[3]} | cut -d ' ' -f 1)
@@ -180,8 +194,6 @@ layout() {
 					local mirror=n_mwc
 					local delta=$(get_window_properties n_nwc |
 						awk '{ s = '$size'; d = ($3 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
-					#local delta=$(~/.orw/scripts/windowctl.sh -n n_mwc -p |
-					#	awk '{ s = '$size'; d = ($4 >= 300) ? s : s - int(s / 3 * 2); print "-" d }')
 
 					[[ $1 == playlist ]] && progressbar=no status=no
 				fi
@@ -190,13 +202,9 @@ layout() {
 			fi
 		else
 			if [[ $controls_running ]]; then
-				get_display n_mwi
-				layout="-d $display -M n_mwi x,h*15,ys-10,w"
+				get_display mpwi
+				layout="-d $display -M mpwi x,h*10,ys-0,w"
 			else
-				#get_display ncmpcpp_playlist
-				#[[ $(wmctrl -l | awk '$NF == "ncmpcpp(_playlist)?"') ]] &&
-				#	layout="-d $display -M ncmpcpp_playlist x,ye+10,w"
-
 				get_display ncmpcpp
 				[[ $(wmctrl -l | awk '$NF == "ncmpcpp"') ]] &&
 					layout="-d $display -M ncmpcpp x,ye+10,w"
@@ -204,8 +212,8 @@ layout() {
 		fi
 
 		[[ ! $layout ]] &&
-			~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -P yes -V${1:0:1}i ||
-			~/.orw/scripts/ncmpcpp.sh -w 100 -h 100 -V${1:0:1} -P ${progressbar-yes} -L "-n $1 $layout" -i
+			~/.orw/scripts/ncmpcpp.sh -w 450 -h 400 -P yes -V${1::1}i ||
+			~/.orw/scripts/ncmpcpp.sh -w 100 -h 100 -V${1::1} -P ${progressbar-yes} -L "-n $1 $layout" -i
 	fi
 }
 
@@ -228,6 +236,23 @@ controls() {
 
 weather() {
 	~/.orw/scripts/barctl.sh -b ww* $1
+}
+
+bar_player() {
+	local running_bar=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw" { print; exit }')
+	[[ $running_bar ]] && ~/.orw/scripts/barctl.sh -b "${running_bar:: -1}*" -k
+
+	if [[ $1 == k ]]; then
+		exit
+	else
+		if [[ $1 == h ]]; then
+			~/.orw/scripts/barctl.sh -b hmpw*
+			cover
+		else
+			~/.orw/scripts/barctl.sh -b mpw*
+			visualizer
+		fi
+	fi
 }
 
 input=false

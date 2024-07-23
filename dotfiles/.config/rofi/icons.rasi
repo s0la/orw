@@ -42,15 +42,12 @@ mainbox {
 #window {
 	border:           0;
 	width:            @window-width;
-	/*height:           @window-height;*/
-	// margin:           @window-margin;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @window-padding;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
     background-color:            transparent;
-    // background-color:            @bg;
 }
 
 #horibox {

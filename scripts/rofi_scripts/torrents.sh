@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function set() {
-	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	eval $1='$(sed "s/\(\\*\)\?\([][()\&+]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
 	sed -i "s|\(^$1=\).*|\1\"${!1//&/\\&}\"|" $0
 }
 
@@ -33,7 +33,7 @@ get_current_torrent_id() {
 	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current=""
+current="   The Prodigy - Greatest Hits \[2CD, Star Mark Compilation\] \(2009\)"
 selection=""
 multiple_torrents=""
 
@@ -72,8 +72,9 @@ else
 				killall rofi
 
 				get_current_torrent_id
-				~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id $current_torrent_id
-				~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content
+				~/.orw/scripts/rofi_scripts/dmenu/select_torrent_content_with_size.sh \
+					set_torrent_id "$current_torrent_id"
+				~/.orw/scripts/rofi_scripts/dmenu/torrents_group.sh select_torrent_content
 
 				un_set current_torrent_id
 				exit 0;;
@@ -92,9 +93,11 @@ else
 					if(id ~ "^(" ti ")$") { tn = tn "\\\\n" substr($0, i); tc++ }
 				} END { print tc, tn }')"
 
-			((torrent_count == 1)) &&
-				notification="torrent <b>${torrent_names#\\n}</b> is $action" ||
-				notification="torrents:\n<b>$torrent_names</b>\n\nare $action"
+			if ((torrent_count)); then
+				((torrent_count == 1)) &&
+					notification="torrent <b>${torrent_names#\\n}</b> is $action" ||
+					notification="torrents:\n<b>$torrent_names</b>\n\nare $action"
+			fi
 
 			~/.orw/scripts/notify.sh -p "$notification"
 			transmission-remote -t ${multiple_torrents:-$current_torrent_id} -$flag &> /dev/null

@@ -9,7 +9,7 @@ function set() {
 set_multiple_files() {
 	if [[ ${multiple_files:-$archive_multiple} ]]; then
 		[[ $option == extract_archive ]] && local var=archive_multiple || var=multiple_files
-		[[ "${!var}" =~ | ]] && files="'$1'{'${!var//|/\',\'}'}" || files="'$1''${!var}'"
+		[[ "${!var}" =~ | ]] && files="\"$1\"{\"${!var//|/\",\"}\"}" || files="\"$1\"\"${!var}\""
 
 		[[ ! $option =~ yes|playlist ]] && end='\n\n'
 
@@ -57,7 +57,7 @@ function create_archive() {
 	pid=$((COPROC_PID + 1))
 	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-	echo -e  
+	echo -e $refresh_icon
 
 	un_set archive
 }
@@ -66,16 +66,18 @@ function list_archive() {
 	format=${current##*.}
 
 	case $format in
-		*[bgx]z*) tar tf "$current" | awk '{ if("'$selection'") s = (/^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
+		*[bgx]z*) tar tf "$current" | awk '{ if("'$selection'") s = (/^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
 			print s $0 }';;
 		zip) nr=2 flag=-l;;
 		rar) nr=7 flag=l;;
 	esac
 
-	[[ $format =~ zip|rar ]] && un$format $flag $password "$current" | awk 'NR == '$nr' { i = index($0, "Name") } \
+	[[ $format =~ zip|rar ]] && un$format $flag $password "$current" | awk '
+		BEGIN { mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'" }
+		NR == '$nr' { i = index($0, "Name") }
 		/[0-9]{4}-[0-9]{2}-[0-9]{2}/ {
 			f = substr($0, i) 
-			if("'$selection'") s = (f ~ /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/) ? " " : " "
+			if("'$selection'") s = (f ~ "^(" mf ")$") ? " " : " "
 			print s f
 		}'
 }
@@ -115,7 +117,7 @@ function extract_archive() {
 	pid=$((COPROC_PID + 1))
 	coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-	echo -e  
+	echo -e $refresh_icon
 
 	un_set archive archive_single password
 }
@@ -164,11 +166,11 @@ copy=""
 sort=""
 reverse=""
 options=""
-current=""
+current="/home/sola"
 torrent=""
 selection=""
 multiple_files=""
-music_directory="/home/sola/Music"
+music_directory=""
 regex=""
 
 git=""
@@ -183,11 +185,11 @@ archive_multiple=""
 
 bookmarks=${0%/*}/bookmarks
 
-[[ $options ]] && back_icon= || back_icon=
-back_icon=
-echo -e $back_icon
+icons='arrow_up.*empty\|reload\|options\|bookmarks\|file_empty\|dir_full\|checkbox'
+read {back,reload,options,bookmarks,file,directory,checkbox{,_checked}}_icon <<< \
+	$(sed -n "s/^\($icons\).*=//p" ~/.orw/scripts/icons | xargs)
 
-#~/.orw/scripts/notify.sh "o: $back_icon $options"
+printf "\0keep-selection\x1ftrue\n$back_icon\n"
 
 if [[ -z $@ ]]; then
 	set current "$HOME"
@@ -290,46 +292,36 @@ if [[ ${option% *} ]]; then
 				if($1 ~ /sd.$/ && $7) {
 					m=""
 					for(f = 7; f <= NF; f++) m = m $f " "
-					}
-				if($6 == "part" && $4 ~ /[0-9]G/ && $7 !~ /^\//) printf("%-45s %-20s %s\n", m, $4, $1)}'
+				}
+
+				if ($6 == "part" && $4 ~ /[0-9]G/ && $7 !~ /^\//) printf("%-45s %-20s %s\n", m, $4, $1)
+			}'
 
 			exit;;
 		edit_text)
 			killall rofi
 			set_multiple_files "$current/"
-			termite -e "bash -c \"nvim -p ${files:-${regex:-'$current'}}\"" &
+			alacritty -e bash -c "nvim -p ${files:-${regex:-'$current'}}" &
 			un_set regex;;
 		open_in_terminal)
 			killall rofi
-			termite -e "bash -c \"cd '$current'\";bash"
+			alacritty -e bash -c "cd '$current'"\;bash
 			exit;;
-		) set options options;;
-		 );;
-		 );;
-		 );;
-		 )
+		$options_icon) set options options;;
+		$bookmarks_icon)
 			awk '{ print $1 }' $bookmarks
 			set options bookmarks;;
-		 )
+		$directory_icon)
 			killall rofi
 
 			if [[ ! $file ]]; then
 				set_multiple_files "$current/"
+				un_set selection
 
 				if [[ $files ]]; then
-					thunar &
-					sleep 0.1
-
-					for directory in $(eval echo $files); do
-						((tab)) && xdotool key ctrl+t
-						xdotool key ctrl+l
-						xdotool type -delay 0 "$directory"
-						xdotool key Return
-
-						((tab++))
-					done
+					~/.orw/scripts/vifm.sh -i "$files"
+					exit
 				else
-					#thunar "$current"
 					~/.orw/scripts/vifm.sh -i "$current"
 				fi
 			fi;;
@@ -344,7 +336,8 @@ if [[ ${option% *} ]]; then
 
 			set_multiple_files "$current/"
 
-			~/.orw/scripts/sxiv_wrapper.sh "${files:-${regex:-'$current'/*}}"
+			~/.orw/scripts/sxiv_wrapper.sh -w 300 -h 500 \
+				"${files:-${regex:-'$current'/*}}"
 
 			un_set options regex
 			exit;;
@@ -400,12 +393,12 @@ if [[ ${option% *} ]]; then
 						command='cp -r'
 					fi
 
-					coproc (eval $command "${files:-${regex:-'$file'}}" "'$destination'" &)
+					coproc (eval "$command ${files:-${regex:-\"$file\"}} \"$destination\"" &)
 					un_set regex
 					pid=$((COPROC_PID + 1))
 					coproc (execute_on_finish "notify 'Operation finished.'" &)
 
-					echo -e  ;;
+					echo -e $refresh_icon;;
 				add_to_bookmarks) echo "${arg:-${current##*/}} $current" >> $bookmarks;;
 				by_*|reverse|alpha*)
 					case ${option#*_} in
@@ -446,6 +439,7 @@ if [[ ${option% *} ]]; then
 
 						command="transmission-remote -a ${regex:-\"$torrent\"} "
 						command+="-w '${torrent_directory-$HOME/Downloads/}' $torrent_state &> /dev/null"
+						echo "COMM: $command" >> ~/comm.log
 						coproc (execute_on_finish "sleep 0.5 && $command" &)
 
 						notify "Adding torrent\n${torrent:-$current}"
@@ -477,13 +471,6 @@ if [[ ${option% *} ]]; then
 				*_wallpaper_directory)
 					[[ ! $option =~ ^set ]] &&
 						flag=M modify=${option%%_*}
-
-					#if [[ $option =~ ^set ]]; then
-					#	flag=d
-					#else
-					#	flag=M
-					#	modify=${option%%_*}
-					#fi
 
 					set_multiple_files "$current/"
 					[[ $files ]] && files="${files//\'/}"
@@ -571,9 +558,9 @@ else
 fi
 
 if [[ -d "$current" && ! $options ]]; then
-	echo -e 
-	echo -e 
-	echo -e 
+	echo -e $options_icon
+	echo -e $bookmarks_icon
+	echo -e $directory_icon
 
 	if [[ $git ]]; then
 		print_git_files() {
@@ -587,22 +574,32 @@ if [[ -d "$current" && ! $options ]]; then
 		print_git_files staged
 		print_git_files unstaged
 	else
-		while read -r s file; do
-			if [[ $file ]]; then
-				if [[ $selection ]]; then
-					((s)) && icon= || icon=
-				else
-					if [[ -d "$current/$file" ]]; then
-						icon=
-					else
-						#icon=
-						icon=
-					fi
-				fi
+		ls $sort $reverse $all -p --group-directories-first "$current" |
+			awk '
+				BEGIN {
+					se = length("'$selection'")
+					mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'"
+				}
 
-				echo -e "$icon $file"
-			fi
-		done <<< "$(ls $sort $reverse $all --group-directories-first "$current" | awk '!/\.$/ \
-			{ print (length("'$selection'") && /^('"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"')$/), $0 }')"
+				!/\.$/ {
+					if (se) {
+						if ($0 ~ "^(" mf ")$") {
+							i = " "
+							asf = asf "," NR + 3
+						} else i = " "
+					} else {
+						if (/\/$/) {
+							sub("/$", "")
+							i = "'$directory_icon' "
+						} else i = "'$file_icon' "
+					}
+
+					print i $0
+				} END {
+					if(se) {
+						printf "\0active\x1f%s\n", substr(asf, 2)
+						printf "\0keep-selection\x1ftrue\n"
+					}
+				}'
 	fi
 fi

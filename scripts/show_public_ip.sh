@@ -1,4 +1,3 @@
 #!/bin/bash
 
-curl ipecho.net/plain
-echo
+printf "%s\n" $(curl -s ipecho.net/plain)

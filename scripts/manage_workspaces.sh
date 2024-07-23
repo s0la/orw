@@ -15,7 +15,6 @@ else
 		width=300
 		height=100
 
-		#read window_x window_y <<< $(~/.orw/scripts/windowctl.sh -p | cut -d " " -f 3,4)
 		window_id=$(xdotool getactivewindow)
 		read window_x window_y <<< $(xwininfo -int -id $window_id |
 			awk '/Absolute/ { print $NF }' | xargs)
@@ -55,8 +54,6 @@ workspace_count=$(awk -i inplace '
 
 		if(n == wc) {
 			if(!r) s = 1
-			#if("'$sign'" == "+")
-			#	wo = wo "\n" $0 "\n" gensub(cwn, ("'$workspace_name'") ? "'$workspace_name'" : wnn + 1, 1)
 			if("'$sign'" == "+") {
 				nwn = ("'$workspace_name'") ? "'$workspace_name'" : (tw) ? "tmp_" tw : "tmp"
 				wo = wo "\n" $0 "\n" gensub(cwn, nwn, 1)

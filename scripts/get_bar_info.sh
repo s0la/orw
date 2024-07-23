@@ -22,7 +22,7 @@ read bar_min bar_max display <<< \
 
 ps aux | grep bar | sort -r | \
 	awk -F '[- ]' '\
-	!/awk/ && /lemonbar/ {
+	!/awk/ && /lemonbar\s*-d/ {
 		nr = NR
 		p = ($(NF - 6) == "b") ? 0 : 1
 		split($(NF - 3), g, "[x+]")

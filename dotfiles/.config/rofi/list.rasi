@@ -50,7 +50,7 @@
 	margin:           @input-margin;
 	padding:          @input-padding;
 	children:         [ prompt, entry ];
-	transparency:                   "real";
+	transparency:     "real";
 }
 
 #entry {

@@ -15,7 +15,7 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        20px 20px;
+	element-padding:        18px 18px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
@@ -23,7 +23,7 @@
 	window-padding:         3px 3px;
 	// window-margin:          0 7px;
 	window-radius:          5px;
-	window-width:           339px;
+	window-width:           335px;
 
 	y-offset:               50px;
 
@@ -48,8 +48,6 @@ mainbox {
 #window {
 	border:           0;
 	width:            @window-width;
-	/*height:           @window-height;*/
-	// margin:           @window-margin;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @list-spacing;
@@ -70,7 +68,6 @@ mainbox {
 	lines:       1;
 	columns: 4;
     background-color:            transparent;
-	/*background-color: argb:00000000;*/
 }
 
 #inputbar {

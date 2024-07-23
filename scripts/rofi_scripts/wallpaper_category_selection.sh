@@ -37,12 +37,12 @@ list_categories() {
 		BEGIN { r = gensub("'\''", "", "g", "'"$root"'") }
 		{
 			cc = $(NF - 1)
-			s = (cc ~ "^(" "'"${all_categories//,/|}"'" ")$") ? " " : " "
+			s = (cc ~ "^(" "'"${all_categories//,/|}"'" ")$") ? " " : " "
 			print s, cc
 		}'
 }
 
-root="/home/ablive/Pictures/wallpapers"
+root="/home/sola/Pictures/wallpapers"
 
 if [[ $@ ]]; then
 	read option arg <<< "$@"

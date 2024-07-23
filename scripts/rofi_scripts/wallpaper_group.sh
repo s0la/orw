@@ -1,12 +1,11 @@
 #!/bin/bash
 
-path=~/.orw/scripts/rofi_scripts
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-[[ $theme =~ icons|dmenu ]] && ${path%/*}/set_rofi_geometry.sh $1
-#${path%/*}/set_rofi_width.sh $1
-#${path%/*}/set_rofi_margins.sh
+path=~/.orw/scripts/rofi_scripts/dmenu
+theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
-modis+="wallpapers:$path/wallpapers.sh,"
-modis+="category_selection:$path/wallpaper_category_selection.sh,"
-modis+="wallpaper_categories:$path/wallpaper_categories.sh"
-rofi -modi "$modis" -show $1 -theme main
+read wallpaper{s,_categories} <<< \
+	$(sed -n 's/^\(wallpapers\|categories\)=//p' ~/.orw/scripts/icons | xargs)
+
+modis+="$wallpapers:$path/select_wallpaper.sh,"
+modis+="$wallpaper_categories:$path/wallpaper_categories.sh,"
+rofi -modi "$modis" -show $wallpapers -theme sidebar

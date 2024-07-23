@@ -5,7 +5,6 @@ color_bar() {
 }
 
 calculate() {
-	#printf '%.0f' $(bc <<< "scale=2; $@")
 	local value=$(($1 / $3))
 	local reminder=$(($1 % $3))
 	(($3 - reminder < ($3 / 100 * 20))) && ((value++))
@@ -32,12 +31,7 @@ adjust_values() {
 	y_size=$(calculate $h / $step)
 	y_after=$((osd_y_end - (osd_window_y + osd_window_h)))
 
-	#echo $w $step $y_start $y_end $h
-	#echo $osd_y_end $osd_window_y $osd_window_h
-	#echo $y_before $y_size $y_after
-
 	local filled_{x,y}
-	#empty_x=$(color_bar ' ' $((x_before + x_size + x_after)))
 	empty_x="<span foreground='\$sbg'>$(color_bar ' ' $((x_before + x_size + x_after)))</span>"
 
 	((x_before)) && filled_x="<span foreground='\$sbg'>$(color_bar ' ' $x_before)</span>"
@@ -97,7 +91,6 @@ read_input() {
 
 listen_input() {
 	while
-		#read -rsn 1 input
 		read_input
 
 		[[ $input == m ]] && option=move
@@ -129,11 +122,6 @@ set_geometry() {
 	~/.orw/scripts/set_geometry.sh -c input \
 		-x $(((width - 100) / 2)) -y $(((height - 100) / 2)) -w 100 -h 100
 
-	#~/.orw/scripts/notify.sh -r 222 -s windows_osd \
-	#	"<span font='Iosevka Orw $osd_width'></span>"
-
-		#-x $(((width - osd_width) / 2)) -y $((height / 2)) -w 100 -h 100
-
 	adjust_values
 }
 
@@ -142,8 +130,6 @@ font_size=8
 named_pipe=/tmp/keyboard_input
 [[ -p $named_pipe ]] && rm $named_pipe
 mkfifo $named_pipe
-
-#~/.orw/scripts/notify.sh -r 222 -s windows_osd -i   'interactive mode'
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
 	step=120

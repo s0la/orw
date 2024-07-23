@@ -16,20 +16,6 @@ property_log=~/.config/orw/windows_properties
 [[ ! -f $config ]] && ~/.orw/scripts/generate_orw_config.sh
 [[ ! $current_desktop ]] && current_desktop=$(xdotool get_desktop)
 
-#read mode part ratio use_ratio alignment_direction reverse full \
-#	{x,y}_border {x,y}_offset display_count display_orientation <<< $(awk '\
-#		/^(mode|part|ratio|full|use_ratio|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
-#		/^display_[0-9]_name/ { dc++ }
-#		/^orientation / { o = substr($NF, 1, 1) }
-#		END { print p, dc, o }' $config)
-
-#read mode part ratio use_ratio alignment_direction reverse full \
-#	default_{x,y}_border {x,y}_offset display_count display_orientation <<< $(awk '\
-#		/^(mode|part|ratio|full|use_ratio|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
-#		/^display_[0-9]_name/ { dc++ }
-#		/^orientation / { o = substr($NF, 1, 1) }
-#		END { print p, dc, o }' $config)
-
 read margin default_{x,y}_border {x,y}_offset full reverse alignment_direction \
 	display_count display_orientation <<< $(awk '
 		/^(margin|full|reverse|direction|[xy]_(border|offset)) / { p = p " " $NF }
@@ -53,11 +39,24 @@ read {x,y}_offset <<< $(sed -n 's/[xy]_offset\s*//p' $config | xargs)
 parse_properties() {
 	awk '
 		/xwininfo/ { id = $4 }
+		/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+		/geometry/ {
+			ap = gensub("([+-]?[0-9]+)(x)?", " \\1", "g", $NF)
+			split(ap, pa, " ")
+			
+			w = (pa[3] ~ /^-/) ? '$width' : 0
+			h = (pa[4] ~ /^-/) ? '$height' : 0
+			print id, pa[1], pa[2], w + pa[3], h + pa[4], 2 * xb, yb + xb
+		}'
+}
+
+parse_properties() {
+	awk '
+		/xwininfo/ { id = $4 }
 		/Absolute/ { if(/X/) x = $NF; else y = $NF }
 		/Relative/ { if(/X/) xb = $NF; else yb = $NF }
 		/Width/ { w = $NF }
 		/Height/ { print id, x - xb, y - yb, w, $NF, 2 * xb, yb + xb }'
-		#/Height/ { printf "0x%.8x %d %d %d %d %d %d\n", id, x - xb, y - yb, w, $NF, 2 * xb, yb + xb }'
 }
 
 function get_windows() {
@@ -67,25 +66,17 @@ function get_windows() {
 		[[ $1 ]] && local desktop=$1
 	fi
 
-	#wmctrl -lG | awk '$2 ~ "'${desktop:-$current_desktop}'" && ! /('"${blacklist//,/|}"')$/ && $1 ~ /'$current_id'/ \
-	#	{ print $1, $3 - '${x_border:=0}', $4 - ('${y_border:=0}' - '$x_border' / 2) * 2, $5, $6 }'
 	wmctrl -l | awk '
 		$2 ~ "'${desktop:-$current_desktop}'" && ! /('"${blacklist//,/|}"')$/ && $1 ~ /'$current_id'/ { print $1 }' |
 			xargs -n 1 xwininfo -id | parse_properties
 }
 
 function set_windows_properties() {
-	#[[ ! $properties ]] && properties=( $(get_windows $id) )
 	[[ ! $properties ]] &&
 		properties=( $(xwininfo -id $id | parse_properties) ) &&
 			x_border=${properties[5]} y_border=${properties[6]}
 
 	[[ $2 ]] || get_display_properties $1
-
-	#if [[ ! $2 ]]; then
-	#	[[ $1 == h ]] && index=1 || index=2
-	#	get_display_properties $index
-	#fi
 
 	if ((!window_count)); then
 		local window_index
@@ -105,12 +96,6 @@ function set_windows_properties() {
 function update_properties() {
 	local window_index=${windows_indexes[$id]}
 	[[ $1 ]] && unset all_windows[window_index] || all_windows[window_index]="${properties[*]}"
-
-	#for window_index in "${!all_windows[@]}"; do
-	#	if [[ ${all_windows[window_index]%% *} == $id ]]; then
-	#		[[ $1 ]] && unset all_windows[window_index] || all_windows[window_index]="${properties[*]}"
-	#	fi
-	#done
 }
 
 function list_all_windows() {
@@ -120,7 +105,6 @@ function list_all_windows() {
 }
 
 [[ ! $arguments =~ -[in] ]] &&
-	#id=$(printf "0x%.8x" $(xdotool getactivewindow)) &&
 	id=$(printf "0x%x" $(xdotool getactivewindow)) &&
 	properties=( $(xwininfo -id $id | parse_properties) ) &&
 		x_border=${properties[5]} y_border=${properties[6]}
@@ -162,9 +146,8 @@ function resize() {
 
 select_window() {
 	~/.orw/scripts/select_window.sh
-	#second_window_id=$(printf '0x%.8x' $(xdotool getactivewindow))
 	second_window_id=$(printf '0x%x' $(xdotool getactivewindow))
-	second_window_properties=( $(get_windows $second_window_id | cut -d ' ' -f 2-) )
+	second_window_properties=( $(get_windows $second_window_id | cut -d ' ' -f 1-) )
 }
 
 select_window_using_mouse() {
@@ -195,7 +178,6 @@ set_orientation_properties() {
 		start=$display_x
 		opposite_dimension=height
 		opposite_start=$display_y
-		#border=${edge_border:-$x_border}
 		border=${properties[index + 4]:-$default_x_border}
 		bar_vertical_offset=0
 	else
@@ -206,7 +188,6 @@ set_orientation_properties() {
 		start=$display_y
 		opposite_dimension=width
 		opposite_start=$display_x
-		#border=${edge_border:-$y_border}
 		border=${properties[index + 4]:-$default_y_border}
 		bar_vertical_offset=$((bar_top_offset + bar_bottom_offset))
 	fi
@@ -225,7 +206,7 @@ get_display_properties() {
 		index=$1
 	fi
 
-	read display display_x display_y width height original_min_point original_max_point bar_min bar_max x y <<< \
+	read display{,_{x,y}} width height original_{min,max}_point bar_{min,max} x y <<< \
 		$(awk -F '[_ ]' '{ if(/^orientation/) {
 			cd = 1
 			bmin = 0
@@ -319,8 +300,6 @@ set_base_values() {
 
 	set_orientation_properties $1
 
-	#unset edge_border
-
 	properties[1]=$x
 	properties[2]=$y
 
@@ -334,6 +313,7 @@ set_base_values() {
 	[[ $option != tile ]] && min_point=$((original_min_point + offset))
 
 	get_bar_properties add
+	echo $bar_top_offset, $bar_bottom_offset
 }
 
 sort_windows() {
@@ -475,7 +455,6 @@ get_alignment() {
 				#removing/unseting variables
 				delete cwp
 				delete fdw
-				#delete pdw
 				ai = fdwi = pdwc = min = max = 0
 
 				for(ai in a) {
@@ -910,9 +889,6 @@ align_windows() {
 		fi
 	fi
 
-	#get_alignment $action
-	#exit
-
 	#storing new window properties after alignment
 	eval aligned_windows=( $(get_alignment $action) )
 
@@ -995,7 +971,6 @@ align() {
 								if(oe > moe) moe = oe
 								if(e > me) me = e
 
-								#ms = ("'$reverse'") ? '$offset' - '$separator' : me + '$separator'
 								ms = ("'$reverse'") ? '$offset' : me + '$separator'
 							}
 						# set window start after furthest window end
@@ -1046,7 +1021,6 @@ align() {
 			[[ $window_action == close ]] && wmctrl -ic $id &> /dev/null
 		else
 			# if there is no windows opened
-			~/.orw/scripts/notify.sh "HERERE"
 			get_bar_properties
 			read width height <<< $(awk '/^display_'${display:-1}'_size/ { print $2, $3 }' $config)
 
@@ -1059,19 +1033,15 @@ align() {
 			w=$((width - 2 * (x_offset + x_border)))
 			h=$((height - (bar_top_offset + bar_bottom_offset) - 2 * y_offset - (x_border + y_border)))
 
-			#~/.orw/scripts/notify.sh "first window"
 			~/.orw/scripts/notify.sh "$x $y $w $h $alignment_direction $x_border $y_border^"
 
 			if [[ $tiling ]]; then
 				id=$original_properties
 				properties=( $id $x $y $w $h )
 				~/.orw/scripts/notify.sh "$x $y $w $h $alignment_direction"
-				#echo $x $y $w $h $alignment_direction
-				#exit
 				return
 			else
 				echo $x $y $w $h $alignment_direction
-				#echo $x $y $w $h $x_border $y_border $alignment_direction
 				exit
 			fi
 		fi
@@ -1081,7 +1051,6 @@ align() {
 }
 
 get_alignment2() {
-	#windows_to_ignore=$(cut -d ' ' -f 1 $shm_states | xargs | tr ' ' '|')
 	list_all_windows | sort -nk $((opposite_index + 1)),$((opposite_index + 1)) -k $((index + 1)),$((index + 1)) |
 		awk '
 			function sort(a) {
@@ -1439,67 +1408,38 @@ align_neighbours() {
 	declare -A aligned_windows
 	local remaining_windows
 	local id=$id edge=$1 value=$sign$2
-	#local temp_windows=( "${all_windows[@]}" )
-	local {old,new}_properties #properties=( ${properties[*]} )
-
-	#for window in "${temp_windows[@]}"; do
-	#	echo "$window"
-	#done
-	#exit
-
-	echo start ${properties[*]}
+	local {old,new}_properties
 
 	old_properties=( ${properties[*]} )
 	new_properties=( ${properties[*]} )
 	(( new_properties[$index + 2] += value ))
-
-	#for window in ${all_windows[*]}; do
-	#	temp_windows+=( "$window" )
-	#done
-
-	#for window in ${!all_windows[*]}; do
-	#	temp_windows[$window]="${all_windows[$window]}"
-	#done
 
 	set_alignment_properties $direction
 
 	if [[ $edge =~ [lt] ]]; then
 		(( new_properties[index] -= value ))
 
-		#echo ${old_properties[*]}
-		#echo ${new_properties[*]}
-		#exit
-
 		for window_id in ${!all_windows[*]}; do
 			cwp=( ${all_windows[window_id]} )
 			window_start=${old_properties[index]}
 
-			#if ((${cwp[index]} > window_start)); then
-			if [[ ${cwp[index]} -gt window_start || ${cwp[0]} == $id ]]; then
-				#echo ${cwp[*]}
+			if [[ ${cwp[index]} -gt $window_start || ${cwp[0]} == $id ]]; then
 				[[ ${cwp[0]} == $id ]] &&
 					remaining_windows+=( "${new_properties[*]}" ) ||
 					remaining_windows+=( "${cwp[*]}" )
-					#remaining_windows[$id]="${new_properties[*]:1}" ||
-					#remaining_windows[${cwp[0]}]="${cwp[*]:1}"
 				unset all_windows[window_id]
 			fi
 		done
 	else
-		#echo $index, ${old_properties[index]}, ${old_properties[index + 2]}
 		window_end=$((${old_properties[index]} + ${old_properties[index + 2]}))
 
 		for window_id in ${!all_windows[*]}; do
 			cwp=( ${all_windows[window_id]} )
-			#window_end=$((${old_properties[index]} + ${old_properties[index + 1]}))
 
 			if ((${cwp[index]} < window_end)); then
-				#remaining_windows[${cwp[0]}]="${cwp[*]:1}"
 				remaining_windows+=( "${cwp[*]}" )
-				#echo HERE ${cwp[index]}, $window_end
 				unset all_windows[window_id]
 			fi
-			#echo $window_id, ${all_windows[$window_id]}
 		done
 
 		properties[index]=$((${new_properties[index]} + ${new_properties[index + 2]}))
@@ -1511,44 +1451,17 @@ align_neighbours() {
 	properties[index + 2]=-$value
 	((properties[index + 2] -= separator))
 
-	#echo ${old_properties[*]}
-	#echo ${new_properties[*]}
-	#echo ${properties[*]}
-	#exit
-
 	id=temp
 	properties[0]=$id
-	#properties[index]=$((${new_properties[index]} + ${new_properties[index + 2]}))
-	#properties[index + 2]=-$value
-
-	##echo ${old_properties[*]}
-	#((properties[index] += separator))
-	#((properties[index + 2] -= separator))
-
-	#echo ${old_properties[*]}
-	#echo ${properties[*]}
-	#exit
 	all_windows+=( "${properties[*]}" )
-
-	#list_all_windows
-	#echo ${properties[*]}
-	#get_alignment2 move
-	#exit
-
 	eval aligned_windows=( $(get_alignment2 move) )
 
 	if [[ $sign ]]; then
 		read id new_properties <<< ${new_properties[*]::5}
 		aligned_neighbours[$id]="$new_properties"
-		#properties=$(tr ' ' ',' <<< $new_properties)
-		#echo wmctrl -ir $id -e 0,$properties
 	else
 		all_windows+=( "${new_properties[*]}" )
 	fi
-
-	#for fix_window_id in ${!fixed_windows[*]}; do
-	#	all_windows+=( "$fix_window_id ${fixed_windows[$fix_window_id]}" )
-	#done
 
 	for window in "${all_windows[@]}"; do
 		if [[ ${window%% *} == 0x* ]]; then
@@ -1568,187 +1481,30 @@ align_neighbours() {
 	done
 
 	properties=( ${org_new_properties[*]} )
-	#echo ${properties[*]}
 	all_windows=( "${remaining_windows[@]}" )
-	#list_all_windows
-	echo
-
-	#get_alignment move
-	return
-
-	#echo
-	#list_all_windows
-
-	new_properties=( ${properties[*]} )
-	exit
-
-	local {old,new}_properties {property,dimension}_diff cw_start window_end
-	old_properties=( $current_id ${all_aligned_windows[$current_id]} )
-	read x y w h {x,y}_border <<< ${old_properties[*]:1}
-	#read x y w h {x,y}_border <<< ${all_aligned_windows[$current_id]}
-	#read old_{x,y,w,h} {x,y}_border <<< ${all_aligned_windows[$current_id]}
-
-	#properites=( ${all_aligned_windows[$current_id]} )
-	#echo $x $y $w $h
-	#source ~/.orw/scripts/windowctl_osd_input_template.sh source
-	get_display_properties
-	#source ~/.orw/scripts/windowctl_by_input.sh windowctl_osd source
-	#echo $x $y $w $h
-	new_properties=( $current_id $x $y $w $h )
-	#echo ${new_properties[*]}
-
-	all_aligned_windows[$current_id]="${new_properties[*]:1}"
-
-	property_diff=$((${new_properties[index]} - ${old_properties[index]}))
-	dimension_diff=$(((${new_properties[index]} + ${new_properties[index + 2]}) - \
-		(${old_properties[index]} + ${old_properties[index + 2]})))
-
-	#temp_properties=( temp ${old_properties[*]:1} )
-	#echo ${temp_properties[*]}
-	#temp_properties[index]=$((${temp_properties[index]} + ${temp_properties[index + 2]} - ${dimension_diff#-}))
-	#temp_properties[index + 2]=${dimension_diff#-}
-	##echo ${temp_properties[index]} + ${temp_properties[index + 2]} - $dimension_diff
-	#echo ${temp_properties[*]}
-
-	properties=( temp ${old_properties[*]:1} )
-	echo ${properties[*]}
-	#properties[index]=$((${properties[index]} + ${properties[index + 2]} - \
-	#	${dimension_diff#-} + (${properties[index + 4]} + margin)))
-	properties[index]=$((${properties[index]} + ${properties[index + 2]} - ${dimension_diff#-}))
-	properties[index + 2]=${dimension_diff#-}
-
-	((properties[index] += ${properties[index + 4]} + margin))
-	((properties[index + 4] -= ${properties[index + 4]} + margin))
-	#echo ${temp_properties[index]} + ${temp_properties[index + 2]} - $dimension_diff
-	echo ${properties[*]}
-
-	for aw in ${!all_aligned_windows[*]}; do
-		[[ $aw == $current_id ]] &&
-			windows[$aw]="${new_properties[*]:1}" ||
-			windows[$aw]="${all_aligned_windows[$aw]}"
-		echo "${windows[$aw]}"
-	done
-
-	windows[temp]="${properties[*]:1}"
-
-	#echo ${!windows[*]}
-	declare -A fixed_windows
-	for aw in ${!windows[*]}; do
-		((${windows[$aw]%% *} < ${properties[1]})) &&
-			fixed_windows[$aw]="${all_aligned_windows[$aw]}" &&
-			unset windows[$aw] all_aligned_windows[$aw]
-	done
-
-	#echo
-	#for aw in ${!windows[*]}; do
-	#	echo $aw, ${windows[$aw]}
-	#done
-
-	id=temp
-	#get_alignment move
-
-	enforced_direction=true
-	alignment_direction=h
-	align m
-
-	for fw in ${!fixed_windows[*]}; do
-		all_aligned_windows[$fw]="${fixed_windows[$fw]}"
-	done
-
-	echo
-	for aw in ${!all_aligned_windows[*]}; do
-		echo $aw, ${all_aligned_windows[$aw]}
-	done
-
-	update_aligned_windows
-
-	killall sws.sh xprop
-	exit
-
-	for aw in ${!all_aligned_windows[*]}; do
-		if [[ $aw == $current_id ]]; then
-			cwp=( ${new_properties[*]} )
-		else
-			cwp=( $aw ${all_aligned_windows[$aw]} )
-			#echo BEFORE ${cwp[*]}
-
-			#if ((${cwp[index]} < ${old_properties[index]})); then
-			#	((cwp[index + 2]+=property_diff))
-			#else
-			#	sign=${dimension_diff//[0-9]}
-			#	((cwp[index]+=dimension_diff))
-			#	((cwp[index + 2]-=dimension_diff))
-			#fi
-
-			#echo $((${cwp[index]} + ${cwp[index + 2]} + ${cwp[index + 4]})), ${old_properties[index]}
-			#echo $((${old_properties[index]} + ${old_properties[index + 2]} + ${old_properties[index + 4]})), ${cwp[index]}
-
-			cw_start=$((${cwp[index]} + ${cwp[index + 2]} + ${cwp[index + 4]} + $margin))
-			window_end=$((${old_properties[index]} + ${old_properties[index + 2]} + \
-				${old_properties[index + 4]} + $margin))
-
-			if ((cw_start == ${old_properties[index]})); then
-				((cwp[index + 2]+=property_diff))
-			elif ((window_end == ${cwp[index]})); then
-				sign=${dimension_diff//[0-9]}
-				((cwp[index]+=dimension_diff))
-				((cwp[index + 2]-=dimension_diff))
-			fi
-		fi
-
-		all_aligned_windows[$aw]="${cwp[*]:1}"
-		echo AFTER ${cwp[*]}
-		#read current_{x,y,w,h,borders} <<< ${all_aligned_windows[$aw]}
-	done
-
-	killall sws.sh xprop
-	exit
-
-	#echo $property_diff, $dimension_diff
-
-	#killall sws.sh xprop
-	#exit
 }
 
 align_adjacent() {
-	#[[ $1 ]] && local continue=true
 	declare -A changed_properties
 	local continue=$1 base_index
 	old_properties=( ${original_properties[*]} )
-
-	#echo ${old_properties[*]}
-	#echo ${properties[*]}
 
 	for property_index in {1..4}; do
 		new_property=${properties[property_index]}
 		old_property=${old_properties[property_index]}
 
 		if ((property_index > 2)); then
-			#echo $new_property ${properties[property_index - 2]}
-			#echo $old_property ${old_properties[property_index - 2]}
 			(( new_property += ${properties[property_index - 2]} ))
 			(( old_property += ${old_properties[property_index - 2]} ))
 		fi
 
-		#echo $new_property - $old_property
-
 		if ((new_property != old_property)); then
-			#((base_index)) || base_index=$property_index
 			changed_properties[$property_index]=$((new_property - old_property))
-			#echo $((new_property - old_property))
 		fi
-		#((new_property != old_property)) &&
-			#value=$((new_property - old_property)) && break
 	done
 
-	#((property_index % 2 == 1)) && orientation=h || orientation=v
-	#((property_index > 2)) && ra=-r || dual=true
-	#value=${value#-}
-
-	#((base_index %= 2))
 	((index == 1)) && orientation=h || orientation=v
 
-	#((property_index > 2)) && ra=-r || dual=true
 	for changed_index in ${!changed_properties[*]}; do
 		((changed_index > 2)) && ra=-r || dual=true
 		if ((changed_index > 2)); then
@@ -1756,7 +1512,6 @@ align_adjacent() {
 			[[ $after_dimension_sign ]] && after_sign=+ || after_sign=-
 		else
 			before_sign=${changed_properties[$changed_index]%%[0-9]*}
-			#[[ $after_sign ]] && after_opposite_sign=+ || after_opposite_sign=-
 		fi
 
 	done
@@ -1765,29 +1520,14 @@ align_adjacent() {
 
 	set_sign $sign
 
-	#set_main_side() {
-	#	echo main $sign $opposite_sign $1
-	#	(( properties[index + 2] ${sign}= ${1:-$value} ))
-	#	[[ $dual ]] && (( properties[index] ${opposite_sign}= ${1:-$value} ))
-	#}
-
-	#set_opposite_side() {
-	#	echo opposite $sign $opposite_sign $1
-	#	(( properties[index + 2] ${opposite_sign}= ${1:-$value} ))
-	#	[[ $dual ]] || (( properties[index] ${sign}= ${1:-$value} ))
-	#}
-
 	set_main_side() {
-		echo main $sign $opposite_sign $1
 		(( properties[index + 2] ${2}= ${1:-$value} ))
 		[[ $3 ]] && (( properties[index] ${3}= ${1:-$value} ))
 	}
 
 	set_opposite_side() {
-		echo opposite $sign $opposite_sign $1
 		(( properties[index + 2] ${2}= ${1:-$value} ))
 		[[ $3 ]] && (( properties[index] ${3}= ${1:-$value} ))
-		#[[ $dual ]] || (( properties[index] ${sign}= ${1:-$value} ))
 	}
 
 	[[ $ra ]] &&
@@ -1813,11 +1553,8 @@ align_adjacent() {
 				cwep = '${properties[index]}' + '${properties[index + 2]}'
 				cws = '${properties[start_index]}'
 				cwe = '${properties[start_index]}' + '${properties[start_index + 2]}'
-
-				#c = (r) ? cwep + o : cwsp - o
 			} {
 				if($2 ~ "0x" && $2 != "'$original_id'") {
-					#if($2 == id) exit
 					if($2 == id) {
 						if('${#changed_properties[*]}' == 1) exit; else next
 					} else {
@@ -1827,55 +1564,18 @@ align_adjacent() {
 						we = ws + $(si + 2)
 						cp = (r) ? $i : $i + $(i + 2)
 
-						#if((cp == c) &&
-						#if((cwep + o == $i) || (cwsp - o == $i + $(i + 2)) &&
-
-						#print
-						#print cwep + o + b, $i, cwsp - s, $i + $(i + 2), s, cwsp, cwep
-						#print (((cwep + s == $i) || (cwsp - s == $i + $(i + 2))))
-						#print (we >= cws && we <= cwe), we, cws, cwe
-						#print 
-						#print cwep + s, $i, s
-
 						if(((cwep + o + cb == $i) || (cwsp - s == $i + $(i + 2))) &&
 							((ws >= cws && ws <= cwe) ||
 							(we >= cws && we <= cwe) ||
 							(ws <= cws && we >= cwe))) {
-								#print $0, (cwep + o == $i) ? "'${after_sign:-+}' '$after_opposite_sign'" : "'${before_sign:-+}'"
-								#print $0, (cwep + o == $i) ? "'$after_sign' '${after_dimension_sign:-+}'" : "'${before_sign:-+}'"
-								#print $0, (cwep + o == $i) ? "-r" : ""
-
-								#v = (cwep + o == $i) ? $i - o : cwsp
-								#os = '${old_properties[index]}'
-								#oe = '${old_properties[index]}' + '${old_properties[index + 2]}'
-								#cv = (v == os) ? '${changed_properties[$((index + 2))]:-0}' : '${changed_properties[$index]:-0}'
-
-								#cv = '${changed_properties[$((index + 2))]:-0}'
-								#cv = '${changed_properties[$index]:-0}'
-
 								d = ""
 								os = '${old_properties[index]}'
 								oe = '${old_properties[index]}' + '${old_properties[index + 2]}'
 
-								#if(cwep + o + b == $i) {
-								#if(oe + o + b == $i) {
-								#if(cwep + o + b == $i) {
-								#if(cwep + o + b == $i + $(i + 2) + s || cwep + o + b == $i) {
-								#if($i + $(i + 2) + s == cwsp || cwep + o + b == $i) {
 								if(cwep + cb + o == $i) {
 									d = "true"
 									v = (cwep + o + cb == $i) ? $i : cwsp
-									#v = $i
-									#system("~/.orw/scripts/notify.sh \"" v " " os "\"")
-									#ce = '${changed_properties[$((index + 2))]:-0}'
-									#ccv = '${old_properties[index]}' + '${old_properties[index + 2]}'
-								} else {
-									v = cwsp
-									#cs = '${changed_properties[$index]:-0}'
-									#ccv = '${old_properties[index]}'
-								}
-
-
+								} else v = cwsp
 
 								if(cwep + cb + o == $i) {
 									d = "true"
@@ -1884,17 +1584,7 @@ align_adjacent() {
 									p = ($i + $(i + 2) + b == oe + '${old_properties[index + 4]}') ? "after" : "before"
 								}
 
-
-
-
-								#cv = (v == os) ? '${changed_properties[$index]:-0}' : '${changed_properties[$((index + 2))]:-0}'
 								cv = (p == "before") ? '${changed_properties[$index]:-0}' : '${changed_properties[$((index + 2))]:-0}'
-								#print cwep + o + b
-
-								#if(cwsp - o == $i + $(i + 2)) {
-								#	cv = '${changed_properties[$index]}'
-								#}
-
 								print $0, cv, d
 							}
 					}
@@ -1902,92 +1592,33 @@ align_adjacent() {
 			}'
 	}
 
-	#echo ${!changed_properties[*]}
-	#get_adjacent "${old_properties[*]}" $ra
-	#get_adjacent "0x05000003 100 132 946 403 4 26" $ra
-	#original_id=0x5000003
-	#get_adjacent "0x5000003 100 132 946 383 4 26" $ra
-	#get_adjacent "${old_properties[*]}" $ra
-	#get_adjacent "0x5000003 100 132 946 383 4 26" $ra
-	#exit
-
 	add_adjacent_window() {
 		local value=$2
 		properties=( $1 )
 		id=${properties[0]}
 		original_properties=( ${properties[*]} )
 
-		#echo $2, $3, $index, ${properties[index]}
-
-		#echo here ${properties[*]}
 		if [[ $3 ]]; then
-			#echo here ${properties[*]}
-			#echo ${properties[index]}, $value
 			(( properties[index] += value ))
 			[[ ${value%%[0-9]*} ]] && value=${value#-} || value=-$value
-			#echo ${properties[index]}, $value
 		fi
 
 		(( properties[index + 2] += value ))
 
-		#echo ${original_properties[*]}
-		#echo ${properties[*]}
-
 		adjacent_windows+=( "${properties[*]}" )
-		#[[ $continue ]] && update_properties
 	}
 
-	#add_adjacent_window() {
-	#	properties=( $1 )
-	#	id=${properties[0]}
-	#	original_properties=( ${properties[*]} )
-
-	#	echo ${original_properties[*]}, $2
-	#	#[[ $2 ]] && $opposite_function ${changed_properties[$((first_index + 2))]} ||
-	#	#	$main_function ${changed_properties[$first_index]}
-	#	[[ $2 ]] && $opposite_function ${changed_properties[$((base_index + 2))]} \
-	#		${after_sign} ${after_dimension_sign:=+} ||
-	#		$main_function ${changed_properties[$base_index]} ${before_sign:=+}
-	#	echo ${properties[*]}, $2, ${changed_properties[*]}
-
-	#	adjacent_windows+=( "${properties[*]}" )
-	#	[[ $continue ]] && update_properties
-	#}
-
 	find_neighbour() {
-		#while read -r c id x y w h xb yb ps ds; do
 		while read -r c id x y w h xb yb v d; do
 			if [[ $c ]]; then
-				#echo here "$id $x $y $w $h $xb $yb $v $d $r"
 				add_adjacent_window "$id $x $y $w $h $xb $yb" $v $d
-				#echo $id $x $y $w $h
 
 				[[ $2 ]] && ra='' || ra=-r
 				original_id=${1%% *}
 				find_neighbour "$id $x $y $w $h $xb $yb" $ra
-				#find_neighbour "$c $id $x $y $w $h $xb $yb" $r
 			fi
 		done <<< $(get_adjacent "$1" $2)
 	}
-
-	#find_neighbour "132 0xa00003 100 132 341 237 4 26"
-	#find_neighbour "718 0x2a00003 100 718 341 236 4 26" -r
-	#exit
-
-	#find_neighbour() {
-	#	while read -r c window; do
-	#		if [[ $c ]]; then
-	#			add_adjacent_window "$window" $2
-
-	#			[[ $2 ]] && ra='' || ra=-r
-	#			original_id=${1%% *}
-	#			find_neighbour "$window" $ra
-	#		fi
-	#	done <<< $(get_adjacent "$1" $2)
-	#}
-
-	#find_neighbour "${old_properties[*]}" $ra
-	#exit
 
 	[[ $sign == - ]] &&
 		adjacent_windows=( "${properties[*]}" ) ||
@@ -1999,9 +1630,6 @@ align_adjacent() {
 		read id x y w h xb yb <<< "$window"
 		wmctrl -ir $id -e 0,$x,$y,$w,$h
 	done
-	exit
-
-	[[ $continue ]] || exit
 }
 
 while ((argument_index <= $#)); do
@@ -2022,7 +1650,6 @@ while ((argument_index <= $#)); do
 			if [[ ! $orientations ]]; then
 				window_x=$(wmctrl -lG | awk '$1 == "'$id'" { print $3 }')
 				width=$(awk '/^display_'$display'_size/ { print $2; exit }' $config)
-				#width=$(awk '/^display.*size/ { w += $2; if ('$window_x' < w) { print $2; exit } }' $config)
 
 				orientations=$(list_all_windows | sort -nk 2,4 -uk 2 | \
 					awk '
@@ -2064,8 +1691,6 @@ while ((argument_index <= $#)); do
 									max_point=$w_min && break
 								fi
 							else
-								#((window_count)) && max_point=$w_min || 
-								#	min_point=$((w_max + distance))
 								if ((!window_count)); then
 									min_point=$((w_max + distance))
 								else
@@ -2100,11 +1725,8 @@ while ((argument_index <= $#)); do
 								(ws <= cws && we >= cwe)) print $0
 						}' | sort -nk $((index + 1)),$((index + 1)) -nk $((start_index + 1)) | awk '
 							function assign(w_index) {
-								#bb = ($1 ~ "0x") ? 0 : $NF
-								#b = ($1 ~ "0x") ? $('$index' + 4) : $NF
 								b = ($1 ~ "0x") ? $(pi + 4) : $NF
 								i = (w_index) ? w_index : (l) ? l : 1
-								#mix_a[i] = $1 " " $pi " " $pi + $(pi + 2) + bb
 								mix_a[i] = $1 " " $pi " " $pi + $(pi + 2) + (($1 ~ "0x") ? 0 : b) " " b
 							}
 
@@ -2127,7 +1749,6 @@ while ((argument_index <= $#)); do
 
 				if ((${properties[index]} != min_point ||
 					${properties[index]} + ${properties[index + 2]} != max_point)); then
-					#((max_point < original_max_point && wid != max_point)) && [[ ! $wid =~ ^0x ]] && 
 					((max_point < original_max_point)) && [[ $wid =~ ^0x ]] && 
 						local last_offset=$margin
 
@@ -2154,8 +1775,6 @@ while ((argument_index <= $#)); do
 				tile
 			done
 		else
-			#[[ ! $previous_option =~ (resize|move) && $(declare -F | grep set_base_values) ]] &&
-			#[[ ! $previous_option =~ (resize|move) ]] && set_base_values $display_orientation
 			if [[ ! $previous_option =~ (resize|move) ]]; then
 				[[ $(sed -n '/ (move|resize).*-[trbl]/p' <<< "$arguments") && ($mode == floating || $current_desktop -ne 1) ]] || with_windows=windows
 				set_base_values $display_orientation $with_windows
@@ -2228,53 +1847,6 @@ while ((argument_index <= $#)); do
 										}
 									}
 								}' | tail -1)
-
-					#sort_windows $argument | \
-					#	awk '{
-					#			if($2 == "'$id'") exit
-					#			else {
-					#				i = '$index' + 2
-					#				si = '$start_index' + 2
-					#				cws = '${properties[start_index]}'
-					#				cwe = cws + '${properties[start_index + 2]}'
-					#				ws = $si; we = ws + $(si + 2)
-					#				#wm = $i; b = ($2 ~ /^0x/) ? '$border' : $7
-					#				wm = $i; b = ($2 ~ /^0x/) ? $(i + 4) : $7
-
-					#				if((ws >= cws && ws <= cwe) ||
-					#					(we >= cws && we <= cwe) ||
-					#					(ws <= cws && we >= cwe)) {
-					#						max = ("'$argument'" ~ /[BR]/) ? wm : wm + $(i + 2) + b
-					#						print max
-					#					}
-					#				}
-					#			}' | tail -1
-					#echo HERE
-					#exit
-
-					#	sort_windows $argument |  awk '{
-					#			if($2 == "'$id'") exit
-					#			else {
-					#				i = '$index' + 2
-					#				si = '$start_index' + 2
-					#				cws = '${properties[start_index]}'
-					#				cwe = cws + '${properties[start_index + 2]}'
-					#				ws = $si; we = ws + $(si + 2)
-					#				wm = $i; b = ($2 ~ /^0x/) ? '$border' : $7
-
-					#				if((ws >= cws && ws <= cwe) ||
-					#					(we >= cws && we <= cwe) ||
-					#					(ws <= cws && we >= cwe)) {
-					#						max = ("'$argument'" ~ /[BR]/) ? wm : wm + $(i + 2) + b
-					#						print max
-					#					}
-					#				}
-					#			}'
-					#exit
-
-					#echo $border
-					#echo $max
-					#exit
 
 					[[ $argument =~ [LR] ]] && offset_orientation=x_offset || offset_orientation=y_offset
 					((!max || (max == bar_top_offset || max == end - bar_bottom_offset))) && offset=${!offset_orientation} ||
@@ -2365,13 +1937,7 @@ while ((argument_index <= $#)); do
 					unset max
 				fi;;
 			I)
-				#step=120
-
 				set_base_values $display_orientation windows
-				#properties=( $(get_windows $id) )
-				#original_properties=( ${properties[*]} )
-				#get_display_properties $display_orientation
-				#get_bar_properties
 
 				x_start=$((display_x + x_offset))
 				x_end=$((display_x + width - x_offset))
@@ -2383,20 +1949,10 @@ while ((argument_index <= $#)); do
 
 				read x y w h xb yb <<< ${properties[*]:1}
 
-				#echo ${properties[*]}
-				#echo $x $y $w $h
 				source ~/.orw/scripts/windowctl_by_input.sh windowctl_osd source
-				#echo $x $y $w $h
 
 				new_properties=( $id $x $y $w $h $xb $yb )
 				properties=( ${original_properties[*]} )
-				#update_properties
-
-				#properties=( $id $x $y $w $h $xb $yb )
-				#update_properties
-				#set_orientation_properties v
-				#align_adjacent
-				#exit
 
 				##ignore aligning adjacent windows if window was moved
 				if [[ $mode != floating && ! $moved ]]; then
@@ -2409,8 +1965,6 @@ while ((argument_index <= $#)); do
 						align_adjacent con
 
 						original_properties=( ${old_original_properties[*]} )
-						#properties=( ${original_properties[*]} )
-						#properties=( ${new_properties[*]} )
 					fi
 
 					properties=( ${new_properties[*]} )
@@ -2418,31 +1972,12 @@ while ((argument_index <= $#)); do
 					[[ $vertical ]] &&
 						set_orientation_properties v &&
 						update_properties && align_adjacent
-						#properties[2]=${new_properties[2]} properties[4]=${new_properties[4]} &&
-						#echo ${properties[*]} ${original_properties[*]} &&
 					exit
 
 					properties=( ${new_properties[*]} )
 					update_properties
-					echo ${properties[*]}
-					echo ${original_properties[*]}
 					align_adjacent
-						#properties[2]=$y properties[4]=$h
 				fi
-
-				#if [[ $mode != floating && ! $moved ]]; then
-				#	[[ $horizontal ]] &&
-				#		properties[1]=${new_properties[1]} properties[3]=${new_properties[3]} &&
-				#		update_properties && align_adjacent con &&
-				#		original_properties=( ${properties[*]} )
-				#	echo ${properties[*]}
-				#	echo ${original_properties[*]}
-				#	[[ $vertical ]] &&
-				#		properties[2]=${new_properties[2]} properties[4]=${new_properties[4]} &&
-				#		update_properties && align_adjacent
-				#		#properties[2]=$y properties[4]=$h
-				#	echo ${properties[*]}
-				#fi
 
 				properties=( ${new_properties[*]} )
 				update_properties;;
@@ -2563,8 +2098,6 @@ while ((argument_index <= $#)); do
 									read aligned_window_width aligned_window_height current_x_border current_y_border <<< \
 										${all_aligned_windows[$aligned_window_id]#* * }
 
-									#((index == 1)) &&
-									#	(( aligned_dimension += aligned_window_width )) || (( aligned_dimension += aligned_window_height ))
 									if ((index == 1)); then
 										current_border=$current_x_border
 										(( aligned_dimension += aligned_window_width ))
@@ -2578,20 +2111,8 @@ while ((argument_index <= $#)); do
 								moved_window_dimension=${original_properties[index + 2]}
 								align_ratio=$(echo "$aligned_dimension / $moved_window_dimension" | bc -l)
 
-								#echo ${original_properties[*]}, $moved_window_dimension, $align_ratio
-								#exit
-								#list_all_windows
-								#for win in "${!all_aligned_windows[@]}"; do
-								#	echo $win, ${all_aligned_windows[$win]}
-								#done
-
 								echo $alignment_direction, ${properties[*]}
 								align
-
-								#for win in "${all_aligned_windows[@]}"; do
-								#	echo $win
-								#done
-								#exit
 							fi
 					esac
 				else
@@ -2599,9 +2120,6 @@ while ((argument_index <= $#)); do
 					set_sign ${optarg%%[0-9]*}
 
 					[[ $argument =~ [lr] ]] && set_orientation_properties h || set_orientation_properties v
-					#[[ $argument =~ [lr] ]] && orientation_index=1 orientation=h || orientation_index=2 orientation=v
-					#get_display_properties $orientation_index
-					#set_orientation_properties $orientation
 
 					if [[ $option == move ]]; then
 						property=${properties[index]}
@@ -2618,21 +2136,7 @@ while ((argument_index <= $#)); do
 					else
 						declare -A aligned_neighbours
 						align_neighbours $argument $value
-						#~/sws_test.sh resize
-						#exit
-
-						#((${#aligned_neighbours[*]})) ||
-						#	declare -A aligned_neighbours
-						#align_neighbours $argument $value
-						#continue
-						#resize $argument
 					fi
-
-					#spy_pid=$(ps aux | awk '/bash.*spy_windows_standalone.sh$/ { print $2 }')
-
-					#spy_pid=$(ps aux |
-					#	awk '/bash.*swf.sh$/ { if((pid && $2 < pid) || !pid) pid = $2 } END { print pid }')
-					#((spy_pid)) && kill -USR1 $spy_pid
 
 					update_properties
 
@@ -2731,13 +2235,12 @@ while ((argument_index <= $#)); do
 
 				get_bar_properties add
 
-				select_window
-
 				if [[ $second_window_properties ]]; then
 					second_window_properties=( ${second_window_properties[*]:1} )
 					optind=$optarg
 				else
 					case $optarg in
+						s) select_window;;
 						[trbl]) select_window;;
 						*)
 							if [[ $optarg =~ ^0x ]]; then
@@ -2748,8 +2251,6 @@ while ((argument_index <= $#)); do
 										echo $bar
 									done
 								}
-
-								#(wmctrl -l && list_bars) | awk '{ wid = ((/^0x/) ? $NF : $1); if(wid == "'$optarg'") print $1 }'
 
 								mirror_window_id=$((wmctrl -l && list_bars) |
 									awk '{
@@ -2762,17 +2263,6 @@ while ((argument_index <= $#)); do
 									}')
 							fi
 
-							#second_window_properties=( $(list_all_windows | \
-							#	awk '$1 == "'$mirror_window_id'" {
-							#		if(NF > 5) { $4 += ($NF - '${x_border:=0}'); $5 += ($NF - '${y_border:=0}') }
-							#			print gensub("(" $1 "|" $6 "$)", "", "g") }') )
-
-							#second_window_properties=( $(list_all_windows | \
-							#	awk '$1 == "'$mirror_window_id'" {
-							#		if(NF > 5) { $4 += ($NF - '${x_border:=0}'); $5 += ($NF - '${y_border:=0}') }
-							#		gsub("(" $1 "|" $6 "$)", "")
-							#		print }') )
-
 							second_window_properties=( $(list_all_windows |
 								awk '$1 == "'$mirror_window_id'" {
 									if(NF < 7) { $4 -= $6; $5 -= $7 }
@@ -2780,10 +2270,6 @@ while ((argument_index <= $#)); do
 									print }') )
 					esac
 				fi
-
-				#list_all_windows
-				#echo ${second_window_properties[*]}
-				#exit
 
 				if [[ $optind && $optind =~ ^[xseywh,+-/*0-9]+$ ]]; then
 					for specific_mirror_property in ${optind//,/ }; do 
@@ -2797,9 +2283,7 @@ while ((argument_index <= $#)); do
 						esac
 
 						if [[ ${specific_mirror_property:1:1} =~ [se] ]]; then
-							#mirror_border=${specific_mirror_property:0:1}_border
 							mirror_border=${second_window_properties[second_window_property_index + 4]}
-							#echo $mirror_border, $second_window_property_index, ${second_window_properties[5]}
 
 							if [[ $specific_mirror_property =~ ee ]]; then
 								mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} - ${properties[second_window_property_index + 3]})))
@@ -2808,14 +2292,15 @@ while ((argument_index <= $#)); do
 								#	mirror_value=$((second_window_properties[second_window_property_index] - (${properties[second_window_property_index + 3]} + ${!mirror_border:-0}))) ||
 								#	mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} + ${!mirror_border:-0})))
 								[[ ${specific_mirror_property:1:1} == s ]] &&
-									mirror_value=$((second_window_properties[second_window_property_index] - (${properties[second_window_property_index + 3]} + ${mirror_border:-0}))) ||
-									mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} + ${mirror_border:-0})))
+									mirror_value=$((second_window_properties[second_window_property_index] - (${properties[second_window_property_index + 3]} + ${properties[second_window_property_index + 5]} + ${mirror_border:-0}))) ||
+									mirror_value=$((second_window_properties[second_window_property_index] + (${second_window_properties[second_window_property_index + 2]} + ${properties[second_window_property_index + 5]} + ${mirror_border:-0})))
 							fi
 						fi
 
 						if [[ $specific_mirror_property =~ [+-/*] ]]; then
 							read operation operand additional_operation additional_operand<<< \
 								$(sed 's/\w*\(.\)\([^+-]*\)\(.\)\?\(.*\)/\1 \2 \3 \4/' <<< $specific_mirror_property)
+							echo ${second_window_properties[*]}
 							((operand)) &&
 								mirror_value=$((${mirror_value:-${second_window_properties[second_window_property_index]}} $operation operand))
 							((additional_operand)) &&
@@ -2894,8 +2379,10 @@ while ((argument_index <= $#)); do
 					id=$properties
 				fi;;
 			p)
-				xwininfo -id $id | parse_properties
-				exit
+				[[ $id ]] &&
+					xwininfo -id $id | parse_properties ||
+					xwininfo -name $name | parse_properties
+
 				[[ $display_orientation == h ]] && index=1 || index=2
 				get_display_properties $index
 
@@ -2932,22 +2419,14 @@ if ((${#aligned_neighbours[*]})); then
 	done
 	exit
 fi
-#exit
-
-#[[ $mode != floating && $current_desktop -eq 1 ]] && align_adjacent
-#exit
 
 generate_printable_properties "${properties[*]}"
 apply_new_properties
-#echo ${printable_properties[*]}
-
 
 # iterate through all windows which should be aligned, and apply new properties
 if ((${#all_aligned_windows[*]})); then
 	for window_id in ${!all_aligned_windows[*]}; do
 		read x y w h xb yb <<< "${all_aligned_windows[$window_id]}"
-
-		#~/.orw/scripts/notify.sh "$window_id $x,$y,$w,$h"
 
 		# adjust original window's alignment direction
 		[[ $window_id == $original_properties ]] &&

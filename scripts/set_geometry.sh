@@ -1,8 +1,6 @@
 #!/bin/bash
 
 set_value() {
-	#sed -i "/\(class\|name\|title\)=.*${class-input}/,/^$/ { /$1/ s/[0-9]\+/$2/ }" ~/.config/openbox/rc.xml
-	#sed -i "/$property=.*${!property}/,/^$/ { /$1/ s/[0-9]\+/$2/ }" ~/.config/openbox/rc.xml
 	sed -i "/$property=.*${!property}/,/application/ { /<$1>/ s/>.*</>$2</ }" ~/.orw/dotfiles/.config/openbox/rc.xml
 }
 

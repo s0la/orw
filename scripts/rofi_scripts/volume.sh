@@ -1,31 +1,38 @@
 #!/bin/bash
 
-theme=$(awk -F '"' 'END { print $(NF - 1) }' ~/.config/rofi/main.rasi)
-
-if [[ $theme != icons ]]; then
-	mute=mute up='volume up' down='volume down' sep=' '
-fi
-
-icon_up=
-icon_down=
-icon_mute=
-
-if [[ -z $@ ]]; then
-	cat <<- EOF
-		$icon_up$sep$up
-		$icon_mute$sep$mute
-		$icon_down$sep$down
-	EOF
+if [[ $style =~ icons|dmenu ]]; then
+	read up down mute <<< \
+		$(sed -n 's/^\(arrow_\(up\|down\)\|x\).*empty=//p' ~/.orw/scripts/icons | xargs)
 else
-	case $@ in
-		$icon_mute*) amixer -q -D pulse set Master toggle;;
-		*)
-			volume="$@"
-			[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
-			[[ ${volume%% *} == $icon_up ]] && direction=+ || direction=-
-			amixer -q -D pulse set Master $((${multiplier:-1} * 10))%$direction;;
-	esac
-
-	killall rofi
-	~/.orw/scripts/system_notification.sh system_volume
+	default='default' up='brightness up' down='brightness down' sep=' '
 fi
+
+toggle
+trap toggle EXIT
+
+while
+	active=$(amixer -D pulse get Master | awk '/Playback.*%/ { if($NF ~ "off") print "-a 1" }')
+
+	read row volume <<< $(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${row:-0} $active -theme main
+		$up
+		$mute
+		$down
+	EOF
+	)
+
+	if [[ $volume ]]; then
+		case $volume in
+			$mute*) amixer -q -D pulse set Master toggle;;
+			*)
+				[[ ${volume##* } =~ [0-9] ]] && multiplier="${volume##* }" volume="${volume% *}"
+				[[ ${volume%% *} == $up ]] && direction=+ || direction=-
+				amixer -q -D pulse set Master $((${multiplier:-1} * 10))%$direction;;
+		esac
+	fi
+
+	[[ $volume ]] && ~/.orw/scripts/system_notification.sh system_volume &
+
+	[[ $volume =~ $up|$down ]]
+do
+	continue
+done

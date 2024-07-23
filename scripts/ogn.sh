@@ -865,7 +865,7 @@ while
 	echo $accent_count, $avg_sv, $avg_value, $avg_saturation, $treshold
 	#((treshold > 20)) && exit
 
-	((accent_count > 7))
+	((accent_count > 10))
 	#[[ ($sign == + && $accent_count -gt 6) ||
 	#	($sign == - && $accent_count -lt 6) ]]
 do
@@ -1047,6 +1047,8 @@ get_accents() {
 			}'
 }
 
+echo SORTED
+
 for c in ${sorted_colors[*]}; do
 	#echo ${colors[$c]}, $c
 	print_color $c label
@@ -1068,6 +1070,7 @@ done <<< $(get_accents | sort -n)
 for a in ${accents[*]}; do
 	print_color $a label
 done
+exit
 
 sort_light_accents() {
 	local dark_count=$((${#light_accent_colors[*]} / 3))

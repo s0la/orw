@@ -131,7 +131,6 @@ get_argument_count() {
 
 execute() {
 	~/.orw/scripts/windowctl.sh $x $y $margin $offsets $center $bar $state $grid $display $mirror $tile $option $edge $interactive $multi $orientation $ratio $adjucent
-	#~/.orw/scripts/notify.sh "$x $y $margin $offsets $center $bar $state $grid $display $mirror $tile $option $edge $multi $orientation $ratio $adjucent"
 	[[ $open_tile ]] && ~/.orw/scripts/tile_terminal.sh
 }
 

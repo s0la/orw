@@ -4,7 +4,6 @@ awk -F '[_ ]' '{
 	if (/^orientation/) {
 		cd = 1
 		bmin = 0
-		#i = '$1'; mi = i + 2
 
 		wx = '${1:-0}'
 		wy = '${2:-0}'
@@ -37,11 +36,6 @@ awk -F '[_ ]' '{
 				maxp = minp + $(mi + 1)
 
 				max += $i
-
-				#if (p < max) {
-				#	print cd, dx, dy, dw, dh, minp, maxp, bmin, bmin + dw, dx + wx, dy + wy
-				#	exit
-				#} else {
 
 				if (p > max) {
 					bmin += $4
