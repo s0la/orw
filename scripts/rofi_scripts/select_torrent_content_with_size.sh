@@ -1,8 +1,32 @@
 #!/bin/bash
 
 function set() {
-	eval $1='$(sed "s/\(\\*\)\?\([][()\&]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
-	sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
+	#eval $1='$(sed "s/\(\\*\)\?\([][()\&+]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	#sed -i "s/\(^$1=\).*/\1\"${!1//\//\\/}\"/" $0
+	#eval $1='$(sed "s/\(\\*\)\?\([][()\&+]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	eval $1='$(sed "s/\(\\*\)\?\([][()\&+]\)/\\\\\\\\\2/g" <<< "${2:-${!1}}")'
+	#[[ $1 =~ current|path ]] &&
+	#eval "$1='${1//\&/\\\\\\\&}'"
+
+	#eval $1='$(sed "s/\\\*&/\&/" <<< "${!1//\`/\\\\\`}")'
+	eval $1='$(sed "s/\\\*&/\&/" <<< "${!1}")'
+	eval $1='$(sed "s/\\\*\`/\\\\\\\\\`/g" <<< "${!1}")'
+
+	#eval $1='$(sed "s/\\\*`/\\\\\\\`/" <<< "${!1}")'
+	#eval $1='$(sed "s/\\\*\(&\|`\)/\\\1/g" <<< "${!1}")'
+
+	#[[ $1 == current ]] && echo -e "$@\n${!1}" >> ~/tor.log
+	#[[ $1 == full_path ]] && echo "NOW: ${!1}" >> ~/tor.log
+	#[[ $1 == full_path ]] && eval echo "v='$(sed "s/\\\*\`/\\\\\\\`/g" <<< "${!1}")'" >> ~/tor.log
+	#[[ $1 == full_path ]] && sed "s/\\\*\`/\\\\\\\`/g" <<< "${!1}" >> ~/tor.log
+	#[[ $1 == full_path ]] && echo "CAME: $1, ${!1}" >> ~/tor.log
+	#[[ $1 == full_path ]] && sed -n "s|\(^$1=\).*|\1\"${!1//\&/\\\\\\\&}\"|p" $0 >> ~/tor.log
+	sed -i "s|\(^$1=\).*|\1\"${!1//\&/\\\\\\\&}\"|" $0
+	#sed -i "s|\(^$1=\).*|\1\"${!1}\"|" $0
+	#sed -i "s|\(^$1=\).*|\1\"${!1//\&/\\\\\\\&}\"|" $0
+	#[[ $1 =~ current|path ]] &&
+	#	sed -n "s|\(^$1=\).*|\1\"${!1//\&/\\\&}\"|p" $0 >> ~/tor.log
+	#awk -i inplace '/^'"$1"'=/ { sub("=.*", "=\"'"${!1//\//\\/}"'\"") } { print }' $0
 }
 
 set_torrent_id() {
@@ -37,8 +61,8 @@ agregate() {
 			d = '$depth'
 			of = '$offset'
 			p = "'$print'"
-			c = "'"$current"'"
-			fp = "'"$full_path"'"
+			c = "'"${current//\\\`/\`}"'"
+			fp = "'"${full_path//\\\`/\`}"'"
 			o = "x"; sp = fp; ns = index($0, "Name")
 		}
 
@@ -138,12 +162,12 @@ offset=$(awk '
 			}
 		}' ~/.config/{rofi/large_list.rasi,orw/config})
 
-torrent_id="167"
+torrent_id=""
 current=""
-full_path="God Is An Astronaut - 2021 - All Is Violent, All Is Bright \\\\(Live\\\\)"
+full_path=""
 
-depth="2"
-final_depth="1"
+depth=""
+final_depth=""
 
 [[ $@ =~ ^set_torrent_id ]] && $@
 
