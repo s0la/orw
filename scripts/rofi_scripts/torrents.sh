@@ -23,9 +23,10 @@ list_torrents() {
 	list -l | awk 'NR == 1 {
 			i = index($0, "Name")
 		}
-		$2 ~ "[0-9]+%" {
+		#$2 ~ "[0-9]+%" {
+		NR > 1 {
 			s = ("'$selection'") ? ($1 ~ "^('${multiple_torrents//,/|}')\\*?$") ? " " : " " : $2
-			printf("%-*s%s\n", (s ~ "%$") ? 6 : 0, s, substr($0, i))
+			printf("%-*s%s\n", (s ~ "%$") ? 6 : 6, s, substr($0, i))
 		}'
 }
 
@@ -33,7 +34,7 @@ get_current_torrent_id() {
 	current_torrent_id=$(list | awk '/'"$current"'$/ { print gensub("([0-9]*)\\*?", "\\1", 1, $1) }')
 }
 
-current="   The Prodigy - Greatest Hits \[2CD, Star Mark Compilation\] \(2009\)"
+current=""
 selection=""
 multiple_torrents=""
 
@@ -41,7 +42,8 @@ if [[ -z $@ ]]; then
 	un_set current_torrent_id multiple_torrents
 	list_torrents
 else
-	if [[ $@ =~ ^[[:alpha:]] ]]; then
+	#if [[ $@ =~ ^[[:alpha:]] ]]; then
+	if [[ ! $@ =~ ^[0-9]|n/a ]]; then
 		case $@ in
 			stop)
 				flag=S
@@ -72,9 +74,9 @@ else
 				killall rofi
 
 				get_current_torrent_id
-				~/.orw/scripts/rofi_scripts/dmenu/select_torrent_content_with_size.sh \
+				~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh \
 					set_torrent_id "$current_torrent_id"
-				~/.orw/scripts/rofi_scripts/dmenu/torrents_group.sh select_torrent_content
+				~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content
 
 				un_set current_torrent_id
 				exit 0;;
