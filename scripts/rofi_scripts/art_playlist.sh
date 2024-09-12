@@ -37,5 +37,6 @@ while
 
 	[[ $index ]]
 do
-	mpc -q play $index
+	((${active//[^0-9]} == $index - 1)) &&
+		mpc toggle && break || mpc -q play $index
 done
