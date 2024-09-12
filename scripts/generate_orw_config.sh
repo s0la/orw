@@ -1,5 +1,35 @@
 #!/bin/bash
 
+get_displays() {
+	xrandr | awk -F '[ x+]' '
+				NR == 1 {
+					h = $9
+					v = $12
+					sub("[^0-9]", "", v)
+					si = (h > 2 * v) ? 2 : 3
+				}
+				$2 == "connected" {
+					p = $3 == "primary"
+					i = 3 + p
+					ad[$(i + si)] = $1 " " p " " $i " " $(i + 1) " " $(i + 2) " " $(i + 3)
+				} END { for (d in ad) print ad[d] }'
+}
+
+#get_displays() {
+#	xrandr | awk -F '[ x+]' '
+#		NR == 1 {
+#			h = $9
+#			v = $12
+#			sub("[^0-9]", "", v)
+#			si = (h > 2 * v) ? 2 : 3
+#		}
+#		$2 == "connected" {
+#			ad[$(3 + ($3 == "primary") + si)] = ++d
+#		} END {
+#			for (d in ad) printf "[%d]=%d ", ++di, ad[d]
+#		}'
+#}
+
 conf=~/.config/orw/config
 
 wm() {
@@ -44,14 +74,16 @@ display() {
 
 		((index == 1)) && first_display_name=$name first_display_index=$index
 		((primary)) && primary_display_name=$name primary_display_index=$index
-	done <<< $(xrandr | awk -F '[ x+]' '$2 == "connected" {
-											p = $3 == "primary"
-											i = 3 + p
-											print $1, p, $i, $(i + 1), $(i + 2), $(i + 3) }')
+	done <<< $(get_displays)
+	#done <<< $(xrandr | awk -F '[ x+]' '$2 == "connected" {
+	#								p = $3 == "primary"
+	#								i = 3 + p
+	#								print $1, p, $i, $(i + 1), $(i + 2), $(i + 3) }' | sort -n)
 
 	((primary_display_index)) || xrandr --output $first_display_name --primary
 
-	primary_display="primary display_${primary_display_index:-$first_display_index}"
+	#primary_display="primary display_${primary_display_index:-$first_display_index}"
+	primary_display="primary display_$first_display_index"
 
 	x_size=$((last_x + last_width))
 	y_size=$((last_y + last_height))

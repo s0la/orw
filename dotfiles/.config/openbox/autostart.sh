@@ -1,5 +1,7 @@
 #!/bin/bash
 
+xrandr --output eDP-1 --below HDMI-1
+
 xset s off -dpms
 xset s blank
 xset s 500
@@ -8,7 +10,8 @@ xset s 500
 #	--animation-window-mass 0.5 --animation-for-open-window zoom --animation-stiffness 500
 #picom --experimental-backends -b &> /dev/null
 #~/Downloads/picom/build/src/picom --experimental-backends -b &> /dev/null
-~/Downloads/picom/build/src/picom -b &> /dev/null
+#~/Downloads/picom/build/src/picom -b &> /dev/null
+icom --config ~/.config/picom/picom_animations.conf -b &> /dev/null
 mpd &
 
 path=~/.orw/scripts
