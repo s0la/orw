@@ -1,0 +1,113 @@
+@import "theme"
+
+* {
+	bg:                     #1b1917cc;
+	sbg:                    #ffffff0a;
+	abg:                    #03030333;
+	efg:                    transparent;
+
+	font:                   "SFMono 9"
+
+	list-spacing:           0px;
+
+	element-padding:        10px;
+
+	window-orientation:     vertical;
+	window-location:        west;
+	window-padding:         3px 3px;
+	window-width:           200px;
+
+	show-icons:             true;
+}
+
+#mainbox {
+    background-color:            transparent;
+}
+
+#window {
+	border:           0;
+	width:            @window-width;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @window-padding;
+	border-radius:    @window-radius;
+    background-color:            transparent;
+	background-color: @bg;
+}
+
+#listview {
+	flow:                 @window-orientation;
+	spacing:              @list-spacing;
+	lines:                9;
+	columns:              1;
+    background-color:     transparent;
+}
+
+element-icon {
+	size:                 95px;
+    background-color:     transparent;
+}
+
+#element {
+	padding:          @element-padding;
+	background-color: transparent;
+	orientation:      vertical;
+}
+
+#element-text {
+	horizontal-align: 0.50;
+	font:             "SFMono 1";
+}
+
+#element.normal.normal, element.alternate.normal {
+	padding:      @element-padding;
+	background-color: transparent;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color:            @efg;
+	background-color: @bg;
+	background-color: transparent;
+}
+
+#element.selected.normal, element.selected.active {
+	border:       @element-border;
+	background-color: @dmsbg;
+	background-color: @sbg;
+}
+
+#element.normal.active {
+	background-color: @abg;
+}
+
+#element-text selected.normal, element-text selected.active {
+	color:            @dpc;
+	color:            @efg;
+}
+
+element-text alternate.active, element-text normal.active {
+	color:            @efg;
+}
+
+#inputbar {
+	border:           0;
+	margin:           0;
+	padding:          @element-padding;
+	children:         [ textbox-prompt-colon, entry ];
+	orientation:      horizontal;
+	background-color: transparent;
+}
+
+#entry {
+	background-color: transparent;
+	color: @lpc;
+}
+
+#prompt {
+	background-color: transparent;
+}
+
+#textbox-prompt-colon {
+	str:              "";
+	expand:           false;
+}
