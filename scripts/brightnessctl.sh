@@ -1,15 +1,18 @@
 #!/bin/bash
 
-path=/sys/class/backlight/*/
-read brightness_step <<< $(awk '{ print int($1 / 100) }' $path/max_brightness)
-read brightness_level <<< $(awk '{ print int($1 / '$brightness_step') }' $path/brightness)
+value=${1:-+5}
 
-case ${1#-} in
-	g) echo $brightness_level;;
-	s)
-		[[ $2 =~ [+-] ]] && new_level=$((brightness_level $2)) || new_level=$2
-		((new_level *= brightness_step))
+read value percent <<< $(awk '{
+		if (NR == FNR) m = $1;
+		else {
+			p = (m / 100)
+			nv = '$value' * p
+			if ("'$value'" ~ "^[+-]") nv += $1
+			$1 = (nv <= m && nv > 0) ? nv : $1
+			printf "%.0f %.0f", $1, nv / p
+		}
+	}' /sys/class/backlight/intel_backlight/{max_,}brightness)
 
-		sudo echo "$new_level" > $path/brightness
-esac
+sudo tee /sys/class/backlight/intel_backlight/brightness <<< $value
 
+~/.orw/scripts/system_notification.sh brightness $percent

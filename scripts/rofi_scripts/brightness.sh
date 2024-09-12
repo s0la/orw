@@ -11,11 +11,7 @@ toggle
 trap toggle EXIT
 
 while
-	active=$(awk '/^[^#].*[0-9]+%/ {
-		l = gensub(/.* ([0-9]+)%.*/, "\\1", 1)
-		if(l == 50) print "-a 1" }' ~/.orw/scripts/system_notification.sh)
-
-	read row brightness <<< $(cat <<- EOF | rofi -dmenu -i -format 'i s' -selected-row ${row:-0} $active -theme main
+	read row brightness <<< $(cat <<- EOF | rofi -dmenu -i -format 'i s' -selected-row ${row:-1} $active -theme main
 		$up
 		$default
 		$down
@@ -32,5 +28,6 @@ do
 			[[ $mulitplier ]] && value=$((mulitplier * 10))
 	esac
 
-	~/Desktop/set_brightness.sh $direction ${default_value:-10}
+	~/.orw/scripts/brightnessctl.sh ${default_value:-${direction}${value:-10}}
+	unset default_{,value}
 done
