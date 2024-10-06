@@ -10,9 +10,13 @@ wait_to_proceed() {
 }
 
 toggle() {
-	local force=$1
-	[[ $style =~ ^((vertical_)?icons|dmenu)$ || $force ]] && ((tiling_workspace)) &&
-		~/.orw/scripts/signal_windows_event.sh rofi_toggle
+	local signal force=$1
+	if [[ $style =~ ^((vertical_)?icons|dmenu)$ || $force ]] &&
+		((tiling_workspace)); then
+			[[ $script == *image_preview* ]] &&
+				signal=image_preview || signal=rofi_toggle
+			~/.orw/scripts/signal_windows_event.sh $signal
+	fi
 }
 
 get_rofi_width() {
@@ -35,7 +39,7 @@ get_rofi_width() {
 				switch ($1) {
 					case /font/:
 						if (!i) v = '$font_size'
-						f = v * 1.34
+						f = v * 1.30
 						break
 					case /window-padding/: wp = v * 2; break
 					case /padding/: ep = v * ((i) ? 2 : 5); break
@@ -54,11 +58,16 @@ get_rofi_width() {
 			width=${widths[$item_count]}
 		fi
 
-		theme_str="window { width: ${width}px; } "
-		[[ $style == *icons ]] &&
-			extra="listview { columns: $item_count; }" ||
-			extra="horibox { children: [ listview ]; } * { font: \"material $font_size\"; }"
-		theme_str+="$extra"
+		theme_str="window { width: ${width}px; } listview { columns: $item_count; }"
+		[[ $style == dmenu ]] &&
+			theme_str+=" horibox { children: [ listview ]; } * { font: \"material $font_size\"; }"
+		#theme_str="window { width: ${width}px; } "
+		#[[ $style == *icons ]] &&
+		#	extra="listview { columns: $item_count; }" ||
+		#	extra="horibox { children: [ listview ]; } * { font: \"material $font_size\"; }"
+		#theme_str+="$extra"
+		#~/.orw/scripts/notify.sh "ic: $item_count, $style, $theme_str"
+		return 0
 }
 
 set_theme_str() {
@@ -67,6 +76,7 @@ set_theme_str() {
 		get_rofi_width $force || unset theme_str
 }
 
+icons=~/.orw/scripts/icons
 sourced=$((${#BASH_SOURCE[*]} == 1))
 
 if ((sourced)); then
@@ -84,5 +94,5 @@ if ((sourced)); then
 
 	style=$(awk 'END { gsub("\"|\\..*", "", $NF); print $NF }' ~/.config/rofi/main.rasi)
 
-	source $script
+	source $script $@
 fi

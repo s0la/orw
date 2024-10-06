@@ -10,11 +10,11 @@ get_directory() {
 
 if [[ $style =~ icons|dmenu ]]; then
 	active=$(systemctl --user is-active change_wallpaper.timer | awk '{ if(/^active/) print "-a 4" }')
-	icons='arrow_\(left\|right\).*empty\|random\|reload\|list\|categories\|grid\|time'
-	read prev next categories select restore random view auto <<< \
+	icons='arrow_\(left\|right\).*empty\|random\|reload\|list\|categories\|grid\|time\|rofi_vertical'
+	read prev next categories select restore random image_preview view auto <<< \
 		$(sed -n "s/^\($icons\)=//p" ~/.orw/scripts/icons | xargs)
 else
-	next=next prev=prev rand=rand restore=restore select=select categories=categories view=view auto=autochange nl=\n
+	next=next prev=prev rand=rand restore=restore select=select categories=categories view=view auto=autochange image_preview=image_preview
 fi
 
 list_actions() {
@@ -27,24 +27,26 @@ list_actions() {
 		$categories
 		$select
 		$view
+		$image_preview
 	EOF
 	)
 }
 
 wallctl=~/.orw/scripts/wallctl.sh
 
-toggle
-trap toggle EXIT
+if ((sourced)); then
+	toggle
+	trap toggle EXIT
 
-item_count=8
-set_theme_str
-list_actions
+	item_count=9
+	set_theme_str
+	list_actions
+fi
 
 while
 	if [[ $action ]]; then
 		case "$action" in
 			$select)
-				indicator=''
 				indicator='●'
 
 				get_directory
@@ -76,7 +78,14 @@ while
 			$view*) $wallctl -v;;
 			$categories*)
 				killall rofi
-				rofi -modi "categories:${0%/*}/wallpaper_category_selection.sh" -show categories -theme large_list;;
+				rofi -modi "categories:${0%/*}/wallpaper_category_selection.sh" -show categories -theme large_list
+				;;
+			$image_preview)
+				trap - EXIT
+				toggle
+				sleep 0.1
+				~/.orw/scripts/rofi_scripts/select_wallpaper.sh
+				;;
 			$index*) $wallctl -i ${action##* };;
 			*) $wallctl -o $action;;
 		esac
