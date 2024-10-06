@@ -9,11 +9,10 @@
 
 	lines:                       5;
 
-	window-width:                35%;
 	window-location:             center;
 
 	list-padding:                6px;
-	list-padding:                10px 30px;
+	list-padding:                15px 15px;
 	list-margin:                 6px 0;
 
 	input-margin:                0 0 10px;
@@ -21,11 +20,11 @@
 
 	entry-margin:                0 3px 0;
 
-	art-width:                   300px;
+	art-width:                   250px;
 
 	element-padding:             8px 8px;
 
-	vertical-prompt-margin:      273px 0 10px 20px;
+	vertical-prompt-margin:      223px 0 10px 20px;
 	horizontal-prompt-margin:    200px 0 10px 20px;
 }
 
@@ -49,7 +48,7 @@ mainbox {
 
 box {
 	expand: false;
-	background-image:            url("/tmp/rofi_cover_art.png");
+	background-image:            url("/tmp/rofi_cover_art.png", BOTH);
     orientation:                 vertical;
 	vertical-align:              5%;
     enabled:                     true;

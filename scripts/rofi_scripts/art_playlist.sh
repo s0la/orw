@@ -14,14 +14,15 @@ while
 		awk '{ print (length($0) > 20) ? substr($0, 0, 20) ".." : $0 }')
 	read index album <<< \
 		$(mpc current -f '%position% %album%' | sed 's/[()]//g')
-	cover="$HOME/Music/covers/${album// /_}.jpg"
+	#cover="$HOME/Music/covers/${album// /_}.jpg"
+	cover="$(~/.orw/scripts/get_cover_art.sh)"
 
-	if [[ ! -f $cover ]]; then
-		root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.config/mpd/mpd.conf)
-		file=$(mpc current -f %file%)
-		full_path="$root/$file"
-		eval ffmpeg -loglevel quiet -i \"$full_path\" -vf scale=300:300 \"$cover\"
-	fi
+	#if [[ ! -f $cover ]]; then
+	#	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.config/mpd/mpd.conf)
+	#	file=$(mpc current -f %file%)
+	#	full_path="$root/$file"
+	#	eval ffmpeg -loglevel quiet -i \"$full_path\" -vf scale=300:300 \"$cover\"
+	#fi
 
 	[[ -f $cover ]] && ln -sf $cover /tmp/rofi_cover_art.png
 
