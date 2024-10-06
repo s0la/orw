@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path=~/.orw/scripts/rofi_scripts/dmenu
+path=~/.orw/scripts/rofi_scripts
 theme=$(awk -F '[".]' 'END { print $(NF - 2) }' ~/.config/rofi/main.rasi)
 
 read wallpaper{s,_categories} <<< \

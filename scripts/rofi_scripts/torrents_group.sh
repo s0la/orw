@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path=~/.orw/scripts/rofi_scripts/dmenu
+path=~/.orw/scripts/rofi_scripts
 
 pidof transmission-daemon &> /dev/null || (transmission-daemon; sleep 0.5)
 
