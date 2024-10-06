@@ -166,8 +166,9 @@ copy=""
 sort=""
 reverse=""
 options=""
-current="/home/sola"
+current=""
 torrent=""
+torrent_source=""
 selection=""
 multiple_files=""
 music_directory=""
@@ -188,6 +189,8 @@ bookmarks=${0%/*}/bookmarks
 icons='arrow_up.*empty\|reload\|options\|bookmarks\|file_empty\|dir_full\|checkbox'
 read {back,reload,options,bookmarks,file,directory,checkbox{,_checked}}_icon <<< \
 	$(sed -n "s/^\($icons\).*=//p" ~/.orw/scripts/icons | xargs)
+
+declare -A bluetooth_devices
 
 printf "\0keep-selection\x1ftrue\n$back_icon\n"
 
@@ -283,10 +286,12 @@ if [[ ${option% *} ]]; then
 
 			echo 'selection'
 			echo '━━━━━━━━━'
-			list_archive;;
+			list_archive
+			;;
 		slide_images)
 			killall rofi
-			feh "$current";;
+			feh "$current"
+			;;
 		mount)
 			lsblk -lpo +model | awk '{
 				if($1 ~ /sd.$/ && $7) {
@@ -431,30 +436,39 @@ if [[ ${option% *} ]]; then
 						unset back
 					fi;;
 				*torrent*)
-					[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
-					[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
+					if [[ ! $selection ]]; then
+						[[ -d $current ]] && torrent_directory="$current" || set torrent "$current"
+						[[ $option =~ ^(add_torrent|select_torrent_content)$ ]] && torrent_state="--start-paused"
 
-					if [[ ! $option =~ destination ]]; then
-						pidof transmission-daemon &> /dev/null || coproc (transmission-daemon &)
+						if [[ $option == *destination ]]; then
+							set torrent_source "$current"
+						else
+							pidof transmission-daemon &> /dev/null || coproc (sudo transmission-daemon &)
 
-						command="transmission-remote -a ${regex:-\"$torrent\"} "
-						command+="-w '${torrent_directory-$HOME/Downloads/}' $torrent_state &> /dev/null"
-						echo "COMM: $command" >> ~/comm.log
-						coproc (execute_on_finish "sleep 0.5 && $command" &)
+							[[ $multiple_files ]] &&
+								#torrent="$current/{${multiple_files//\|/\",\"}}"
+								#torrent="$torrent_source/{${multiple_files//\|/,}}"
+								torrent="$torrent_source/${multiple_files//\|/\" -a \"$torrent_source/}"
 
-						notify "Adding torrent\n${torrent:-$current}"
+							command="transmission-remote -a ${regex:-\"$torrent\"} "
+							command+="-w '${torrent_directory-$HOME/Downloads/}' $torrent_state &> /dev/null"
+							coproc (execute_on_finish "sleep 0.5 && $command" &)
 
-						un_set regex torrent
+							notify "Adding torrent\n${torrent:-$current}"
+
+							un_set regex torrent
+						fi
+
+						if [[ $option == select_torrent_content ]]; then
+							killall rofi
+
+							command="~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id"
+							command+="&& ~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content"
+							coproc (execute_on_finish "sleep 0.5 && $command" &)
+							exit
+						fi
 					fi
-
-					if [[ $option == select_torrent_content ]]; then
-						killall rofi
-
-						command="~/.orw/scripts/rofi_scripts/select_torrent_content_with_size.sh set_torrent_id"
-						command+="&& ~/.orw/scripts/rofi_scripts/torrents_group.sh select_torrent_content"
-						coproc (execute_on_finish "sleep 0.5 && $command" &)
-						exit
-					fi;;
+					;;
 				extract_archive) [[ -d "$current" && $archive ]] && $option || set archive "$current";;
 				*to_archive)
 					if [[ -d "$current" && $archive ]]; then
@@ -468,6 +482,16 @@ if [[ ${option% *} ]]; then
 					set current "$current/$arg"
 					mkdir "$current";;
 				add_to_playlist) add_music;;
+				*bluetooth*)
+					#bluetoothctl --timeout=10 scan on &> /dev/null &
+					#while read _ device_{mac,name}; do
+					#	bluetooth_devices["$device_name"]="$device_mac"
+					#done <<< $(bluetoothctl devices)
+					bluetoothctl --timeout=10 scan on &> /dev/null &
+					sleep 3
+					bluetoothctl devices | awk '{ sub(".*" $2 "\\s+", ""); print }'
+					exit
+					;;
 				*_wallpaper_directory)
 					[[ ! $option =~ ^set ]] &&
 						flag=M modify=${option%%_*}
@@ -508,15 +532,71 @@ if [[ $list && $selection && ! $options ]]; then
 	list_archive
 fi
 
+#~/.orw/scripts/notify.sh -t 5 "$option: ${bluetooth_devices[*]}"
+
+#if ((${#bluetooth_devices[*]})); then
+#	#if ((${#bluetooth_device[*]})) && [[ "${!bluetooth_devices[@]}" == *$option* ]]; then
+#	for bt_device in "${!bluetooth_devices[@]}"; do
+#		echo "$bt_device"
+#	done
+#	exit
+#fi
+
+bluetooth_device=$(bluetoothctl devices | awk '{
+		dn = $0
+		sub(".*" $2 "\\s+", "", dn)
+		if (dn ~ "^'"$option"'($|\\s)") { print $2; exit }
+	}')
+
+#~/.orw/scripts/notify.sh -t 5 "$option: $bluetooth_device"
+if [[ $bluetooth_device ]]; then
+	#files_to_send="${multiple_files:-$file}"
+
+	pidof obexd &> /dev/null ||
+		/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+	files_to_send="${multiple_files:-$current}"
+	#echo "send \"send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n\"" > ~/bt.log
+	/usr/bin/expect <<- EOF &> ~/bt.log
+		set timeout 10
+		spawn obexctl
+
+		expect "Client" {
+			send "connect $bluetooth_device\n"
+		}
+
+		expect "Connection successful" {
+			send "send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n"
+		}
+
+		sleep 5
+		interact
+	EOF
+
+	un_set options
+	[[ $multiple_files ]] &&
+		un_set selection && un_set multiple_files
+fi
+
+#if [[ "${!bluetooth_devices[@]}" == *$option* ]]; then
+#	echo obexctl connect ${bluetooth_devices["$option"]}
+#	echo $current, $file, $multiple_files
+#	exit
+#fi
+
 if [[ $options == options ]]; then
 	options=( 'all' 'sort' 'copy' 'move' )
 
 	[[ $move || $copy ]] && options+=( 'paste' )
 
+	#pidof obexd &> /dev/null && options+=( 'send_over_bluetooth' )
+	options+=( 'send_over_bluetooth' )
+
 	options+=( 'remove' 'mount' 'selection' 'add_to_bookmarks' 'add_content_to_archive' 'add_directory_to_archive' )
 
+	#~/.orw/scripts/notify.sh -t 11 "HERE $selection: $current, $multiple_files"
 	[[ "$archive" || "$archive_multiple" ]] && options+=( 'extract_archive' )
-	[[ "$torrent" ]] && options+=( 'add_torrent' 'start_torrent' 'select_torrent_content' )
+	[[ "$torrent" || $regex || $multiple_files == *torrent* ]] &&
+		options+=( 'add_torrent' 'start_torrent' 'select_torrent_destination' 'select_torrent_content' )
 
 	[[ $multiple_files ]] && options+=( 'set_as_wallpaper' 'edit_text' )
 	[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.mpd/mpd.conf)"
@@ -539,6 +619,9 @@ if [[ ! -d "$current" && ! $selection && ! $git ]]; then
 			options+=( 'move' 'copy' 'remove' 'xdg-open' )
 			mime=$(file --mime-type -b "$current")
 
+			#pidof obexd &> /dev/null && options+=( 'send_over_bluetooth' )
+			options+=( 'send_over_bluetooth' )
+
 			case $mime in
 				*torrent)
 					options+=( 'add_torrent' 'start_torrent' 'select_torrent_destination' 'select_torrent_content' );;
@@ -551,7 +634,7 @@ if [[ ! -d "$current" && ! $selection && ! $git ]]; then
 	fi
 fi
 
-if ((${#options[*]} > 1)); then
+if ((${#options[*]})); then
 	print_options | awk '!options[$0]++'
 else
 	[[ ! -f "$current" && ! -d "$current" ]] && back
@@ -574,11 +657,14 @@ if [[ -d "$current" && ! $options ]]; then
 		print_git_files staged
 		print_git_files unstaged
 	else
+		#~/.orw/scripts/notify.sh -t 5 "HERE $selection: $current, $(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"
+		#echo "$current, $(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")" >> ~/rezn.log
+
 		ls $sort $reverse $all -p --group-directories-first "$current" |
 			awk '
 				BEGIN {
 					se = length("'$selection'")
-					mf = "'"$(sed 's/[][\(\)\/]/\\&/g' <<< "$multiple_files")"'"
+					mf = "'"$(sed 's/[][\(\)\/]/\\\\&/g' <<< "$multiple_files")"'"
 				}
 
 				!/\.$/ {
