@@ -1,33 +1,22 @@
 #!/bin/bash
 
-indicator='●'
 config=~/.config/orw/config
-
-running="$(wmctrl -l | awk '\
+active=$(wmctrl -l | awk '\
 	{
-		w = $NF
-		if(w ~ "vifm[0-9]?") {
-			a = a ",3"
-			r = r " vifm_label=\"'$indicator' \""
-		} else if(w == "alacritty[0-9]?") {
-			a = a ",0"
-			r = r " term_label=\"'$indicator' \""
-		} else if(w == "DROPDOWN") {
-			a = a ",2"
-			r = r " dropdown_label=\"'$indicator' \""
-		} else if(w == "qutebrowser") {
-			a = a ",4"
-			r = r " qb_label=\"'$indicator' \""
+		switch ($NF) {
+			case /vifm[0-9]?/: a = a ",2"; break;
+			case /alacritty[0-9]?/: a = a ",0"; break;
+			case /DROPDOWN/: a = a ",1"; break;
+			case /qutebrowser/: a = a ",3"; break
 		}
-	} END { print r, "a=" a }')"
+	} END { if (a) print "-a " substr(a, 2) }')
 
 if [[ $style =~ icons|dmenu ]]; then
-	[[ $running ]] && eval "running='-a ${running#*,}'"
-	read {dropdown,term,vifm,qb} <<< \
-		$(sed -n 's/^\(arrow_down_square_full\|term\|dir_empty\|web\).*=//p' ~/.orw/scripts/icons | xargs)
+	read dropdown term vifm qb left right top bottom <<< \
+		$(sed -n 's/^\(arrow_down_square_full\|.*_side\|term\|dir_empty\|web\).*=//p' $icons | xargs)
 else
-	[[ $running ]] && eval "$running empty='  '"
-	term=alacritty dropdown=dropdown vifm=vifm qb=qutebrowser
+	term=alacritty dropdown=dropdown vifm=vifm qb=qutebrowser \
+		left=left right=right top=top bottom=bottom
 fi
 
 toggle
@@ -36,16 +25,19 @@ trap toggle EXIT
 item_count=4
 set_theme_str
 
-app=$(cat <<- EOF | rofi -dmenu -i -theme-str "$theme_str" $running -theme main
-	${term_label-$empty}$term
-	${dropdown_label-$empty}$dropdown
-	${vifm_label-$empty}$vifm
-	${qb_label-$empty}$qb
-EOF
+options=(
+	$term
+	$dropdown
+	$vifm
+	$qb
 )
 
-run=~/.orw/scripts/run.sh
-mode=$(awk '/^mode/ { print $NF }' $config)
+dropdown_options=(
+	$top
+	$right
+	$left
+	$bottom
+)
 
 get_title() {
 	title=$(wmctrl -l | awk '$NF ~ "^'$1'[0-9]+?" { print $NF }' | sort -n | \
@@ -55,32 +47,88 @@ get_title() {
 			} END { if(length(mc)) mc++; print "'"$1"'" mc }')
 }
 
-case "$app" in
-	*$dropdown*) ~/.orw/scripts/dropdown.sh ${app#*$dropdown};;
-	*$term*)
-		get_title alacritty
-		alacritty -t $title &
-		;;
-	*$vifm*)
-		get_title vifm
-		spy_windows=~/.orw/scripts/spy_windows.sh
-		workspace=$(xdotool get_desktop)
-		class="--class=custom_size"
+focused_window=$(xdotool getwindowfocus getwindowname)
+base_count=${#options[*]}
+item_count=$base_count
 
-		[[ $mode == tiling ]] &&
-			grep "^tiling_workspace.*\b$workspace\b" $spy_windows &> /dev/null &&
-			width=250 height=150
+while
+	set_theme_str
 
-		~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
+	read index option < <(
+		for option in ${options[*]}; do
+			echo $option
+			[[ $selected_option == $option ]] &&
+				tr ' ' '\n' <<< "${dropdown_options[*]}"
+		done | rofi -dmenu -format 'i s' -selected-row $index \
+			$hilight $active -theme-str "$theme_str" -theme main)
 
-		alacritty -t $title --class=custom_size -e ~/.orw/scripts/vifm.sh &
-		;;
-	*$qb*)
-		get_title qutebrowser
-		if [[ ! $app =~ private ]]; then
-			qutebrowser ${app#*$qb} &
-		else
-			qutebrowser -s content.private_browsing true &
-		fi
-		;;
-esac
+	[[ $option ]]
+do
+	case "$option" in
+		$dropdown|$top|$right|$left|$bottom)
+			if [[ $option == $dropdown ]]; then
+				if [[ $focused_window == DROPDOWN ]]; then
+					xdotool getactivewindow windowminimize
+				else
+					if ! wmctrl -a DROPDOWN; then
+						if [[ $selected_option ]]; then
+							item_count=$base_count
+							unset selected_option hilight
+						else
+							selected_option=$option
+							((item_count += ${#dropdown_options[*]}))
+							for h in $(seq 1 ${#dropdown_options[*]}); do
+								hilight+=",$((index + h))"
+							done
+
+							[[ $hilight ]] && hilight="-u ${hilight#,}"
+						fi
+
+						continue
+					fi
+				fi
+			else
+				case $option in
+					$top|$bottom)
+						x=c w=60 h=40
+						[[ $option == $top ]] && y=t || y=b
+						;;
+					$left|$right)
+						y=c w=25 h=65
+						[[ $option == $left ]] && x=l || x=r
+						;;
+				esac
+
+				~/.orw/scripts/dropdown.sh -x $x -y $y -w $w -h $h
+			fi
+				#~/.orw/scripts/dropdown.sh ${app#*$dropdown}
+			;;
+		$term*)
+			get_title alacritty
+			alacritty -t $title &
+			;;
+		$vifm*)
+			get_title vifm
+			spy_windows=~/.orw/scripts/spy_windows.sh
+			workspace=$(xdotool get_desktop)
+			class="--class=custom_size"
+
+			[[ $(awk '/^mode/ { print $NF }' $config) == tiling ]] &&
+				grep "^tiling_workspace.*\b$workspace\b" $spy_windows &> /dev/null &&
+				width=250 height=150
+
+			~/.orw/scripts/set_geometry.sh -c custom_size -w ${width:-400} -h ${height:-500}
+
+			alacritty -t $title --class=custom_size -e ~/.orw/scripts/vifm.sh &
+			;;
+		$qb*)
+			get_title qutebrowser
+			if [[ ! $app =~ private ]]; then
+				qutebrowser ${app#*$qb} &
+			else
+				qutebrowser -s content.private_browsing true &
+			fi
+			;;
+	esac
+	exit
+done

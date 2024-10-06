@@ -5,18 +5,93 @@ set_position() {
 
 	read x y width height <<< $(sed -n '/dropdown/,/^$/ s/[^0-9]*\([0-9]\+\).*/\1/p' ~/.config/openbox/rc.xml | xargs)
 
+	#echo $x, $y, $width, $height
+
+	read x y w h <<< $(awk -F '[_ ]' '
+		BEGIN {
+			wb = '$window_border'; wx = '$x'; wy = '$y'; ww = '$width'; wh = '$height';  rwx = dw - (wx + ww + wb);
+			nx = "'$x_position'"; ny = "'$y_position'"; nw = "'$new_width'"; nh = "'$new_height'"
+		} {
+			if (/^[xy]_offset/) { if (/x/) xo = $NF; else yo = $NF }
+			if (/^orientation/) {
+				d = '${display:-0}'; cd = 1
+				if ($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy }
+			}
+
+			if ($1 == "display") {
+				if ($3 == "size") {
+					if ((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i
+				} else if ($3 == "xy") {
+					cd = $2
+					if ((d && d == cd) || !d) { dx = $4; dy = $5 }
+				} else if ($3 == "offset") {
+					if (((d && (cd >= d)) || (!d)) && p < max) {
+						if (nw) { ww = int((dw / 100) * nw); if (nw == 100) ww -= bw }
+						if (nh) wh = int(((dh - $4 - $5 - yo) / 100) * nh);
+
+						if (nx == "r" || (!nx && rwx < wx + 10)) wx = dw - ww - int((xo + wb) / 2)
+						else if (nx == "l" || (!nx && wx < rwx + 10)) wx = int(xo / 2)
+						else wx = int((dw - ww) / 2)
+
+						if (ny == "t" || (!ny && rwx < wx + 10)) wy = (($4) ? $4 + 1 : int(yo / 2))
+						else if (ny == "b" || (!ny && wx < rwx + 10)) wx = dh - wh - int(xo / 2)
+						else wy = int((dh - wh - $4 - $5) / 2)
+
+						print dx + wx, dy + wy, ww + 32, wh + 57
+						exit
+					} else {
+						if(d && cd < d || !d) bmin += $3;
+						if(p > max) if(i == 3) wx -= $i; else wy -= $i
+					}
+				}
+			}
+		}' ~/.config/orw/config)
+
+	~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $w -h $h
+	return
+
 	read display display_x display_y display_width display_height bar_min bar_max x y <<< \
 		$(awk -F '[_ ]' '{
 			if(/^orientation/) {
 				d = '${display:-0}'; cd = 1; wx = '$x'; wy = '$y'; bmin = 0;
-				if($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy } };
-				if($1 == "display")
-					if($3 == "xy") { cd = $2; if((d && d == cd) || !d) { dx = $4; dy = $5 } }
-					else if($3 == "size") { if((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i;
-						if(((d && (cd >= d)) || (!d)) && p < max)
-							{ print (d) ? d : cd, dx, dy, dw, dh, bmin, bmin + $3, wx, wy; exit } else
-								{ if(d && cd < d || !d) bmin += $3;
-									if(p > max) if(i == 3) wx -= $i; else wy -= $i } } }' ~/.config/orw/config)
+				if($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy }
+			}
+
+			if($1 == "display") {
+				if ($3 == "size") {
+					if ((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i
+				} else if ($3 == "xy") {
+					cd = $2
+					if ((d && d == cd) || !d) { dx = $4; dy = $5 }
+					if (((d && (cd >= d)) || (!d)) && p < max) {
+						print (d) ? d : cd, dx, dy, dw, dh, bmin, bmin + $3, wx, wy
+						exit
+					} else {
+						if(d && cd < d || !d) bmin += $3;
+						if(p > max) if(i == 3) wx -= $i; else wy -= $i
+					}
+				}
+			}
+		}' ~/.config/orw/config)
+
+		#$(awk -F '[_ ]' '{
+		#	if(/^orientation/) {
+		#		d = '${display:-0}'; cd = 1; wx = '$x'; wy = '$y'; bmin = 0;
+		#		if($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy } };
+		#		if($1 == "display") {
+		#			if($3 == "xy") { cd = $2; if((d && d == cd) || !d) { dx = $4; dy = $5 } }
+		#			else if($3 == "size") {
+		#				if((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i;
+		#				if(((d && (cd >= d)) || (!d)) && p < max) {
+		#					print (d) ? d : cd, dx, dy, dw, dh, bmin, bmin + $3, wx, wy
+		#					exit
+		#				} else {
+		#					if(d && cd < d || !d) bmin += $3;
+		#					if(p > max) if(i == 3) wx -= $i; else wy -= $i
+		#					}
+		#				}
+		#			}
+		#		}' ~/.config/orw/config)
 
 	if [[ $x_position ]]; then
 		case $x_position in
@@ -47,9 +122,10 @@ set_position() {
 					nw = "'$new_width'"; if(nw) { ww = int((dw / 100) * nw); if(nw == 100) ww -= bw }
 					nh = "'$new_height'"; if(nh) wh = int(((dh - yo) / 100) * nh);
 					nx = "'$x_position'";
-					if(nx == "r" || (!nx && rwx < wx + 10)) wx = dw - (rxo + ww + wb);
+					#if(nx == "r" || (!nx && rwx < wx + 10)) wx = dw - (rxo + ww + wb);
+					if (nx == "r" || (!nx && rwx < wx + 10)) wx = dw - (rxo + ww + wb);
 					else if(nx == "l" || (!nx && wx < rwx + 10)) wx = xo;
-					else wx = int(dw / 2 - ww / 2);
+					else wx = int((dw - ww) / 2);
 						print dx + wx, dy + yo, ww, wh }')
 
 		y=$(awk '
@@ -60,6 +136,7 @@ set_position() {
 }
 
 x_position=c
+y_position=t
 	
 current_desktop=$(xdotool get_desktop)
 focused_window=$(xdotool getwindowfocus getwindowname)
@@ -70,12 +147,13 @@ else
 	if ! wmctrl -a DROPDOWN; then
 		while getopts :x:y:w:h:d: flag; do
 			case $flag in
-				y) new_y=$OPTARG;;
+				#y) new_y=$OPTARG;;
 				w) new_width=$OPTARG;;
 				h) new_height=$OPTARG;;
-				x)
-					x_position=$OPTARG
-					sed -i "/^x_position/ s/=./=$x_position/" $0;;
+				[xy])
+					var=${flag}_position
+					eval $var=$OPTARG
+					sed -i "/^$var/ s/=./=${!var}/" $0;;
 				d) display=$OPTARG;;
 			esac
 		done
