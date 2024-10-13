@@ -13,7 +13,7 @@ icon_size=$(awk '
 		if (/element-padding/) { p = get_value() }
 		if (/window-padding/) { wp = get_value() }
 		if (/window-width/) { exit }
-	} END { print int((h - (2 * p + f)) / 9 - 2 * p - 1) }' \
+	} END { print int((h - (2 * p + f)) / 9 - 2 * p - 2) }' \
 	~/.config/{orw/config,rofi/image_preview.rasi})
 
 theme_str="element-icon { size: ${icon_size}px; }"
@@ -28,7 +28,7 @@ while
 			echo -en "$element\0icon\x1f$element\n"
 		done <<< $(echo -e "$content") |
 			rofi -dmenu -show-icons -format 'i s' \
-			$active -selected-row ${index:-0} -theme-str "$theme_str" -theme img)
+			$active -selected-row ${index:-0} -theme-str "$theme_str" -theme image_preview 2> /dev/null)
 	[[ $element ]]
 do
 	[[ $command ]] &&
