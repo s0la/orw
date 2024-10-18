@@ -55,8 +55,8 @@ get_mpd_stats() {
 					ts = get_seconds(tt)
 					ss = es % int(ts / pbs)
 
-					ns = "|"
 					ns = "┃"
+					ns = "|"
 					fn = a ns t
 					nsl = length(ns)
 					fnl = length(fn)
