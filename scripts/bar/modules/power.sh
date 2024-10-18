@@ -1,10 +1,13 @@
 #!/bin/bash
 
 make_power_action() {
-	[[ $2 ]] && local power_action="&& ${2:-sudo systemctl ${1/ }}"
+	#[[ $2 ]] && local power_action="&& ${2:-sudo systemctl ${1/ }}"
+	local power_action="&& ${2:-sudo systemctl ${1/ }}"
+	[[ $1 == close ]] && local afg="$pbefg" || local afg='$fg'
+
 	[[ ! $power_offset ]] && local separator='%{O$separator}'
 	local icon=$(get_icon "power_bar_${1// /_}") offset=$power_offset
-	echo "actions+=\"$offset%{A:kill \$pid $power_action:}${icon:-$1}%{A}$offset$separator\"\\n"
+	echo "actions+=\"$offset%{A:kill \$pid $power_action:}$afg${icon:-$1}%{A}$offset$separator\"\\n"
 }
 
 assign_power_args() {
@@ -53,8 +56,26 @@ make_power_bar_script() {
 
 	((${#bg} > 7)) &&
 		local transparency=${bg:1:2}
+	local transparency='dd'
 
-	cat <<- EOF > $power_bar
+	#cat <<- EOF > $power_bar
+	#	pid='\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)'
+
+	#	separator='$separator'
+	#	$(echo -e "$power_actions")
+
+	#	bg='#$transparency${Psbg//[%{B\#\}]}'
+	#	fg='${Psfg//[%{F\}]}'
+	#	fc='${Psfc:-$sfc}'
+	#	font='$font'
+	#	geometry='$geometry'
+
+	#	echo -e "%{c}\$actions" | lemonbar \\
+	#		-p -d -B\$bg -F\$fg -R\$fc -r 2 \\
+	#		-f "\$font" -g \$geometry -n power_bar | bash
+	#EOF
+
+	power_bar="$(cat <<- EOF
 		pid='\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)'
 
 		separator='$separator'
@@ -62,18 +83,23 @@ make_power_bar_script() {
 
 		bg='#$transparency${Psbg//[%{B\#\}]}'
 		fg='${Psfg//[%{F\}]}'
-		fc='${Pfc:-$fc}'
+		fc='${Psfc:-$sfc}'
 		font='$font'
 		geometry='$geometry'
 
 		echo -e "%{c}\$actions" | lemonbar \\
-			-p -d -B\$bg -F\$fg -R\$fc -r 3 \\
+			-p -d -B\$bg -F\$fg -R\$fc -r 2 \\
 			-f "\$font" -g \$geometry -n power_bar | bash
-	EOF
+		EOF
+	)"
+
+	[[ -f $power_bar_path ]] || touch $power_bar_path
+	local diff=$(comm -3 <(echo -e "$power_bar" | sort) <(sort $power_bar_path) | wc -l)
+	((diff)) && echo -e "$power_bar" > $power_bar_path
 }
 
 make_power_content() {
-	power_bar=$modules_dir/power_bar.sh
+	power_bar_path=$modules_dir/power_bar.sh
 	power_width_ratio=20 power_height_ratio=20
 
 	assign_args power
@@ -82,7 +108,7 @@ make_power_content() {
 }
 
 set_power_actions() {
-	actions_start="%{A:bash $power_bar:}" actions_end="%{A}"
+	actions_start="%{A:bash $power_bar_path:}" actions_end="%{A}"
 }
 
 get_power() {
