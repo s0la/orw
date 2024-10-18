@@ -2,6 +2,21 @@
 
 get_date() {
 	read seconds date <<< "$(date +"%S $date_format")"
+
+	[[ "$date_format" == *\|* ]] &&
+		#date="${dsfg}${date/\|/┃${dpfg}}"
+		date="${dsfg}${date/\|/|${dpfg}}"
+		#date="${dpfg}${date/\|/${dsfg}┃}"
+
+	#if [[ ! ${joiner_modules[$opt]} ]]; then
+	#	local tpbg='$tpbg' tpfg='$tpfg'
+	#	[[ "$date_format" == *\|* ]] &&
+	#		date_format="${tsfg}${date_format%\|*}|${tpfg}${date_format#*\|}"
+	#	~/.orw/scripts/notify.sh -t 11 "$date_format"
+	#else
+	#	local tpbg='${cjsbg:-$tsbg}' tpfg='${cjsfg:-$tsfg}'
+	#	local time_frame_start=$module_frame_start time_frame_end=$module_frame_end
+	#fi
 }
 
 check_date() {
