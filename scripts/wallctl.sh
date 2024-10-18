@@ -18,7 +18,7 @@ function set_aspect() {
 	local file="$(eval ls "$1")"
 
 	if [[ -f "$file" ]]; then
-		read aspect xinerama <<< $(file -b "$file" |\
+		read aspect xinerama <<< $(file -b "$file" |
 			awk -F '[x,]' '{
 				o = "'${orientation:0:1}'"
 				wd = gensub(/.* ([0-9]+) ?x ?([0-9]+).*/, "\\1,\\2", 1)
@@ -26,12 +26,17 @@ function set_aspect() {
 				ww = wda[1]
 				wh = wda[2]
 
-				if ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) {
-					print "--bg-scale --no-xinerama"
-				} else {
-					print "--bg-fill"
-				}
+				print ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) ? \
+					"--bg-scale --no-xinerama" :  "--bg-fill"
+
+				#if ((o == "h" && ww > 2.5 * wh) || (o == "v" && wh > ww)) {
+				#	print "--bg-scale --no-xinerama"
+				#} else {
+				#	print "--bg-fill"
+				#}
 			}')
+			
+		[[ $no_xinerama ]] && unset xinerama
 	fi
 }
 
@@ -76,6 +81,24 @@ function read_wallpapers() {
 
 function write_wallpapers() {
 	eval [[ -f "${wallpaper_directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
+		awk -i inplace '
+			BEGIN {
+				wi = '$2'
+				dc = '$display_count'
+				w = " \"'"$1"'\""
+			}
+
+			NR == FNR { d[NR] = $1 }
+			NR > FNR {
+				if(/^desktop_'${all_desktops:-$current_desktop}'/) {
+					$0 = (d[wi] > dc) ? $0 w : gensub(" [^\"]*(\"[^\"]*\")*", w, d[wi])
+				}
+				print
+			}' <(~/.orw/scripts/display_mapper.sh) $config 2> /dev/null
+}
+
+function write_wallpapers() {
+	eval [[ -f "${wallpaper_directories[$2 - 1]:-${directory%\{*}}/'$1'" \|\| '$1' =~ ^# ]] &&
 		awk -i inplace 'BEGIN {
 				wi = '$2'
 				dc = '$display_count'
@@ -92,8 +115,8 @@ set_order() {
 	[[ $unsplash ]] && type=image || type=wallpaper
 
 	case ${image_order:=${order:=n}} in
-		p*) index="(((${type}_count + current_${type}_index - ${order_count-1})) % ${type}_count)";;
-		n*) index="(current_${type}_index + ${order_count-1})";;
+		p*) index="(((${type}_count + current_${type}_index - ${order_count:-1})) % ${type}_count)";;
+		n*) index="(current_${type}_index + ${order_count:-1})";;
 		*) index="RANDOM";;
 	esac
 }
@@ -251,6 +274,9 @@ try_wall() {
 	[[ $keep_wall == n ]] && rm "$wallpaper_path"
 }
 
+display_mapping=$(~/.orw/scripts/display_mapper.sh | awk '{ printf "[%d]=%d ", NR, $1 }')
+declare -A display_mapper
+eval display_mapper=( $display_mapping )
 current_desktop=$(xdotool get_desktop)
 
 read depth directory <<< $(awk '\
@@ -262,12 +288,14 @@ display_count=${#displays[*]}
 
 [[ "$@" =~ -U ]] && unsplash=true
 
-while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
+while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmx flag; do
 	case $flag in
+		x) no_xinerama=true;;
 		i) index=$((OPTARG - 1));;
 		n)
-			read_wallpapers
-			display_number=$OPTARG;;
+			((${#wallpapers[@]})) || read_wallpapers
+			display_number=${display_mapper[$OPTARG]}
+			;;
 		w)
 			desktop=true
 			current_desktop=$((OPTARG - 1));;
@@ -279,7 +307,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				((depth)) && directory_depth=$((depth - 1))
 				wallpaper_index=$((${display_number:-1} + $1 - 1))
 
-				if (($1 <= arg_count)); then
+				if ((!arg_count || $1 <= arg_count)); then
 					read belong_to_path wallpaper_directory <<< "$(awk '{
 						dd = "'$directory_depth'"
 						d = "'"$directory"'"; dp = d
@@ -327,7 +355,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 				done
 			fi
 
-			shift $arg_count;;
+			shift $((arg_count + 1))
+			;;
 		d)
 			directory="$(sed "s/\(^'\|\/\?['\/]$\|'\(\/\)\)/\2/g" <<< $OPTARG)"
 			directory="$(get_directory_path "${directory//\\ / }")"
@@ -378,11 +407,17 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 		r)
 			read_wallpapers
 
-			if [[ $all_desktops ]]; then
+			#[[ $display_number ]] &&
+			#	display_wallpaper="${wallpapers[display_number - 1]}"
+
+			#if [[ $all_desktops || $display_number ]]; then
 				for wallpaper_index in ${!wallpapers[*]}; do
-					write_wallpapers "${wallpapers[wallpaper_index]}" $((wallpaper_index + 1))
+					wallpaper="${display_wallpaper:-${wallpapers[wallpaper_index]}}" 
+					write_wallpapers "$wallpaper" $((wallpaper_index + 1))
+					wallpapers[wallpaper_index]="$wallpaper"
 				done
-			fi;;
+			#fi
+			;;
 		D)
 			depth=$OPTARG
 			set depth;;
@@ -1134,6 +1169,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUW flag; do
 			do
 				continue
 			done;;
+		m) mirror=true;;
 		?) echo "$OPTARG is not supported, please try again.";;
 	esac
 done
@@ -1178,32 +1214,74 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 	root="${directory%/\{*}"
 	((depth)) && maxdepth="-maxdepth $depth"
 
-	while read -r wallpaper; do
-		[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
-		all_wallpapers+=("$wallpaper")
-	done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
-			awk '{ sub("'"${root//\'}"'/?", ""); print }' | sort)
+	IFS=$'\n' read -d '' -a wallpapers <<< $(awk -F '"' '\
+		NR == FNR && /^primary/ {
+			dn = "'$display_number'"
+			d = (length(dn)) ? dn : gensub("[^0-9]*", "", 1)
+		}
+		NR == FNR && /^desktop_'${current_desktop}'/ {
+			for (i=2; i<NF; i++) {
+				if (!(i % 2)) {
+					aw[$i] = aw[$i] " " i / 2
+					ad[i / 2] = 1
+				}
+			}
+		}
+		NR > FNR {
+			sub("'"${root//\'}"'/?", "")
+			if ($0 in aw) {
+				split(aw[$0], wd, " ")
+				for (cd in wd) ad[wd[cd]] = FNR
+			}
+			wp[FNR]=$0
+		}
 
-	wallpaper_count=${#all_wallpapers[*]}
+		END {
+			wc = FNR
+			m = '${#mirror}'
+			o = "'${order:-next}'"
+			oc = '${order_count:-1}'
 
-	if [[ ! $index ]]; then
-		[[ $colors ]] && index=$current_wallpaper_index || set_order
-	fi
-
-	for display in $(seq $display_count); do
-		wallpaper_index="$((${index:-$wall_index} % wallpaper_count))"
-		wallpaper="${all_wallpapers[$wallpaper_index]}"
-
-		if ((display_number)); then
-			if ((display_number == display)); then
-				write_wallpapers "$wallpaper" $display_number
-				wallpapers[display_number - 1]="$wallpaper"
-			fi
-		else
-			write_wallpapers "$wallpaper" $display
-			wallpapers+=( "$wallpaper" )
-		fi
+			if (m || dn) wi = (o == "rand") ? srand() : ad[d] + ((o == "next") ? oc : -oc)
+			for (d in ad) {
+				if (!m || (dn && d != dn)) {
+					wi = ad[d]
+					if (!dn || d == dn) wi = (o == "rand") ? '$RANDOM' : ad[d] + ((o == "next") ? oc : -oc)
+				}
+				print wp[(wi + wc) % wc]
+			}
+		}' $config <(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort))
+	
+	for wallpaper_index in "${!wallpapers[@]}"; do
+		write_wallpapers "${wallpapers[wallpaper_index]}" $((wallpaper_index + 1))
 	done
+
+	#while read -r wallpaper; do
+	#	[[ "$wallpaper" == "$current_wallpaper" ]] && current_wallpaper_index=${#all_wallpapers[*]}
+	#	all_wallpapers+=("$wallpaper")
+	#done <<< $(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | \
+	#		awk '{ sub("'"${root//\'}"'/?", ""); print }' | sort)
+
+	#wallpaper_count=${#all_wallpapers[*]}
+
+	#if [[ ! $index ]]; then
+	#	[[ $colors ]] && index=$current_wallpaper_index || set_order
+	#fi
+
+	#for display in $(seq $display_count); do
+	#	wallpaper_index="$((${index:-$wall_index} % wallpaper_count))"
+	#	wallpaper="${all_wallpapers[$wallpaper_index]}"
+
+	#	if ((display_number)); then
+	#		if ((display_number == display)); then
+	#			write_wallpapers "$wallpaper" $display_number
+	#			wallpapers[display_number - 1]="$wallpaper"
+	#		fi
+	#	else
+	#		write_wallpapers "$wallpaper" $display
+	#		wallpapers+=( "$wallpaper" )
+	#	fi
+	#done
 fi
 
 if [[ $desktop ]]; then
@@ -1212,14 +1290,24 @@ else
 	for wallpaper_index in "${!wallpapers[@]}"; do
 		wallpaper="${wallpapers[wallpaper_index]}"
 
-		if [[ ${wallpaper//\"/} =~ ^# ]]; then
-			((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot -solid "$wallpaper" && exit
-		else
-			wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
-			set_aspect "$wallpaper_path"
+		#if [[ ${wallpaper//\"/} =~ ^# ]]; then
+		#	((display_number)) && screens="-screens $display_number"
+		#	((wallpaper_index == (${#wallpapers[@]} - 1))) && hsetroot $screens -solid "$wallpaper" && exit
+		#else
+		#	wallpaper_path="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
+		#	#set_aspect "$wallpaper_path"
 
-			wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
-		fi
+		#	wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
+		#fi
+
+		[[ ${wallpaper//\"/} == \#* ]] &&
+			wallpaper_to_add="-sc \\$wallpaper" ||
+			wallpaper_to_add="-z ${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
+			#set_aspect "$wallpaper_path"
+
+		wallpapers_to_set+="--on $wallpaper_index "$wallpaper_to_add" "
+		#echo $wallpaper_index: ${wallpaper_directories[$wallpaper_index]} - ${wallpapers[$wallpaper_index]}
+		#echo $wallpaper_index: $wallpaper_to_add
 	done
 
 	if [[ $colors ]]; then
@@ -1234,5 +1322,6 @@ else
 		[[ -f "${config%/*}/colorschemes/$colorscheme.ocs" ]] && ~/.orw/scripts/rice_and_shine.sh -tC $colorscheme &
 	fi
 
-	eval "feh $wallpapers_to_set" &> /dev/null
+	#eval "feh $wallpapers_to_set" #&> /dev/null
+	eval "setroot $wallpapers_to_set" #&> /dev/null
 fi

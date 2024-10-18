@@ -44,20 +44,22 @@ displays=( $(awk -F '[=_ ]' '
 		for (di in adi) print adi[di]
 	}' ~/.config/{openbox/rc.xml,orw/config} ~/.orw/scripts/icons ) )
 
-display_mapping=$(
-	xrandr | awk -F '[ x+]' '
-		NR == 1 {
-			h = $9
-			v = $12
-			sub("[^0-9]", "", v)
-			si = (h > 2 * v) ? 2 : 3
-		}
-		$2 == "connected" {
-			ad[$(3 + ($3 == "primary") + si)] = ++d
-		} END {
-			for (d in ad) printf "[%d]=%d ", ++di, ad[d]
-		}'
-)
+#display_mapping=$(
+#	xrandr | awk -F '[ x+]' '
+#		NR == 1 {
+#			h = $9
+#			v = $12
+#			sub("[^0-9]", "", v)
+#			si = (h > 2 * v) ? 2 : 3
+#		}
+#		$2 == "connected" {
+#			ad[$(3 + ($3 == "primary") + si)] = ++d
+#		} END {
+#			for (d in ad) printf "[%d]=%d ", ++di, ad[d]
+#		}'
+#)
+
+display_mapping=$(~/.orw/scripts/display_mapper.sh | awk '{ printf "[%d]=%d ", NR, $1 }')
 
 declare -A display_map
 eval display_map=( $display_mapping )

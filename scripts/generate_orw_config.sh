@@ -1,19 +1,19 @@
 #!/bin/bash
 
-get_displays() {
-	xrandr | awk -F '[ x+]' '
-				NR == 1 {
-					h = $9
-					v = $12
-					sub("[^0-9]", "", v)
-					si = (h > 2 * v) ? 2 : 3
-				}
-				$2 == "connected" {
-					p = $3 == "primary"
-					i = 3 + p
-					ad[$(i + si)] = $1 " " p " " $i " " $(i + 1) " " $(i + 2) " " $(i + 3)
-				} END { for (d in ad) print ad[d] }'
-}
+#get_displays() {
+#	xrandr | awk -F '[ x+]' '
+#				NR == 1 {
+#					h = $9
+#					v = $12
+#					sub("[^0-9]", "", v)
+#					si = (h > 2 * v) ? 2 : 3
+#				}
+#				$2 == "connected" {
+#					p = $3 == "primary"
+#					i = 3 + p
+#					ad[$(i + si)] = $1 " " p " " $i " " $(i + 1) " " $(i + 2) " " $(i + 3)
+#				} END { for (d in ad) print ad[d] }'
+#}
 
 #get_displays() {
 #	xrandr | awk -F '[ x+]' '
@@ -60,7 +60,75 @@ wm() {
 }
 
 display() {
-	while read -r name primary width height x y; do
+	get_bar_offset() {
+		local current_bars="${current_running//,/ }"
+
+		read default_y_offset primary_display <<< \
+			$(awk -F '[_ ]' '/^(y_offset|primary)/ { print $NF }' ~/.config/orw/config | xargs)
+
+		while read bar_config; do
+				read display bottom offset <<< $(awk '
+					function get_flag(flag) {
+						if(match($0, "-" flag "[^-]*")) return substr($0, RSTART + 3, RLENGTH - 3)
+					}
+
+					function get_value(flag) {
+						gsub("[^0-9]", "", flag)
+					}
+
+					/^[^#]/ {
+						y = get_flag("y")
+						b = (y ~ "b")
+						if (y) {
+							gsub("[^0-9]", "", y)
+						} else y = '$default_y_offset'
+
+						h = get_flag("h")
+						if (h) get_value(h)
+
+						f = get_flag("f")
+						if (f) {
+							m = (f ~ "[ou]") ? 1 : 2
+							get_value(f)
+							f *= m
+						}
+
+						F = get_flag("F")
+						if (F) {
+							get_value(F)
+							F *= 2
+						}
+
+						s = get_flag("S")
+						if (!s) s = 1
+
+						print s, b, y + h + f + F
+					}' $bar_config)
+
+			((!${#offsets[$display]})) &&
+				display_offsets=( 0 0 ) ||
+				read -a display_offsets <<< ${offsets[$display]}
+
+			if [[ ! $killed || ($killed && ! ${bars[*]} =~ $bar) ]]; then
+				((offset > ${display_offsets[bottom]:-0})) && display_offsets[bottom]=$offset
+			fi
+
+			offsets[$display]="${display_offsets[*]}"
+		done < <(
+				awk '
+					NR == FNR && /^last_running/ {
+						sub(".*=", "")
+						ab = $NF
+					}
+					NR > FNR && $0 ~ "/(" ab ")$" { print }' \
+						~/.orw/scripts/barctl.sh <(ls ~/.config/orw/bar/configs/*)
+				)
+	}
+
+	declare -A offsets
+	get_bar_offset
+
+	while read -r display_index name primary width height x y; do
 		((index++))
 		((last_x += x))
 		((last_y += y))
@@ -70,11 +138,12 @@ display() {
 		displays+="display_${index}_name $name\n"
 		displays+="display_${index}_size $width $height\n"
 		displays+="display_${index}_xy $x $y\n"
-		displays+="display_${index}_offset 0 0\n"
+		displays+="display_${index}_offset ${offsets[$index]:-0 0}\n"
 
 		((index == 1)) && first_display_name=$name first_display_index=$index
 		((primary)) && primary_display_name=$name primary_display_index=$index
-	done <<< $(get_displays)
+	done <<< $(~/.orw/scripts/display_mapper.sh)
+	#done <<< $(get_displays)
 	#done <<< $(xrandr | awk -F '[ x+]' '$2 == "connected" {
 	#								p = $3 == "primary"
 	#								i = 3 + p
@@ -108,7 +177,20 @@ if [[ -f $conf ]]; then
 		line_number=$(sed -n "/^#$arg/=" $conf)
 		sed -i "/^#$arg/,/^$/d" $conf
 
-		((line_number > $(wc -l < $conf))) && echo -e $($arg) >> $conf || sed -i "${line_number}i$($arg)" $conf
+		((line_number > $(wc -l < $conf))) &&
+			echo -e $($arg) >> $conf ||
+			sed -i "${line_number}i$($arg)" $conf
+
+		if [[ $arg == display ]]; then
+			awk -i inplace -F '"' '
+				/^display.*name/ { d++ }
+				/^desktop/ {
+					if (d > NF / 2) {
+						for (f=NF/2; f<d; f++) sub("$", " \"" $(NF - 1) "\"")
+					}
+				} { print }
+			' ~/.config/orw/config
+		fi
 	done
 else
 	echo -e "$(wm)\n$(display)\n$(wallpapers)" > $conf
