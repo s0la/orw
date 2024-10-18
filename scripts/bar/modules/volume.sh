@@ -6,11 +6,23 @@ get_volume() {
 	#	NR == nr { c = $NF !~ "hdmi" }
 	#	c && /^\s*Volume/ { print $5; exit }')
 
-	read icon volume <<< $(pactl list sinks |
-		awk '
-			$1 == "State:" && $NF == "RUNNING" { c = 1 }
-			c && $1 == "Mute:" { print "volume" (($NF == "yes") ? "_mute" : "") }
-			c && /^\s*Volume/ { print $5; exit }' | xargs)
+	#read icon volume <<< $(pactl list sinks |
+	#	awk '
+	#		#$1 == "State:" && $NF ~ "RUNNING|IDLE" { c = 1 }
+	#		$1 == "Name:" { c = ($NF ~ "USB|analog-stereo") }
+	#		c && $1 == "Mute:" { print "volume" (($NF == "yes") ? "_mute" : "") }
+	#		c && /^\s*Volume/ { print $5; exit }' | xargs)
+
+	read icon volume <<< $(pactl list sinks | awk '
+		$1 == "Mute:" { m = "volume" (($NF == "yes") ? "_mute" : "") }
+		/^\s*Volume/ { v = $5 }
+		$1 ~ "bus$" {
+			switch ($NF) {
+				case /bluetooth/: b = m " " v; break
+				case /usb/: u = m " " v; break
+				case /pci/: p = m " " v; break
+			}
+		} END { print (b) ? b : (u) ? u : p }')
 
 	label='VOL'
 	icon="$(get_icon "${icon}=")"
