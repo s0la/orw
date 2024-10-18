@@ -42,7 +42,7 @@ list_categories() {
 		}'
 }
 
-root="/home/sola/Pictures/wallpapers"
+root="$HOME/Pictures/wallpapers"
 
 if [[ $@ ]]; then
 	read option arg <<< "$@"

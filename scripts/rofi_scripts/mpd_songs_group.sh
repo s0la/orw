@@ -1,6 +1,6 @@
 #!/bin/bash
 
-path=~/.orw/scripts/rofi_scripts/dmenu
+path=~/.orw/scripts/rofi_scripts
 
 read x y <<< $(xdotool getactivewindow getwindowgeometry |
 	sed -n '2s/.*\s\([0-9]*\),\([0-9]*\).*/\1 \2/p')
@@ -29,10 +29,10 @@ rofi_width=$(awk '
 				}
 
 				if (/^display_[0-9]_size/) { w = $2 }
-				if (/^display_[0-9]_xy/ && $pf > p) {
+				if (/^display_[0-9]_xy/ && p > $pf) {
 					rw = int(w * (ww - sw - 2 * wp) / 100)
 					rw -= 2 * ep
-					print int((rw / f) * 1.15)
+					print int((rw / f) * 1.13) + 0
 					exit
 				}
 			}
