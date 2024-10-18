@@ -75,9 +75,10 @@ check_bluetooth() {
 				set_bluetooth_actions
 				;;
 			bluetooth) get_bluetooth $state;;
-			*) [[ ${state,} == disconnect ]] &&
-				unset bluetooth_devices[$device] ||
-				eval bluetooth_devices+=( $(get_bluetooth_devices $device) )
+			*)
+				[[ ${state,} == disconnect ]] &&
+					unset bluetooth_devices[$device] ||
+					eval bluetooth_devices+=( $(get_bluetooth_devices $device) )
 				#eval "bluetooth_devices$(get_bluetooth_devices $device)"
 				;;
 				#if [[ $state == Connect ]]; then
