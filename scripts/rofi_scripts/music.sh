@@ -4,19 +4,23 @@ while
 	prompt=$(mpc current -f '%title%\n%artist%\n%album%' |
 		awk '{ print (length($0) > 20) ? substr($0, 0, 20) ".." : $0 }')
 	album=$(mpc current -f %album% | sed 's/[()]//g')
-	cover="$HOME/Music/covers/${album// /_}.jpg"
+	#cover="$HOME/Music/covers/${album// /_}.jpg"
 
-	if [[ ! -f $cover ]]; then
-		root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.config/mpd/mpd.conf)
-		file=$(mpc current -f %file%)
-		full_path="$root/$file"
-		eval ffmpeg -loglevel quiet -i \"$full_path\" -vf scale=300:300 \"$cover\"
-	fi
+	#if [[ ! -f $cover ]]; then
+	#	root=$(sed -n "/music_directory/ s/[^\"]*\"\(.*\)\/\?\".*/\1/p" ~/.config/mpd/mpd.conf)
+	#	[[ -d $root/covers ]] || mkdir $root/covers
+	#	file=$(mpc current -f %file%)
+	#	full_path="$root/$file"
+	#	eval ffmpeg -loglevel quiet -i \"$full_path\" -vf scale=300:300 \"$cover\"
+	#fi
 
+	cover="$(~/.orw/scripts/get_cover_art.sh)"
 	[[ -f $cover ]] && ln -sf $cover /tmp/rofi_cover_art.png
 
+	include='.*circle_empty\|repeat\|shuffle'
+	exclude='Workspace\|arrow_\(left\|right\)\|x\|\(.*us_circle\)'
 	read {volume_{up,down},prev,next,play,stop,pause,repeat,shuffle}_icon <<< \
-		$(sed -n '/^Workspace/! s/\(.*circle_empty\|repeat\|shuffle\).*=//p' ~/.orw/scripts/icons | xargs)
+		$(sed -n "/^\($exclude\)/! s/\($include\).*=//p" ~/.orw/scripts/icons | xargs)
 
 	toggle_icon=$(mpc | awk -F '[][]' '
 							NR == 2 { s = $2 }

@@ -4,7 +4,7 @@ if [[ $style =~ icons|dmenu ]]; then
 	read up down mute <<< \
 		$(sed -n 's/^\(arrow_\(up\|down\)\|x\).*empty=//p' ~/.orw/scripts/icons | xargs)
 else
-	default='default' up='brightness up' down='brightness down' sep=' '
+	default='default' up='volume up' down='volume down' sep=' '
 fi
 
 toggle
@@ -21,6 +21,7 @@ while
 	)
 
 	if [[ $volume ]]; then
+		#echo "$(xdotool get_desktop): $row - $volume" #> ~/vol.log
 		case $volume in
 			$mute*) amixer -q -D pulse set Master toggle;;
 			*)
@@ -30,7 +31,8 @@ while
 		esac
 	fi
 
-	[[ $volume ]] && ~/.orw/scripts/system_notification.sh system_volume &
+	#echo "$(xdotool get_desktop): $row" #> ~/vol.log
+	[[ $row ]] && ~/.orw/scripts/system_notification.sh system_volume &
 
 	[[ $volume =~ $up|$down ]]
 do

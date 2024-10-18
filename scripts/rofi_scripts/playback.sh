@@ -1,9 +1,10 @@
 #!/bin/bash
 
 if [[ $style =~ icons|dmenu ]]; then
-	icons='.*circle_empty\|list\|random'
+	include='.*circle_empty\|list\|random'
+	exclude='Workspace\|plus\|minus\|x\|arrow_\(left\|right\)'
 	read up down prev next play stop pause pl random <<< \
-		$(sed -n "/^\(Workspace\|plus\|minus\)/! s/^\($icons\).*=//p" ~/.orw/scripts/icons | xargs)
+		$(sed -n "/^\($exclude\)/! s/^\($include\).*=//p" ~/.orw/scripts/icons | xargs)
 	toggle=$(mpc | awk -F '[][]' 'NR == 2 { s = $2 }
 		END { print (s == "playing") ? "'"$pause"'" : "'"$play"'" }')
 else
@@ -13,7 +14,7 @@ fi
 handle_volume() {
 	volume="$action"
 	[[ ${volume##* } =~ [0-9] ]] && local multiplier="${volume##* }" volume="${volume% *}"
-	[[ ${volume%% *} == $icon_up ]] && direction=+ || direction=-
+	[[ ${volume%% *} == $up ]] && direction=+ || direction=-
 
 	mpc -q volume $direction$((${multiplier:-1} * 5))
 	~/.orw/scripts/system_notification.sh mpd_volume osd &
@@ -44,7 +45,7 @@ while
 		case "$action" in
 			$toggle*) mpc -q toggle;;
 			$up*|$down*) handle_volume;;
-			$pl*) ~/.orw/scripts/rofi_scripts/dmenu/art_playlist.sh &;;
+			$pl*) ~/.orw/scripts/rofi_scripts/art_playlist.sh &;;
 			$stop*) mpc -q stop;;
 			$next*) mpc -q next;;
 			$prev*) mpc -q prev;;
