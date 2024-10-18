@@ -59,7 +59,8 @@ set_x() {
 					bar_x=$((x + display_width - ${reverse_offset:-$default_x_offset} - bar_width))
 			fi
 		else
-			bar_x=$default_x_offset
+			#bar_x=$default_x_offset
+			bar_x=$((x + default_x_offset))
 		fi
 	fi
 }
@@ -67,13 +68,24 @@ set_x() {
 get_icon() {
 	local icon="$1"
 
-	icon="$(awk -F '=' '/^[^#]/ && /'"$icon"'/ { print $NF }' $icons_file)"
-	echo "%{I}$icon%{I}"
+	#icon="$(awk -F '=' '/^[^#]/ && /'"$icon"'/ {
+	#	p = (/bar/) ? "T3" : "I"
+	#	printf "%{%s}%s%{%s-}\n", p, $NF, substr(p, 2, 1)
+	#}' $icons_file)"
+
+	#icon="$(awk -F '=' '/^[^#]/ && /'"$icon"'/ { print $NF }' $icons_file)"
+	#echo "%{I}$icon%{I}"
+
+	awk -F '=' '/^[^#]/ && /'"$icon"'/ {
+		p = (/bar/) ? "T3" : "I"
+		printf "%{%s}%s%{%s-}\n", p, $NF, substr(p, 1, 1)
+	}' $icons_file
 }
 
 singles=( rec tiling power )
 multiframe_modules=( workspaces windows launchers )
-labeled_modules=( rss emails volume counter vanter torrents network power display rec )
+labeled_modules=( rss emails volume counter vanter torrents \
+	network power display rec bluetooth battery weather )
 
 set_module_colors() {
 	local module_short=$1
@@ -88,11 +100,15 @@ set_module_colors() {
 set_module_frame() {
 	local short_module=$1 frame_type=${2:-$frame_type}
 	local frame_mode="\${${short_module}pfc:-\$${short_module}sfc}"
+	local frame_mode="\${${short_module}_fc:-\$${short_module}sfc}"
 
 	if [[ $frame_type == all ]]; then
 		module_frame_start="%{B\$${short_module}sfc}%{U\$${short_module}sfc}$frame_start"
 		module_active_frame_start="%{B\$${short_module}pfc}%{U\$${short_module}pfc}$frame_start"
 		module_frame_end="%{B\$${short_module}sfc}$frame_end%{B-}"
+		#module_frame_start="%{B${frame_mode//_/s}}%{U${frame_mode//_/s}}$frame_start"
+		#module_active_frame_start="%{B${frame_mode//_/p}}%{U${frame_mode//_/p}}$frame_start"
+		#module_frame_end="%{B${frame_mode//_/s}}$frame_end%{B-}"
 	else
 		module_frame_start="%{U\$${short_module}sfc}$frame_start"
 		module_active_frame_start="%{U\$${short_module}pfc}$frame_start"
@@ -134,21 +150,24 @@ get_module() {
 		t) module=tiling;;
 		D) module=display;;
 		X) module=rec;;
+		B) module=bluetooth;;
+		b) module=battery;;
+		E) module=weather;;
 	esac
 }
 
 bar_separator='%{B-}%{O10}'
 padding='%{O20}'
-inner='%{O3}'
 
 make_module() {
 	local module_file=$modules_dir/${module}.sh
+	local module_pbg="${opt}pbg" module_sbg="${opt}sbg"
 	local full_module module_frame_{start,end} {p,s}bg mf{s,e} single_color_type
 
 	if [[ ! ${joiner_modules[$opt]} ]]; then
 		set_module_frame $opt
 		mfs="$module_frame_start" mfe="$module_frame_end"
-		pbg="\$${opt}pbg" sbg="\$${opt}sbg"
+		pbg="\$$module_pbg" sbg="\$$module_sbg"
 		eval ${module}_padding=$padding
 	fi
 
@@ -170,17 +189,20 @@ make_module() {
 			[[ $label ]] &&
 				local single_content=$label || local single_content="\$$module"
 
-			[[ ${singles[*]} == *$module* ]] &&
-				single_color_type=s || single_color_type=s
-			local single_fg="\${cj${single_color_type}fg:-\$${opt}${single_color_type}fg}"
+			[[ ${singles[*]} == *$module* && ! ${joiner_modules[$opt]} ]] &&
+				single_color_type=p mfs="$module_active_frame_start" mfe="${mfe/?fc/pfc}" || single_color_type=s
+			local single_fg="\${cjffg:-\${cj${single_color_type}fg:-\$${opt}${single_color_type}fg}}"
 
 			full_module="$pbg$single_fg\$${module}_padding%{T2}"
 			full_module+="$single_content\$${module}_padding"
 		else
+			[[ ${!module_pbg} == ${!module_sbg} ]] &&
+				inner='%{O2}' || inner='%{O3}'
 			full_module="$sbg\${cjsfg:-\$${opt}sfg}\$${module}_padding%{T2}$label$inner"
 			full_module+="$pbg\${cjpfg:-\$${opt}pfg}$inner%{T2}\$$module\$${module}_padding"
 		fi
 
+		#[[ $module == rec ]] && ~/.orw/scripts/notify.sh -t 11 "REC: $full_module"
 		full_module="\$mfs${full_module//\$/\\\$}\$mfe"
 	fi
 
@@ -190,7 +212,7 @@ make_module() {
 get_joiner_frame() {
 	local module="$1" switch_bg="$2"
 	local joiner_sbg="\$${module}sbg"
-	local frame_mode="\${${module}sfc:-\$${module}pfc}"
+	local frame_mode="\${${module}sfc:-\${${module}pfc:-\$pfc}}"
 	local joiner_fc="%{B$frame_mode}"
 
 	joiner_start="$joiner_fc%{U$frame_mode}$joiner_frame_start"
@@ -200,9 +222,19 @@ get_joiner_frame() {
 		((${#new_active_modules} > 0 && ${#switch_bg} > 2)) &&
 			local bg_distance="%{O${switch_bg:2}}"
 
-		[[ ${switch_bg:1:1} == f ]] &&
-			joiner_next_bg="$bg_distance$joiner_fc$joiner_padding" ||
+		#[[ ${switch_bg:1:1} == f ]] &&
+		#	joiner_next_bg="$bg_distance$joiner_fc$joiner_padding" ||
+		#	joiner_next_bg="$joiner_padding$joiner_sbg$bg_distance"
+
+		if [[ ${switch_bg:1:1} == f ]]; then
+			local ffg
+			joiner_next_bg="$bg_distance$joiner_fc$joiner_padding"
+			eval ffg="\$(~/.orw/scripts/convert_colors.sh -hB $frame_mode | grep -o '[^ ]*$')"
+			jffg="%{F$ffg}"
+			#~/.orw/scripts/notify.sh "$frame_mode, $jffg, $ffg"
+		else
 			joiner_next_bg="$joiner_padding$joiner_sbg$bg_distance"
+		fi
 	fi
 
 	[[ ${switch_bg:1:1} == b ]] ||
@@ -286,6 +318,8 @@ print_module() {
 	[[ $2 ]] ||
 		local modules_to_print reloaded_modules
 
+	#[[ $module == rec ]] && ~/.orw/scripts/notify.sh -t 11 "REC: $content - ${!content}"
+
 	[[ "${!module}" ]] &&
 		output_content="$actions_start${!content}$actions_end"
 
@@ -314,7 +348,7 @@ print_module() {
 
 		} 11< $joiner_modules_file
 
-		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{p,s}fg switch_bg
+		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{f,p,s}fg switch_bg
 		read joiner_{distance,padding,frame_{start,end}} switch_bg <<< \
 			"${joiners[joiner_group_index - 1]}"
 
@@ -368,7 +402,7 @@ print_module() {
 				(${switch_bg::1} == e &&
 				(${switch_bg:1:1} == b && $short != ${new_active_modules: -1}) ||
 				(${switch_bg:1:1} == f && $short == ${new_active_modules: -1})) ]] &&
-				cjsfg="$jsfg" cjpfg="$jpfg"
+				cjsfg="$jsfg" cjpfg="$jpfg" cjffg="$jffg"
 
 			[[ ${multiframe_modules[*]} == *$module* ]] &&
 				local is_multiframe=true
@@ -404,6 +438,13 @@ print_module() {
 			fi
 		fi
 
+		#[[ $module == date ]] &&
+		#	~/.orw/scripts/notify.sh -t 11 "T: $output_content, $active_modules"
+		#[[ $module == power ]] &&
+		#	~/.orw/scripts/notify.sh -t 11 "P: $output_content, $cjpfg, $cjsfg, $cjffg"
+
+		#[[ $module == rec ]] && ~/.orw/scripts/notify.sh -t 11 "REC: $output_content"
+
 		if [[ ! $2 ]]; then
 			for module_to_print in "${modules_to_print[@]}"; do
 				echo "$module_to_print" > $fifo
@@ -427,7 +468,7 @@ set_colors() {
 	eval $(awk '\
 		/#bar/ { nr = NR }
 
-		nr && NR > nr {
+		nr && NR > nr && /^[^#]/ {
 			if ($1 ~ "^(b?bg|.*c)$") c = $2
 			else {
 				l = length($1)
@@ -527,7 +568,7 @@ assign_width_args() {
 	esac
 }
 
-while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLX opt; do
+while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLXBbE opt; do
 	args=''
 	if [[ ${!OPTIND} != -[[:alpha:]] ]]; then
 		args="${!OPTIND}"
@@ -673,12 +714,14 @@ icon_size=$((font_size + font_size / 2))
 font="SFMono:style=Medium:size=$font_size"
 bold_font="SFMono:style=Heavy:size=$font_size"
 
-font="Iosevka Orw:style=Semibold:size=$font_size"
+font="SFMono:style=Medium:size=$font_size"
+bold_font="SFMono:style=Bold:size=$font_size"
+font="Iosevka Orw:style=Medium:size=$font_size"
 bold_font="Iosevka Orw:style=Heavy:size=$font_size"
 icon_font="material:size=$icon_size"
 bar_font="SFMono-Medium:size=11"
 bar_font="SFMono-Medium:size=$icon_size"
-bar_font="SFMono-Medium:size=11"
+bar_font="SFMono:style=Medium:size=11"
 
 font_offset=${font_offset:--2}
 
@@ -759,6 +802,9 @@ main_pid=$$
 
 while IFS=':' read module content; do
 	eval ${module,,}=\""$content"\"
+	#[[ ${module,,} == rec ]] && eval echo "${module,,}=\""$content"\"" >> ~/bar.log
+	#(($?)) && eval echo "${module,,}: "$content"" >> ~/bar.log
+	#eval echo -e \""$bar_content"\" >> b.log
 	eval echo -e \""$bar_content"\"
 done < $fifo | adjust_bar_width |
 	lemonbar -d -B$bg -F$fg -u 0 \
