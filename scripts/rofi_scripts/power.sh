@@ -1,48 +1,57 @@
 #!/bin/bash
 
 [[ ! $style =~ icons|dmenu ]] &&
-	lock=lock loggout=loggout reboot=reboot suspend=suspend off=poweroff sep=' '
+	lock=lock loggout=loggout reboot=reboot suspend=suspend off=poweroff yes=yes no=no
 
-read {off,suspend,reboot,logout,,lock,yes,no}_icon <<< \
+read off suspend reboot logout _ lock yes no <<< \
 	$(sed -n 's/^\(power_bar\|yes\|no\).*=//p' ~/.orw/scripts/icons | xargs)
+
+options=(
+	$lock
+	$logout
+	$reboot
+	$suspend
+	$off
+)
+
+base_count=${#options[*]}
+item_count=$base_count
 
 toggle
 trap toggle EXIT
 
 while
-	item_count=5
 	set_theme_str
 
-	action=$(cat <<- EOF | rofi -dmenu -theme-str "$theme_str" -theme main
-		$lock_icon$sep$lock
-		$logout_icon$sep$loggout
-		$reboot_icon$sep$reboot
-		$suspend_icon$sep$suspend
-		$off_icon$sep$off
-	EOF
-	)
+	read index option < <(
+		for option in ${options[*]}; do
+			echo $option
+			[[ $option == $selected_option ]] &&
+				echo -e "$yes\n$no"
+		done | rofi -dmenu -format 'i s' -selected-row $index \
+			$hilight -theme-str "$theme_str" -theme main)
 
-	[[ $action ]]
+	[[ $option ]]
 do
-	[[ $style != *icons ]] &&
-		yes_label=yes no_label=no
-
-	if [[ $action =~ $lock_icon ]]; then
+	if [[ $option == $lock ]]; then
 		~/.orw/scripts/lock_screen.sh
 		exit
+	elif [[ $option == $yes ]]; then
+		case "$selected_option" in
+			$logout*) openbox --exit;;
+			$reboot*) systemctl reboot;;
+			$suspend*) systemctl suspend;;
+			$off*) systemctl poweroff ;;
+		esac
+		exit
 	else
-		item_count=2
-		set_theme_str
-
-		confirmation=$(echo -e "$yes_icon$yes_label\n$no_icon$no_label" |
-			rofi -dmenu -theme-str "$theme_str" -theme main)
-
-		[[ $confirmation == "$yes_icon$yes_label" ]] &&
-			case "$action" in
-				$logout_icon*) openbox --exit;;
-				$reboot_icon*) systemctl reboot;;
-				$suspend_icon) systemctl suspend;;
-				$off_icon*) systemctl poweroff ;;
-			esac && exit
+		if [[ $option =~ ^($selected_option|$no)$ ]]; then
+			item_count=$base_count
+			unset selected_option hilight
+		else
+			selected_option=$option
+			item_count=$((base_count + 2))
+			hilight="-u $((index + 1)),$((index + 2))"
+		fi
 	fi
 done
