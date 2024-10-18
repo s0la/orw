@@ -1,9 +1,9 @@
 #!/bin/bash
 
 get_rec() {
-	local rec_color='#e34e68'
+	#local rec_color='#e34e68'
 	label="%{F$rec_color}REC"
-	icon="%{F$rec_color}$(get_icon 'rec')"
+	icon="$rec_icon"
 
 	rec_pid=$(pidof -x record_screen.sh)
 	((rec_pid)) &&
@@ -17,6 +17,10 @@ set_rec_actions() {
 }
 
 check_rec() {
+	rec_color=$(awk '$1 == "red" { gsub("\"", "", $NF); r = $NF } END { print r }' \
+		~/.config/alacritty/alacritty.toml)
+	rec_icon="%{F$rec_color}$(get_icon '^rec')"
+
 	while true; do
 		get_rec
 		print_module rec
