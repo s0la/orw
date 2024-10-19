@@ -20,7 +20,7 @@ nb_conf=$config/newsboat/config
 dunst_conf=$config/dunst/dunstrc
 sxiv_conf=$config/X11/xresources
 term_conf=$config/termite/config
-term_conf=$config/alacritty/alacritty.yml
+term_conf=$config/alacritty/alacritty.toml
 rofi_conf=$config/rofi/theme.rasi
 ncmpcpp_conf=$config/ncmpcpp/config
 vim_conf=$config/nvim/colors/orw.vim
@@ -572,9 +572,20 @@ set_dunst() {
 }
 
 set_term() {
-	while read property color; do
-		term
-	done
+	awk -i inplace '
+		NR == FNR {
+			tc[NR] = $NF
+		}
+
+		NR > FNR {
+			if (/primary/) { cc = 1 }
+
+			if (cc && cc <= length(tc) && !/^(\[|$)/) {
+				$NF = "\"" tc[cc++] "\""
+			}
+
+			print
+		}' <(cat) $term_conf
 }
 
 set_lock() {
@@ -1393,6 +1404,8 @@ else
 		exit
 	fi
 fi
+
+exit
 
 colorscheme=${colorscheme%.*}
 colorscheme=${colorscheme##*/}

@@ -8,12 +8,12 @@ vim_colors=$(awk '
 
 ocs_root=~/.config/orw/colorschemes
 current_ocs=$(grep -zlP "#vim\n$vim_colors" $ocs_root/*.ocs)
-ISF=$'\n' read -d '' active colorschemes <<< $(ls $ocs_root/previews/* |
+ISF=$'\n' read -d '' active colorschemes <<< $(ls $ocs_root/wall_previews/* |
 	awk '/'"${current_ocs##*/}"'.png/ { a = NR - 1 } { ac = ac "\n" $0 } END { print a ac }')
 
 (
 	echo '~/.orw/scripts/rice_and_shine.sh -tC "$(sed "s/.ocs.png//" <<< "${element##*/}")"'
-	ls $ocs_root/previews/* | awk '
+	ls $ocs_root/wall_previews/* | awk '
 		/'"${current_ocs##*/}"'.png/ { a = NR - 1 } { ac = ac "\n" $0 }
 		END { print a ac }'
 ) | ${0%/*}/dmenu.sh image_preview
