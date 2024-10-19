@@ -30,11 +30,11 @@
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
 
-    #geometry = "750x55-80+80"
-	origin = top-right
-	height = (0, 100)
-	width = (0, 750)
-	offset = 80x80
+    geometry = "1440x900+0+0"
+	origin = top-left
+	height = 900
+	width = 1920
+	offset = 0x0
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -137,7 +137,8 @@
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
-    alignment = left
+    alignment = center
+    content_alignment = center
 
     # Show age of message if message is older than show_age_threshold
     # seconds.
@@ -170,7 +171,7 @@
     icon_position = left
 
     # Scale larger icons down to this size, set to 0 to disable
-    max_icon_size = 70
+    max_icon_size = 60
 
     # Paths to default icons.
     icon_path = ''
@@ -221,7 +222,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 5
+    corner_radius = 3
 
     ### Legacy
 
