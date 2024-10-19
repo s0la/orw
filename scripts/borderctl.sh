@@ -22,8 +22,10 @@ done
 	mode=$(awk -F '"' 'END { print $(NF - 1) }' $rofi_path/main.rasi)
 
 if [[ $2 =~ [0-9]+ ]]; then
-	sign=${2%%[0-9]*}
-	new_value=${2#"$sign"}
+	#sign=${2%%[0-9]*}
+	#new_value=${2#"$sign"}
+	new_value=$2
+	sign=${new_value%%[0-9]*}
 fi
 
 if [[ $3 ]]; then
@@ -56,7 +58,7 @@ case $1 in
 		read property value <<< $(awk '/^'$property'/ { print; exit }' $orw_conf)
 
 		if [[ $property == m* ]]; then
-			awk -i inplace '/^margin/ { $NF '$sign'= '${new_value}' } { print }' ~/.config/orw/config
+			awk -i inplace '/^margin/ { $NF += '${new_value}' } { print }' ~/.config/orw/config
 			~/.orw/scripts/signal_windows_event.sh update
 			exit
 		elif [[ $property =~ offset ]]; then
@@ -66,7 +68,7 @@ case $1 in
 			min=1
 		fi
 
-		[[ $sign ]] && check_value=$((value $sign new_value)) || check_value=$new_value
+		[[ $sign ]] && check_value=$((value += new_value)) || check_value=$new_value
 
 		style='-s osd'
 
@@ -109,7 +111,7 @@ case $1 in
 			$1 ~ "^'${1:1:1}'[^-]*:" {
 				nv = '$new_value'
 				cv = gensub(/.* ([0-9]+).*/, "\\1", 1)
-				sub(/[0-9]+/, ("'$sign'") ? cv '$sign' nv : nv)
+				sub(/[0-9]+/, ("'$sign'") ? cv + nv : nv)
 			}
 
 			$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
@@ -120,9 +122,9 @@ case $1 in
 					av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
 					split(av, v)
 
-					v1 = ("'$sign'") ? v[1] '$sign' fv : fv 
+					v1 = ("'$sign'") ? v[1] + fv : fv 
 					v2 = ("'$second_arg'") ? ("'${second_sign:=$sign}'") ? \
-						v[2] '$second_sign' sv : sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
+						v[2] + sv : sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
 
 					sub(/([0-9px]+ ?){2}/, v1 "px " v2 "px")
 				} else {
@@ -132,14 +134,16 @@ case $1 in
 					nv = '$new_value'
 
 					cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
-					sub(cv "(%|px)", ("'$sign'") ? cv '$sign' nv u : nv u)
+					sub(cv "(%|px)", ("'$sign'") ? cv + nv u : nv u)
 				}
 			}
 
 			w && FILENAME ~ "icons" && $1 == "window-width:" {
 				cv = $NF
 				gsub("[^0-9]", "", cv)
-				nv = cv '${second_sign}' w * '$second_arg'
+				nv = cv + w * '${second_arg:-$new_value}'
+				#nv = cv '${second_sign:-$sign}' w * '${second_arg:-$new_value}'
+				#system("~/.orw/scripts/notify.sh -t 5 \"" cv " '"${second_sign:-$sign}"' " nv " '"${second_arg:-$new_value}"' \"")
 				sub(cv, nv)
 			}
 
@@ -152,7 +156,7 @@ case $1 in
 			function set_value() {
 				cv = length(s)
 				uv = "'${new_value:-$2}'"
-				nv = sprintf("%*.s", ("'$sign'") ? cv '$sign' uv : uv, " ")
+				nv = sprintf("%*.s", ("'$sign'") ? cv + uv : uv, " ")
 			}
 
 			{
@@ -183,7 +187,7 @@ case $1 in
 				if(/padding/) {
 					nv = '$new_value'
 					cv = gensub("[^0-9]*([0-9]+).*", "\\1", 1)
-					sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
+					sub(cv, ("'$sign'") ? cv + nv : nv)
 				}
 				print
 		}' ~/.orw/dotfiles/.config/gtk-3.0/gtk.css;;
@@ -196,7 +200,7 @@ case $1 in
 			if (nr && NR == nr + '$nr') {
 				nv = "'${new_value:-$2}'"
 				cv = gensub(".*>(.*)<.*", "\\1", 1)
-				sub(cv, ('$nr' == 1) ? (nv) ? nv : (cv == "no") ? "yes" : "no" : ("'$sign'") ? cv '$sign' nv : nv)
+				sub(cv, ('$nr' == 1) ? (nv) ? nv : (cv == "no") ? "yes" : "no" : ("'$sign'") ? cv + nv : nv)
 			}
 			print
 		}' $openbox_conf;;
@@ -213,7 +217,7 @@ case $1 in
 		awk -i inplace '{ \
 			if(/^\s*\w*'$pattern'/) {
 				nv = '$new_value'
-				sub($NF, ("'$sign'") ? $NF '$sign' nv : nv)
+				sub($NF, ("'$sign'") ? $NF + nv : nv)
 			}
 			print
 		}' $dunst_conf
@@ -233,7 +237,7 @@ case $1 in
 			if(/^'$pattern'/) {
 				nv = '$new_value'
 				cv = gensub(".*=", "", 1)
-				sub(cv, ("'$sign'") ? cv '$sign' nv : nv)
+				sub(cv, ("'$sign'") ? cv + nv : nv)
 			}
 			print
 		}' $lock_conf;;
@@ -249,7 +253,7 @@ case $1 in
 			jt) pattern=label.*justify;;
 			pw) pattern=^padding.width;;
 			ph) pattern=^padding.height;;
-			md) pattern=^menu.overlap.x;;
+			md*) pattern="^menu.overlap.${1: -1}";;
 			mbw)
 				pattern=^menu.border.width
 				gtkrc2=~/.orw/themes/theme/gtk-2.0/gtkrc;;
@@ -262,17 +266,15 @@ case $1 in
 					if("'$pattern'" ~ "border") $NF = (obw + $NF) - nv
 				}
 			}
+
 			if(/'$pattern'/) {
 				nv = '${new_value:-\"$2\"}'
 
 				if(/overlap/) {
-					if("'$sign'") {
-						if("'$sign'" == "+") $NF -= nv; else $NF += nv
-					} else {
-						$NF = -(obw + nv)
-					}
+					if("'$sign'") $NF += nv
+					else $NF = (/x/) ? -(obw + nv) : nv
 				} else {
-					$NF = ("'$sign'") ? $NF '$sign' nv : nv
+					$NF = ("'$sign'") ? $NF + nv : nv
 					nv = $NF
 				}
 			} if("'$pattern'" ~ "menu") { 
