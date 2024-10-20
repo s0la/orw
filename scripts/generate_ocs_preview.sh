@@ -2,7 +2,7 @@
 
 ocs_root=~/.config/orw/colorschemes
 ocs_previews_root=$ocs_root/previews_new
-ocs_previews_root=$ocs_root/previews_fin
+ocs_previews_root=$ocs_root/wall_previews
 colorshceme="$1"
 
 [[ -d $ocs_previews_root ]] || mkdir $ocs_previews_root
