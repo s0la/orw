@@ -11,7 +11,7 @@ xset s 500
 #picom --experimental-backends -b &> /dev/null
 #~/Downloads/picom/build/src/picom --experimental-backends -b &> /dev/null
 #~/Downloads/picom/build/src/picom -b &> /dev/null
-icom --config ~/.config/picom/picom_animations.conf -b &> /dev/null
+picom --config ~/.config/picom/picom_animations.conf -b &> /dev/null
 mpd &
 
 path=~/.orw/scripts
