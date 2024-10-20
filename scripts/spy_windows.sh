@@ -67,7 +67,7 @@ border_gap() {
 get_border_gap() {
 	 awk '
 	 	/xwininfo/ { id = $4 }
-		/Absolute.*Y/ { ay = $NF}
+		/Absolute.*Y/ { ay = $NF }
 		/Relative/ { if(/X/) xb = $NF; else yb = $NF }
 		$0 ~ "geometry.*" ay "$" { print id, xb, yb }
 	 '
@@ -136,6 +136,14 @@ select_tiling_window() {
 		current_id=${original_properties[0]}
 		#properties=( $second_window_id ${second_window_properties[*]} )
 		properties=( $id ${all_windows[$id]} )
+	fi
+}
+
+select_tiling_win() {
+	if [[ ! $second_window_properties ]]; then
+		# let user select window to which should selected window tile to
+		~/.orw/scripts/select_window.sh
+		printf '0x%x' $(xdotool getactivewindow)
 	fi
 }
 
@@ -243,8 +251,8 @@ remove_tiling_window() {
 		resize_after_tiling+=( $window_id )
 	done
 
-	#xdotool windowminimize $id
-	update_aligned_windows $@ no_change
+	#[[ $move_window ]] && xdotool windowminimize $id
+	update_aligned_windows $@ #no_change
 
 	unset windows[$id]
 }
@@ -285,12 +293,15 @@ list_windows() {
 }
 
 set_new_position() {
+	local monitor=${display_map[$display]}
+	#echo $id, $current_id: $monitor
 	awk -i inplace '
-		/class="\*"/ { t = 1 } t && /<\/app/ { t = 0 }
+		/class="(\*|input)"/ { t = 1 } t && /<\/app/ { t = 0 }
 
 		#t && /<decor>/ { v = ("'"${tiling_workspaces[*]}"'" !~ "'$workspace'") ? "yes" : "no" }
 
 		t && /<(width|height)>/ { v = (/width/) ? "'$3'" : "'$4'" }
+		#t && /<monitor>/ { sub("[0-9]+", "'"$monitor"'") }
 		t && /<[xy]>/ { v = (/x/) ? "'$1'" : "'$2'" }
 
 		t && v { 
@@ -787,6 +798,8 @@ get_workspace_windows() {
 		local display=$1 ||
 		display=${workspaces[$id]#*_}
 
+	#echo $display: ${displays[*]}, ${display_properties[*]}, $id, ${workspaces[$id]}
+
 	[[ ${FUNCNAME[*]: -3:1} != update_values ]] &&
 		display_properties=( ${displays[$display]} )
 
@@ -795,6 +808,97 @@ get_workspace_windows() {
 		[[ ${workspaces[$window]} == ${closing_id_workspace:-$workspace}_${display} ]] &&
 			windows[$window]="${all_windows[$window]}"
 	done
+}
+
+adjust_workspaces() {
+	((current_ws_count)) && previous_ws_count=$current_ws_count
+	current_ws_count=$(xdotool get_num_desktops)
+	#echo adjust: $current_ws_count, $previous_ws_count, $closing_id_workspace, $workspace, $id, $current_window_id
+	#wmctrl -d
+
+	if ((previous_ws_count && current_ws_count != previous_ws_count)); then
+		((current_ws_count > previous_ws_count)) &&
+			local ws_direction=+1 referent_workspace=$previous_workspace ||
+			local ws_direction=-1 referent_workspace=${new_workspace:-${closing_id_workspace:-$previous_workspace}}
+		#workspace=$(xdotool get_desktop)
+
+		#echo $previous_ws_count, $current_ws_count, $sign
+			#echo ${w%_*}: $privious_workspace $((${w%_*} $sign 1))_${w#*_}]="${workspaces[$w]}"
+			#((${w%_*} >= referent_workspace)) &&
+			#	workspaces[$((${w%_*} $sign 1))_${w#*_}]="${workspaces[$w]}" &&
+			#	unset workspaces[$w]
+			#echo in $w: "$((${workspaces[$w]%_*} $sign 1))_${workspaces[$w]#*_}", ${workspaces[$w]%_*} - $referent_workspace
+
+		for w in ${!workspaces[*]}; do
+			[[ $w != "$moving_id" ]] && ((${workspaces[$w]%_*} > referent_workspace)) &&
+				workspaces[$w]="$((${workspaces[$w]%_*} + ws_direction))_${workspaces[$w]#*_}"
+			#echo win: $w: ${workspaces[$w]}
+		done
+
+		#for w in ${!workspaces[*]}; do
+		#	echo ws: $w: ${workspaces[$w]}
+		#done
+
+		for tw in ${!tiling_workspaces[*]}; do
+			#echo $tw: $referent_workspace, ${tiling_workspaces[tw]}, $workspace_offset
+			if ((current_ws_count < previous_ws_count &&
+				${tiling_workspaces[tw]} == referent_workspace)); then
+					echo unset tiling_workspaces[$tw] - ${tiling_workspaces[tw]}
+					unset tiling_workspaces[tw]
+					local workspace_offset=-1
+			else
+				#((${tiling_workspaces[tw]} > referent_workspace)) &&
+				#	tiling_workspaces[tw - workspace_offset]=$((${tiling_workspaces[tw]} + ws_direction))
+
+				if ((${tiling_workspaces[tw]} > referent_workspace)); then
+					if [[ $new_tiling_workspace ]]; then
+						#echo NEW: $new_tiling_workspace
+						tiling_workspaces[tw]=$new_tiling_workspace
+						unset new_tiling_workspace
+						local workspace_offset=1
+					fi
+
+					#echo else tiling_workspaces[$tw + $workspace_offset], $((${tiling_workspaces[tw]} + ws_direction))
+					tiling_workspaces[tw + workspace_offset]=$((${tiling_workspaces[tw]} + ws_direction))
+				fi
+			fi
+
+			#echo tw: $tw - ${tiling_workspaces[tw]}
+			#((${tiling_workspaces[tw]} > referent_workspace)) &&
+			#	((tiling_workspaces[tw - workspace_offset]$sign$sign))
+		done
+
+		((workspace_offset < 0)) && unset tiling_workspaces[-1]
+
+		((current_ws_count > previous_ws_count)) && [[ $new_tiling_workspace ]] &&
+			tiling_workspaces+=( $new_tiling_workspace ) && unset new_tiling_workspace
+
+		echo adjust: $referent_workspace - ${tiling_workspaces[*]}
+
+		signal_tiling
+		sed -i "/^tiling/ s/[0-9 ]\+/ ${tiling_workspaces[*]} /" $0
+	fi
+
+	#echo end $workspace, ${workspaces[$id]}
+	unset closing_id_workspace
+}
+
+get_display_mapping() {
+	display_mapping=$(
+		xrandr | awk -F '[ x+]' '
+			NR == 1 {
+				h = $9
+				v = $12
+				sub("[^0-9]", "", v)
+				si = (h > 2 * v) ? 2 : 3
+			}
+			$2 == "connected" {
+				ad[$(3 + ($3 == "primary") + si)] = ++d
+			} END {
+				for (d in ad) printf "[%d]=%d ", ++di, ad[d]
+			}'
+	)
+	eval display_map=( $display_mapping )
 }
 
 set_alignment() {
@@ -840,7 +944,22 @@ align_windows() {
 		[[ $action == close ]] && unset ${alignments[$id]}
 	fi
 
-	[[ $tiling ]] || get_workspace_windows
+	#[[ $tiling ]] || get_workspace_windows
+	get_workspace_windows ${workspaces[$id]#*_}
+
+	#if display is set to some other display than the one the current active window is on
+	#select the first window from the correct display
+	#if ((display != ${workspaces[$id]#*_})); then
+	#	if [[ ${last_display_window[$display]} ]]; then
+	#		id=${last_display_window[$display]}
+	#	else
+	#		local all_window_ids=${!windows[*]}
+	#		id=${all_window_ids%% *}
+	#	fi
+
+	#	properties=( $id ${windows[$id]} )
+	#	echo $id: ${properties[*]}
+	#fi
 
 	set_alignment_properties $alignment_direction
 
@@ -924,7 +1043,7 @@ handle_first_window() {
 
 	all_windows[$id]="${props[*]}"
 	windows[$id]="${props[*]}"
-	properties=( ${props[*]} )
+	properties=( $id ${props[*]} )
 	((window_count++))
 
 	get_display_properties
@@ -1008,17 +1127,24 @@ function set_sign() {
 
 get_display_properties() {
 	[[ -z $@ ]] &&
-		local properties=( ${properties[*]:1} ) ||
+		local properties=( ${properties[*]: -6} ) ||
 		local properties=( $(get_windows $1 | cut -d ' ' -f 2-) )
-	[[ $2 ]] && echo GDP $@, $id: ${properties[*]}, $display, ${properties[*]:1}
+	[[ $2 ]] && echo GDP ${BASH_LINENO[*]} $@, $id: ${properties[*]}, $display, ${properties[*]:1}
 
 	if [[ ${properties[*]} ]] && ((window_count)); then
 		for display in ${!displays[*]}; do
 			display_properties=( ${displays[$display]} )
 
-			if ((${properties[display_index]} >= ${display_properties[display_index]} &&
-				${properties[display_index]} + ${properties[display_index + 2]} <= \
-				${display_properties[display_index + 2]})); then
+			#echo P: ${properties[*]}, DP: ${display_properties[*]}
+
+			#if ((${properties[display_index]} >= ${display_properties[display_index]} &&
+			#	${properties[display_index]} + ${properties[display_index + 2]} <= \
+			#	${display_properties[display_index + 2]})); then
+
+			if ((${properties[0]} >= ${display_properties[0]} &&
+				${properties[0]} + ${properties[2]} <= ${display_properties[2]} &&
+				${properties[1]} >= ${display_properties[1]} &&
+				${properties[1]} + ${properties[3]} <= ${display_properties[3]})); then
 					read {x,y}_start {x,y}_end <<< ${display_properties[*]}
 					break
 			fi
@@ -1246,7 +1372,7 @@ update_borders() {
 }
 
 get_workspace_icons() {
-	read pwi swi <<< $(awk '
+	read {p,s}wi <<< $(awk '
 		BEGIN { p = s = "" }
 
 		function make_icon(icon, color) {
@@ -1260,14 +1386,15 @@ get_workspace_icons() {
 				gsub(".", "&[^_]*_", it)
 			} else {
 				if ($1 ~ "Workspace_" it "[sp]") {
-					gsub("%[^}]*}", " ")
-					if($1 ~ "_s_") s = $2
-					else p = $2
+					i = $0
+					gsub(".*=", "", i)
+					if($1 ~ "_s=") s = i
+					else p = i
 				}
 			}
 		}
 
-		END { print p, s }' $bar_config ~/.orw/scripts/new_bar/icons 2> /dev/null)
+		END { print p, s }' $bar_config ~/.orw/scripts/icons 2> /dev/null)
 }
 
 get_rofi_pid() {
@@ -1391,7 +1518,7 @@ update_values() {
 							}' | xargs)
 					fi
 
-					declare -A diffs offset_windows
+					declare -A diffs offset_windows updated_displays
 
 					sorted_workspaces="$(tr ' ' '\n' <<< ${workspaces[*]} |
 						cut -d '_' -f 1 | sort | uniq | grep -v $current_workspace)"
@@ -1520,8 +1647,10 @@ update_values() {
 							fi
 						fi
 
-						displays[$display]="$display_properties"
+						updated_displays[$display]="$display_properties"
 					done <<< $(sed 's/\(\([0-9]\+\s*\)\{5\}\)/\1\n/g' <<< "$diff_value")
+
+					eval displays="$(typeset -p updated_displays | sed 's/^[^=]*.//')"
 
 					workspace=$current_workspace
 					all_displays="$diff_value"
@@ -1563,7 +1692,7 @@ update_values() {
 make_workspace_notification() {
 	local notification
 
-	for workspace_index in $(seq 0 $total_workspace_count); do
+	for workspace_index in $(seq 0 $current_ws_count); do
 		fg='sbg'
 
 		case $workspace_index in
@@ -2124,6 +2253,7 @@ signal_tiling() {
 }
 
 signal_event_event() {
+	#adjust_workspaces
 	signal_tiling
 	signal_event "workspaces" "windows" "$workspace $id ${!windows[*]}"
 	signal_event "launchers" "active" "${current_id:-$id}"
@@ -2139,10 +2269,11 @@ set_tile_event() {
 	local style=$rofi_style item_count theme_str
 
 	[[ $rofi_state == opened ]] && toggle_rofi
-	remove_tiling_window
-	local windows_to_ignore=$id
+	#remove_tiling_window no_change
+	#local windows_to_ignore=$id
 
-	select_tiling_window
+	local tiling_id=$(select_tiling_win)
+	#select_tiling_window
 	toggle_rofi
 
 	item_count=4
@@ -2163,6 +2294,16 @@ set_tile_event() {
 		((!(align_index % 2))) && reverse=true
 	fi
 
+	remove_tiling_window no_change
+	local windows_to_ignore=$id
+	id=$tiling_id
+	properties=( $id ${all_windows[$id]} )
+
+	#sec_properties=( $id ${properties[*]} )
+	#properties=( $current_id ${all_windows[$current_id]} )
+	#properties=( $id ${sec_properties[*]} )
+	#local windows_to_ignore=$current_id
+
 	local windows_to_ignore=( $current_id )
 	((full_index)) &&
 		make_full_window || align
@@ -2175,8 +2316,8 @@ set_tile_event() {
 	#fi
 
 	update_aligned_windows
-
-	wmctrl -ia ${original_properties[0]} &
+	xdotool windowactivate ${original_properties[0]} &
+	workspaces[${original_properties[0]}]=${workspaces[$tiling_id]}
 }
 
 set_min_event() {
@@ -2221,24 +2362,101 @@ set_update_event() {
 }
 
 set_move_event() {
+	moving_id=$id move_window=true
+
+	#[[ ${tiling_workspaces[*]} == *$workspace* ]] &&
+	#	remove_tiling_window no_change || xdotool windowminimize $id
+
 	[[ ${tiling_workspaces[*]} == *$workspace* ]] &&
-		remove_tiling_window || xdotool windowminimize $id
+		remove_tiling_window no_change || unset windows[$id]
 
+	echo HERE
 	local rofi_pid=$(pidof -x signal_windows_event.sh)
+	echo rofi pid: $rofi_pid
 	[[ $rofi_pid ]] && kill -USR1 $rofi_pid
+	echo killing
 
-	if [[ $rofi_state == opened ]]; then
-		local new_workspace=$(~/.orw/scripts/rofi_scripts/dmenu.sh workspaces move)
-		toggle_rofi
+	if [[ $rofi_state != closed ]]; then
+		local new_workspace{,_name}
+		read new_workspace{,_name} added_workspace <<< \
+			$(~/.orw/scripts/rofi_scripts/dmenu.sh workspaces move)
+		[[ $rofi_state ]] && toggle_rofi
 	fi
 
-	if [[ $new_workspace ]]; then
-		wmctrl -ir $id -t $new_workspace
-		wmctrl -s $new_workspace
+	#if [[ $new_workspace ]]; then
+	#	[[ ${tiling_workspaces[*]} == *$workspace* ]] &&
+	#		new_tiling_workspace=$new_workspace
+	#	wmctrl -ir $id -t $new_workspace
+	#	wmctrl -s $new_workspace
+	#fi
+
+	#local added_workspace=$(wmctrl -d | awk '$2 == "*" { print $1 == "'"$new_workspace"'" }')
+	([[ ${tiling_workspaces[*]} == *$new_workspace* ]] || ((added_workspace))) &&
+		#(($(wmctrl -d | awk '$2 == "*" { print $1 == "'"$new_workspace"'" }')))) &&
+		xdotool windowminimize $id
+
+	#echo "SW: $(date +'%s') - $workspace: $new_workspace" >> ~/sec.log
+	#echo "SW: $added_workspace - $workspace: $new_workspace"
+	#wmctrl -d
+
+	if ((!${#windows[*]})); then
+		tmp=$(awk '
+			/names/ {
+				wn = !wn
+				if (wn) wi = NR + 1 + '$workspace'
+			}
+
+			wi && NR == wi && /tmp/ {
+				gsub("\\s*<[^>]*.", "")
+				print
+				exit
+			}' ~/.config/openbox/rc.xml)
+
+		#echo TMP: $tmp, $workspace, $new_workspace, ${#windows[*]}
+
+		if [[ $tmp ]]; then
+			((new_workspace -= new_workspace > workspace))
+			~/.orw/scripts/workspacectl.sh remove $tmp $new_workspace
+
+			if ((new_workspace == workspace)); then
+				#wmctrl -ir $id -t $workspace
+				adjust_workspaces
+				set_workspace_windows
+				align_moved_window
+				#wmctrl -ir $id -b add,above &
+				#echo xdotool windowactivate $id
+				xdotool windowactivate $id
+
+				#echo LIST: $workspace, $new_workspace, $id, ${properties[*]}
+				#list_windows
+			fi
+
+			unset tmp
+		fi
+	elif [[ $new_workspace ]]; then
+		declare -A all_aligned_windows
+		for resized_id in ${resize_after_tiling[*]}; do
+			[[ ${!all_aligned_windows[*]} != *$resized_id* ]] &&
+				all_aligned_windows[$resized_id]="${all_windows[$resized_id]}"
+		done
+
+		update_aligned_windows
+
+		##echo $added_workspace, ${tiling_workspaces[*]} == $workspace 
+		#((added_workspace)) && [[ ${tiling_workspaces[*]} == *$workspace* ]] &&
+		#	new_tiling_workspace=$new_workspace
+		if ((added_workspace)); then
+			[[ ${tiling_workspaces[*]} == *$workspace* ]] &&
+				new_tiling_workspace=$new_workspace
+			workspaces[$id]=${new_workspace}_${display}
+			echo workspaces[${new_workspace}_${display}]=$id
+		fi
 	fi
 
-	move_window=true
-	moving_id=$id
+	wmctrl -ir $id -t $new_workspace
+	wmctrl -s $new_workspace
+
+	xdotool windowminimize $id
 }
 
 tile_windows() {
@@ -2265,6 +2483,7 @@ tile_windows() {
 			for surface_win in ${!surfaces[*]}; do
 				surface=${surfaces[$surface_win]}
 				scalled_surface=$(echo "($scale * $surface) / 1" | bc)
+				echo "${scalled_surface}_${surface_win}"
 			done | sort -nr
 		)
 	)
@@ -2361,20 +2580,20 @@ set_toggle_tiling_workspace_event() {
 set_update_workspaces_event() {
 	event=update_workspaces
 
-	[[ ${tiling_workspaces[*]} =~ $desktop ]] && toggle_rofi
+	[[ ${tiling_workspaces[*]} =~ $desktop_index ]] && toggle_rofi
 
 	all_tiling_workspaces=${tiling_workspaces[*]}
-	desktop=$(~/.orw/scripts/rofi_scripts/dmenu.sh workspaces \
-		move ${all_tiling_workspaces// /,})
+	read desktop_{index,name} <<< $(~/.orw/scripts/rofi_scripts/dmenu.sh \
+		workspaces move ${all_tiling_workspaces// /,})
 
 	[[ $rofi_state == opened ]] && toggle_rofi
 
-	if [[ $desktop ]]; then
-		if [[ ${tiling_workspaces[*]} =~ $desktop ]]; then
-			tiling_workspaces=( ${tiling_workspaces[*]/$desktop} )
+	if [[ $desktop_index ]]; then
+		if [[ ${tiling_workspaces[*]} =~ $desktop_index ]]; then
+			tiling_workspaces=( ${tiling_workspaces[*]/$desktop_index} )
 			set_new_position center center 0 0 yes
 		else
-			tiling_workspaces+=( $desktop )
+			tiling_workspaces+=( $desktop_index )
 			tile_windows
 			set_new_position ${new_x:-center} ${new_y:-center} 150 150
 		fi
@@ -2537,18 +2756,47 @@ set_offset_steps() {
 	y_border=0
 	properties=( $x $y $w $h 0 0 )
 
+	#read {x,y}_start {x,y}_end columns rows step <<< \
+	#	$(awk -F '[_ ]' '
+	#		$1 == "display" && $2 == "'"$display"'" {
+	#			switch ($3) {
+	#				case "xy":
+	#					x = $(NF - 1)
+	#					y = $NF
+	#					break
+	#				case "size":
+	#					xs = $(NF - 1)
+	#					xe = x + xs
+	#					ys = $NF
+	#					ye = y + ys
+	#					break
+	#				case "offset":
+	#					y += $(NF - 1)
+	#					ye -= $NF
+	#					break
+	#			}
+	#		} END {
+	#			s = 50
+	#			while (xs % s + ys % s) s++
+	#			print x, y, xe, ye, xs / s, ys / s, s
+	#		}' $orw_config)
+
+	#echo $display, ${display_properties[*]}
+
 	read {x,y}_start {x,y}_end columns rows step <<< \
 		$(awk -F '[_ ]' '
 			$1 == "display" && $2 == "'"$display"'" {
 				switch ($3) {
+					case "size":
+						w = $(NF - 1)
+						h = $NF
+						break
 					case "xy":
 						x = $(NF - 1)
 						y = $NF
-						break
-					case "size":
-						xs = $(NF - 1)
+						xs = w
 						xe = x + xs
-						ys = $NF
+						ys = h
 						ye = y + ys
 						break
 					case "offset":
@@ -2799,6 +3047,7 @@ get_stretch_properties() {
 
 set_stretch_event() {
 	get_workspace_windows
+	get_display_properties
 
 	read d{xs,ys,xe,ye} <<< "${display_properties[*]}"
 	read w{x,y,w,h,{x,y}b} <<< "${properties[*]}"
@@ -2862,14 +3111,28 @@ set_aligned_windows() {
 }
 
 wait_for_mouse_movement() {
-	local drag_counter pointer_id=$(xinput list |
-		awk -F '=' '/pointer/ { sub("\t.*", "", $NF); p = $NF } END { print p }')
+	#local drag_counter pointer_id=$(xinput list |
+	#	awk -F '=' '/pointer/ { sub("\t.*", "", $NF); p = $NF } END { print p }')
+
+	#local pointer_id=$(xinput list | awk -F '=' '
+	#	/(USB|Touchpad).*pointer/ { sub("\t.*", "", $NF)
+	#		print $NF
+	#		exit
+	#	}')
+
+	while read device_id; do
+		xinput --query-state $device_id |
+			grep 'down$' &> /dev/null && break
+	done < <(xinput list | awk '
+		p && $0 !~ "^" p { exit }
+		/XTEST pointer/ { p = $0; sub("Virtual.*", "", p) }
+		p && /Touchpad|USB|Mouse/ { d = $(NF - 3); sub(".*=", "", d); print d }')
 
 	[[ $@ ]] &&
 		local button=3 || local button=1
 
 	while
-		action=$(xinput --query-state $pointer_id |
+		action=$(xinput --query-state $device_id |
 			awk -F '=' '/button\['$button'\]/ { print $NF == "down" }')
 		((action))
 	do
@@ -3118,7 +3381,297 @@ resize_rofi() {
 	windows[$id]="${properties[*]}"
 }
 
+get_translated_windows() {
+	new_display=$1
+	get_display_properties $id
+
+	awk '
+		/[xy]_offset/ { if (/x/) xo = $NF; yo = $NF }
+		$1 ~ "display_'"$display"'_(size|xy|offset)" {
+			if (/xy/) { cdx = $2; cdy = $3 } else {
+				if (/size/) { cdw = $2; cdh = $3 } else { cdto = $2; cdbo = $3 }
+			}
+		}
+		$1 ~ "display_'"$new_display"'_(size|xy)" {
+			if (/xy/) { ndx = $2; ndy = $3 } else { ndw = $2; ndh = $3 }
+		}
+
+		function move() {
+			mx = my = 0
+
+			for (max in xm[d]) {
+				split(max, maxa, "_")
+				if (((y >= maxa[1] && y + h <= maxa[2]) ||
+					(y <= maxa[1] && y + h >= maxa[2]) ||
+					(y <= maxa[1] && y + h > maxa[1]) ||
+					(y >= maxa[1] && y < maxa[2])) &&
+						xm[d][max] > mx) mx = xm[d][max]
+			}
+
+			if (!mx) mx = int(nx)
+			xm[d][y "_" y + h] = mx + nw
+
+			for (max in ym[d]) {
+				split(max, maxa, "_")
+				if (((x >= maxa[1] && x + w <= maxa[2]) ||
+					(x <= maxa[1] && x + w >= maxa[2]) ||
+					(x <= maxa[1] && x + w > maxa[1]) ||
+					(x >= maxa[1] && x < maxa[2])) &&
+						ym[d][max] > my) my = ym[d][max]
+			}
+
+			if (!my) my = int(ny)
+			ym[d][x "_" x + w] = my + nh
+
+			if (mx + nw > ndw) nw = ndw - mx
+			if (my + nh > ndh) nh = ndh - my
+			#print d, $3, ndx + xo + mx, ndy + yo + cdto + my, nw - $8 - m, nh - $9 - m, $8, $9
+			print d, $3, xo + mx, yo + cdto + my, nw - $8 - m, nh - $9 - m, $8, $9
+
+			#print d, $3, ndx + xo + mx, ndy + yo + my, nw - $8 - m, nh - $9 - m, $8, $9
+			#print d, $3, xo + mx, yo + my, nw - $8 - m, nh - $9 - m, $8, $9
+		}
+
+		NR > FNR && $2 == "'$display'" {
+			d = $1; x = $4 - cdx - xo; y = $5 - cdy - (yo + cdto); w = $6 + $8 + m; h = $7 + $9 + m
+			nx = x * hr; ny = y * vr; nw = sprintf("%.0f", w * hr); nh = sprintf("%.0f", h * vr)
+			move()
+		}
+
+		ENDFILE {
+			m = '$margin'
+			if (NR == FNR) {
+				ndw = ndw - 2 * xo + m; ndh = ndh - 2 * yo - (cdto + cdbo) + m
+				cdw = cdw - 2 * xo + m; cdh = cdh - 2 * yo - (cdto + cdbo) + m
+				#cdw = cdw - 2 * xo + m; cdh = cdh - 2 * yo - (cdto + cdbo) + m
+				#ndw = ndw - 2 * xo + m; ndh = ndh - 2 * yo + m
+				hr = ndw / cdw
+				vr = ndh / cdh
+			}
+		}' ~/.config/orw/config <(
+				for wid in ${!all_windows[*]}; do
+					echo ${workspaces[$wid]/_/ } $wid ${all_windows[$wid]}
+				done | sort -nk 1,1 -nk 4,4 -nk 5,5 -nk 6,6
+			)
+}
+
+get_translated_windows() {
+	new_display=$1
+	new_display=2
+	get_display_properties $id
+
+	awk '
+		/[xy]_offset/ { if (/x/) xo = $NF; yo = $NF }
+		$1 ~ "display_'"$display"'_(size|xy|offset)" {
+			if (/xy/) { cdx = $2; cdy = $3 } else {
+				if (/size/) { cdw = $2; cdh = $3 } else { cdto = $2; cdbo = $3 }
+			}
+		}
+		$1 ~ "display_'"$new_display"'_(size|xy)" {
+			if (/xy/) { ndx = $2; ndy = $3 } else { ndw = $2; ndh = $3 }
+		}
+
+		function round(n) {
+			return sprintf("%.0f", n)
+		}
+
+		function move() {
+			#if (x) nx = round((cdw + m) / x)
+			#if (y) nh = round((cdh + m) / y)
+			#nxe = round((cdw + m) / (x + w + m))
+			#nye = round((cdh + m) / (y + h + m))
+
+			#print "START", x, y, nxa[x], nya[y]
+			nx = (x) ? nxa[x] : 0
+			ny = (y) ? nya[y] : 0
+			nxe = round(ndw / (cdw / (x + w)))
+			nye = round(ndh / (cdh / (y + h)))
+			nxa[x + w] = nxe
+			nya[y + h] = nye
+			#print "END", x + w, nxe, y + h, nye
+			nw = nxe - nx - m
+			nh = nye - ny - m
+
+			print x, y, w, h, cdw, cdh
+			print xo + nx, (yo + cdto) + ny, nw, nh
+		}
+
+		NR > FNR && $2 == "'$display'" {
+			d = $1; x = $4 - cdx - xo; y = $5 - cdy - (yo + cdto); w = $6 + $8 + m; h = $7 + $9 + m
+			nx = x * hr; ny = y * vr; nw = sprintf("%.0f", w * hr); nh = sprintf("%.0f", h * vr)
+			move()
+		}
+
+		ENDFILE {
+			m = '$margin'
+			if (NR == FNR) {
+				ndw = ndw - 2 * xo + m; ndh = ndh - 2 * yo - (cdto + cdbo) + m
+				cdw = cdw - 2 * xo + m; cdh = cdh - 2 * yo - (cdto + cdbo) + m
+				hr = ndw / cdw
+				vr = ndh / cdh
+			}
+		}' ~/.config/orw/config <(
+				for wid in ${!all_windows[*]}; do
+					echo ${workspaces[$wid]/_/ } $wid ${all_windows[$wid]}
+				done | sort -nk 1,1 -nk 4,4 -nk 5,5 -nk 6,6
+			)
+}
+
+move_windows_to_display() {
+	local current_workspace=$workspace all_displays="${!displays[*]}"
+	local icons_template="^number_\(${all_displays// /\\\|}\)="
+
+	[[ $rofi_state != opened ]] && toggle_rofi
+	new_display_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template")
+	[[ $rofi_state == opened ]] && toggle_rofi
+
+	(( new_display_index++ ))
+
+	turn_off_display=$(xrandr -q |
+		awk '$2 == "connected" { if (++di == "'"$new_display_index"'") d = $1 } END { print d }')
+
+	#           
+	~/.orw/scripts/notify.sh -t 100 -s fullscreen -i '' "DISCONNECT $turn_off_display" &
+
+	while
+		connected=$(xrandr -q | awk '$1 == "'"$turn_off_display"'" { print $2 == "connected" }')
+		#connected=$(xrandr -q | awk '
+		#	$2 ~ "connected" { if (++di == "'"$new_display_index"'") print $2 == "connected" }')
+		((connected))
+	do
+		sleep 1
+	done
+
+	pidof dunst | xargs -r kill
+
+	#xrandr --output $turn_off_display --off
+	xrandr --auto
+
+	while read workspace wid new_properties; do
+		#workspaces[$wid]="${workspace}_${new_display_index}"
+		echo ${all_windows[$wid]}: $new_properties
+		((workspace == current_workspace)) &&
+			windows[$wid]="$new_properties"
+		all_windows[$wid]="$new_properties"
+		set_window $wid "$new_properties"
+		#echo $wid $new_properties
+	done <<< $(get_translated_windows $new_display_index)
+
+	properties=( ${windows[$id]} )
+	workspace=$current_workspace
+	#update_aligned_windows
+
+	~/.orw/scripts/generate_orw_config.sh display
+	update_values
+	~/.orw/scripts/barctl.sh
+
+	echo END $display: ${!displays[*]}, ${display_properties[*]}
+
+	return
+
+	new_display=1
+	get_display_properties $id
+	#local new_display_properties=( ${displays[$new_display]} )
+	#local display_width=$((${display_properties[2]} - ${display_properties[0]}))
+	#local display_height=$((${display_properties[3]} - ${display_properties[1]}))
+	#local new_display_width=$((${new_display_properties[2]} - ${new_display_properties[0]}))
+	#local new_display_height=$((${new_display_properties[3]} - ${new_display_properties[1]}))
+	#echo $display_width, $new_display_width, $display_height, $new_display_height
+
+	awk '
+		/[xy]_offset/ { if (/x/) xo = $NF; yo = $NF }
+		$1 ~ "display_'"$display"'_(size|xy|offset)" {
+			if (/xy/) { cdx = $2; cdy = $3 } else {
+				if (/size/) { cdw = $2; cdh = $3 } else { cdto = $2; cdbo = $3 }
+			}
+		}
+		$1 ~ "display_'"$display_index"'_(size|xy)" {
+			if (/xy/) { ndx = $2; ndy = $3 } else { ndw = $2; ndh = $3 }
+		}
+
+		function move() {
+			##print x, y, $0, cdx, cdy
+			#d = $2; x = $3 - cdx - xo; y = $4 - cdy - (yo + cdto); w = $5 + $7 + 10; h = $6 + $8 + 10
+			#nx = x * hr; ny = y * vr; nw = w * hr; nh = h * vr
+			##print x, y, nx, ny, w, h, nw, nh
+			#print nx, ny, nw, nh
+
+			mx = my = 0
+
+			#if (length(xm)) {
+				for (max in xm[d]) {
+					split(max, maxa, "_")
+					#if (y >= maxa[1] && y + h <= maxa[2] && xm[d][max] > mx) mx = xm[d][max]
+					if (((y >= maxa[1] && y + h <= maxa[2]) ||
+						(y <= maxa[1] && y + h >= maxa[2]) ||
+						(y <= maxa[1] && y + h > maxa[1]) ||
+						(y >= maxa[1] && y < maxa[2])) &&
+							xm[d][max] > mx) mx = xm[d][max]
+					#print max, xm[d][max], mx
+				}
+			#}
+			if (!mx) mx = x
+			xm[d][y "_" y + h] = mx + nw
+
+			#if (length(ym)) {
+				for (max in ym[d]) {
+					split(max, maxa, "_")
+					#if (x >= maxa[1] && x + w <= maxa[2] && ym[d][max] > my) my = ym[d][max]
+					if (((x >= maxa[1] && x + w <= maxa[2]) ||
+						(x <= maxa[1] && x + w >= maxa[2]) ||
+						(x <= maxa[1] && x + w > maxa[1]) ||
+						(x >= maxa[1] && x < maxa[2])) &&
+							ym[d][max] > my) my = ym[d][max]
+					#print max, ym[d][max], my
+				}
+			#}
+			if (!my) my = y
+			ym[d][x "_" x + w] = my + nh
+
+			if (mx + nw > ndw) nw = ndw - mx
+			if (my + nh > ndh) nh = ndh - my
+			#print mx, nw, m, ndw, ndh
+			print d, $3, ndx + mx, ndy + my, nw - $8 - m, nh - $9 - m
+		}
+
+		NR > FNR && $2 == "'$display'" {
+			#d = $1; x = $3 - cdx - xo; y = $4 - cdy - (yo + cdto); w = $5 + $7 + m; h = $6 + $8 + m
+			d = $1; x = $4 - cdx - xo; y = $5 - cdy - (yo + cdto); w = $6 + $8 + m; h = $7 + $9 + m
+			nx = x * hr; ny = y * vr; nw = sprintf("%.0f", w * hr); nh = sprintf("%.0f", h * vr)
+			#print "OP:", $5, w, $6, h
+
+			move()
+		}
+
+		ENDFILE {
+			m = '$margin'
+			if (NR == FNR) {
+				ndw = ndw - 2 * xo + m; ndh = ndh - 2 * yo - (cdto + cdbo) + m
+				cdw = cdw - 2 * xo + m; cdh = cdh - 2 * yo - (cdto + cdbo) + m
+				hr = ndw / cdw
+				vr = ndh / cdh
+				#print (ndw - 2 * xo), (cdw - 2 * xo)
+				#print (ndh - 2 * yo - (cdto + cdbo)), (cdh - 2 * yo - (cdto + cdbo))
+				#print cdw, cdh, ndw, ndh, hr, vr
+			}
+		}' ~/.config/orw/config <(
+				for wid in ${!all_windows[*]}; do
+					echo ${workspaces[$wid]/_/ } $wid ${all_windows[$wid]}
+				done | sort -nk 1,1 -nk 4,4 -nk 5,5 -nk 6,6
+			)
+}
+
 test() {
+	#for w in ${!workspaces[*]}; do
+	#	echo $w: ${workspaces[$w]}
+	#done
+	#exit
+	get_translated_windows
+	return
+
+	move_windows_to_display
+	return
+
 	local size start {{align,full}_,}index choosen_alignment reverse
 
 	[[ $rofi_state != opened ]] && toggle_rofi
@@ -4073,6 +4626,14 @@ set_rofi_toggle_event() {
 	toggle_rofi
 }
 
+set_toggle_image_preview() {
+	rofi_index=1 rofi_opposite_index=2 rofi_direction=h
+	[[ ! $rofi_state || $rofi_state == closed ]] && set_rofi_windows 200
+	toggle_rofi
+	[[ ! $rofi_state || $rofi_state == closed ]] &&
+		unset rofi_offset && set_rofi_windows
+}
+
 set_rofi_resize_event() {
 	local id=rofi old_properties=( ${rofi_restore_windows#* } )
 	event=resize_rofi
@@ -4109,16 +4670,19 @@ set_untile_event() {
 
 	#wmctrl -ir $id -e 0,${props// /,}
 	set_window $id properties[*]
-	wmctrl -ia $id
+	#wmctrl -ia $id
+	xdotool windowactivate $id
 
 	unset {all_,}windows[$id]
 }
 
 set_layout_event() {
 	local size start {{align,full}_,}index choosen_alignment reverse
+	local icons_template='^\(.*_side\|rotate\|tile\|move\|resize\)='
 
-	align_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh layout)
-	[[ $rofi_state == opened ]] && toggle_rofi
+	#toggle_rofi
+	align_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template")
+	#[[ $rofi_state == opened ]] && toggle_rofi
 
 	if [[ $align_index ]]; then
 		if ((align_index)); then
@@ -4129,6 +4693,8 @@ set_layout_event() {
 					7) set_tile_event;;
 				esac
 			else
+				[[ $rofi_state == opened ]] && toggle_rofi
+
 				get_display_properties
 
 				if [[ ${tiling_workspaces[*]} == *$workspace* ]]; then
@@ -4144,7 +4710,8 @@ set_layout_event() {
 
 					make_full_window
 					update_aligned_windows
-					wmctrl -ia $id &
+					#wmctrl -ia $id &
+					xdotool windowactivate $id &
 				else
 					local margin=$((margin / 2))
 
@@ -4155,12 +4722,13 @@ set_layout_event() {
 					size=$(((${display_properties[index + 2]} - ${display_properties[index]}) / 2))
 					properties[index + 2]=$((size - ${properties[index + 4]} - margin))
 					((!(align_index % 2))) && ((properties[index] += size + margin))
+
 					((properties[opposite_index + 2] -= \
 						${properties[opposite_index]} + ${properties[opposite_index + 4]}))
 					local props="${properties[*]::4}"
-					echo ${properties[*]}, ${props[*]}
 
 					#wmctrl -ir $id -e 0,${props// /,} &
+
 					set_window $id properties[*] &
 					all_windows[$id]="${properties[*]}"
 					windows[$id]="${properties[*]}"
@@ -4249,15 +4817,16 @@ trap set_interactive_offset_event 52
 trap set_interactive_resize_event 53
 trap set_rofi_toggle_event 54
 trap set_rofi_resize_event 55
-trap set_untile_event 56
-trap set_layout_event 57
-trap display_notification 58
+trap set_toggle_image_preview 56
+trap set_untile_event 57
+trap set_layout_event 58
+trap display_notification 59
 trap save_state SIGKILL SIGINT SIGTERM
 
 declare -A {all_,}windows {all_,}aligned_windows workspaces border_gaps
-declare -A displays alignments states
+declare -A displays alignments states last_display_window display_map
 
-tiling_workspaces=( 2 1 )
+tiling_workspaces=( 1 2 )
 workspace=$(xdotool get_desktop)
 
 read total_workspace_count workspace <<< \
@@ -4274,6 +4843,7 @@ update_values
 
 add_border_gap "${!all_windows[*]}"
 
+get_display_mapping
 set_workspace_windows
 
 source ~/.orw/scripts/windowctl_by_input.sh windowctl_osd source
@@ -4411,6 +4981,63 @@ for file in alignments states; do
 	fi
 done
 
+align_moved_window() {
+	#echo ALIGN: $id, $current_id, $moving_id
+	if [[ ${tiling_workspaces[*]} =~ $workspace ]]; then
+		if ((window_count)); then
+			[[ $rofi_state == opened ]] && toggle_rofi 
+			select_tiling_window
+
+			toggle_rofi
+			align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
+			full_index=$(echo -e '\n ' | rofi -dmenu -format i -theme main)
+			toggle_rofi
+
+			[[ $reverse ]] && reverse_state=$reverse
+			[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
+
+			if [[ $align_index ]]; then
+				((align_index > 1)) &&
+					choosen_alignment=v || choosen_alignment=h
+				((!(align_index % 2))) &&
+					reverse=true
+			fi
+
+			tiling=true current_id=$moving_id
+
+			((full_index)) &&
+				make_full_window || align
+			[[ $interactive ]] && adjust_window
+			update_aligned_windows "$current_id"
+			alignments[$current_id]=$alignment_direction
+
+			unset reverse
+			[[ $reverse_state ]] &&
+				reverse=$reverse_state &&
+				unset reverse_state
+
+			unset choosen_alignment
+			[[ $alignment_state ]] &&
+				choosen_alignment=$alignment_state &&
+				unset alignment_state
+		else
+			id=${original_properties[0]}
+			current_window_count=1
+			handle_first_window
+		fi
+	fi
+
+	workspaces[${moving_id:-${current_id:-$id}}]=${workspace}_${display}
+	#wmctrl -ia ${current_id:-$id} &
+	#wmctrl -ir ${current_id:-$id} -t $workspace
+	#echo ALIGN MOVED: xdotool windowactivate ${current_id:-$id} &
+	xdotool windowactivate ${moving_id:-${current_id:-$id}} &
+
+	properties=( ${all_windows[${moving_id:-${current_id:-$id}}]} )
+
+	unset move_window tiling moving_id
+}
+
 shm_alignments=/tmp/alignments
 shm_floating_properties=/tmp/shm_floating_properties
 
@@ -4420,7 +5047,16 @@ while read change new_value; do
 		previous_workspace=$workspace
 		workspace=$new_value
 
+		#((current_ws_count)) && previous_ws_count=$current_ws_count
+		#current_ws_count=$(xdotool get_num_desktops)
+		#echo $previous_ws_count, $current_ws_count
+
+		#echo WSCHANGE: $workspace, $previous_workspace
+
 		if ((workspace != previous_workspace)); then
+			adjust_workspaces
+			#echo tw $workspace: ${tiling_workspaces[*]}
+
 			[[ $rofi_state == opened &&
 				 ${tiling_workspaces[*]} == *$previous_workspace* ]] &&
 				 toggle_rofi $previous_workspace
@@ -4433,6 +5069,7 @@ while read change new_value; do
 			make_workspace_notification $workspace $previous_workspace
 		fi
 
+		current_ws_count=$(xdotool get_num_desktops)
 		pattern="$previous_workspace.*$workspace|$workspace.*$previous_workspace"
 
 		if [[ ! ${tiling_workspaces[*]} =~ $pattern ]]; then
@@ -4444,56 +5081,7 @@ while read change new_value; do
 			fi
 		fi
 
-		if [[ $move_window ]]; then
-			if [[ ${tiling_workspaces[*]} =~ $workspace ]]; then
-				if ((window_count)); then
-					[[ $rofi_state == opened ]] && toggle_rofi 
-					select_tiling_window
-
-					toggle_rofi
-					align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
-					full_index=$(echo -e '\n ' | rofi -dmenu -format i -theme main)
-					toggle_rofi
-
-					[[ $reverse ]] && reverse_state=$reverse
-					[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
-
-					if [[ $align_index ]]; then
-						((align_index > 1)) &&
-							choosen_alignment=v || choosen_alignment=h
-						((!(align_index % 2))) &&
-							reverse=true
-					fi
-
-					tiling=true current_id=$moving_id
-
-					((full_index)) &&
-						make_full_window || align
-					[[ $interactive ]] && adjust_window
-					update_aligned_windows "$current_id"
-					alignments[$current_id]=$alignment_direction
-
-					unset reverse
-					[[ $reverse_state ]] &&
-						reverse=$reverse_state &&
-						unset reverse_state
-
-					unset choosen_alignment
-					[[ $alignment_state ]] &&
-						choosen_alignment=$alignment_state &&
-						unset alignment_state
-				else
-					id=${original_properties[0]}
-					current_window_count=1
-					handle_first_window
-				fi
-			fi
-
-			workspaces[$current_id]=${workspace}_${display}
-			wmctrl -ia ${current_id:-$id} &
-
-			unset move_window tiling moving_id
-		fi
+		[[ $move_window ]] && align_moved_window
 	elif [[ $change == all_ids ]]; then
 		previous_ids=( ${all_ids[*]} )
 		all_ids=( $new_value )
@@ -4516,11 +5104,13 @@ while read change new_value; do
 				[[ $current_ids =~ ' ' ]] &&
 					closing_ids=$(sort_by_workspaces)
 
+				current_window_id=$id
 				for current_id in ${closing_ids:-$current_ids}; do
 					[[ ${input_ids[*]} != *$current_id* ]] &&
 						signal_event "launchers" "close" "$current_id"
 
 					closing_id_workspace=${workspaces[$current_id]%_*}
+					#echo ciw: $closing_id_workspace, $id, $current_id
 					id=$current_id
 
 					if [[ ${tiling_workspaces[*]} == *$closing_id_workspace* ]]; then
@@ -4547,6 +5137,92 @@ while read change new_value; do
 					fi
 				done
 
+				id=$current_window_id
+
+				#echo closing: $closing_id_workspace, $workspace, $window_count
+				windows_in_closing_workspace="${workspaces[*]//[^$closing_id_workspace]_?}"
+				#echo "${#window_count} - ^$window_count^: $windows_in_closing_workspace : ${workspaces[*]}", $id: ${workspaces[$id]}
+				#for w in ${!workspaces[*]}; do
+				#	echo ws: $w, ${workspaces[$w]}
+				#done
+				#((!${#window_count})) && echo empty || echo not
+
+				#if ((closing_id_workspace == workspace && !window_count)); then
+				#if ((!${window_count//[^0-9]})); then
+				if [[ ! ${windows_in_closing_workspace//[^0-9]} ]]; then
+					tmp=$(awk '
+						/names/ {
+							wn = !wn
+							if (wn) wi = NR + 1 + '$closing_id_workspace'
+						}
+
+						wi && NR == wi && /tmp/ {
+							gsub("\\s*<[^>]*.", "")
+							print
+							exit
+						}' ~/.config/openbox/rc.xml)
+
+					if [[ $tmp ]]; then
+						#if we're on a tmp workspace while last window is closed
+						#we should move to the previously visited workspace and remove the current empty one
+						#and shift all the windows to the right of the removed workspace, to the left
+						if ((workspace == closing_id_workspace)); then
+							workspace_to_restore=$((previous_workspace - (previous_workspace > closing_id_workspace)))
+							workspace_not_shifted=$((workspace_to_restore == closing_id_workspace))
+							#workspace_to_restore=$previous_workspace
+							#workspace_not_shifted=$((previous_workspace - \
+							#	(previous_workspace > closing_id_workspace) == closing_id_workspace))
+
+							#shift_workspace_back=$((previous_workspace > closing_id_workspace))
+							#workspace_to_restore=$((previous_workspace - shift_workspace_back))
+							#((previous_workspace > closing_id_workspace)) &&
+							#	shift_left_count=1 && unset workspaces_not_shifted || workspaces_not_shifted=1
+							#workspace_to_restore=$((previous_workspace - shift_left_count))
+						#else
+						#	((closing_id_workspace > workspace)) && unset closing_id_workspace
+						fi
+
+						#echo aws: $shift_left_count, $workspaces_not_shifted, $workspace_to_restore
+
+						~/.orw/scripts/workspacectl.sh remove $tmp $workspace_to_restore
+						#since adjust_workspaces function is triggered by workspace change (from removed to the previous),
+						#if it happens that previously visited workspace (the one we should move to after removal)
+						#should become the current workspace (one to be removed) after shift is applied,
+						#workspace won't change, thus adjust_workspace won't be triggered automatically,
+						#so we have to run it manually
+						((workspace_not_shifted)) && adjust_workspaces
+						#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+						((closing_id_workspace > workspace)) && unset closing_id_workspace
+						unset workspace{s_not_shifted,_to_restore}
+
+
+
+						#((workspace == closing_id_workspace)) &&
+						#	workspace=$((previous_workspace - (previous_workspace > closing_id_workspace)))
+						#	#workspace_to_restore=$previous_workspace || unset workspace_to_restore
+						#echo WS: $workspace
+
+						##~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+						#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+						##new_ws_count=$(~/.orw/scripts/manage_workspaces.sh remove $tmp $restore_workspace)
+
+						##echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $no_change
+						##echo tmp: $tmp, $no_change, $workspace, $closing_id_workspace, $id
+						##~/.orw/scripts/notify.sh -t 5 "CHANGING: $new_ws_count, $no_change, $closing_id_workspace"
+
+
+						##if [[ $no_change ]]; then
+						##	sleep 2
+						##	wmctrl -s $previous_workspace
+						##	echo CLOSING $previous_workspace
+						##	sleep 2
+						##	wmctrl -n $new_ws_count
+						##fi
+					else
+						unset closing_id_workspace
+					fi
+				fi
+
 				if ((closing_id_workspace != workspace)); then
 					windows=()
 
@@ -4556,7 +5232,6 @@ while read change new_value; do
 						done
 				fi
 
-				unset closing_id_workspace
 
 				[[ ! ${windows[*]} ]] &&
 					signal_event "workspaces" "close" "$workspace"
@@ -4585,7 +5260,10 @@ while read change new_value; do
 							de = ds + dd
 						}
 
-						$1 ~ "'"${current_id#0x}"'" { i = ($NF ~ "('${blacklist//,/|}')") }
+						#$1 ~ "'"${current_id#0x}"'" { i = ($NF ~ "('${blacklist//,/|}')") }
+						$1 ~ "'"${current_id#0x}"'" {
+							i = (($NF ~ "('${blacklist//,/|}')") || $(di + 2) >= dd)
+						}
 						$2 == '$workspace' && $di >= ds && $di + 0 <= de \
 							{ if($NF !~ "('${blacklist//,/|}')") cwc++ }
 						END { print cwc++, i }')
@@ -4640,10 +5318,15 @@ while read change new_value; do
 						workspaces[$current_id]=${workspace}_${display}
 
 						read x y w h xb yb <<< ${windows[$current_id]}
-						new_x=$((x + (w - new_window_size) / 2))
-						new_y=$((y + (h - new_window_size) / 2))
-						new_x=$x new_y=$y
+						new_x=$((x + (w - new_window_size) / 2 - ${display_properties[0]}))
+						new_y=$((y + (h - new_window_size) / 2 - ${display_properties[1]}))
+
+						#new_x=$x new_y=$y
+						#new_x=$((x - ${display_properties[0]})) new_y=$((y - ${display_properties[1]}))
+
 						set_new_position $new_x $new_y 150 150
+
+						#echo $new_x, $new_y: $x, $y, $w, $h - ${display_properties[*]},   ${windows[$current_id]}, $offset, $offset_x, $offset_y
 
 						[[ ! $id ]] && id=$current_id
 					fi
@@ -4667,7 +5350,8 @@ while read change new_value; do
 				ignore=1
 			fi
 
-			wmctrl -ia $current_id 2> /dev/null
+			#wmctrl -ia $current_id 2> /dev/null
+			[[ $window_title != image_preview ]] && xdotool windowactivate $current_id
 		fi
 	else
 		signal_event "workspaces" "windows" "$workspace $new_value ${!windows[*]}"
@@ -4675,10 +5359,15 @@ while read change new_value; do
 		[[ "$new_value" =~ "0x0" || "$new_value" == $id || $move_window || #]] && continue
 			${input_ids[*]} == *$new_value* ]] && continue
 
+		#save the last active window on each display,
+		#so it can be targeted as a default window, when different display is selected 
+		#[[ $id && ${workspaces[$id]} ]] && last_display_window[${workspaces[$id]#*_}]=$id
+			#echo ldw: $id, ${!workspaces[*]}, ${last_display_window[${workspaces[$id]#*_}]}
+
 		id=$new_value
 		signal_event "launchers" "active" "$id"
 		current_id=$id
-
+		display=${workspaces[$id]#*_}
 		properties=( ${windows[$id]} )
 
 		if [[ ${states[$id]} ]]; then

@@ -24,24 +24,36 @@ workspaces=( $(awk '
 		wn && /<name>/ {
 			cwn = gensub("[^>]*>([^<]*).*", "\\1", 1)
 			awn = awn "|" cwn
+			aw[cwn] = ++wi
 		}
 
-		FILENAME ~ ".*(icons|dmenu)$" && $0 ~ "Workspace_(" substr(awn, 2) ")" {
-			awi = awi " " gensub(".*=", "", 1)
-		} END { print (awi) ? awi : gensub("\\|", " ", "g", awn) }' ~/.config/openbox/rc.xml $icons) )
+		FILENAME ~ ".*(icons|dmenu)$" && $0 ~ "Workspace_(" substr(awn, 2) ")=" {
+			split($0, wni, "=")
+			sub("Workspace_", "", wni[1])
+			awi[aw[wni[1]]] = wni[2]
+		} END {
+			if (awi[1]) for (wi in awi) print awi[wi]
+			else print gensub("\\|", " ", "g", awn)
+		}' ~/.config/openbox/rc.xml $icons) )
+		#} END { print (awi) ? awi : gensub("\\|", " ", "g", awn) }' ~/.config/openbox/rc.xml $icons) )
+
+	#[[ $style =~ icons|dmenu ]] && workspaces+=(    ) || workspaces+=( add remove )
+[[ ! $style =~ icons|dmenu ]] &&
+	add=add remove=remove ||
+	read add remove <<< $(sed -n 's/^\(plus\|minus\).*=//p' $icons | xargs)
 
 workspace_count=${#workspaces[*]}
 window_id=$(printf "0x%.8x" $(xdotool getactivewindow))
 
 [[ $1 == move ]] && move=true
 
-manage=
-if [[ $manage ]]; then
-	#[[ $style =~ icons|dmenu ]] && workspaces+=(    ) || workspaces+=( add remove )
-	[[ ! $style =~ icons|dmenu ]] &&
-		workspaces+=( add remove ) ||
-		workspaces+=( $(sed -n 's/^\(plus\|minus\).*=//p' $icons | xargs) )
-fi
+#manage=
+#if [[ $manage ]]; then
+#	#[[ $style =~ icons|dmenu ]] && workspaces+=(    ) || workspaces+=( add remove )
+#	[[ ! $style =~ icons|dmenu ]] &&
+#		workspaces+=( add remove ) ||
+#		workspaces+=( $(sed -n 's/^\(plus\|minus\).*=//p' $icons | xargs) )
+#fi
 
 for workspace_index in ${!workspaces[*]}; do
 	((workspace_index)) && all_workspaces+='\n'
@@ -58,10 +70,138 @@ read chosen_{index,workspace} <<< $(echo -e "$all_workspaces" |
 	rofi -dmenu -format 'i s' -selected-row $current_workspace \
 	-theme-str "$theme_str" $active -theme main)
 
-if [[ -z $chosen_workspace || $chosen_index -eq $current_workspace ]]; then
+if [[ -z $chosen_workspace ]]; then
 	toggle
 	exit 0
+elif ((chosen_index == current_workspace)); then
+	base_count=${#workspaces[*]}
+
+	while
+		unset {sub,main}_options
+
+		for wi in ${!workspaces[*]}; do
+			workspaces[wi+sub_options]=${workspaces[wi+main_options]}
+			if ((wi == current_workspace)); then
+				((${#workspaces[*]} == base_count)) &&
+					sub_options=2 || main_options=2
+			fi
+		done
+
+		if ((sub_options)); then
+			((item_count+=sub_options))
+			workspaces[current_workspace+1]=$add
+			workspaces[current_workspace+2]=$remove
+			hilight="-u $((current_workspace + 1)),$((current_workspace + 2))"
+		else
+			item_count=$base_count
+			unset workspaces[-2] workspaces[-1]
+			unset hilight
+		fi
+
+		set_theme_str
+
+		read new_workspace{_index,} <<< \
+			$(tr ' ' '\n' <<< ${workspaces[*]} |
+			rofi -dmenu -format 'i s' $hilight \
+			-selected-row $current_workspace -theme-str "$theme_str" -theme main)
+
+		((new_workspace_index == current_workspace))
+	do
+		continue
+	done
+
+	case $new_workspace in
+		$add)
+			action=add
+			((chosen_index++))
+			;;
+		$remove)
+			action=remove
+			workspace_to_remove=${workspaces[current_workspace]}
+			;;
+		*) chosen_index=$new_workspace_index chosen_workspace=$new_workspace
+	esac
+
+	#~/.orw/scripts/notify.sh "$chosen_index $chosen_workspace"
+	echo -n "$chosen_index $chosen_workspace"
+
+	[[ $action ]] &&
+		~/.orw/scripts/workspacectl.sh $action "$workspace_to_remove" && exit
+	#~/.orw/scripts/notify.sh "$chosen_index $chosen_workspace"
+
+	echo $chosen_index: $chosen_workspace
+	exit
+
+	#toggle
+	#exit 0
 fi
+
+#echo HERE $chosen_workspace
+#exit
+#
+#[[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r &
+#
+#if [[ "$chosen_workspace" =~   ]]; then
+#	wmctrl -n $((workspace_count - 1))
+#else
+#	if [[ "$chosen_workspace" =~   ]]; then
+#		new_workspace_name='tmp'
+#		new_workspace_index=$workspace_count
+#
+#		((workspace_count++))
+#			if ((wi == current_workspace)); then
+#				((${#workspaces[*]} == base_count)) &&
+#					sub_options=2 || main_options=2
+#			fi
+#		done
+#
+#		if ((sub_options)); then
+#			((item_count+=sub_options))
+#			workspaces[current_workspace+1]=$add
+#			workspaces[current_workspace+2]=$remove
+#			hilight="-u $((current_workspace + 1)),$((current_workspace + 2))"
+#		else
+#			echo ${workspaces[*]}
+#			item_count=$base_count
+#			unset workspaces[-1] workspaces[-2] hilight
+#			#unset hilight
+#		fi
+#
+#		set_theme_str
+#
+#		read new_workspace{_index,} <<< \
+#			$(tr ' ' '\n' <<< ${workspaces[*]} |
+#			rofi -dmenu -format 'i s' $hilight \
+#			-selected-row $current_workspace -theme-str "$theme_str" -theme main)
+#
+#		((new_workspace_index == current_workspace))
+#	do
+#		continue
+#	done
+#
+#	exit
+#
+#	case $new_workspace in
+#		$add) action=add;;
+#		$remove)
+#			action=remove
+#			workspace_to_remove=${workspaces[current_workspace]}
+#			;;
+#		*)
+#			((new_workspace_index == current_workspace)) &&
+#				toggle && exit 0 ||
+#				chosen_index=$new_workspace_index chosen_workspace=$new_workspace
+#	esac
+#
+#	[[ $action ]] &&
+#		echo ~/.orw/scripts/manage_workspaces.sh $action "$workspace_to_remove"
+#
+#	#toggle
+#	#exit 0
+#fi
+#
+#echo HERE $chosen_workspace
+#exit
 
 [[ $1 == wall ]] && ~/.orw/scripts/wallctl.sh -c -r &
 
@@ -89,7 +229,7 @@ else
 		current_workspace_name=${workspaces[current_workspace_index]}
 
 		if [[ $mode != floating ]]; then
-			echo $new_workspace_index
+			echo $new_workspace_index ${workspaces[$new_workspace_index]}
 			exit
 			$windowctl -D $new_workspace_index -t
 		else

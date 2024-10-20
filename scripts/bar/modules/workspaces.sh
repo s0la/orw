@@ -215,6 +215,8 @@ check_workspaces() {
 
 		read event value < $workspaces_fifo #&
 
+		workspace_count=$(xdotool get_num_desktops)
+
 		case $event in
 			close)
 				current_workspace=$value
@@ -301,7 +303,6 @@ make_workspaces_content() {
 			i)
 				if ((${#value} > 1)); then
 					icon_type=$(sed 's/\w/&\[^_]*_/g' <<< "W$value")
-					echo "IT: ${icon_type}[pcs]" > ~/ic.log
 					read workspace_{p,c,s}_icon <<< $(get_icon "${icon_type}[pcs]" | xargs)
 				else
 					workspace_icons=$value

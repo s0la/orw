@@ -1,22 +1,37 @@
 #!/bin/bash
 
-icons=~/.orw/scripts/bar/icons
+icons=~/.orw/scripts/icons
+#workspaces=$(awk '
+#		NR == FNR && /<\/?names>/ { wn = !wn }
+#
+#		wn && /<name>/ {
+#			gsub("\\s*<[^>]*>", "")
+#			awn = awn "|" $0
+#		}
+#
+#		NR != FNR && $0 ~ "Workspace_(" substr(awn, 2) ")" {
+#			if (!wii) wii = NR
+#			gsub(".*=", "")
+#			awi[NR - wii] = $0
+#		} END { for (i in awi) printf "[%s]=%d ", awi[i], i }
+#		' ~/.config/openbox/rc.xml $icons)
+
 workspaces=$(awk '
-		NR == FNR && /<\/?names>/ { wn = !wn }
+		/<\/?names>/ { wn = !wn }
 
 		wn && /<name>/ {
-			gsub("\\s*<[^>]*>", "")
-			awn = awn "|" $0
+			cwn = gensub("[^>]*>([^<]*).*", "\\1", 1)
+			awn = awn "|" cwn
+			aw[cwn] = wi++
 		}
 
-		NR != FNR && $0 ~ "Workspace_(" substr(awn, 2) ")_icon" {
-			if (!wii) wii = NR
-			gsub("(^|%)[^}]*.", "")
-			awi[NR - wii] = $0
+		NR != FNR && $0 ~ "Workspace_(" substr(awn, 2) ")=" {
+			split($0, wni, "=")
+			sub("Workspace_", "", wni[1])
+			awi[aw[wni[1]]] = wni[2]
 		} END { for (i in awi) printf "[%s]=%d ", awi[i], i }
-		' ~/.config/openbox/rc.xml $icons)
+		' ~/.config/openbox/rc.xml $icons | xargs)
 
-		
 eval declare -A workspaces=( "$workspaces" )
 
 if [[ $@ ]]; then
