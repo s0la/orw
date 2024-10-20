@@ -3,51 +3,66 @@
 set_position() {
 	window_border=$(awk '/^border.width/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
 
-	read x y width height <<< $(sed -n '/dropdown/,/^$/ s/[^0-9]*\([0-9]\+\).*/\1/p' ~/.config/openbox/rc.xml | xargs)
+	read current_display x y width height <<< \
+		$(sed -n '/dropdown/,/^$/ { s/[^0-9]*\([0-9]\+\).*/\1/p }' \
+		~/.config/openbox/rc.xml | xargs)
 
+	id=$(xdotool getactivewindow)
+	read x y <<< $(xwininfo -id $id | awk '/Absolute/ { print $NF }' | xargs)
+	mapped_display=$(~/.orw/scripts/display_mapper.sh |
+		awk 'NR == '$current_display' { print $1 }')
+
+	#echo $display
 	#echo $x, $y, $width, $height
 
-	read x y w h <<< $(awk -F '[_ ]' '
+	read d x y w h <<< $(awk -F '[_ ]' '
 		BEGIN {
 			wb = '$window_border'; wx = '$x'; wy = '$y'; ww = '$width'; wh = '$height';  rwx = dw - (wx + ww + wb);
 			nx = "'$x_position'"; ny = "'$y_position'"; nw = "'$new_width'"; nh = "'$new_height'"
 		} {
 			if (/^[xy]_offset/) { if (/x/) xo = $NF; else yo = $NF }
 			if (/^orientation/) {
-				d = '${display:-0}'; cd = 1
+				d = '${display:-0}'
 				if ($NF ~ /^h/) { i = 4; p = wx } else { i = 5; p = wy }
 			}
 
 			if ($1 == "display") {
 				if ($3 == "size") {
-					if ((d && d == cd) || !d) { dw = $4; dh = $5 }; max += $i
-				} else if ($3 == "xy") {
 					cd = $2
-					if ((d && d == cd) || !d) { dx = $4; dy = $5 }
+					if (cd == '$mapped_display') { cdw = $4; cdh = $5 }
+					if (!e && ((d && d == cd) || !d)) { dw = $4; dh = $5 }; max += $i
+				} else if ($3 == "xy") {
+					if (!e && ((d && d == cd) || !d)) { dx = $4; dy = $5 }
 				} else if ($3 == "offset") {
-					if (((d && (cd >= d)) || (!d)) && p < max) {
-						if (nw) { ww = int((dw / 100) * nw); if (nw == 100) ww -= bw }
-						if (nh) wh = int(((dh - $4 - $5 - yo) / 100) * nh);
-
-						if (nx == "r" || (!nx && rwx < wx + 10)) wx = dw - ww - int((xo + wb) / 2)
-						else if (nx == "l" || (!nx && wx < rwx + 10)) wx = int(xo / 2)
-						else wx = int((dw - ww) / 2)
-
-						if (ny == "t" || (!ny && rwx < wx + 10)) wy = (($4) ? $4 + 1 : int(yo / 2))
-						else if (ny == "b" || (!ny && wx < rwx + 10)) wx = dh - wh - int(xo / 2)
-						else wy = int((dh - wh - $4 - $5) / 2)
-
-						print dx + wx, dy + wy, ww + 32, wh + 57
-						exit
-					} else {
+					#if (((d && (cd >= d)) || (!d)) && p < max) {
+					if (cd == '$mapped_display') { cdh -= $5 + $6 }
+					if (!e && ((d && cd >= d) || (!d && p < max))) e = cd
+					else {
 						if(d && cd < d || !d) bmin += $3;
 						if(p > max) if(i == 3) wx -= $i; else wy -= $i
 					}
 				}
 			}
+		} END {
+			if (nw) { ww = int((dw / 100) * nw); if (nw == 100) ww -= bw }
+			else { ww = int(dw / 100 * (ww / (cdw / 100))) }
+			if (nh) wh = int(((dh - $4 - $5 - yo) / 100) * nh);
+			else { wh = int((dh - $4 - $5 - yo) / 100 * (wh / (cdh / 100))) }
+
+			if (nx == "r" || (!nx && rwx < wx + 10)) wx = dw - ww - int((xo + wb) / 2)
+			else if (nx == "l" || (!nx && wx < rwx + 10)) wx = int(xo / 2)
+			else wx = int((dw - ww) / 2)
+
+			if (ny == "t" || (!ny && rwx < wx + 10)) wy = (($4) ? $4 + 1 : int(yo / 2))
+			else if (ny == "b" || (!ny && wx < rwx + 10)) wx = dh - wh - int(xo / 2)
+			else wy = int((dh - wh - $4 - $5) / 2)
+
+			print e, wx, wy, ww, wh
 		}' ~/.config/orw/config)
 
-	~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $w -h $h
+	display=$(~/.orw/scripts/display_mapper.sh | awk 'NR == '$d' { print $1 }')
+
+	~/.orw/scripts/set_geometry.sh -c dropdown -m $display -x $x -y $y -w $w -h $h
 	return
 
 	read display display_x display_y display_width display_height bar_min bar_max x y <<< \
@@ -135,8 +150,8 @@ set_position() {
 		~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 
-x_position=c
-y_position=t
+x_position=r
+y_position=c
 	
 current_desktop=$(xdotool get_desktop)
 focused_window=$(xdotool getwindowfocus getwindowname)
