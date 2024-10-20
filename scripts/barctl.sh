@@ -279,7 +279,8 @@ check_new_bars() {
 	declare -A displays
 	local current_bars="${current_running//,/ }"
 
-	read default_y_offset <<< $(awk '/^y_offset/ { print $NF }' ~/.config/orw/config)
+	read default_y_offset primary_display <<< \
+		$(awk -F '[_ ]' '/^(y_offset|primary)/ { print $NF }' ~/.config/orw/config | xargs)
 
 	for bar in ${current_bars:-${bars[@]}}; do
 			read display bottom offset <<< $(awk '
@@ -293,12 +294,9 @@ check_new_bars() {
 
 				/^[^#]/ {
 					y = get_flag("y")
-					#b = (y ~ "b")
 					b = (y ~ "b")
 					if (y) {
-						#get_value(y)
 						gsub("[^0-9]", "", y)
-						#print y
 					} else y = '$default_y_offset'
 
 					h = get_flag("h")
@@ -318,9 +316,8 @@ check_new_bars() {
 					}
 
 					s = get_flag("S")
-					if (!s) s = 1
+					if (!s) s = '$primary_display'
 
-					#print b, y + h + f + F, y, h, f, F
 					print s, b, y + h + f + F
 				}' ~/.config/orw/bar/configs/$bar)
 
@@ -357,31 +354,6 @@ check_new_bars() {
 	((update_values)) && ~/.orw/scripts/signal_windows_event.sh update
 
 	[[ $killed ]] && exit
-	return
-
-	awk -i inplace -F '[_ ]' '{
-			if (NR == FNR) d[$1] = $2 " " $3
-			#else if ($1 == "display" && $3 == "offset") {
-			#	print $(NF - 1), $NF
-			#	print d[$2]
-			#	#&& $2 in d &&
-			#	#$(NF - 1) " " $NF != d[$2]) {
-			else if ($1 == "display" && $3 == "offset" && $2 in d &&
-				$(NF - 1) " " $NF != d[$2]) {
-				#print
-				#print $(NF - 1), $NF ", " d[$2]
-				printf "display_%d_offset %s\n", $2, d[$2]
-				next
-			} print
-		}' <(
-			for d in ${!displays[*]};do
-				echo $d ${displays[$d]}
-			done
-		) ~/.config/orw/config &> /dev/null
-
-		~/.orw/scripts/signal_windows_event.sh update
-
-		[[ $killed ]] && exit
 }
 
 check_new_bars
