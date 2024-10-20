@@ -30,7 +30,8 @@ read margin default_{x,y}_border {x,y}_offset full reverse alignment_direction \
 declare -A windows_indexes
 
 # getting default size of opening window
-new_window_size=$(awk -F '=' '/^new_window_size/ { print $NF }' ~/.orw/scripts/tile_windows.sh)
+#new_window_size=$(awk -F '=' '/^new_window_size/ { print $NF }' ~/.orw/scripts/tile_windows.sh)
+new_window_size=130
 
 [[ -f $offsets_file && $(awk '/^offset/ { print $NF }' $config) == true ]] && eval $(cat $offsets_file | xargs)
 
@@ -119,14 +120,29 @@ function save_properties() {
 }
 
 function backtrace_properties() {
-	read line_number properties <<< $(awk '/^'$id'/ {
-			nr = NR; p = gensub($1 " (.*) ?" $6, "\\1", 1)
-		} END { print nr, p }' $property_log)
-		sed -i "${line_number}d" $property_log
-		echo "$properties"
+	#read line_number properties <<< $(awk '/^'$id'/ {
+	#		nr = NR; p = gensub($1 " (.*) ?" $6, "\\1", 1)
+	#	} END { print nr, p }' $property_log)
+	#	sed -i "${line_number}d" $property_log
+	#	echo "$properties"
+	read line_number properties <<< $(awk '
+		/^'$id'/ { nr = NR; p = $0 }
+		END { print nr, p }' $property_log)
+	sed -i "${line_number}d" $property_log
+	echo "$properties"
 }
 
 function apply_new_properties() {
+	read {x,y}b_diff <<< $(xwininfo -id $id | awk '
+	 	/xwininfo/ { id = $4 }
+		/Absolute.*Y/ { ay = $NF }
+		/Relative/ { if(/X/) xb = $NF; else yb = $NF }
+		$0 ~ "geometry.*" ay "$" { print xb, yb }')
+
+	#echo ${printable_properties[*]}, ${properties[*]}
+	((xb_diff)) && ((properties[3] += xb_diff))
+	((yb_diff)) && ((properties[4] += yb_diff))
+	printable_properties="${properties[*]:1:4}"
 	[[ $printable_properties ]] && wmctrl -ir $id -e 0,${printable_properties// /,}
 }
 
@@ -1798,7 +1814,8 @@ while ((argument_index <= $#)); do
 						set_windows_properties $display_orientation
 
 						while read -r id properties; do
-							printable_properties=$(backtrace_properties)
+							#printable_properties=$(backtrace_properties)
+							properties=( $(backtrace_properties) )
 							apply_new_properties
 						done <<< $(list_all_windows)
 						exit
@@ -2050,7 +2067,8 @@ while ((argument_index <= $#)); do
 						b) bar_offset=true;;
 						r)
 							properties=( $id $(backtrace_properties) )
-							update_properties;;
+							update_properties
+							;;
 						t)
 							tiling=true
 
@@ -2233,6 +2251,8 @@ while ((argument_index <= $#)); do
 
 				optind=${!argument_index}
 
+				select_window
+
 				get_bar_properties add
 
 				if [[ $second_window_properties ]]; then
@@ -2347,16 +2367,16 @@ while ((argument_index <= $#)); do
 
 					[[ $optarg =~ [lr] ]] && index=1 start_index=2 || index=2 start_index=1
 
-					swap_windwow_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | \
+					swap_window_properties=( $(sort_windows $optarg | sort $reverse -nk 1,1 | \
 						awk '{ si = '$start_index'; sp = $(si + 2); csp = '${properties[start_index]}'; \
 						print (csp > sp) ? csp - sp : sp - csp, $0 }' | sort $reverse -nk 2,2 -nk 1,1$start_reverse | \
 						awk '{ if($3 == "'$id'") { print p; exit } else { gsub(/.*0x/, "0x", $0); p = $0 } }') )
 
 					original_properties=( ${properties[*]} )
-					printable_properties="${swap_windwow_properties[*]:1}"
+					printable_properties="${swap_window_properties[*]:1}"
 
 					apply_new_properties
-					id=${swap_windwow_properties[0]}
+					id=${swap_window_properties[0]}
 					printable_properties="${original_properties[*]:1}"
 
 					apply_new_properties
