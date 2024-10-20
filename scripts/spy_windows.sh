@@ -2370,11 +2370,8 @@ set_move_event() {
 	[[ ${tiling_workspaces[*]} == *$workspace* ]] &&
 		remove_tiling_window no_change || unset windows[$id]
 
-	echo HERE
 	local rofi_pid=$(pidof -x signal_windows_event.sh)
-	echo rofi pid: $rofi_pid
 	[[ $rofi_pid ]] && kill -USR1 $rofi_pid
-	echo killing
 
 	if [[ $rofi_state != closed ]]; then
 		local new_workspace{,_name}
@@ -3365,10 +3362,12 @@ toggle_rofi() {
 		((rofi_offset != rofi_opening_offset || rofi_pid)) &&
 			local reset_rofi_windows=true
 
+		#echo CLOSED $rofi_pid: $rofi_offset, $reset_rofi_windows
 		unset rofi_opening_offset
 
 		[[ $reset_rofi_windows ]] && set_rofi_windows
 		[[ $rofi_pid ]] && kill -USR1 $rofi_pid
+		unset rofi_state
 	fi
 
 	return 0
