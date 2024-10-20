@@ -5,7 +5,7 @@ function show_status() {
 	sed -i "/^statusbar_visibility/ s/\".*/\"${status:-no}\"/" ~/.orw/dotfiles/.config/ncmpcpp/config{,_cover_art}
 }
 
-function show_progessbar() {
+function show_progressbar() {
 	if [[ $1 =~ (true|yes) ]]; then
 		vis_bar='   '
 		vis_status="no"
@@ -132,7 +132,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			fi
 
 			command="new -s $title cava"
-			show_progessbar ${progressbar-no}
+			show_progressbar ${progressbar-no}
 			[[ $@ == *-L* ]] && config="--config-file $HOME/.config/alacritty/cava.toml"
 			;;
 		s)
@@ -140,9 +140,12 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 			height=${height-600}
 			title=ncmpcpp_split
 
-			show_status no
+			status=no
+			progressbar=no
 
-			command="new -s $title ncmpcpp \; splitw -p 20 cava \; selectp -U";;
+			#command="new -s $title ncmpcpp \; splitw -p 20 cava \; selectp -U"
+			command="new -s $title ncmpcpp \; splitw -p 30 ncmpcpp -s visualizer -c ~/.config/ncmpcpp/config_visualizer \; selectp -U"
+			;;
 		c)
 			padding=$(awk '/padding/ {
 				p = gensub(/[^0-9]*([0-9]+).*/, "\\1", 1)
@@ -161,7 +164,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				back=b
 			fi
 
-			show_progessbar $progressbar
+			show_progressbar $progressbar
 			show_status $progressbar
 
 			command="new -s $title ~/.orw/scripts/ueberzug_parser.sh \; "
@@ -181,7 +184,7 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 				get_cover_properties && draw_cover_art
 			fi;;
 		[PS])
-			[[ $flag == S ]] && show_status $OPTARG || show_progessbar $OPTARG
+			[[ $flag == S ]] && show_status $OPTARG || show_progressbar $OPTARG
 			(($# + 1 == OPTIND)) && exit 0;;
 		L) pre="~/.orw/scripts/windowctl.sh $OPTARG";;
 		D)
@@ -234,6 +237,6 @@ while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 		esac
 done
 
-show_status yes
-show_progessbar ${progressbar-yes}
+show_status ${status:-yes}
+show_progressbar ${progressbar-yes}
 eval "$base_command ${command-new -s ncmpcpp ncmpcpp}"
