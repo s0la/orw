@@ -14,9 +14,9 @@ configuration {
 
 	lines:                 7;
 
-	window-width:          30%;
+	window-width:          23%;
 	window-margin:         0px 0;
-	window-padding:        3% 2%;
+	window-padding:        2% 1%;
 	window-location:       center;
 	window-orientation:    horizontal;
 

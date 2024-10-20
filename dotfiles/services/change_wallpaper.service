@@ -3,8 +3,8 @@ Description=wallpaper changer
 
 [Service]
 Environment=DISPLAY=:0.0
-Environment=XAUTHORITY=/home/sola/.Xauthority
-ExecStart=/bin/bash -c "/home/sola/.orw/scripts/wallctl.sh -a -o random"
+Environment=XAUTHORITY=/home/sasa/.Xauthority
+ExecStart=/bin/bash -c "/home/sasa/.orw/scripts/wallctl.sh -a -o random"
 
 [Install]
 WantedBy=multi-user.target

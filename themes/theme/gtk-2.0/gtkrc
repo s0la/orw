@@ -318,8 +318,8 @@ style "notebook" = "notebook-bg" {
 style "menu" {
     font_name = '8'
 
-	ythickness = 10
-	xthickness = 10
+ythickness = 12
+xthickness = 12
 
 	bg[NORMAL]        = @mbg_color
 	bg[ACTIVE]        = @msbg_color

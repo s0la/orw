@@ -7,10 +7,10 @@
 	font:   "SFMono Medium 9";
 	font:   "SFMono Medium 7";
 
-	window-width:    35%;
-	window-height:   35%;
+	window-width:    25%;
+	window-height:   25%;
 	window-border:   2px;
-	window-padding:  4% 4%;
+	window-padding:  2% 2%;
 
 	list-padding:    0px 0px;
 	list-spacing:    0px;

@@ -23,4 +23,14 @@
 #~/.orw/scripts/bar/run.sh -y 0 -x 0 -h 20 -a 7 -F 4 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,S:b,b:S2o5cptn,i:s20d2o10io10t -c -W i:n,o:2,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -N -R -t -j -s 10 -p 10 -i icons -e -v -d 'I:M|b_d'
 
 #~/.orw/scripts/bar/run.sh -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:2,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -N -R -t -j -f -s 10 -p 10 -i icons -e -v -d 'I:M|b_d'
-~/.orw/scripts/bar/run.sh -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:1,p:10 -r -i -p 10 -T P:16d -i only -p 8 -j d:4 -X -N -R -t -j -f -s 5 -i icons -e -v -d 'I:M|b_d' -f a:1 -P i,f:17,o:15,a:Lrlo,s:25x15
+
+
+
+
+#~/.orw/scripts/bar/run.sh -x 250 -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:1,p:10 -r -i -p 10 -T P:16d -i only -p 8 -j d:4 -X -N -R -t -j -B -i icons -f -s 5 -e -b -v -d 'I:M|b_d' -f a:1 -P i,f:12,o:12,a:Lrlo,s:25x15
+#~/.orw/scripts/bar/run.sh -x 250 -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:1,p:10 -r -i -p 10 -T P:16d -i icons -f -s 5 -e -b -v -d 'I:M|b_d' -i only -p 8 -f a:1 -B -j d:4 -X -N -R -t -j -P i,f:12,o:12,a:Lrlo,s:25x15
+#~/.orw/scripts/bar/run.sh -x 250 -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:1,p:10 -r -i -p 10 -T P:16d -i only -p 8 -j d:4 -X -N -R -t -j -B -i icons -f -s 5 -e -b -v -f a:1 -j d:15,s:ef -d 'I:M|b_d' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+
+
+#~/.orw/scripts/bar/run.sh -x 250 -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo10,P:b,S:f,R:e,b:S2o5ptno5,i:s20d2o10io10t -c -W i:rsf,o:1,p:10 -r -i -p 10 -T P:16d -i icons -f -s 5 -e -b -v -d 'I:M|b_d' -i only -p 8 -f a:1 -B -j d:4 -X -N -R -t -j -P i,f:12,o:12,a:Lrlo,s:25x15
+~/.orw/scripts/bar/run.sh -x 250 -y 10 -h 20 -a 7 -F 3 -f a:1 -s 3 -p 0 -c auto_generated -n under_join -m P:b,p:s12o10bo12,P:b,S:f,R:e,b:S2o5ptno2,i:s20d2o10io10t -c -f -W i:cc,o:1,p:10 -r -i -p 10 -T P:16d -i -s 5 -e -b -v -d 'b_d|I:M' -i only -p 8 -f a:1 -B -j d:4 -N -D -R -t -X -j -P i,f:12,o:12,a:Lrlo,s:25x15

@@ -202,11 +202,13 @@ get_branch_info() {
 			END {
 				gm = "'$1'"
 				#if(gm ~ "m" && m) c = c " m=\"  "m"\""
-				if(gm ~ "m" && m) c = c " m=\"  "m"\""
+				#if(gm ~ "m" && m) c = c " m=\"  "m"\""
+				if(gm ~ "m" && m) c = c " m=\"  "m"\""
 				if(gm ~ "i" && i) c = c " i=\"  "i"\""
 				if(gm ~ "d" && d) c = c " d=\"  "d"\""
-				if(gm ~ "a" && a) c = c " a=\"  "a"\""
-				if(gm ~ "u" && u) c = c " u=\"  "u"\""
+				if(gm ~ "a" && a) c = c " a=\"  "a"\""
+				if(gm ~ "u" && u) c = c " u=\"  "u"\""
+				#if(gm ~ "u" && u) c = c " u=\"  "u"\""
 
 				if(b) print b, (r > 1) ? "╋" : "┣", (NR == 1), s, c }')
 
@@ -248,24 +250,8 @@ get_virtual_env() {
 }
 
 get_basic_info() {
-	for info in ${1//,/ }; do
-		case $info in
-			u) infos+="$(whoami)";;
-			h) infos+="$(hostname)";;
-			*) infos+="${info//_/ }";;
-		esac
-	done
-
-	if [[ $mode == simple ]]; then
-		format_module -f $ic -c "$infos"
-	else
-		format_module -b $ic -c " $infos "
-	fi
-}
-
-get_basic_info() {
 	[[ $mode == simple ]] &&
-		local info_flag=f || local info_flag=b
+		local info_flag=f || local info_flag=b space=' '
 
 	for info in ${1//,/ }; do
 		case $info in
@@ -277,7 +263,7 @@ get_basic_info() {
 				;;
 		esac
 
-		format_module -$info_flag $ic -${bold_info}c "$info_content"
+		format_module -$info_flag $ic -${bold_info}c "$space$info_content$space"
 		unset bold_info
 	done
 }
@@ -364,21 +350,25 @@ color_modules() {
 
 		separator_length=$((COLUMNS - content_length))
 
-		if [[ $modules == *d* ]]; then
+		#if [[ $modules == *d* ]]; then
+		if [[ $modules == *r* ]]; then
 			[[ $mode == rice ]] && local side_separators=3
 			dashed_symbol='•'
 			dashed_symbol=''
 			dashed_symbol='━'
+			[[ $modules == *d* ]] &&
+				symbol='━' || symbol=' '
 			half_length=$((separator_length / 2 - 0))
-			dashed_separator=$(printf "$dashed_symbol%.0s" \
+			separator_content=$(printf "$symbol%.0s" \
 				$(eval echo {0..$((separator_length - side_separators))}))
-			dashed_separator=" $dashed_separator"
-			((content_length > left_content_length)) && dashed_separator+=' '
+			separator_content=" $separator_content"
+			[[ $mode == rice ]] &&
+				((content_length > left_content_length)) && separator_content+=' '
 		fi
 
-		separator="$default$(color_content 3 $dc)$dashed_separator"
+		separator="$default$(color_content 3 $dc)$separator_content"
 
-		if [[ $mode == simple && ! $dashed_separator ]]; then
+		if [[ $mode == simple && ! $separator_content ]]; then
 			local save_cursor='\e[s'
 			local restore_cursor='\e[u'
 		fi
@@ -400,14 +390,14 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="74;81;82;"
-	sc="74;81;82;"
-	dc="74;81;82;"
-	ic="93;174;179;"
-	sec="121;134;163;"
-	gcc="121;134;163;"
-	gdc="223;132;119;"
-	vc="184;193;161;"
+	fg="67;70;82;"
+	sc="67;70;82;"
+	dc="67;70;82;"
+	ic="93;150;175;"
+	sec="76;112;123;"
+	gcc="76;112;123;"
+	gdc="186;96;138;"
+	vc="109;80;125;"
 
 	clean='\[\033[0m\]'
 
@@ -424,7 +414,8 @@ generate_ps1() {
 		set_edge
 
 		info_module="u,┃"
-		info_module="u,|"
+		[[ $mode == simple ]] &&
+			info_module='u,|' || info_module="u"
 		git_module="s,m,i,a,d,u"
 
 		modules="i,W,g,v"
@@ -447,7 +438,7 @@ generate_ps1() {
 				all_modules="$start$all_modules"
 			fi
 
-			format_module -f $fg -Bc " ]"
+			[[ $reverse ]] || format_module -f $fg -Bc " ]"
 
 			if [[ $prompt_end ]]; then
 				all_modules+='\n'
@@ -602,3 +593,9 @@ fi
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+. "$HOME/.cargo/env"
+
+#neovim
+alias nvim='/opt/nvim-linux64/bin/nvim'
+
+#[ -f ~/.fzf.bash ] && source ~/.fzf.bash

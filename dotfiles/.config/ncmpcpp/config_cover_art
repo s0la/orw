@@ -3,8 +3,8 @@ song_list_format = "{%a: %t} $R {%l}"
 song_window_title_format = "{%a - }{%t}|{%f}"
 song_columns_list_format = "(50)[black]{ar}(50)[green]{t}"
 
-ncmpcpp_directory = "/home/sola/.config/ncmpcpp"
-mpd_music_dir = "/home/sola/Music"
+ncmpcpp_directory = "/home/sasa/.config/ncmpcpp"
+mpd_music_dir = "/home/sasa/Music"
 external_editor = "vim"
 user_interface = "classic"
 playlist_display_mode = "classic"
@@ -12,11 +12,11 @@ playlist_display_mode = "classic"
 message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
-now_playing_prefix = "$(125)"
+now_playing_prefix = "$(133)"
 now_playing_suffix = "$0"
-selected_item_prefix = "$(26)"
-current_item_prefix = "$(26)$r"
-browser_playlist_prefix = "$(26)»$(26) "
+selected_item_prefix = "$(132)"
+current_item_prefix = "$(132)$r"
+browser_playlist_prefix = "$(132)»$(132) "
 
 colors_enabled = "yes"
 cyclic_scrolling = "yes"
@@ -25,13 +25,13 @@ discard_colors_if_item_is_selected = "yes"
 
 header_visibility = "no"
 titles_visibility = "no"
-statusbar_visibility = "yes"
+statusbar_visibility = "no"
 display_remaining_time = "yes"
 
-volume_color = "26"
-statusbar_color = "26"
-header_window_color = "26"
-main_window_color = "26"
+volume_color = "132"
+statusbar_color = "132"
+header_window_color = "132"
+main_window_color = "132"
 empty_tag_color = "125"
 color2 = "4"
 
@@ -42,16 +42,16 @@ window_border_color = "white"
 active_window_border = "cyan"
 alternative_ui_separator_color = "black"
 
-progressbar_color = "25"
-progressbar_look = "━━━"
-progressbar_elapsed_color = "120"
+progressbar_color = "131"
+progressbar_look = "   "
+progressbar_elapsed_color = "134"
 
 visualizer_in_stereo = "no"
-visualizer_fifo_path = "/home/sola/.config/mpd/mpd.fifo"
+visualizer_fifo_path = "/home/sasa/.config/mpd/mpd.fifo"
 visualizer_output_name = "mpd_fifo"
 visualizer_sync_interval = "30"
 visualizer_look = "○▋"
 visualizer_type = "spectrum" (spectrum/wave)
-visualizer_color = 120,120,120,120,120,120,120,120,120,120,120
+visualizer_color = 134,134,134,134,134,134,134,134,134,134,134
 
 execute_on_song_change = "~/.orw/scripts/ncmpcpp.sh -C"

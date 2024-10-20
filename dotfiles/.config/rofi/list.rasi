@@ -7,11 +7,11 @@
 	font:                  "SFMono Medium 9";
 	font:                  "SFMono Medium 7";
 
-	lines:                 6;
+	lines:                 5;
 
-	window-width:          30%;
+	window-width:          22%;
 	window-margin:         0px 0;
-	window-padding:        3% 2%;
+	window-padding:        1% 1%;
 	window-location:       center;
 	window-orientation:    horizontal;
 
@@ -61,13 +61,11 @@
 
 #prompt {
 	enabled: false;
-	str:              "";
 	background-color: @ibg;
 	color:            @lpc;
 }
 
 #textbox-prompt-colon {
-	str:              "";
 	str:              "›";
 	expand:           false;
 	background-color: @ibg;

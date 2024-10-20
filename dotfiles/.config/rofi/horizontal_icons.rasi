@@ -5,7 +5,7 @@
 * {
 	bg: @tbg;
 
-	font:                   "material 9";
+	font:                   "material 10";
 
 	window-orientation:     horizontal;
 
@@ -25,12 +25,15 @@
 	window-radius:          5px;
 	window-width:           335px;
 
-	y-offset:               50px;
+	y-offset:               30px;
 
 	background-color: @ftbg;
 	sbg: #dddddd0d;
+	sbg: #00000014;
+	sbg: #ffffff04;
 	abg: #08080844;
-	abg: #03030333;
+	abg: #03030330;
+	smbg: #0303031a;
 }
 
 configuration {
@@ -103,7 +106,7 @@ mainbox {
 
 #element.selected.normal {
 	text-color:       @efg;
-	background-color: @sbg;
+	background-color: @esbg;
 	border:           @element-border;
 }
 

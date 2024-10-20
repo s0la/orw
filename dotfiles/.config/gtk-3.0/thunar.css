@@ -1,17 +1,18 @@
-@define-color bg #101314;
-@define-color pbg #252b2c;
-@define-color sbg #1a1f20;
-@define-color bbg #5daeb3;
-@define-color hlbg #161a1b;
-@define-color tbg rgba(16,19,20,0.95);
-@define-color fg #acb6bf;
-@define-color pfg #4a5152;
-@define-color sfg #363d3e;
-@define-color afg #5daeb3;
+@define-color bg #0e0f14;
+@define-color pbg #21232c;
+@define-color sbg #171920;
+@define-color bbg #5d96af;
+@define-color hlbg #13141b;
+@define-color tbg rgba(14,15,20,0.90);
+@define-color fg #bfafac;
+@define-color pfg #434652;
+@define-color sfg #30333e;
+@define-color afg #5d96af;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
 	background: none;
+	font-family: SFMono;
 	font-size: 10px;
 }
 
@@ -29,7 +30,6 @@ window.thunar grid *:selected,
 window.thunar grid *:active {
 	border-radius: 1px;
 	background: @sbg;
-	color: @afg;
 }
 
 window.thunar .sidebar {
@@ -120,15 +120,23 @@ window.thunar toolbar#location-toolbar > button {
 	border-radius: 1px;
 	background: @sbg;
 	padding-left: 0px;
-	color: @afg;
 	box-shadow: none;
-	background: none;
+	background: @hlbg;
+	font-size: 9px;
+	color: @afg;
 	color: @pfg;
 	border: 0;
 }
 
 window.thunar separator {
 	background: @sbg;
+}
+
+window.thunar scrollbar {
+	background-color: @sbbg;
+	box-shadow: none;
+	transition: 0;
+	border: 0;
 }
 
 window.thunar scrollbar:hover {

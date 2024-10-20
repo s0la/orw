@@ -1,49 +1,51 @@
 /* color definition */
 
 * {
-	bg: #161a1b;
-	dmbg: #161a1b;
-	dmbg: #1a1f20;
-	dmfg: #4a5152;
-	dmsbg: #252b2c;
-	hpfg: #4a5152;
-	tbg: argb:f0161a1b;
-	tbg: argb:ea161a1b;
-	tbg: argb:dd161a1b;
-	tbg: argb:f0161a1b;
-	mbg: argb:f0101314;
-	msbg: argb:70212627;
-	fg: #363d3e;
-	bc: #7986a3;
-	bc: #161a1b;
-	ibg: #161a1b;
-	ibc: #252b2c;
-	ibc: #161a1b;
+	bg: #13141b;
+	dmbg: #13141b;
+	dmbg: #171920;
+	dmfg: #434652;
+	dmsbg: #21232c;
+	hpfg: #434652;
+	tbg: argb:f013141b;
+	tbg: argb:ea13141b;
+	tbg: argb:dd13141b;
+	tbg: argb:ea13141b;
+	mbg: argb:f00e0f14;
+	msbg: argb:701c1e27;
+	fg: #30333e;
+	bc: #4c707b;
+	bc: #13141b;
+	ibg: #13141b;
+	ibc: #21232c;
+	ibc: #13141b;
 	abg: #08080855;
 	abg: #08080866;
 	abg: #08080844;
-	abg: #0f1213b0;
-	abg: #0f1213dd;
-	afg: #4a5152;
-	ebg: #161a1b;
-	efg: #5daeb3;
+	abg: #0d0e13b0;
+	abg: #0d0e13dd;
+	afg: #434652;
+	ebg: #13141b;
+	esbg: #ffffff04;
+	efg: #5d96af;
 	sbg: #e0e0e00e;
 	sbg: #fafafa0a;
 	sbg: #eeeeee0a;
 	sbg: #cccccc0a;
 	sbg: #dddddd0d;
-	sbg: #212627b0;
-	sbg: #212627d0;
-	sfg: #5daeb3;
-	sul: #5daeb3;
-	lpc: #acb6bf;
-	dpc: #acb6bf;
-	btc: #161a1b;
-	sbtc: #161a1b;
-	btbc: #161a1b;
+	sbg: #1c1e27b0;
+	sbg: #1c1e27d0;
+	sfg: #5d96af;
+	sul: #5d96af;
+	lpc: #bfafac;
+	dpc: #bfafac;
+	btc: #13141b;
+	sbtc: #13141b;
+	btbc: #13141b;
 	ftbg: #00000000;
-	sbbg: #5daeb3aa;
+	sbbg: #5d96afaa;
 	sbsbg: #11111144;
+	smbg: #03030333;
 
 	background-color: @bg;
 
@@ -60,12 +62,27 @@
 	border-color: @bc;
 }
 
-#element.normal.normal, element.urgent.normal, element.alternate.normal, element.alternate.urgent {
+#element.normal.normal, element.alternate.normal, {
 	background-color: @bg;
 }
 
-#element-text normal.normal, element-text urgent.normal, element-text alternate.normal, element-text alternate.urgent {
+#element-text normal.normal, element-text alternate.normal {
 	text-color:       @fg;
+}
+
+#element.normal.urgent, element.alternate.urgent, element.selected.urgent, element.alternate.selected.urgent {
+	background-color: @smbg;
+	text-color:       @sfg;
+}
+
+#element-text normal.urgent, element-text alternate.urgent {
+	background-color: transparent;
+	text-color:       @fg;
+}
+
+#element-text selected.urgent, element-text selected.alternate.urgent {
+	background-color: transparent;
+	text-color: @sfg;
 }
 
 #element.normal.active, element.alternate.active {

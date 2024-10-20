@@ -12,3 +12,4 @@ VteTerminal, vte-terminal {
 * { outline: none }
 
 @import url("thunar.css");
+@import 'colors.css';

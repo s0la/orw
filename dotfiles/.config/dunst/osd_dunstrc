@@ -174,7 +174,7 @@
     max_icon_size = 60
 
     # Paths to default icons.
-    icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
+    icon_path = ''
 
     ### History ###
 
@@ -260,9 +260,9 @@
     per_monitor_dpi = false
 
 [urgency_normal]
-	background = "#161a1b"
-	foreground = "#acb6bf"
-	frame_color = "#7986a3"
+	background = "#13141b"
+	foreground = "#bfafac"
+	frame_color = "#4c707b"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

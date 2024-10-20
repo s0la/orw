@@ -5,7 +5,7 @@
 * {
 	bg: @tbg;
 
-	font:                   "material 10";
+	font:                   "material 9";
 
 	window-orientation:     vertical;
 
@@ -15,17 +15,17 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        21px 21px;
+	element-padding:        17px 17px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
-	x-offset:               4px;
+	x-offset:               6px;
 
 	window-location:        west;
 	window-padding:         1px 1px;
 	// window-margin:          0 7px;
 	window-radius:          5px;
-	window-width:           61px;
+	window-width:           51px;
 
 	background-color: @ftbg;
 }

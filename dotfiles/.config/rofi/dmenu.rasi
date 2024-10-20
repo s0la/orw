@@ -6,7 +6,7 @@
 	window-border:        0px;
 	window-padding:       0px;
 
-	y-offset:             34px;
+	y-offset:             44px;
 
 	element-padding:      5px 15px;
 	element-border:       0 0 2px;
@@ -22,7 +22,7 @@
 	font: "Iosevka Orw 9";
 	font: "SFMono 7";
 
-	window-width:         1000px;
+	window-width:         1200px;
 	bg:      @dmbg;
 }
 

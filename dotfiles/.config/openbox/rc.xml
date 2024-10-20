@@ -1117,8 +1117,8 @@
       <focus>no</focus>
       <position force="yes">
         <monitor>2</monitor>
-        <x>324</x>
-        <y>667</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>150</width>
@@ -1192,8 +1192,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>324</x>
-        <y>667</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>150</width>

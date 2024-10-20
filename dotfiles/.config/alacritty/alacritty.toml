@@ -18,14 +18,14 @@ family = "SFMono"
 style = "Regular"
 
 [window]
-opacity = 0.98
+opacity = 0.96
 
 [window.dimensions]
 columns = 100
 lines = 25
 
 [window.padding]
-x = 15
+x = 20
 y = 10
 #tabspaces = 4
 
@@ -33,28 +33,28 @@ y = 10
 draw_bold_text_with_bright_colors = true
 
 [colors.primary]
-background = "#101314"
-foreground = "#cdd3d8"
+background = "#0e0f14"
+foreground = "#d8d8d8"
 
 [colors.bright]
-black = "#2c3e3e"
-blue = "#a3daf6"
-cyan = "#5daeb3"
-green = "#b8c1a1"
-magenta = "#a475c3"
-red = "#b07989"
-white = "#cdd8d3"
-yellow = "#cfa55f"
+black = "#4e515c"
+blue = "#7bb4cd"
+cyan = "#6a8e99"
+green = "#a5ada3"
+magenta = "#8b6e9b"
+red = "#d87ea8"
+white = "#f6f6f6"
+yellow = "#c1b383"
 
 [colors.normal]
-black = "#2c3e3e"
-blue = "#a3daf6"
-cyan = "#5daeb3"
-green = "#b8c1a1"
-magenta = "#a475c3"
-red = "#b07989"
-white = "#cdd8d3"
-yellow = "#cfa55f"
+black = "#30333e"
+blue = "#5d96af"
+cyan = "#4c707b"
+green = "#878f85"
+magenta = "#6d507d"
+red = "#ba608a"
+white = "#d8d8d8"
+yellow = "#a39565"
 
 [[colors.indexed_colors]]
 color = "#B3836B"
@@ -456,7 +456,6 @@ index = 114
 color = "#a2c89a"
 index = 115
 
-
 [[colors.indexed_colors]]
 color = "#152020"
 index = 116
@@ -473,7 +472,6 @@ index = 118
 color = "#5daeb3"
 index = 119
 
-
 [[colors.indexed_colors]]
 color = "#435252"
 index = 120
@@ -481,7 +479,6 @@ index = 120
 [[colors.indexed_colors]]
 color = "#799ec3"
 index = 121
-
 
 [[colors.indexed_colors]]
 color = "#1f201f"
@@ -491,7 +488,42 @@ index = 122
 color = "#525252"
 index = 123
 
-
 [[colors.indexed_colors]]
 color = "#4a5152"
 index = 124
+
+[[colors.indexed_colors]]
+color = "#201d1c"
+index = 125
+
+[[colors.indexed_colors]]
+color = "#2c2928"
+index = 126
+
+[[colors.indexed_colors]]
+color = "#525050"
+index = 127
+
+[[colors.indexed_colors]]
+color = "#8ba9b3"
+index = 128
+
+[[colors.indexed_colors]]
+color = "#a4d7ed"
+index = 129
+
+[[colors.indexed_colors]]
+color = "#171920"
+index = 130
+
+[[colors.indexed_colors]]
+color = "#21232c"
+index = 131
+
+[[colors.indexed_colors]]
+color = "#434652"
+index = 132
+
+[[colors.indexed_colors]]
+color = "#5d96af"
+index = 133

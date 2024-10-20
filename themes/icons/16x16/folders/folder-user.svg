@@ -93,14 +93,14 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#6f968e;fill-rule:evenodd;stroke-opacity:0;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#35667c;fill-rule:evenodd;stroke-opacity:0;stroke:#35667c;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#9bbdb5;fill-rule:evenodd;stroke-opacity:1;stroke:#6f968e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#528aa2;fill-rule:evenodd;stroke-opacity:1;stroke:#35667c;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <g
      transform="translate(226.5678,445.61441)"
@@ -204,7 +204,7 @@
                  inkscape:connector-curvature="0"
                  id="path3146"
                  d="m 99.082758,-91.306948 c -14.95902,-0.60506 -25.08306,-1.75033 -32.9075,-3.72371 -8.95738,-2.25906 -15.34803,-5.681162 -17.98569,-9.631152 -1.82326,-2.73029 -2.12911,-4.14217 -2.01417,-9.29913 0.0968,-4.34249 0.10414,-4.38567 1.13523,-6.52982 2.52013,-5.24167 7.17427,-9.6852 15.7981,-15.08325 4.26401,-2.66905 13.02406,-6.97829 19.28208,-9.48535 6.22514,-2.49381 7.61411,-3.48474 8.98251,-6.40898 0.68979,-1.47488 0.83439,-2.15978 0.83439,-3.96149 0,-3.44265 -0.63084,-5.18385 -2.73888,-7.55803 -8.87496,-9.99629 -14.56062,-24.81331 -14.56062,-37.94567 0,-14.53016 6.23187,-25.88722 17.19893,-31.34376 4.63314,-2.30528 8.704132,-3.30846 14.314382,-3.52746 15.36773,-0.59953 28.03851,7.99143 32.36349,21.94368 2.28173,7.36048 2.33716,17.20916 0.14554,25.88299 -2.12809,8.42352 -6.93527,18.00879 -11.88614,23.70044 -2.58662,2.97372 -2.83169,3.40609 -3.36196,5.93295 -0.63452,3.02454 -0.46691,6.07754 0.43929,8.00644 1.0098,2.14836 2.33365,3.111 6.20084,4.50908 20.28506,7.33348 34.61344,17.03583 38.17037,25.84697 0.60782,1.50591 0.66584,2.08941 0.66676,6.68626 2.7e-4,4.8888 -0.0189,5.08568 -0.78833,6.71979 -3.28423,7.01072 -13.58987,11.521092 -31.63698,13.846352 -7.95079,1.02446 -28.39557,1.79702 -37.651792,1.42285 z"
-                 style="fill-opacity:1;fill:#6f968e" />
+                 style="fill-opacity:1;fill:#35667c" />
             </g>
           </g>
         </g>
