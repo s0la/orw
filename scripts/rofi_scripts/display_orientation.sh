@@ -5,6 +5,9 @@ set_theme_str
 
 index=$(sed -n 's/^rofi_.*al=//p' ~/.orw/scripts/icons |
 	rofi -dmenu -format d -theme-str "$theme_str" -theme main)
+
+xrandr --auto
+
 displays=(
 	$(xrandr -q | awk '
 	/connected/ {
@@ -27,4 +30,5 @@ command="xrandr --output $outputs"
 sed -i "s/xrandr.*/$command/" ~/.orw/dotfiles/.config/openbox/autostart.sh
 eval "$command"
 
-~/.orw/scripts/wallctl.sh -r
+~/.orw/scripts/generate_orw_config.sh display
+~/.orw/scripts/wallctl.sh -r &
