@@ -18,7 +18,7 @@ torrent_info=$(transmission-remote -l | awk '
 		us = index($0, "Up"); ds = index($0, "Down")
 	} {
 		ts = substr($0, ss, ns - ss)
-		if($2 ~ "^[0-9]{1,2}%") {
+		if ($2 ~ "^[0-9]{1,2}\\.[0-9]{1,2}%") {
 			tc++
 			tn = substr($0, ns)
 			tnl = length(tn)
