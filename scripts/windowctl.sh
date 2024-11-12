@@ -2008,8 +2008,15 @@ while ((argument_index <= $#)); do
 				fi
 
 				if [[ $option == move ]]; then
-					[[ $edge =~ [br] ]] && properties[index]=$((end_point - properties[index + 2])) ||
-						properties[index]=${start_point:-$optarg}
+					#[[ $edge =~ [br] ]] && properties[index]=$((end_point - properties[index + 2])) ||
+					#	properties[index]=${start_point:-$optarg}
+					if [[ $edge =~ [br] ]]; then
+						properties[index]=$((end_point - properties[index + 2]))
+					else
+						[[ $optarg == [^0-9]* ]] &&
+							((properties[index] += optarg)) ||
+							properties[index]=${start_point:-$optarg}
+					fi
 				else
 					if [[ $edge ]]; then
 						set_sign +
