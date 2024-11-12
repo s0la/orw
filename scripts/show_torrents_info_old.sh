@@ -34,7 +34,7 @@ torrent_info=$(transmission-remote -l | awk '
 		}
 	} END {
 		for(i = 1; i <= tc; i++) {
-			ft = ft sprintf("%-5s%s%-10s   %s %-*s     %20s      ", "'"$icon"'", \
+			ft = ft sprintf("%-5s%s%-10s   %s %-*s     %20s", "'"$icon"'", \
 				at[i, 3], at[i, 4], "'"$tn_span"'", mtnl, at[i, 1], at[i, 2]) #, at[i, 3], at[i, 4])
 			if(i < tc) ft = ft "\\\\n\\\\n"
 		}
@@ -42,4 +42,4 @@ torrent_info=$(transmission-remote -l | awk '
 		print ft
 	}' 2> /dev/null)
 
-~/.orw/scripts/notify.sh -p "$torrent_info"
+~/.orw/scripts/notify.sh -pP 3 -o 3 "$torrent_info"
