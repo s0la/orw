@@ -3,10 +3,18 @@
 get_date() {
 	read seconds date <<< "$(date +"%S $date_format")"
 
-	[[ "$date_format" == *\|* ]] &&
+	#[[ "$date_format" == *\|* ]] &&
+	#	#date="${dsfg}${date/\|/┃${dpfg}}"
+	#	date="${dsfg}${date/\|/|${dpfg}}"
+	#	#date="${dpfg}${date/\|/${dsfg}┃}"
+
+	if [[ "$date_format" == *\|* ]]; then
 		#date="${dsfg}${date/\|/┃${dpfg}}"
-		date="${dsfg}${date/\|/|${dpfg}}"
+		[[ ${joiner_modules[d]} || $pbg == $sbg ]] &&
+			date="${dsfg}${date/\|/|${dpfg}}" ||
+			date="$dsbg${dsfg}${date/\|/${inner}${dpbg}${dpfg}${inner}}"
 		#date="${dpfg}${date/\|/${dsfg}┃}"
+	fi
 
 	#if [[ ! ${joiner_modules[$opt]} ]]; then
 	#	local tpbg='$tpbg' tpfg='$tpfg'
