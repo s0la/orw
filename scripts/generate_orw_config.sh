@@ -81,7 +81,7 @@ display() {
 						b = (y ~ "b")
 						if (y) {
 							gsub("[^0-9]", "", y)
-						} else y = '$default_y_offset'
+						} else y = '${default_y_offset:-0}'
 
 						h = get_flag("h")
 						if (h) get_value(h)
