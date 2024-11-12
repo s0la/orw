@@ -49,7 +49,9 @@ get_mpd_stats() {
 					et = ert[1]
 					tt = ert[2]
 					ft = "%{T2}" et "┃%{T-}" tt
-					ft = "%{T2}" et "|%{T-}" tt
+					to = "'"$mpd_time_offset"'"
+					teo = "'"${mpd_time_ending_offset:-$mpd_time_offset}"'"
+					ft = to "%{T2}" et "|%{T-}" tt teo
 
 					es = get_seconds(et)
 					ts = get_seconds(tt)
@@ -163,7 +165,6 @@ assign_components() {
 assign_mpd_info_components() {
 	case $component in
 		s) scroll_area=$component_value;;
-		t) mpd_time=true;;
 		d) scroll_delay=$component_value;;
 		o) mpd_info_components+="%{O$component_value}";;
 		i) mpd_info_components+='$mpfg$song_info';;
@@ -207,6 +208,17 @@ assign_mpd_buttons_components() {
 	fi
 }
 
+assign_mpd_time_components() {
+	case $component in
+		t) mpd_time=true;;
+		o)
+			[[ ! $mpd_time_offset ]] &&
+				mpd_time_offset="%{O$component_value}" ||
+				mpd_time_ending_offset="%{O$component_value}"
+			;;
+	esac
+}
+
 make_mpd_content() {
 	for arg in ${1//,/ }; do
 		value=${arg:2}
@@ -227,6 +239,7 @@ make_mpd_content() {
 				;;
 			[PS]) switch_color="\$m${arg,}${value:-g\$m${arg,}f}g";;
 			P*) mpd_components+="\$mp${value:-g\$mpf}g";;
+			t) assign_components mpd_time;;
 			i)
 				assign_components mpd_info
 				mpd_components+='$mpd_info'
