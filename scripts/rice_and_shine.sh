@@ -484,7 +484,7 @@ set_ob() {
 		property=${property:1}
 	fi
 
-	shadow_color=$(awk '
+	shadow="$(awk '
 		function change(pk) {
 			if (/inactive/) pk = "i" pk
 			$NF = p[pk]
@@ -496,8 +496,8 @@ set_ob() {
 			if (/active.(title|button.*(bg|disabled.image)).*#/) { change("tb") }
 			if (/active.*border.*#/) { change("b") }
 			if (/active.*client.*#/) { change("c") }
-			if (/active.button.(close|max|iconify).((un)?pressed|hover).*#/) {
-				pk = (/close/) ? "c" : (/max/) ? "ma" : "mi"
+			if (/active.button.((close|max|iconify).)?((un)?pressed|hover).*image.*#/) {
+				if (/\.active/) pk = (/close/) ? "c" : (/max/) ? "ma" : "mi"; else pk = ""
 				pk = pk "bt"
 				if (/hover/) pk = pk "h"
 				change(pk)
@@ -514,7 +514,7 @@ set_ob() {
 
 			o = o "\n" $0
 		} END { print p["s"] o }' <(cat) $ob_conf 2> /dev/null |
-			{ read s; { echo $s >&1; cat > $ob_conf; } })
+			{ read s; { echo $s >&1; cat > $ob_conf; } })"
 
 		read red green blue <<< $($colorctl -chd ' ' $shadow_color)
 }
@@ -532,7 +532,7 @@ set_tmux() {
 set_ncmpcpp() {
 	local colors=$(cat)
 	local vc=$(sed -n 's/^vc.* //p' <<< "$colors")
-	sed -i "/^foreground/ s/#\w*/$vc/" $cava_conf
+	sed -i "/^gradient_color/ s/#\w*/$vc/" $cava_conf
 
 	awk -i inplace '
 		function add_pattern(property, color) {
@@ -595,6 +595,17 @@ set_lock() {
 			if (p) print
 			if (/^$/) { print o; p = 1 }
 		}' <(cat) $lock_conf
+}
+
+set_sxiv() {
+	awk -i inplace '{
+		if (NR == FNR) ap[$1] = $NF
+		else {
+			p = ap[substr($1, 6, 1) "g"]
+			if (p) $NF = p
+			print
+		}
+	}' <(cat) $sxiv_conf
 }
 
 function bar() {
@@ -1405,8 +1416,6 @@ else
 	fi
 fi
 
-exit
-
 colorscheme=${colorscheme%.*}
 colorscheme=${colorscheme##*/}
 [[ $colorscheme ]] && notification+="has been changed to <b>$colorscheme</b> colorscheme." || notification+="."
@@ -1419,7 +1428,7 @@ reload_bash() {
 	done <<< $(ps aux | awk '
 		$NF ~ "bash$" && $7 ~ "/[1-9].?" {
 			if (ot !~ $7) {
-				ot = ot " " $7
+				#ot = ot " " $7
 				print $2
 			}
 		}')
@@ -1430,7 +1439,7 @@ if [[ ${reload-yes} == yes ]]; then
 	[[ $reload_bar ]] && ~/.orw/scripts/barctl.sh &> /dev/null &
 	[[ $reload_vim ]] && ~/.orw/scripts/reload_neovim_colors.sh &> /dev/null &
 	[[ $reload_ncmpcpp ]] && ~/.orw/scripts/ncmpcpp.sh -a &
-	[[ $reload_term ]] && killall -USR1 termite
+	#[[ $reload_term ]] && killall -USR1 termite
 	[[ $reload_sxiv ]] && xrdb -merge $sxiv_conf
 	[[ $reload_bash ]] && reload_bash &
 
