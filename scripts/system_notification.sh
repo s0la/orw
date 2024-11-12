@@ -34,7 +34,7 @@ else
 
 					switch ("'"$theme"'") {
 						case "vertical": st = 10; break
-						case "mini": st = 10; break
+						case "mini": st = 7; break
 						case "osd": st = 5; break
 						default: st = 6
 					}
