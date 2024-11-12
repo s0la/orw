@@ -1692,18 +1692,22 @@ update_values() {
 make_workspace_notification() {
 	local notification
 
-	for workspace_index in $(seq 0 $current_ws_count); do
-		fg='sbg'
+	for workspace_index in $(seq 0 $((current_ws_count - 1))); do
+		local fg='sbg' spacing_start="<span font='Iosevka Orw 5'>" spacing_end="</span>"
 
 		case $workspace_index in
-			$1) workspace_icon=$pwi fg='pbfg';;
-			$2) workspace_icon=$pwi;;
+			$1)
+				extra_space="$spacing_start $spacing_end"
+				fg='pbfg' workspace_icon="$pwi"
+			 ;;
+			$2) workspace_icon=$swi;;
 			*) workspace_icon=$swi;;
 		esac
 
 		((workspace_index)) &&
-			workspace_icon="<span font='Iosevka Orw 5'> </span>$workspace_icon"
+			workspace_icon="$spacing_start $spacing_end$extra_space$workspace_icon$extra_space"
 		notification+="<span foreground='\$$fg'>$workspace_icon</span>"
+		unset extra_space
 	done
 
 	notification="<span foreground='\$sbg' font='Iosevka Orw 15'>$notification</span>"
@@ -3228,7 +3232,7 @@ set_rofi_window() {
 
 	if ((rofi_offset > 0)); then
 		local state=$1
-		if [[ $state == align ]]; then
+		if [[ $state == open* ]]; then
 			(( rofi_window[rofi_index] += rofi_offset ))
 			local open_sign=-
 		fi
@@ -3241,10 +3245,32 @@ set_rofi_window() {
 	fi
 }
 
+set_rofi_window() {
+	((rofi_offset <= 0 && rofi_opening_offset)) &&
+		local rofi_offset=$rofi_opening_offset
+
+	if ((rofi_offset > 0)); then
+		local state=$1
+
+		local rofi_start=$(awk '
+			$1 == "display_'"$display"'_xy" { print $('$rofi_index' + 1) + '$rofi_offset' }
+			' ~/.config/orw/config)
+
+		[[ $state == open* ]] && local open_sign=-
+
+		(( rofi_window[rofi_opposite_index + 2] -= ${rofi_window[rofi_opposite_index]} ))
+		rofi_window[rofi_index + 2]=$open_sign$((rofi_start - ${rofi_window[rofi_index]}))
+		[[ $state == open* ]] && rofi_window[rofi_index]=$rofi_start
+		(( rofi_window[rofi_index + 2] -= margin ))
+
+		echo "${rofi_window[*]}"
+	fi
+}
+
 set_rofi_windows() {
 	rofi_style=$(awk 'END { gsub(".*\\s\"|\\..*", ""); print }' ~/.config/rofi/main.rasi)
 
-	local rofi_window=( temp ${current_display_properties[*]:-${display_properties[*]}} 0 0 )
+	#local rofi_window=( temp ${current_display_properties[*]:-${display_properties[*]}} 0 0 )
 
 	if [[ $1 ]]; then
 		rofi_offset=$1
@@ -3271,12 +3297,12 @@ set_rofi_windows() {
 			$1 == "element-padding:" { ep = 2 * get_value() }
 			$1 == "font:" { f = sprintf("%.0f", 1.65 * 12) } #get_value()
 			END {
-				print bo + wp + ep + f + ao - '${rofi_window[rofi_index]}'
+				print bo + wp + ep + f + ao #- '${display_properties[rofi_index-1]}'
 			}' ~/.config/{orw/config,rofi/$rofi_style.rasi})
 	fi
 
-	rofi_restore_windows="$(set_rofi_window restore)"
-	rofi_align_windows="$(set_rofi_window align)"
+	#rofi_restore_windows="$(set_rofi_window restore)"
+	#rofi_align_windows="$(set_rofi_window align)"
 }
 
 toggle_maxed_window() {
@@ -3331,7 +3357,9 @@ toggle_rofi() {
 				if [[ $id ]]; then
 					[[ $id != temp ]] && get_workspace_windows
 
-					local properties=( ${!state_properties} )
+					local rofi_window=( temp ${display_properties[*]} 0 0 )
+					local properties=( $(set_rofi_window $rofi_state) )
+					echo $rofi_index: ${rofi_window[*]}, ${properties[*]}
 					local id=temp
 
 					local aligned=$(list_windows | grep -v "^\<$maxed_id\>" |
@@ -3481,8 +3509,10 @@ get_translated_windows() {
 			#nye = round((cdh + m) / (y + h + m))
 
 			#print "START", x, y, nxa[x], nya[y]
-			nx = (x) ? nxa[x] : 0
-			ny = (y) ? nya[y] : 0
+			#nx = (x) ? nxa[x] : 0
+			#ny = (y) ? nya[y] : 0
+			nx = (x) ? ((nxa[x]) ? nxa[x] : round(ndw / (cdw / (x + m))) - m) : 0
+			ny = (y) ? ((nya[y]) ? nya[y] : round(ndh / (cdh / (y + m))) - m) : 0
 			nxe = round(ndw / (cdw / (x + w)))
 			nye = round(ndh / (cdh / (y + h)))
 			nxa[x + w] = nxe
@@ -3491,8 +3521,8 @@ get_translated_windows() {
 			nw = nxe - nx - m
 			nh = nye - ny - m
 
-			print x, y, w, h, cdw, cdh
-			print xo + nx, (yo + cdto) + ny, nw, nh
+			#print d, $3, x, y, w, h, cdw, cdh
+			print d, $3, xo + nx, (yo + cdto) + ny, nw, nh
 		}
 
 		NR > FNR && $2 == "'$display'" {
@@ -3665,6 +3695,7 @@ test() {
 	#	echo $w: ${workspaces[$w]}
 	#done
 	#exit
+
 	get_translated_windows
 	return
 
@@ -4627,7 +4658,10 @@ set_rofi_toggle_event() {
 
 set_toggle_image_preview() {
 	rofi_index=1 rofi_opposite_index=2 rofi_direction=h
-	[[ ! $rofi_state || $rofi_state == closed ]] && set_rofi_windows 200
+	local image_preview_offset=$(sed -n '/^\s*window-width/ s/[^0-9]//gp' \
+		~/.config/rofi/image_preview.rasi)
+	[[ ! $rofi_state || $rofi_state == closed ]] &&
+		set_rofi_windows $((image_preview_offset + margin))
 	toggle_rofi
 	[[ ! $rofi_state || $rofi_state == closed ]] &&
 		unset rofi_offset && set_rofi_windows
@@ -4681,7 +4715,7 @@ set_layout_event() {
 
 	#toggle_rofi
 	align_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template")
-	#[[ $rofi_state == opened ]] && toggle_rofi
+	[[ $rofi_state == opened ]] && toggle_rofi
 
 	if [[ $align_index ]]; then
 		if ((align_index)); then

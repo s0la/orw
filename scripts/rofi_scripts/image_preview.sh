@@ -1,22 +1,31 @@
 #!/bin/bash
 
-icon_size=$(awk '
-	function get_value() {
-		gsub("[^0-9]", "", $NF)
-		return $NF
-	}
+item_count=8
 
-	NR == FNR && $1 == "primary" { d = get_value() }
-	NR == FNR && $1 == "display_" d "_size" { h = $NF }
-	NR > FNR {
-		if (/font/) { f = get_value() }
-		if (/element-padding/) { p = get_value() }
-		if (/window-padding/) { wp = get_value() }
-		if (/window-width/) { exit }
-	} END { print int((h - (2 * p + f)) / 9 - 2 * p - 2) }' \
-	~/.config/{orw/config,rofi/image_preview.rasi})
+read icon_size window_width <<< \
+	$(awk '
+		function get_value() {
+			gsub("[^0-9]", "", $NF)
+			return $NF
+		}
 
-theme_str="element-icon { size: ${icon_size}px; }"
+		NR == FNR && $1 == "primary" { d = get_value() }
+		NR == FNR && $1 == "display_" d "_size" { h = $NF }
+		NR > FNR {
+			if (/font/) { f = get_value() }
+			if (/element-padding/) { ep = get_value() }
+			if (/window-padding/) { wp = get_value() }
+			if (/input-padding/) { ip = get_value() }
+			if (/window-width/) { exit }
+		} END {
+			ww = int((h - (2 * (wp + ip) + f)) / '$item_count')
+			is = ww - 3 * ep - 1
+			print is
+		 }' ~/.config/{orw/config,rofi/image_preview.rasi})
+
+theme_str="listview { lines: $item_count; } "
+theme_str+="element-icon { size: ${icon_size}px; } "
+theme_str+="window { width: ${window_width:-130}px; }"
 IFS=$'\n' read -d '' command active content
 [[ $active == *[0-9]* ]] && active="-a $active"
 
