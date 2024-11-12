@@ -38,8 +38,9 @@ get_rofi_width() {
 
 				switch ($1) {
 					case /font/:
-						if (!i) v = '$font_size'
-						f = v * 1.30
+						#if (!i) v = '$font_size'
+						#f = v * 1.10
+						f = (i) ? v * 1.3 : '$font_size'
 						break
 					case /window-padding/: wp = v * 2; break
 					case /padding/: ep = v * ((i) ? 2 : 5); break
