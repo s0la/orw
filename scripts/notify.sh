@@ -33,8 +33,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#21232c"
-pbfg="#5d96af"
+sbg="#1e272c"
+pbfg="#63a585"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -235,21 +235,22 @@ if [[ $style ]]; then
 				level=$(color_bar $bar_icon $level_value)
 				empty=$(color_bar $bar_icon $empty_value)
 
-				empty_bar="<span font='$font 15' foreground='$sbg'>$empty</span>"
-				level_bar="<span font='$font 15' foreground='$pbfg'>$level</span>"
+				empty_bar="<span font='$font 11' foreground='$sbg'>$empty</span>"
+				level_bar="<span font='$font 11' foreground='$pbfg'>$level</span>"
 			fi
 
 			#icon="<span foreground='$pbfg' font='Iosevka Orw 11'> $font_icon </span>"
 			#info="<span foreground='$fg' font='Iosevka Orw 12'> ${value :-${@: -1}}</span>"
 			#message="$icon$info"
 
-			side_font=8
+			side_font=7
 			icon_font=12
 			icon_padding=2
 			padding_in_icon_row="$(color_bar " " $icon_padding)"
-			padding_in_side_row="$(color_bar " " $((icon_font / side_font * (2 * icon_padding + 3) + 0)))"
+			padding_in_side_row="$(color_bar " " $((icon_font / side_font * (4 * icon_padding + 0) + 0)))"
 
 			ibg="$(~/.orw/scripts/convert_colors.sh -hV -10 $sbg)"
+			ibg=$sbg
 			icon_area="$padding_in_icon_row$font_icon$padding_in_icon_row"
 			icon="<span font='SFMono $icon_font' background='$ibg' foreground='$fg'>$icon_area</span>"
 			side_row_icon_area="<span background='$ibg'>$padding_in_side_row</span>"
