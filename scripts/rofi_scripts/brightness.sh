@@ -2,7 +2,7 @@
 
 if [[ $style =~ icons|dmenu ]]; then
 	read up down default <<< \
-		$(sed -n 's/^\(arrow_\(up\|down\).*empty\|brightness\).*=//p' ~/.orw/scripts/icons | xargs)
+		$(sed -n 's/^\(arrow_\(up\|down\).*empty\|brightness_mid\).*=//p' ~/.orw/scripts/icons | xargs)
 else
 	default='default' up='brightness up' down='brightness down' sep=' '
 fi
