@@ -197,7 +197,8 @@ make_module() {
 			full_module+="$single_content\$${module}_padding"
 		else
 			[[ ${!module_pbg} == ${!module_sbg} ]] &&
-				inner='%{O2}' || inner='%{O3}'
+				inner='%{O2}' || inner=$'%{O4}'
+				#inner='%{O2}' || inner=$padding
 			full_module="$sbg\${cjsfg:-\$${opt}sfg}\$${module}_padding%{T2}$label$inner"
 			full_module+="$pbg\${cjpfg:-\$${opt}pfg}$inner%{T2}\$$module\$${module}_padding"
 		fi
