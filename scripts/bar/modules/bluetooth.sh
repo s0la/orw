@@ -14,6 +14,10 @@
 
 make_bluetooth_content() {
 	bluetooth_icon=$icons
+	local joiner_group_index=${joiner_modules[B]}
+	[[ ! $joiner_group_index ]] &&
+		bluetooth_distance="\$inner" ||
+		bluetooth_distance="%{O${joiners[joiner_group_index - 1]%% *}}"
 }
 
 get_bluetooth_devices() {
@@ -39,7 +43,7 @@ get_bluetooth() {
 
 	if ((show_full)); then
 		for bluetooth_device in ${!bluetooth_devices[*]}; do
-			icon+="\$inner\${cjpfg:-\${jpfg}}$(get_icon ${bluetooth_devices[$bluetooth_device]})"
+			icon+="$bluetooth_distance\${cjpfg:-\${jpfg}}$(get_icon ${bluetooth_devices[$bluetooth_device]})"
 		done
 	fi
 }
