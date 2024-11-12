@@ -7,21 +7,23 @@ blank=33000000
 khl="$(~/.orw/scripts/convert_colors.sh -hv -$delta ${rc:0:6})${rc: -2}"
 bshl="$(~/.orw/scripts/convert_colors.sh -hv +$delta ${rc:0:6})${rc: -2}"
 
-i3lock --blur $blur \
-	   --verifsize=16 \
-	   --veriftext="..." \
-	   --radius $radius \
-	   --ring-width $width \
-	   --indicator --clock \
-	   --timesize=$timesize \
-	   --datesize=$datesize \
-	   --timestr="%I:%M" \
-	   --datestr="%B %d, %Y" \
-	   --linecolor=$blank \
-	   --insidecolor=$ic --ringcolor=$rc \
-	   --datecolor=$tc --timecolor=$tc \
-	   --separatorcolor=$rc --keyhlcolor=${khl#\#} \
-	   --bshlcolor=${bshl#\#} \
-	   --verifcolor=$tc --wrongcolor=$tc \
-	   --ringvercolor=${rvc:-$rc} --ringwrongcolor=$wc \
-	   --insidevercolor=$ic --insidewrongcolor=$ic &
+~/Downloads/i3lock/build/i3lock \
+		--blur $blur \
+		--color "#00000000" \
+		--verif-size=16 \
+		--verif-text="..." \
+		--radius $radius \
+		--ring-width $width \
+		--indicator --clock \
+		--time-size=$timesize \
+		--date-size=$datesize \
+		--time-str="%I:%M" \
+		--date-str="%B %d, %Y" \
+		--line-color=$blank \
+		--inside-color=$ic --ring-color=$rc \
+		--date-color=$tc --time-color=$tc \
+		--separator-color=$rc --keyhl-color=${khl#\#} \
+		--bshl-color=${bshl#\#} \
+		--verif-color=$tc --wrong-color=$tc \
+		--ringver-color=${rvc:-$rc} --ringwrong-color=$wc \
+		--insidever-color=$ic --insidewrong-color=$ic &
