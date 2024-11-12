@@ -27,7 +27,7 @@ add_bar() {
 }
 
 configs=~/.config/orw/bar/configs
-last_running=under_join
+last_running=duo
 
 while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
@@ -297,7 +297,7 @@ check_new_bars() {
 					b = (y ~ "b")
 					if (y) {
 						gsub("[^0-9]", "", y)
-					} else y = '$default_y_offset'
+					} else y = '${default_y_offset:-0}'
 
 					h = get_flag("h")
 					if (h) get_value(h)
