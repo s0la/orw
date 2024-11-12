@@ -35,23 +35,6 @@ fi
 
 case $1 in
 	w*)
-		get_icon() {
-			icon=$(awk '
-				/^part/ { p = $NF }
-				/^ratio/ { r = 100 / $NF * p }
-				/^use_ratio/ {
-					if(r < 13) i = ""
-					else if(r <= 25) i = ""
-					else if(r < 38) i = ""
-					else if(r <= 50) i = ""
-					else if(r < 63) i = ""
-					else if(r <= 75) i = ""
-					else i = ""
-
-					print i
-				}' ~/.config/orw/config)
-		}
-
 		property="${1: -1}"
 		[[ $property == [xy] ]] && property+=_offset
 
@@ -68,7 +51,7 @@ case $1 in
 			min=1
 		fi
 
-		[[ $sign ]] && check_value=$((value += new_value)) || check_value=$new_value
+		[[ $sign ]] && check_value=$((value + new_value)) || check_value=$new_value
 
 		style='-s osd'
 
@@ -83,19 +66,7 @@ case $1 in
 					message="<b>${property^}</b> must be lower then ratio (<b>$ratio</b>)"
 			fi
 
-			if [[ $property == ratio ]]; then
-				if [[ $check_value -gt $part ]]; then
-					new_ratio="$part/$check_value"
-				else
-					part=$((check_value / 2))
-					new_ratio="$part/$check_value"
-
-					$0 wp $part
-				fi
-			fi
-
 			sed -i "/$property/ s/$value/$check_value/" $orw_conf
-			[[ ! $property =~ (offset|margin) ]] && get_icon && message="RATIO: $new_ratio"
 		else
 			message="<b>$check_value</b> must be higher than <b>$min</b>!"
 		fi
