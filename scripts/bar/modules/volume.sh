@@ -15,7 +15,19 @@ get_volume() {
 
 	read icon volume <<< $(pactl list sinks | awk '
 		$1 == "Mute:" { m = "volume" (($NF == "yes") ? "_mute" : "") }
-		/^\s*Volume/ { v = $5 }
+		/^\s*Volume/ {
+			v = $5
+
+			if (m == "volume") {
+				switch (v) {
+					case /^[7-9].|100/: l = "high"; break
+					case /^[3-6]./: l = "mid"; break
+					default: l = "low"
+				}
+
+				m = m "_" l
+			}
+		}
 		$1 ~ "bus$" {
 			switch ($NF) {
 				case /bluetooth/: b = m " " v; break
