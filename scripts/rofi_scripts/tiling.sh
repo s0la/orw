@@ -19,7 +19,7 @@ direction_options=(
 offset_options=(
 	offset_horizontal_increase
 	offset_horizontal_decrease
-	offset_vertical_increase
+	offset_vertical_decrease
 	offset_vertical_increase
 )
 
@@ -68,7 +68,7 @@ done
 declare -A submenus=(
 	[$direction]="$direction_auto $direction_horizontal $direction_vertical"
 	[$margin]="$margin_decrease $margin_increase"
-	[$offset]="$offset_horizontal_decrease $offset_horizontal_increase $offset_vertical_increase $offset_vertical_increase"
+	[$offset]="$offset_horizontal_decrease $offset_horizontal_increase $offset_vertical_decrease $offset_vertical_increase"
 	)
 
 base_count=${#options[*]}
@@ -84,6 +84,7 @@ wait_to_proceed() {
 }
 
 trap : USR1
+toggle
 
 set_value() {
 	local property=$1 value=$2 icon=${1}_icon state
@@ -267,12 +268,12 @@ do
 		if ((item_count > base_count)); then
 			restore_active
 		else
-			if [[ $option == $offset ]]; then
-				echo "${active} == -a*${active_indices[$interactive]}*, $interactive, ${active_indices[*]}", ${active_indices[$interactive]}
-			fi
+			#if [[ $option == $offset ]]; then
+			#	echo "${active} == -a*${active_indices[$interactive]}*, $interactive, ${active_indices[*]}", ${active_indices[$interactive]}
+			#fi
 			#if [[ $option == $offset && ${active} == -a*${active_indices[$interactive]}* ]]; then
 			if [[ $option == $offset && ${active_indices[$interactive]} ]]; then
-				echo ~/.orw/scripts/signal_windows_event.sh offset_int
+				~/.orw/scripts/signal_windows_event.sh offset_int
 				exit
 			else
 				((item_count += ${#submenu[*]}))
@@ -331,7 +332,7 @@ do
 		if [[ ${submenu[*]} == *$option* ]]; then
 			case $option in
 				$offset_horizontal_increase|$offset_horizontal_decrease| \
-					$offset_vertical_increase|$offset_vertical_increase) set_offset;;
+					$offset_vertical_decrease|$offset_vertical_increase) set_offset;;
 				$direction_auto|$direction_horizontal|$direction_vertical) set_direction;;
 			esac
 		else
@@ -373,6 +374,8 @@ do
 		fi
 	fi
 done
+
+toggle
 exit
 
 get_state() {
