@@ -221,7 +221,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 5
+    corner_radius = 3
 
     ### Legacy
 
@@ -290,9 +290,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#13141b"
-	foreground = "#bfafac"
-	frame_color = "#4c707b"
+	background = "#12171b"
+	foreground = "#999391"
+	frame_color = "#6b525e"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

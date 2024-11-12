@@ -23,7 +23,9 @@
 	font: "SFMono 7";
 
 	window-width:         1200px;
+	sul:     @sfg;
 	bg:      @dmbg;
+	abg:     #0000001a;
 }
 
 configuration {
@@ -79,7 +81,7 @@ configuration {
 #element.selected.normal, element.selected.active {
 	border:       @element-border;
 	background-color: @sbg;
-	background-color: @dmsbg;
+	background-color: @sbg;
 }
 
 #element.normal.active {

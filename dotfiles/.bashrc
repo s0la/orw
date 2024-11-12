@@ -390,14 +390,14 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="67;70;82;"
-	sc="67;70;82;"
-	dc="67;70;82;"
-	ic="93;150;175;"
-	sec="76;112;123;"
-	gcc="76;112;123;"
-	gdc="186;96;138;"
-	vc="109;80;125;"
+	fg="50;62;69;"
+	sc="50;62;69;"
+	dc="50;62;69;"
+	ic="99;165;133;"
+	sec="107;82;94;"
+	gcc="107;82;94;"
+	gdc="199;101;104;"
+	vc="92;118;156;"
 
 	clean='\[\033[0m\]'
 
@@ -430,9 +430,12 @@ generate_ps1() {
 			format_module -f $fg -b default -Bc "[ "
 			color_modules
 
-			((content_length > 55)) &&
-				prompt_start='┌─' prompt_end='└─╼'
-
+			#((content_length > 70)) &&
+			#((COLUMNS / content_length < 2)) &&
+			((COLUMNS - content_length < 50)) &&
+				#prompt_start='┌─' prompt_end='└─╼'
+				#prompt_start='╭─' prompt_end='╰─›'
+				prompt_start='┌─' prompt_end='└─›'
 			if [[ $prompt_start ]]; then
 				start="$(color_content 3 $sc)$prompt_start"
 				all_modules="$start$all_modules"

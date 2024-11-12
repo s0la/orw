@@ -1,49 +1,52 @@
 /* color definition */
 
 * {
-	bg: #13141b;
-	dmbg: #13141b;
-	dmbg: #171920;
-	dmfg: #434652;
-	dmsbg: #21232c;
-	hpfg: #434652;
-	tbg: argb:f013141b;
-	tbg: argb:ea13141b;
-	tbg: argb:dd13141b;
-	tbg: argb:ea13141b;
-	mbg: argb:f00e0f14;
-	msbg: argb:701c1e27;
-	fg: #30333e;
-	bc: #4c707b;
-	bc: #13141b;
-	ibg: #13141b;
-	ibc: #21232c;
-	ibc: #13141b;
-	abg: #08080855;
-	abg: #08080866;
-	abg: #08080844;
-	abg: #0d0e13b0;
-	abg: #0d0e13dd;
-	afg: #434652;
-	ebg: #13141b;
+	bg: #12171b;
+	dmbg: #151c20;
+	dmbg: #151c20;
+	dmfg: #323e45;
+	dmsbg: #25272c;
+	hpfg: #3d4a52;
+	tbg: argb:ed12171b;
+	tbg: argb:ed12171b;
+	tbg: argb:ed12171b;
+	tbg: argb:ed12171b;
+	tbg: #ed12171b;
+	tbg: argb:ed12171b;
+	mbg: argb:f00d1114;
+	msbg: argb:701b2227;
+	fg: #323e45;
+	bc: #12171b;
+	bc: #12171b;
+	ibg: #12171b;
+	ibc: #12171b;
+	ibc: #12171b;
+	abg: #00000030;
+	abg: #00000030;
+	abg: #00000030;
+	abg: #00000030;
+	abg: #00000030;
+	abg: #00000030;
+	afg: #2c383e;
+	ebg: #12171b;
 	esbg: #ffffff04;
-	efg: #5d96af;
-	sbg: #e0e0e00e;
-	sbg: #fafafa0a;
-	sbg: #eeeeee0a;
-	sbg: #cccccc0a;
-	sbg: #dddddd0d;
-	sbg: #1c1e27b0;
-	sbg: #1c1e27d0;
-	sfg: #5d96af;
-	sul: #5d96af;
-	lpc: #bfafac;
-	dpc: #bfafac;
-	btc: #13141b;
-	sbtc: #13141b;
-	btbc: #13141b;
+	efg: #63a585;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sbg: #1b2227d0;
+	sfg: #63a585;
+	sul: #5c5e96;
+	lpc: #999391;
+	dpc: #999391;
+	btc: #12171b;
+	sbtc: #12171b;
+	btbc: #12171b;
 	ftbg: #00000000;
-	sbbg: #5d96afaa;
+	sbbg: #63a585aa;
 	sbsbg: #11111144;
 	smbg: #03030333;
 
@@ -77,7 +80,7 @@
 
 #element-text normal.urgent, element-text alternate.urgent {
 	background-color: transparent;
-	text-color:       @fg;
+	text-color:       @afg;
 }
 
 #element-text selected.urgent, element-text selected.alternate.urgent {

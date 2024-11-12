@@ -80,21 +80,24 @@ mainbox {
 #element {
 	padding:        @element-padding;
 	border-radius:  @element-radius;
+	background-color: @ebg;
 	background-color: @bg;
 }
 
 #element.normal.normal, element.alternate.normal {
 	background-color: @bg;
+	background-color: @ebg;
 	background-color: transparent;
 }
 
 #element-text normal.normal, element-text alternate.normal {
 	color: @hpfg;
+	color: @fg;
 }
 
 #element.selected.normal {
 	text-color:       @efg;
-	background-color: @sbg;
+	background-color: @esbg;
 	border:           @element-border;
 }
 
