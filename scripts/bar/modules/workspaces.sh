@@ -304,6 +304,7 @@ make_workspaces_content() {
 				if ((${#value} > 1)); then
 					icon_type=$(sed 's/\w/&\[^_]*_/g' <<< "W$value")
 					read workspace_{p,c,s}_icon <<< $(get_icon "${icon_type}[pcs]" | xargs)
+					[[ $value == *b* ]] && workspace_p_icon="%{O3}$workspace_p_icon%{O3}"
 				else
 					workspace_icons=$value
 					while read ws_name; do
