@@ -1,8 +1,45 @@
 #!/bin/bash
 
 while
-	prompt=$(mpc current -f '%title%\n%artist%\n%album%' |
-		awk '{ print (length($0) > 20) ? substr($0, 0, 20) ".." : $0 }')
+	#prompt=$(mpc current -f '%artist%\n%title%')
+	#prompt=$(mpc current -f '%artist% - %title%\n%album%' |
+	#	awk '{ print (length($0) > 25) ? substr($0, 0, 25) ".." : $0 }')
+
+	prompt=$(
+		(
+			mpc current -f '%artist%\n%title%'
+			mpc status '%percenttime% %currenttime% %totaltime%'
+		) | awk '
+			BEGIN { l = 31 }
+			NR < 3 {
+				print (length($0) > l) ? substr($0, 0, l - 2) ".." : \
+					sprintf("%*s", l - int((l - length($0)) / 2), $0)
+			}
+
+			END {
+				sub("%", "")
+				el = length($2)
+				rl = length($3)
+				s = 100 / (l - (el + rl + 2 * 2 + 1))
+				#s = 6
+
+				e = int($1 / s)
+				r = int((100 - $1) / s)
+
+				ep = sprintf("%*s", e, "")
+				rp = sprintf("%*s", r, "")
+
+				#gsub(" ", "■", ep)
+				#gsub(" ", "━", rp)
+				gsub(" ", "━", ep)
+				gsub(" ", "━", rp)
+				#gsub(" ", "―", ep)
+				#gsub(" ", "―", rp)
+
+				#printf "\x1f<b>%s</b>%s", ep, rp
+				printf "\n\n %s  %s%s%s  %s", $2, ep, "•", rp, $3
+			}')
+
 	album=$(mpc current -f %album% | sed 's/[()]//g')
 	#cover="$HOME/Music/covers/${album// /_}.jpg"
 
@@ -22,12 +59,14 @@ while
 	read {volume_{up,down},prev,next,play,stop,pause,repeat,shuffle}_icon <<< \
 		$(sed -n "/^\($exclude\)/! s/\($include\).*=//p" ~/.orw/scripts/icons | xargs)
 
+	echo $play_icon, $pause_icon
+
 	toggle_icon=$(mpc | awk -F '[][]' '
-							NR == 2 { s = $2 }
-							END { print (s == "playing") ? "'$pause_icon'" : "'$play_icon'" }')
+					NR == 2 { s = $2 }
+					END { print (s == "playing") ? "'$pause_icon'" : "'$play_icon'" }')
 
 	read index action <<< \
-		$(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${index:-2} -p "$prompt" -theme music_player
+		$(cat <<- EOF | rofi -dmenu -format 'i s' -selected-row ${index:-2} -p "$prompt" -theme music
 			$volume_up_icon
 			$prev_icon
 			$toggle_icon
@@ -35,6 +74,17 @@ while
 			$volume_down_icon
 		EOF
 		)
+
+	#index=0
+	#read index action <<< $(
+	#	(
+	#		for e in $prompt $volume_up_icon $prev_icon $toggle_icon $next_icon $volume_down_icon; do
+	#			((index)) &&
+	#				printf "$e\n" || printf "\x00prompt\x1f$e\n"
+	#			#echo -ne "\x1f$e\n"
+	#		done
+	#	) | rofi -dmenu -format 'i s' -selected-row ${index:-2} -p "$prompt" -theme music2
+	#)
 
 	[[ $action ]]
 do

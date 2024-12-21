@@ -1,56 +1,80 @@
-
-@theme "/dev/null"
-
-* {
-  mbg:   argb:dd111111;
-}
-
 @import "theme"
 
-mainbox {
-  background-image:	url("/tmp/rofi_cover_art.png");
+* {
+	y-offset: 20px;
+	x-offset: 60px;
 }
 
 window {
-  width:		300px;
-  height:		300px;
-  border:		0;
+  border:  2px;
+  width:   250px;
+  height:  420px;
+  padding: 15px 15px 0 15px;
 }
 
 prompt {
-  padding:		10px;
-  background-color:   @mbg;
-  font:			"Iosevka Orw 10";
-  border-radius:	5px;
-  expand: false;
-	text-color: @lpc;
+  font:             "Iosevka Orw 9";
+  font:             "SFMono Medium 8";
+  // horizontal-align: 0.50;
+  expand:           false;
+  text-color:       @lpc;
+  padding:          30px 0 10px 0;
+}
+
+#space {
+	expand: true;
+	background-color:            transparent;
+}
+
+#prompt-wrapper {
+  children:         [ space, prompt, space ];
+	background-color:            #888888;
+  orientation: horizontal;
+  extand: false;
+  padding: 135px 0 10px 0;
+  height: 35px;
+}
+
+cover-art {
+  background-image: url("/tmp/rofi_cover_art.png", both);
+  padding: 10px 10px 206px 10px;
 }
 
 inputbar {
-  background-image:	url("/tmp/rofi_cover_art.png");
-  children:		[ prompt ];
-  expand:		false;
-  border-radius:	8px 8px 0px 0px;
-  padding:		146px 10px 10px 10px;
+  children:         [ cover-art, prompt ];
+  orientation:      vertical;
+  horizontal-align: 0.50;
+  expand:           false;
+  height: 200px;
 }
 
 listview {
-  layout:		horizontal;
-  padding:		5px;
-  background-color:   @mbg;
-  transparency: "real";
+  layout:            horizontal;
+  background-color:  transparent;
+  // padding:           10px 0 0 0;
+  padding:           15px 3px 0;
 }
 
-mainbox { children: [ inputbar, listview ]; }
+box {
+	expand: false;
+    orientation:                 horizontal;
+	background-color:            inherit;
+    children:                    [  "space" , "listview", "space" ];
+}
+
+mainbox {
+  height:  370px;
+	children: [ inputbar, listview ];
+}
 
 element {
-  margin: 5px;
-  border-radius:	5px;
+  margin: 3px;
+  border-radius:	2px;
 }
 
 element-text {
-  padding:		13px;
-  font:			"remix 15";
+  padding:		8px 9px;
+  font:			"remix 12";
   background-color: inherit;
 }
 
@@ -63,10 +87,10 @@ element-text {
 }
 
 #element.selected.normal {
-	background-color: @sbg;
+	background-color: argb:00000000;
 }
 
 #element-text selected.normal {
 	text-color:       @sfg;
-	background-color: @sbg;
+	background-color: @msbg;
 }
