@@ -1,0 +1,94 @@
+/* list config */
+
+@import "theme"
+@import "cover_art"
+
+* {
+	font:                        "Iosevka Orw 9";
+	font:                        "SFMono Medium 8";
+	font:                        "SFMono Medium 7";
+
+	lines:                       5;
+
+	window-location:             center;
+
+	// list-padding:                6px;
+	window-padding:                15px 15px;
+	list-margin:                 6px 0;
+
+	input-margin:                0 0 10px;
+	input-padding:               5px 8px;
+
+	entry-margin:                0 3px 0;
+
+	art-width:                   250px;
+
+	element-padding:             8px 8px;
+
+	vertical-prompt-margin:      223px 0 10px 20px;
+	horizontal-prompt-margin:    200px 0 10px 20px;
+}
+
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    background-color:            transparent;
+    orientation:                 vertical;
+	children:                    [ "inputbar", "listview" ];
+}
+
+#window {
+	width:                       @window-width;
+	border:                      2px;
+    height:  410px;
+	margin:                      0;
+	padding:                     @window-padding;
+	location:                    @window-location;
+    background-color:            @bg;
+}
+
+box {
+	expand: false;
+    orientation:                 vertical;
+	vertical-align:              5%;
+    enabled:                     true;
+    text-color:                  @fg;
+    width:                       @art-width;
+    children:                    [ prompt ];
+}
+
+listbox {
+	children:                    [ "inputbar", "listview" ];
+    orientation:                 vertical;
+	background-color:            @bg;
+	padding:                     @list-padding;
+}
+
+#listview {
+	background-color:            transparent;
+	scrollbar:                   false;
+	dynamic:                     true;
+	vertical-align:              0.5;
+	spacing:                     0;
+}
+
+prompt {
+	//margin:                      @vertical-prompt-margin;
+	font:                        "SFMono 10";
+}
+
+inputbar {
+	children:                    [ cover-art, "entry" ];
+    orientation:                 vertical;
+	background-color:            transparent;
+}
+
+#entry {
+	padding:                     @element-padding;
+	background-color:            transparent;
+	color:                       @lpc;
+}
+
+#element {
+	padding:                     @element-padding;
+}

@@ -1,0 +1,29 @@
+* {
+	y-offset: -30px;
+	x-offset: 0px;
+
+	art-width:      250px;
+	window-width:   550px;
+	window-padding: 15px;
+
+	font:           "SFMono Medium 8";
+
+}
+
+window {
+  border:             2px;
+  width:              @art-width;
+  padding:            @window-padding;
+  orientation:        vertical;
+}
+
+cover-art {
+  expand: false;
+  background-image: url("/tmp/rofi_cover_art.png", both);
+  padding: 10px 10px 206px 10px;
+}
+
+prompt {
+  expand:           false;
+  text-color:       @lpc;
+}

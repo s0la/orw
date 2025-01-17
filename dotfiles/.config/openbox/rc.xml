@@ -43,7 +43,11 @@
   </placement>
   <theme>
     <name>orw</name>
-    <titleLayout>LIMC</titleLayout>
+		<titleLayout>LIMC</titleLayout>
+    <!--
+		<titleLayout>LIMC</titleLayout>
+	-->
+    <titleLayout/>
     <!--
       available characters are NDSLIMC, each can occur at most once.
       N: window icon
@@ -58,7 +62,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Roboto</name>
-      <size>8</size>
+      <size>7</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -179,6 +183,11 @@
   <keyboard>
     <chainQuitKey>C-g</chainQuitKey>
     <!-- Keybindings for desktop switching -->
+	<keybind key="C-S-A">
+      <action name="Execute">
+        <command>alacritty</command>
+      </action>
+    </keybind>
     <keybind key="W-b">
       <action name="ToggleDecorations"/>
     </keybind>
@@ -327,6 +336,16 @@
         <command>~/.orw/scripts/rofi_scripts/dmenu.sh display</command>
       </action>
     </keybind>
+    <keybind key="A-C-m">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/music_controls.sh</command>
+      </action>
+    </keybind>
+	<keybind key="A-C-p">
+      <action name="Execute">
+        <command>~/.orw/scripts/rofi_scripts/music_progressbar.sh</command>
+      </action>
+    </keybind>
     <keybind key="A-S-m">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/dmenu.sh display_orientation</command>
@@ -339,7 +358,7 @@
     </keybind>
     <keybind key="A-p">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/art_playlist.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/music_playlist.sh</command>
       </action>
     </keybind>
     <keybind key="A-S-p">
@@ -1102,7 +1121,7 @@
   </menu>
   <applications>
     <application name="*">
-      <decor>yes</decor>
+      <decor>no</decor>
       <focus>yes</focus>
       <layer>below</layer>
       <position force="yes">
@@ -1113,7 +1132,7 @@
 
     <application class="*">
       <layer>below</layer>
-      <decor>yes</decor>
+      <decor>no</decor>
       <focus>no</focus>
       <position force="yes">
         <monitor>2</monitor>
@@ -1121,8 +1140,8 @@
         <y>center</y>
       </position>
       <size>
-        <width>0</width>
-        <height>0</height>
+        <width>150</width>
+        <height>150</height>
       </size>
     </application>
 
@@ -1177,12 +1196,12 @@
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
         <monitor>2</monitor>
-        <x>288</x>
-        <y>39</y>
+        <x>480</x>
+        <y>45</y>
       </position>
       <size>
-        <width>910</width>
-        <height>407</height>
+        <width>1040</width>
+        <height>495</height>
       </size>
     </application>
 
@@ -1196,8 +1215,8 @@
         <y>center</y>
       </position>
       <size>
-        <width>0</width>
-        <height>0</height>
+        <width>150</width>
+        <height>150</height>
       </size>
     </application>
 

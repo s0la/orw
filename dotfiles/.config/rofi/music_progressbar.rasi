@@ -1,0 +1,59 @@
+@import "theme"
+@import "cover_art"
+
+prompt {
+  background-color: transparent;
+  expand:           false;
+  text-color:       @lpc;
+  width:            100%;
+  padding:          30px 0;
+}
+
+inputbar {
+  children:         [ cover-art, prompt ];
+  orientation:      vertical;
+  horizontal-align: 0.50;
+  expand:           false;
+  height:           200px;
+}
+
+listview {
+  spacing: 0px;
+  layout:            horizontal;
+  background-color:  transparent;
+  padding:           0 2px;
+}
+
+element {
+  margin: 0px;
+  border-radius:	2px;
+}
+
+element-text {
+  background-color: inherit;
+}
+
+#element.normal.normal, element.alternate.normal, element.normal.active, element.alternate.active {
+  background-color: argb:00000000;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	text-color:       @msbg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	text-color:       @sfg;
+}
+
+#element.selected.normal {
+	background-color: argb:00000000;
+}
+
+#element-text selected.normal {
+	text-color:       @fg;
+	background-color: @msbg;
+}
+
+#element.selected.active {
+	background-color: @msbg;
+}
