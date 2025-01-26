@@ -24,10 +24,14 @@ make_time_content() {
 		time_format='%I:%M' ||
 		time_format="$(sed 's/[[:alpha:]]/%&/g' <<< "${args//_/ }")"
 
-	[[ ${joiner_modules[$opt]} ]] &&
-		local tpbg='$tpbg' tpfg='$tpfg' ||
-		local tpbg='${cjsbg:-$tsbg}' tpfg='${cjsfg:-$tsfg}' \
-		time_frame_start=$module_frame_start time_frame_end=$module_frame_end
+	if [[ ${joiner_modules[$opt]} ]]; then
+		local tpbg='$tpbg' tpfg='$tpfg'
+		[[ "$time_format" == *|* ]] &&
+			time_format="${tsfg}${time_format%|*}|${tpfg}${time_format#*|}"
+	else
+		local tpbg='${cjsbg:-$tsbg}' tpfg='${cjsfg:-$tsfg}'
+		local time_frame_start=$module_frame_start time_frame_end=$module_frame_end
+	fi
 
 	time_content="\${cjpbg:-\$tpbg}\$time_padding\${cjpfg:-\$tpfg}\$time\$time_padding"
 	time_content="$time_frame_start$time_content$time_frame_end"
