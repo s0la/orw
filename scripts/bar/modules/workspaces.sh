@@ -116,7 +116,9 @@ get_all_windows() {
 			if (wid) exit
 
 			aw[d] = aw[d] " " id
-			at[id] = (length($0) < 20) ? $0 : substr($0, 0, 20) ".."
+			t = (length($0) < 20) ? $0 : substr($0, 0, 20) ".."
+			gsub("\"", "'\''", t)
+			at[id] = t
 		} END {
 			if (wid) print $0
 			else {
