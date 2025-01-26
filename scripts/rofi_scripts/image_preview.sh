@@ -19,7 +19,7 @@ read icon_size window_width <<< \
 			if (/window-width/) { exit }
 		} END {
 			ww = int((h - (2 * (wp + ip) + f)) / '$item_count')
-			is = ww - 3 * ep - 1
+			is = ww - 3 * ep - 0
 			print is
 		 }' ~/.config/{orw/config,rofi/image_preview.rasi})
 
