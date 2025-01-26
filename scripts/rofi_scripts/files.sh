@@ -229,6 +229,8 @@ elif [[ $file ]]; then
 		fi
 	else
 		if [[ $selection ]]; then
+			#echo "FILE: $file, ${file: -1}"
+
 			[[ ${file: -1} == / ]] &&
 				file=$(list_archive | awk '/ '${file//\//\\/}'/ { sub("^[^ ]* ", "|"); f = f $0 } END { print substr(f, 2) }')
 
@@ -497,9 +499,11 @@ if [[ ${option% *} ]]; then
 						flag=M modify=${option%%_*}
 
 					set_multiple_files "$current/"
+
 					[[ $files ]] && files="${files//\'/}"
 
-					~/.orw/scripts/wallctl.sh -${flag:-d} $modify "${files:-$current}";;
+					eval "~/.orw/scripts/wallctl.sh -${flag:-d} $modify \"${files:-$current}\""
+					;;
 				set_as_wallpaper)
 					set_multiple_files "$current/"
 					eval ~/.orw/scripts/wallctl.sh -s "${files:-'$current'}";;
@@ -669,20 +673,20 @@ if [[ -d "$current" && ! $options ]]; then
 
 				!/\.$/ {
 					if (se) {
-						if ($0 ~ "^(" mf ")$") {
+						if ($0 ~ "^(" mf ")/?$") {
 							i = " "
 							asf = asf "," NR + 3
 						} else i = " "
 					} else {
 						if (/\/$/) {
-							sub("/$", "")
 							i = "'$directory_icon' "
 						} else i = "'$file_icon' "
 					}
 
+					sub("/$", "")
 					print i $0
 				} END {
-					if(se) {
+					if (se) {
 						printf "\0active\x1f%s\n", substr(asf, 2)
 						printf "\0keep-selection\x1ftrue\n"
 					}
