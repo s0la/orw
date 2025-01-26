@@ -28,7 +28,7 @@ get_rofi_width() {
 				ic = '${item_count:-5}'
 				i = (FILENAME ~ "icons")
 				p = "font|element-padding|window-width"
-				p = "font|element-padding|window-(padding|width)"
+				p = "font|element-padding|window-(padding|width|border)"
 				p = p "|" ((i) ? "list-spacing" : "entry-width")
 			}
 
@@ -43,11 +43,12 @@ get_rofi_width() {
 						f = (i) ? v * 1.3 : '$font_size'
 						break
 					case /window-padding/: wp = v * 2; break
+					case /window-border/: wb = v * 2; break
 					case /padding/: ep = v * ((i) ? 2 : 5); break
 					case /spacing/: ls = v; break
 					case /entry/: ew = v; break
 					case /window-width/:
-						w = wp + (ep + f) * ic
+						w = wp + wb + (ep + f) * ic
 						if (i) w += ls * (ic - 1)
 						print int(w)
 						exit
