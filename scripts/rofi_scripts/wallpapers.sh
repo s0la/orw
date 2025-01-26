@@ -84,7 +84,7 @@ while
 				trap - EXIT
 				toggle
 				sleep 0.1
-				~/.orw/scripts/rofi_scripts/select_wallpaper.sh
+				~/.orw/scripts/rofi_scripts/select_wallpaper.sh | ${0%/*}/dmenu.sh image_preview
 				;;
 			$index*) $wallctl -i ${action##* };;
 			*) $wallctl -o $action;;

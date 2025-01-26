@@ -6,6 +6,11 @@ get_directory() {
 	root="${directory%/\{*}"
 }
 
+image_preview=$(ps -p $$ -o ppid= |
+	xargs -I {} ps -o args= -p {} | awk '{ print $NF == "wallpapers" }')
+
+[[ ${BASH_SOURCE[0]} == *select* ]] && select=true
+
 config=~/.config/orw/config
 get_directory
 
@@ -41,14 +46,19 @@ if [[ -z $@ ]]; then
 
 	#works with rofi image preview
 	(
-		echo '~/.orw/scripts/wallctl.sh -s "$element"'
+		((image_preview)) && echo '~/.orw/scripts/wallctl.sh -s "$element"'
 		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" |
 			sort -t '/' -k 1 | awk '{
 					if ($0 ~ "('"${current_wallpapers//\|/\\\\\\\\|}"')$") i = i "," NR - 1
+					if (!'$image_preview') sub("'"${root//\'}"'/?", "")
 					aw = aw "\n" $0
-				} END { print substr(i, 2) aw }'
+				} END {
+					a = ('$image_preview') ? "" : "\0active\x1f"
+					printf "%s%s", a, substr(i, 2)
+					print aw
+				}'
 				#} END { print substr(i, 2) aw }' | ${0%/*}/image_preview.sh
-	) | ${0%/*}/dmenu.sh image_preview
+	) #| ${0%/*}/dmenu.sh image_preview
 else
 	wall="$@"
 	eval ~/.orw/scripts/wallctl.sh -s "$root/'$wall'"
