@@ -38,7 +38,7 @@ while
 	read index <<< \
 		$(mpc playlist |
 		rofi -dmenu -format d -p '' -i $active \
-		-theme-str "$theme_str" -selected-row ${index:-0} -theme playlist)
+		-theme-str "$theme_str" -selected-row ${index:-0} -theme music_playlist)
 
 	[[ $index ]]
 do
