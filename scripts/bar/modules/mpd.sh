@@ -102,7 +102,7 @@ get_mpd() {
 		<<< $(get_mpd_stats)
 
 	if [[ $status ]]; then
-		if [[ $mpd_volume ]]; then
+		if [[ $mpd_volume_visible ]]; then
 			set_volume="mpc -q volume ${volume_level%*\%}"
 			action1="$toggle_mpd_volume_buttons && $set_volume"
 			action4='mpc -q volume +5'
@@ -127,11 +127,19 @@ get_mpd() {
 		eval "mpd_info=\"$mpd_info_components\""
 	fi
 
-	if [[ $mpd_components =~ toggle ]]; then
+	local mpd_full_form=$(sed -n "s/mpd_full.* //p" $bar_config)
+	((mpd_full_form)) &&
+		local mpd_components="$full_mpd_components" ||
+		local mpd_components="$short_mpd_components"
+
+	if [[ $mpd_components == *toggle* ]]; then
 		[[ $status == playing ]] &&
 			toggle_icon=pause || toggle_icon=play
 		toggle="%{A:mpc -q toggle:}$(get_icon "^${toggle_icon}${toggle_style}=")%{A}"
 	fi
+
+	eval mpd_buttons=\""$mpd_buttons"\"
+	#~/.orw/scripts/notify.sh "$mpd_buttons"
 
 	eval mpd=\""$mpd_components"\"
 	unset change
@@ -167,8 +175,12 @@ assign_mpd_info_components() {
 		s) scroll_area=$component_value;;
 		d) scroll_delay=$component_value;;
 		o) mpd_info_components+="%{O$component_value}";;
-		i) mpd_info_components+='$mpfg$song_info';;
+		#i) mpd_info_components+='$mpfg$song_info';;
+		i) mpd_info_components+='$song_info';;
 	esac
+
+	#mpd_info_components="$mpd_bg$mpd_fg$mpd_info_components"
+	mpd_info_components="$mpfg$mpd_info_components"
 }
 
 assign_mpd_progressbar_components() {
@@ -177,7 +189,10 @@ assign_mpd_progressbar_components() {
 		s) mpd_progressbar_step="$component_value";;
 		o) mpd_progressbar_components+="%{O$component_value}";;
 		b) mpd_progressbar_components+='$mpd_bar';;
+		#b) mpd_progressbar_components+="$mpd_bg$mpd_fg$mpd_bar";;
 	esac
+
+	mpd_progressbar_components="$mpd_bg$mpd_fg$mpd_progressbar_components"
 }
 
 assign_mpd_buttons_components() {
@@ -206,6 +221,8 @@ assign_mpd_buttons_components() {
 			mpd_button_icon="%{A:mpc -q $mpd_button:}$mpd_button_icon%{A}"
 		mpd_buttons+="$mpd_button_icon$mpd_button_separator"
 	fi
+
+	mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
 }
 
 assign_mpd_time_components() {
@@ -220,14 +237,20 @@ assign_mpd_time_components() {
 }
 
 make_mpd_content() {
+	local mpd_bg=$msbg mpd_fg=$msfg
+
 	for arg in ${1//,/ }; do
 		value=${arg:2}
 		arg=${arg%%:*}
 
+		#mpd_components+="$mpd_bg$mpd_fg"
+
 		case $arg in
 			o) mpd_components+="%{O$value}";;
 			[PS])
-					eval switch_${value}g_color="\$m${arg,}${value:-g\$m${arg,}f}g";;
+				eval mpd_${value}g="\$m${arg,}${value:-g\$m${arg,}f}g"
+				eval switch_${value}g_color="\$m${arg,}${value:-g\$m${arg,}f}g"
+				;;
 			R)
 				[[ $value == s* ]] &&
 					side=start || side=end side_frame_end=$mfe
@@ -244,23 +267,25 @@ make_mpd_content() {
 				assign_components mpd_info
 				mpd_components+='$mpd_info'
 
-				if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
-					mpd_info_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_info_components$restore_end_color"
-					unset {switch_{b,f}g,restore_{start,end}}_color
-				fi
+				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
+				#	mpd_info_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_info_components$restore_end_color"
+				#	unset {switch_{b,f}g,restore_{start,end}}_color
+				#fi
 				;;
 			v)
 				read volume_{up,down}_icon <<< $(get_icon 'arrow_(right|left).*full' | xargs)
 				toggle_mpd_volume_buttons="sed -i '/mpd_volume_buttons/ y/01/10/' \$bar_config"
 				mpd_volume_down_button="%{A:mpc -q volume -5:}$volume_down_icon%{A}%{O10}"
 				mpd_volume_up_button="%{O10}%{A:mpc -q volume +5:}$volume_up_icon%{A}"
-				mpd_volume=true
-				mpd_components+='$volume'
+				mpd_volume_visible=true
+				mpd_volume="$mpd_bg$mpd_fg\$volume"
 
-				if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
-					mpd_volume="$restore_start_color$switch_bg_color$switch_fg_color$mpd_volume$restore_end_color"
-					unset {switch_{b,f}g,restore_{start,end}}_color
-				fi
+				mpd_components+='$mpd_volume'
+
+				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
+				#	mpd_volume="$restore_start_color$switch_bg_color$switch_fg_color$mpd_volume$restore_end_color"
+				#	unset {switch_{b,f}g,restore_{start,end}}_color
+				#fi
 				;;
 			p)
 				mpd_progressbar_icon="━"
@@ -269,25 +294,48 @@ make_mpd_content() {
 				assign_components mpd_progressbar
 				mpd_components+='$mpd_progressbar'
 
-				if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
-					mpd_progressbar_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_progressbar_components$restore_end_color"
-					unset {switch_{b,f}g,restore_{start,end}}_color
-				fi
+				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
+				#	mpd_progressbar_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_progressbar_components$restore_end_color"
+				#	unset {switch_{b,f}g,restore_{start,end}}_color
+				#fi
 				;;
 			b)
 				buttons="${value:-ptn}"
 
 				assign_components mpd_buttons "$buttons"
 
-				if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
-					mpd_buttons="$restore_start_color$switch_bg_color$switch_fg_color$mpd_buttons$restore_end_color"
-					unset {switch_{b,f}g,restore_{start,end}}_color
-				fi
+				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
+				#	mpd_buttons="$restore_start_color$switch_bg_color$switch_fg_color$mpd_buttons$restore_end_color"
+				#	unset {switch_{b,f}g,restore_{start,end}}_color
+				#fi
 
 				mpd_components+="%{T4}$mpd_buttons%{T-}"
 				;;
+			T)
+				[[ $value ]] &&
+					short_mpd_components="$mpd_bg$mpd_fg\$mpd_toggle" &&
+					while ((i < ${#value})); do
+						case ${value:$((i++)):1} in
+							b) mpd_short_module='%{T4}$mpd_buttons%{T-}';;
+							p) mpd_short_module='$mpd_progressbar';;
+							i) mpd_short_module='$mpd_info';;
+							t) mpd_short_module='$mpd_time';;
+							v) mpd_short_module='$volume';;
+						esac
+						short_mpd_components+="$mpd_short_module"
+					done
+
+				toggle_volume='mpc -q volume +1 && mpc -q volume -1'
+				toggle_command="sed -i '/mpd_full/ y/01/10/' \$bar_config && $toggle_volume"
+				toggle_icon=$(get_icon music)
+				mpd_toggle="%{A:$toggle_command:}$toggle_icon%{A}"
+				mpd_components+="$mpd_bg$mpd_fg$mpd_toggle"
+				;;
 		esac
 	done
+
+	full_mpd_components="$mpd_components"
+	#short_mpd_components='$mpd_toggle$mpd_info$mpd_time'
 
 	[[ ${joiner_modules[m]} ]] ||
 		local mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs=$mfs mpd_fe=$mfe
