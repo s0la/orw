@@ -106,16 +106,8 @@ resize_rofi() {
 		} { print }' ~/.config/rofi/icons.rasi
 }
 
-#item_count=10
-#set_theme_str
-#echo "$theme_str"
-#exit
-
 toggle
 trap toggle EXIT
-
-#item_count=5
-#set_theme_str
 
 list_resize_options() {
 	for resize_option in ${!resize_options[*]}; do
@@ -126,18 +118,12 @@ list_resize_options() {
 		fi
 
 		echo $option
-		#~/.orw/scripts/notify.sh -t 11 "$vertical_offset"
 		[[ $option == $selected_option ]] &&
 			((item_count > base_count + ${#resize_options[*]})) &&
 			echo -e "$up\n$down"
 	done
-
-	#[[ $resize_hilights ]] &&
-	#	hilight="-u ${resize_hilights%,}" ||
-	#	hilight="-u ${suboption_hilights%,}"
 }
 
-#options=( $dmenu $horizontal $vertical $list $resize )
 options=(
 	dmenu
 	horizontal
@@ -156,13 +142,9 @@ resize_options=(
 
 base_count=${#options[*]}
 item_count=$base_count
-#echo ${resize_options[*]}, $font
-#sed -n 's/^\(arrow_\(up\|down\).*circle.*\|font\|margin\|.*\(padding\|_offset\)\)=//p' ~/.orw/scripts/icons | xargs
-#exit
 
 while
 	set_theme_str
-	#~/.orw/scripts/notify.sh -t 11 "$theme_str"
 
 	for option_index in ${!options[*]}; do
 		[[ $style == *${options[option_index]}* ]] &&
@@ -176,7 +158,6 @@ while
 		done | rofi -dmenu -format 'i s' -selected-row ${index:-0} \
 			$active $hilight -theme-str "$theme_str" -theme $style)
 
-	echo $index: $option
 	[[ $option ]]
 do
 	if [[ $option == $resize ]]; then
@@ -192,7 +173,6 @@ do
 			unset hilight
 		fi
 	elif [[ $selected_option ]]; then
-		echo $option, $selected_option, $item_count, $base_count, ${#resize_options[*]}
 		if [[ $option == $selected_option ]]; then
 			((item_count > base_count + ${#resize_options[*]}))
 			hilight="-u ${resize_hilight%,}"
@@ -201,6 +181,7 @@ do
 		fi
 
 		if [[ $option =~ $up|$down ]]; then
+			echo $option: $margin, $padding
 			case $selected_option in
 				$font) property=f;;
 				$margin) property=wm;;
