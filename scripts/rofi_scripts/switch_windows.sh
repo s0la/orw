@@ -39,10 +39,24 @@ if [[ $@ ]]; then
 		desktop="${workspaces[$1]}"
 		id=$(printf '0x%.8x' $(xdotool getactivewindow))
 
+		#IFS=$'\n' read -d '' current_window all <<< \
+		#	$(wmctrl -l | awk '
+		#		$2 ~ "'"$desktop"'" && $2 >= 0 {
+		#			aw[$2] = aw[$2] " " $NF
+		#			if ($1 == "'"$id"'") i = wc
+		#			wc++
+		#		} END {
+		#			i = (i) ? i : " "
+		#			for (w in aw) {
+		#				gsub(" ", "\n", aw[w])
+		#				print i aw[w]
+		#			}
+		#		}')
+
 		IFS=$'\n' read -d '' current_window all <<< \
 			$(wmctrl -l | awk '
 				$2 ~ "'"$desktop"'" && $2 >= 0 {
-					aw[$2] = aw[$2] " " $NF
+					aw[$2] = aw[$2] " " $NF "\\\\0info\\\\x1f" $1
 					if ($1 == "'"$id"'") i = wc
 					wc++
 				} END {
@@ -55,8 +69,9 @@ if [[ $@ ]]; then
 
 		echo -ne "\0active\x1f$current_window\n${all/ /\n}"
 	else
-		window="$@"
-		wmctrl -l | sed -n "s/\s.*${window##* }$//p" | xargs wmctrl -ia
+		#window="$@"
+		#wmctrl -l | sed -n "s/\s.*${window##* }$//p" | xargs wmctrl -ia
+		[[ $ROFI_INFO == 0x* ]] && wmctrl -ia $ROFI_INFO
 	fi
 else
 	desktop=$(xdotool get_desktop)
