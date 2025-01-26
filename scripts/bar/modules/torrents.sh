@@ -6,7 +6,7 @@ get_torrents_stats() {
 			function make_progressbar(percent) {
 				if (percent) {
 					pb = sprintf("%*s", percent, " ")
-					gsub(" ", pbi, pb)
+					gsub(" ", pbi "%{O0}", pb)
 					return fg pb
 				}
 			}
@@ -21,7 +21,7 @@ get_torrents_stats() {
 			}
 
 			{
-				if ($2 ~ "^[0-9]{1,2}%") {
+				if ($2 ~ "^[0-9]{1,2}\\.[0-9]{1,2}%") {
 					tp += $2
 					tc++
 
@@ -36,12 +36,15 @@ get_torrents_stats() {
 				pd = sprintf("%.0f", ap / spbs)
 				pr = 100 / spbs - pd
 
-				pb = "%{T3}${tbefg:-${pbefg:-${$pfg}}}" make_progressbar(pd) 
-				pb = pb "${tbfg:-${$sfg}}" make_progressbar(pr) "%{T-}"
+				pb = "%{T3}${tbefg:-${pbefg:-${pfg}}}" make_progressbar(pd) 
+				pb = pb "${tbfg:-${sfg}}" make_progressbar(pr) "%{T-}"
 
 				if (tc) print substr(i, 2), ns, tc, ap "%", pb
 			}' 2> /dev/null
 }
+
+#get_torrents_stats
+#exit
 
 set_torrents_actions() {
 	local action1="transmission-remote -t $ids -$status &> /dev/null"
@@ -52,7 +55,7 @@ set_torrents_actions() {
 
 get_torrents() {
 	unset torrents
-	label=TOR icon="$(get_icon "torrents_icon")"
+	label=TOR icon="$(get_icon "torrents")"
 	read ids status count percentage torrents_progressbar <<< $(get_torrents_stats)
 
 	set_torrents_actions
@@ -66,7 +69,7 @@ check_torrents() {
 	local pid actions_{start,end} quit
 
 	while true; do
-		pid=$(pidof transmission-daemon)
+		pid=$(pidof transmission-daemon 2> /dev/null)
 
 		if ((pid)); then
 			unset quit
@@ -77,7 +80,17 @@ check_torrents() {
 			print_module torrents
 		fi
 
-		sleep 60
+		#((count)) && sleep_interval=10 || sleep_interval=60
+		if ((!count)); then
+			sleep_interval=60
+			((pid)) && kill $pid
+		else
+			sleep_interval=10
+		fi
+
+		#~/.orw/scripts/notify.sh "$pid: $count, $sleep_interval"
+
+		sleep $sleep_interval
 	done
 }
 
@@ -92,7 +105,7 @@ make_torrents_content() {
 			o) torrents_components+="%{O$value}";;
 			P)
 				torrents_progressbar_step=${value//[^0-9]}
-				[[ ${value/$torrents_progressbar_step} == d ]] &&
+				[[ ${value/$torrents_progressbar_step} == *d* ]] &&
 					torrents_progressbar_icon="■" || torrents_progressbar_icon="━"
 				torrents_components+='$torrents_progressbar'
 				;;
