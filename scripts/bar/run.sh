@@ -4,7 +4,7 @@ pid=$$
 
 get_display_properties() {
 	[[ ! $x && ! $y ]] &&
-		read default_{x,y}_offset {vertical_,}{x,y} display_width display_height <<< \
+		read default_{x,y}_offset {vertical_,}{x,y} display_{width,height} <<< \
 				$(awk -F '[_ ]' '
 					/^orientation/ && $NF ~ /^v/ { v = 1 }
 
@@ -68,14 +68,6 @@ set_x() {
 get_icon() {
 	local icon="$1"
 
-	#icon="$(awk -F '=' '/^[^#]/ && /'"$icon"'/ {
-	#	p = (/bar/) ? "T3" : "I"
-	#	printf "%{%s}%s%{%s-}\n", p, $NF, substr(p, 2, 1)
-	#}' $icons_file)"
-
-	#icon="$(awk -F '=' '/^[^#]/ && /'"$icon"'/ { print $NF }' $icons_file)"
-	#echo "%{I}$icon%{I}"
-
 	awk -F '=' '/^[^#]/ && /'"$icon"'/ {
 		p = (/bar/) ? "T3" : "I"
 		printf "%{%s}%s%{%s-}\n", p, $NF, substr(p, 1, 1)
@@ -128,7 +120,8 @@ fifo_dir=/tmp/fifos
 bar_config=$root_dir/config
 modules_dir=$root_dir/modules
 icons_file=${root_dir%/*}/icons
-colorscheme_dir=~/.orw/dotfiles/config/orw/colorschemes
+config_dir=~/.orw/dotfiles/.config/orw/bar/configs
+colorscheme_dir=~/.orw/dotfiles/.config/orw/colorschemes
 
 [[ -d $fifo_dir ]] || mkdir $fifo_dir
 
@@ -136,7 +129,7 @@ get_module() {
 	case $1 in
 		m) module=mpd;;
 		d) module=date;;
-		C) module=counter;;
+		#C) module=counter;;
 		N) module=network;;
 		V) module=vanter;;
 		A) module=windows;;
@@ -569,6 +562,8 @@ assign_width_args() {
 	esac
 }
 
+all_args="$@"
+
 while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLXBbE opt; do
 	args=''
 	if [[ ${!OPTIND} != -[[:alpha:]] ]]; then
@@ -606,6 +601,9 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLXBbE opt; do
 			mkfifo $fifo
 
 			fifos_to_remove=( $fifo )
+
+			[[ -f $config_dir/$bar_name ]] ||
+				echo "$root_dir/run.sh $all_args" > $config_dir/$bar_name
 			;;
 		S) screen="$args";;
 		O)
@@ -692,6 +690,8 @@ done
 bar_content+='%{B-}'
 
 get_display_properties
+[[ $width == adjustable ]] && 
+	bar_width=$((display_width - (bar_frame_width + 2 * (default_y_offset + frame_size))))
 set_x
 
 [[ $bar_y ]] ||
@@ -722,9 +722,11 @@ bold_font="Iosevka Orw:style=Heavy:size=$font_size"
 icon_font="material:size=$icon_size"
 bar_font="SFMono-Medium:size=11"
 bar_font="SFMono-Medium:size=$icon_size"
-bar_font="SFMono:style=Medium:size=11"
+bar_font="SFMono:style=Medium:size=$font_size"
+bar_font="SFMono:style=Heavy:size=$font_size"
+bar_font="Iosevka Orw:style=Heavy:size=$font_size"
 
-font_offset=${font_offset:--2}
+font_offset=${font_offset:-0}
 
 remove_fifos() {
 	local fifo
@@ -755,27 +757,58 @@ adjust_bar_width() {
 	while read content; do
 		if [[ $width == adjustable ]]; then
 
+
+			#awk -F '%{|}' '
+			#		{
+			#			fs = sprintf("%.0f", '$font_size' / 1.4)
+			#			is = sprintf("%.0f", '$icon_size' * 1.8)
+			#			fs = sprintf("%.0f", '$font_size' / 1.4)
+			#			is = sprintf("%.0f", '$icon_size' * 1.3)
+
+			#			for (f = 1; f < NF; f++) {
+			#				print $f
+			#				if ($f ~ /O[0-9]+$/) {
+			#					co = substr($f, 2)
+			#					if (c) cl += co
+			#					o += co
+			#				} else if ($f == "C") {
+			#					if (c) cl = int(l - cl / 1 + o)
+			#					c = !c
+			#				} else if ($f !~ /^'$bar_options'/) {
+			#					if ($f ~ "^I[0-9-]?$") i = !i
+			#					else {
+			#						ml = length($f) * ((i) ? is : ($f ~ "━") ? 9 : fs)
+			#						if (c) cl += ml
+			#						l += ml
+			#					}
+			#				}
+			#			}
+			#		} END { print int(o + l), cl }' <<< "$content"
+
+
+
 			old_width=$content_width
 			read content_width $adjust_center <<< \
 				$(awk -F '%{|}' '
 					{
 						fs = sprintf("%.0f", '$font_size' / 1.4)
 						is = sprintf("%.0f", '$icon_size' * 1.8)
+						fs = sprintf("%.0f", '$font_size' / 1.4)
 						is = sprintf("%.0f", '$icon_size' * 1.3)
 
-						for(f = 1; f < NF; f++) {
-							if($f ~ /O[0-9]+$/) {
+						for (f = 1; f < NF; f++) {
+							if ($f ~ /O[0-9]+$/) {
 								co = substr($f, 2)
 								if (c) cl += co
 								o += co
-							}
-							else if($f == "C") {
+							} else if ($f == "C") {
 								if (c) cl = int(l - cl / 2 + o)
 								c = !c
-							} else if($f !~ /^'$bar_options'/) {
+							} else if ($f !~ /^'$bar_options'/) {
 								if ($f ~ "^I[0-9-]?$") i = !i
 								else {
-									ml = length($f) * ((i) ? is : ($f ~ "━") ? 9 : fs)
+									#ml = length($f) * ((i) ? is : ($f ~ "━") ? fs : fs)
+									ml = length($f) * ((i) ? is : fs)
 									if (c) cl += ml
 									l += ml
 								}
@@ -784,11 +817,13 @@ adjust_bar_width() {
 					} END { print int(o + l), cl }' <<< "$content")
 
 			if ((old_width != content_width)); then
+				#~/.orw/scripts/notify.sh -t 11 "$content_width: $center_width"
 				unset bar_x
 				set_x $content_width
 				xdotool search --name "^$bar_name$" \
 					windowsize $content_width $bar_height \
 					windowmove $bar_x $bar_y
+				#echo "windowsize $content_width $bar_height windowmove $bar_x $bar_y" >> ~/bar.log
 			fi
 		fi
 
@@ -811,7 +846,7 @@ done < $fifo | adjust_bar_width |
 	lemonbar -d -B$bg -F$fg -u 0 \
 	-f "$font" -o $font_offset \
 	-f "$bold_font" -o $font_offset \
-	-f "$bar_font" -o $((font_offset + 1)) \
+	-f "$bar_font" -o $((font_offset + 0)) \
 	-f "$icon_font" -o $((font_offset + 0)) \
 	-a 150 -u ${largest_frame_size:-0} $bar_frame \
 	-g "$geometry" -n "$bar_name" | bash &
