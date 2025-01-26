@@ -4,15 +4,14 @@
 	theme=dmenu || theme=list
 theme=list
 
-if [[ -z $@ ]]; then
+command="$(
 	for script in ~/.orw/scripts/*.sh; do
 		script=${script##*/}
 		echo ${script%.*}
 	done | rofi -dmenu -theme $theme
-else
-	killall rofi
+)"
 
-	command="$@"
-	script=${command%% *}
-	~/.orw/scripts/$script.sh ${@/$script/} &
-fi
+killall rofi
+
+script=${command%% *}
+~/.orw/scripts/$script.sh ${@/$script/} &
