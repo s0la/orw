@@ -14,12 +14,6 @@ make_battery_content() {
 }
 
 get_battery() {
-	#read battery{_state,,time} <<< $(acpi |
-	#	awk '{ gsub("(.*:|,)\\s+|\\s+\\w*$", " "); print }')
-	#read battery{_state,,_time} <<< $(acpi | awk -F '[:, ]' '{ print $4, $6, $8 ":" $9 }')
-	#acpi | awk -F '[:, ]' '{ print $4, $6, $8 ":" $9 }'
-	#echo 'battery 0: charging, 100%, 11:33:55 remaining' | awk '{ gsub("[^,]*\\s+", " "); print }'
-
 	read battery_{state,percentage,time} <<< $(acpi |
 		awk -F ',' '{
 			gsub("[^0-9:]", "", $3)
@@ -33,18 +27,11 @@ get_battery() {
 	[[ ${battery_state,} == charging ]] &&
 		label=CHR || label=BAT
 	icon=$(get_icon "^${label,,}?.*_?${icon_level:-empty}")
-	#[[ $battery_time ]] &&
-	#	battery_time="\$inner
-
-	#[[ $battery_components == \$*\$* && $battery_components != *O* ]] &&
-	#	battery_components="${battery_components%\$*}\$inner\$${battery_components##*\$}"
-	#eval battery=\""$battery_components"\"
 
 	[[ $battery_components != *O* ]] &&
 		battery_components=$(sed 's/\([^^]\)\$/\1$inner$/g' <<< $battery_components)
 
 	eval battery=\""$battery_components"\"
-	#[[ $label == CHR ]] && ((${battery_percentage:: -1} >= 95)) &&
 	((${battery_percentage:: -1} >= 95)) &&
 		unset battery || battery="${battery:-$battery_percentage}"
 	print_module battery
