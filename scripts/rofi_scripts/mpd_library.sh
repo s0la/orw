@@ -80,7 +80,7 @@ else
 		add_all)
 			mpc add "$current"
 			back;;
-		*.mp3|*.ogg)
+		*.mp3|*.ogg|*.m4a)
 			[[ $current ]] && current+='/'
 			mpc add "$current${arg// /\ }";;
 		*)
