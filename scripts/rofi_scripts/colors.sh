@@ -7,21 +7,15 @@ vim_colors=$(awk '
 	END { print substr(c, 3) }' ~/.config/nvim/colors/orw.vim)
 
 ocs_root=~/.config/orw/colorschemes
-current_ocs=$(grep -zlP "#vim\n$vim_colors" $ocs_root/*.ocs)
-ISF=$'\n' read -d '' active colorschemes <<< $(ls $ocs_root/wall_previews/* |
-	awk '/'"${current_ocs##*/}"'.png/ { a = NR - 1 } { ac = ac "\n" $0 } END { print a ac }')
+current_ocs=$(grep -zlP "#vim\n$vim_colors" $ocs_root/*.ocs | sed 's/[()]/\\&/g')
+
+command='wall="$(sed "s/.ocs.png//" <<< "${element##*/}")";'
+command+='~/.orw/scripts/wallctl.sh -s ~/Downloads/"$wall"* & '
+command+='~/.orw/scripts/rice_and_shine.sh -tC "$wall"'
 
 (
-	echo '~/.orw/scripts/rice_and_shine.sh -tC "$(sed "s/.ocs.png//" <<< "${element##*/}")"'
+	echo "$command"
 	ls $ocs_root/wall_previews/* | awk '
 		/'"${current_ocs##*/}"'.png/ { a = NR - 1 } { ac = ac "\n" $0 }
 		END { print a ac }'
 ) | ${0%/*}/dmenu.sh image_preview
-exit
-
-while read preview; do
-	echo -en "${preview##*/}\x00icon\x1f${preview}\n"
-done <<< $(ls $ocs_root/previews/*) |
-	rofi -dmenu -show-icons -l 5 -theme list \
-	-theme-str 'element-icon { size: 100px; } element { padding: 0; margin: 10px; }' |
-	sed "s/.png$//" | xargs echo ~/.orw/scripts/rice_and_shine.sh -tC
