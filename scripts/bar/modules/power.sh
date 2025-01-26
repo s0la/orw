@@ -57,6 +57,7 @@ make_power_bar_script() {
 	((${#bg} > 7)) &&
 		local transparency=${bg:1:2}
 	local transparency='dd'
+	local transparency='ff'
 
 	#cat <<- EOF > $power_bar
 	#	pid='\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)'
@@ -81,15 +82,15 @@ make_power_bar_script() {
 		separator='$separator'
 		$(echo -e "$power_actions")
 
-		bg='#$transparency${Psbg//[%{B\#\}]}'
+		bg='#$transparency${Psbg: -7:6}'
 		fg='${Psfg//[%{F\}]}'
-		fc='${Psfc:-$sfc}'
+		fc='${Ppfc:-$sfc}'
 		font='$font'
 		geometry='$geometry'
 
 		echo -e "%{c}\$actions" | lemonbar \\
 			-p -d -B\$bg -F\$fg -R\$fc -r 2 \\
-			-f "\$font" -g \$geometry -n power_bar | bash
+			-f "\$font" -g \$geometry -n power_bar | bash &> /dev/null
 		EOF
 	)"
 
