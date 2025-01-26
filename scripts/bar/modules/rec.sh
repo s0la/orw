@@ -13,7 +13,8 @@ get_rec() {
 }
 
 set_rec_actions() {
-	actions_start="%{A:kill $rec_pid:}" actions_end="%{A}"
+	#actions_start="%{A:kill $rec_pid:}" actions_end="%{A}"
+	actions_start="%{A:killall ffmpeg:}" actions_end="%{A}"
 }
 
 check_rec() {
