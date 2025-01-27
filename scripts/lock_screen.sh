@@ -7,9 +7,9 @@ blank=33000000
 khl="$(~/.orw/scripts/convert_colors.sh -hv -$delta ${rc:0:6})${rc: -2}"
 bshl="$(~/.orw/scripts/convert_colors.sh -hv +$delta ${rc:0:6})${rc: -2}"
 
-~/Downloads/i3lock/build/i3lock \
-		--blur $blur \
-		--color "#00000000" \
+		#--blur $blur \
+i3lock \
+		--color "#00000028" \
 		--verif-size=16 \
 		--verif-text="..." \
 		--radius $radius \
