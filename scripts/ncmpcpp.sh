@@ -86,7 +86,7 @@ function draw_cover_art() {
 	exit
 }
 
-base_command='TERM=xterm-256color tmux -S /tmp/tmux_hidden -f ~/.config/tmux/tmux_hidden.conf'
+base_command='tmux -S /tmp/tmux_hidden -f ~/.config/tmux/tmux_hidden.conf'
 
 while getopts :pvscdaRVCP:S:L:D:r:w:h:i flag; do
 	case $flag in

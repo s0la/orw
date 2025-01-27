@@ -390,14 +390,14 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="50;62;69;"
-	sc="50;62;69;"
-	dc="50;62;69;"
-	ic="99;165;133;"
-	sec="107;82;94;"
-	gcc="107;82;94;"
-	gdc="199;101;104;"
-	vc="92;118;156;"
+	fg="50;66;82;"
+	sc="50;66;82;"
+	dc="50;66;82;"
+	ic="96;142;154;"
+	sec="129;91;95;"
+	gcc="129;91;95;"
+	gdc="147;165;209;"
+	vc="147;126;185;"
 
 	clean='\[\033[0m\]'
 
@@ -435,7 +435,9 @@ generate_ps1() {
 			((COLUMNS - content_length < 50)) &&
 				#prompt_start='┌─' prompt_end='└─╼'
 				#prompt_start='╭─' prompt_end='╰─›'
-				prompt_start='┌─' prompt_end='└─›'
+				#prompt_start='┌─' prompt_end='└─•›'
+				prompt_start='\[\033[1m\]• ' prompt_end='• ›'
+				#prompt_start='┌─' prompt_end='└─›'
 			if [[ $prompt_start ]]; then
 				start="$(color_content 3 $sc)$prompt_start"
 				all_modules="$start$all_modules"
@@ -447,8 +449,12 @@ generate_ps1() {
 				all_modules+='\n'
 				format_module -f $sc -Bc "$prompt_end"
 			else
-				format_module -f $sc -Bc '›'
+				format_module -f $sc -Bc '•›'
+				#format_module -f $sc -Bc '━›'
+				#format_module -f $sc -Bc '━'
 			fi
+
+			echo -e "$all_modules" >> ~/b.log
 		else
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
@@ -520,7 +526,7 @@ remove_id() {
 }
 
 show_tty_clock() {
-	local color=$(sed -n 's/visualizer_color.*,//p' ~/.config/ncmpcpp/config)
+	local color=$(sed -n '/^#/! { s/visualizer_color.*,//p }' ~/.config/ncmpcpp/config)
 	tty-clock -cBDC $((color - 1))
 }
 
@@ -532,7 +538,7 @@ export FFF_COL3=2
 export FFF_COL4=9
 
 export EDITOR='nvim'
-export TERM=xterm-256color
+export TERM=alacritty
 export PATH="$PATH:/sbin:/usr/local/go/bin:~/.local/bin:~/.orw/scripts"
 export XDG_CONFIG_HOME="$HOME/.config"
 export GTK2_RC_FILES="$HOME/.config/gtk-2.0/gtkrc-2.0"
