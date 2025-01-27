@@ -237,7 +237,9 @@ fetch_preview() {
 		color=$(magick $thumb -resize 1x1 txt:- | awk 'END { print $3 }')
 		magick $thumb -gravity south -background $color -splice 0x15 $thumb
 
-		read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - '${thumb_width-300}'), $4 + ($2 - $1) }')
+		#read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $3 + ($5 - '${thumb_width:-300}'), $4 + ($2 - $1) }')
+		read x y <<< $(~/.orw/scripts/windowctl.sh -p | awk '{ print $2 + ($4 - '${thumb_width:-150}'), $3 + 0 }')
+
 		~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 		feh --title image_preview $thumb &
 
@@ -247,7 +249,7 @@ fetch_preview() {
 
 try_wall() {
 	[[ ! $directory_path ]] && directory_path=$(sed -n "s/\(.*[Ww]all[^/]*\).*/\1\/$1/p" <<< $directory)
-	[[ ! -d "$directory_path" ]] && mkdir "$directory_path"
+	[[ ! -d "$directory_path" ]] && mkdir -p "$directory_path"
 	wallpaper_path="$directory_path/${wallpaper,,}"
 
 	read -rsn 1 -p $"Apply/offset color$color_types? [a/o/N]"$'\n' apply_color
@@ -948,7 +950,8 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmx flag; do
 
 				read id width height alt_color thumb_url download_location username name <<< ${images[index_in_range]}
 
-				thumb_url="${thumb_url//w=*[0-9]&/w=${thumb_width:=200}&/}"
+				#thumb_url="${thumb_url//w=*[0-9]&/w=${thumb_width:=200}&/}"
+				thumb_url="${thumb_url//w=*[0-9]&/w=${thumb_width:=150}&/}"
 				wallpaper="${name//[ \/]/_}_${id}_unsplash.jpg"
 
 				fetch_preview
