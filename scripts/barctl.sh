@@ -27,7 +27,7 @@ add_bar() {
 }
 
 configs=~/.config/orw/bar/configs
-last_running=duo
+last_running=border
 
 while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
@@ -35,8 +35,10 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
 			kill_bar
 
+			echo $bar
+
 			[[ -f $configs/$bar ]] && overwrite=-o
-			~/bar_new/run.sh ${@:2} $overwrite
+			~/.orw/scripts/bar/run.sh ${@:2} $overwrite
 
 			add_bar
 			exit
@@ -58,14 +60,14 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 				$NF ~ /^'${pattern//\*/\.\*}'/ {
 					b = $NF
-					if(! r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
+					if (!r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
 					ub = ub "," b
 				} END {
 					if(r) {
 						ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", lr)
-						if(ab ~ /^,/) sub("^,", "", ab)
+						if (ab ~ /^,/) sub("^,", "", ab)
 					} else {
-						if(nb && ! lr) sub("^,", "", nb)
+						if (nb && ! lr) sub("^,", "", nb)
 						ab = lr nb
 					}
 
