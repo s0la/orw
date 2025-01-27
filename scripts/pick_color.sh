@@ -19,7 +19,8 @@ read x y <<< $(xwininfo -int -id $(xdotool getactivewindow) | awk '
 ~/.orw/scripts/set_geometry.sh -t image_preview -x $x -y $y
 
 while
-	color=$(colorpicker --short --one-shot)
+	#color=$(colorpicker --short --one-shot)
+	color=$(colorpicker -o | grep -o '[^ ]*$')
 
 	magick -size 100x100 xc:$color $preview
 	feh -g 100x100 --title 'image_preview' $preview &
