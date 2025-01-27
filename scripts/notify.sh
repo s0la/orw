@@ -33,8 +33,8 @@ done
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#1e272c"
-pbfg="#63a585"
+sbg="#8899a5"
+pbfg="#608e9a"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -56,7 +56,7 @@ restore_default_config() {
 }
 
 restore_default_config() {
-	(
+	{
 		sleep ${sleep_time:-$time}
 
 		while
@@ -66,9 +66,9 @@ restore_default_config() {
 			sleep 1
 		done
 
-		pidof dunst | xargs -r kill -9 &> /dev/null
-		dunst &> /dev/null &
-	) &
+		pidof dunst | xargs -r kill -9 #&> /dev/null
+		dunst & #&> /dev/null &
+	} &> /dev/null &
 }
 
 running_pids=( $(pidof -o %PPID -x $0) )
@@ -171,7 +171,7 @@ if [[ $style ]]; then
 
 	case $style in
 		osd)
-			((icon_size)) || icon_size=57
+			((icon_size)) || icon_size=
 			#((info_size)) || info_size=5
 			[[ $bar ]] && info_size=5
 
@@ -244,10 +244,11 @@ if [[ $style ]]; then
 			#message="$icon$info"
 
 			side_font=7
-			icon_font=12
+			icon_font=15
 			icon_padding=2
 			padding_in_icon_row="$(color_bar " " $icon_padding)"
-			padding_in_side_row="$(color_bar " " $((icon_font / side_font * (4 * icon_padding + 0) + 0)))"
+			#padding_in_side_row="$(color_bar " " $((icon_font / side_font * (4 * icon_padding + 0) + 0)))"
+			padding_in_side_row="$(color_bar " " $((icon_font / side_font * (2 * icon_padding + 1) + 0)))"
 
 			ibg="$(~/.orw/scripts/convert_colors.sh -hV -10 $sbg)"
 			ibg=$sbg
@@ -420,3 +421,4 @@ fi
 [[ $miliseconds ]] || ((time *= 1000))
 dunstify $image -t $time $replace 'summery' \
 	"$padding_font<span font='$font'>$padding$offset${message//\\n/$offset\\n$offset}$offset$padding</span>$bottom_padding"
+	#"$padding_font<span font='$font'>$padding${message}$offset$padding</span>$bottom_padding"
