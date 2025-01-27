@@ -1,13 +1,12 @@
 * {
-	y-offset: -30px;
+	y-offset: -50px;
 	x-offset: 0px;
 
-	art-width:      250px;
+	art-width:      240px;
 	window-width:   550px;
-	window-padding: 15px;
+	window-padding: 10px;
 
 	font:           "SFMono Medium 8";
-
 }
 
 window {
