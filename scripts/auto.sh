@@ -12,10 +12,10 @@ wait_to_proceed() {
 trap : SIGUSR1
 
 resize() {
+	((times)) && local repeat="--repeat $times $direction "
 	xdotool \
 		key $size \
-		key --window $id --repeat-delay 100 --repeat $times $direction \
-		sleep 0.3 key d
+		key --window $id --repeat-delay 100 $repeat sleep 0.3 key d
 }
 
 run() {
@@ -23,6 +23,8 @@ run() {
 	read size direction times app
 
 	eval "$app &> /dev/null &"
+
+	[[ $size == _ ]] && return
 
 	wait_to_proceed
 	id=$(wmctrl -l | awk '$NF == "input" { print $1 }')
@@ -35,6 +37,7 @@ if [[ -t 0 ]]; then
 	run <<< "$@"
 else
 	while read app; do
+		sleep 0.3
 		run <<< "$app"
 	done
 fi
