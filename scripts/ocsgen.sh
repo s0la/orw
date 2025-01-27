@@ -114,6 +114,7 @@ yet_another_sort() {
 				as += s * 100
 				av += v * 100
 				asv += (s + v) * 100
+				#print cc
 			} END {
 				as /= NR
 				av /= NR
@@ -124,7 +125,7 @@ yet_another_sort() {
 			}'
 }
 
-while getopts :aAw:sS:i:m:M:npd:I:kN opt; do
+while getopts :aAw:sS:i:m:M:npd:I:kNbc:C:K opt; do
 	case $opt in
 		a) accents_only=true;;
 		A) no_accents=true;;
@@ -138,22 +139,32 @@ while getopts :aAw:sS:i:m:M:npd:I:kN opt; do
 		n) no_brightning=true;;
 		d) dark_accent=$OPTARG;;
 		I) matching_index=$OPTARG;;
-		k) keep_all=true;;
+		k) keep_all_accents=true;;
 		N) non_interactive=true;;
+		b) skip_base=true;;
+		c) custom_name=$OPTARG;;
+		C) custom_suffix=$OPTARG;;
+		K) keep_all=true;;
 	esac
 done
 
 [[ ! -f $wallpaper ]] &&
 	echo "$wallpaper not found, exiting.." && exit
 
-wallpaper_name="${wallpaper##*/}"
+#while read c; do
+#	print_color $c label
+#done <<< $(yet_another_sort "$wallpaper")
+#exit
+
+#wallpaper_name="${wallpaper##*/}"
+wallpaper_name="${custom_name:-${wallpaper##*/}}"
 read dbg average_hue_step saturation value colors <<< $(yet_another_sort "$wallpaper")
 declare -A colors
 eval colors=( $colors )
 
 get_colors() {
 	[[ $1 == accents ]] &&
-		local pattern='^let.*[ivcsf]fg' file=~/.config/nvim/colors/orw.vim ||
+		local pattern='^let.*[ivcsf]y?fg' file=~/.config/nvim/colors/orw.vim ||
 		local pattern='ground' format='0;_' file=~/.config/alacritty/alacritty.toml
 
 	awk --non-decimal-data '
@@ -235,7 +246,11 @@ else
 		tr ' ' '\n' <<< ${sorted_colors[*]} | awk -F '[;_]' '
 			BEGIN { minv = mins = 100 }
 			{
-				if($3 > 45 && $2 < mins) {
+				#if ($3 > 45 && $2 < mins) {
+				#	mins = $2
+
+				if ($3 > maxv && $2 < mins) {
+					maxv = $3
 					mins = $2
 					fgi = NR - 1
 					fg = $0
@@ -265,21 +280,32 @@ fi
 
 set_mode() {
 	[[ ${mode,} == d* ]] &&
-		main_bg=$dbg main_fg=$org_fg bg_v=8 fg_v=60 sign=+ ||
-		main_bg=$org_fg main_fg=$dbg bg_v=70 fg_v=40 sign=-
+		#main_bg=$dbg main_fg=$org_fg bg_v=8 fg_v=50 sign=+ ||
+		#main_bg=$org_fg main_fg=$dbg bg_v=70 fg_v=40 sign=-
+		main_bg=$dbg main_fg=$org_fg bg_v=8 bg_s=30 fg_v=50 sign=+ ||
+		main_bg=$org_fg main_fg=$dbg bg_v=70 bg_s=15 fg_v=40 sign=-
 
 	read {rgb,hex}_fg <<< $(get_sbg "${main_fg##*_}" $fg_v 5)
 	read {hsv,rgb,hex}_term_fg <<< $(~/.orw/scripts/convert_colors.sh -haV +10 -S -10 "$hex_fg")
 
 	if [[ ! $accents_only ]]; then
-		bg_s=$(cut -d ';' -f 2 <<< $main_bg)
-		((bg_s > 50)) && bg_s=50
+		#bg_s=$(cut -d ';' -f 2 <<< $main_bg)
+		#((bg_s > 50)) && bg_s=50
+		#[[ $mode == dark ]] && bg_s=50
+		#read {rgb,hex}_bg <<< $(get_sbg ${main_bg##*_} $bg_v $bg_s)
 		read {rgb,hex}_bg <<< $(get_sbg ${main_bg##*_} $bg_v $bg_s)
 	fi
 
+	#read {_,rgb,hex}_bg <<< "${main_bg//_/ }"
+	#get_sbg ${main_bg##*_} $bg_v #$bg_s
+	#print_color $main_bg label
+	#print_color "0;_${rgb_bg}_0" label
+	#exit
+
 	read {rgb,hex}_tbg <<< $(get_sbg $hex_bg +3)
 	read {rgb,hex}_sbg <<< $(get_sbg $hex_bg ${sign}5)
-	read {rgb,hex}_sfg <<< $(get_sbg $hex_sbg ${sign}12)
+	#read {rgb,hex}_sfg <<< $(get_sbg $hex_sbg ${sign}12)
+	read {rgb,hex}_sfg <<< $(get_sbg $hex_sbg ${sign}8)
 	read {rgb,hex}_pbg <<< $(get_sbg $hex_sbg ${sign}5)
 	read {rgb,hex}_pfg <<< $(get_sbg $hex_pbg ${sign}7)
 
@@ -290,9 +316,11 @@ set_mode() {
 		read {rgb,hex}_pbg <<< $(get_sbg $hex_sbg ${sign}5)
 		read {rgb,hex}_pfg <<< $(get_sbg $hex_pbg ${sign}10)
 	else
-		term_bg_s=$(cut -d ';' -f 2 <<< $dbg)
-		((term_bg_s > 50)) && term_bg_s=50
-		read term_{rgb,hex}_bg <<< $(get_sbg ${dbg##*_} 8 $term_bg_s)
+		#term_bg_s=$(cut -d ';' -f 2 <<< $dbg)
+		#((term_bg_s > 50)) && term_bg_s=50
+		#term_bg_s=50
+		#read term_{rgb,hex}_bg <<< $(get_sbg ${dbg##*_} 8 $term_bg_s)
+		read term_{rgb,hex}_bg <<< $(get_sbg ${dbg##*_} 8 50)
 		read term_{rgb,hex}_sbg <<< $(get_sbg $term_hex_bg +5)
 		read term_{rgb,hex}_sfg <<< $(get_sbg $term_hex_sbg +12)
 		read term_{rgb,hex}_pbg <<< $(get_sbg $term_hex_sbg +5)
@@ -303,6 +331,12 @@ set_mode() {
 }
 
 set_mode
+
+#echo $org_fg
+#for c in ${sorted_colors[*]}; do
+#	print_color $c label
+#done
+#exit
 
 if ((mono)); then
 	set_mono_accents() {
@@ -486,12 +520,18 @@ else
 				v = $3 <= '$value' + 15 && $3 >= '$value' - 25
 				v = 1
 
-				if(b && $2 + $3 > max_v) {
+				if (b && $2 + $3 > max_v) {
 					max_v = $2 + $3
 					mva = max_v "_" $0
 				}
 
-				if(!(b && v)) next
+				if ($2 < 10 && $3 > 60) {
+					drgb = ($4 + $5 + $6) / 3
+					v = ((sqrt(($1 - drgb) ^ 2) < 10) + (sqrt(($2 - drgb) ^ 2) < 10) + (sqrt(($3 - drgb) ^ 2) < 10))
+					#print v, drgb, $0
+				} else v = 1
+
+				if (!(b && v)) next
 
 				if(length(lh)) {
 					d = $1 - lh
@@ -524,15 +564,16 @@ else
 				di = 1
 				as = 50
 
-				for(ci in ac) {
+				for (ci in ac) {
+					#print ci, aad[di], ac[ci]
 					split(ac[ci], cp, ";")
 					ch = cp[1]
 					if(ch == 360) c0 = 1
 
-					if(ci == 1 || ch - ph < 15) {
-						ce = (NR < 20) ? 0 : ch - ph < aad[di]
-						if(ci == 1 || ((sc < 3 && ce) || (sc >= 3 && ce))) {
-							if(ci == 1 || (cp[2] + cp[3] > msv) ||
+					if (ci == 1 || ch - ph < 15) {
+						ce = (NR < 20) ? 0 : ch - ph < aad[di] - 0
+						if (ci == 1 || ((sc < 3 && ce) || (sc >= 3 && ce))) {
+							if (ci == 1 || (cp[2] + cp[3] > msv) ||
 								(cp[2] + cp[3] == msv && cp[3] > v)) {
 								msvc = ac[ci]
 								h = ch; s = cp[2]; v = cp[3]
@@ -559,6 +600,8 @@ else
 	}
 
 	treshold=13
+	#yet_another_get_step2 "${accents[*]:-${sorted_colors[*]}}" $treshold
+	#exit
 
 	while
 		read accent_count avg_{sv,value,saturation} sorted_accents <<< \
@@ -573,7 +616,8 @@ else
 				accent_limit=8 || accent_limit=7
 		fi
 
-		accent_limit=9
+		#accent_limit=9
+		accent_limit=11
 
 		[[ $reverse ]] && unset reverse || reverse=r
 
@@ -582,11 +626,14 @@ else
 		#for c in ${accents[*]}; do
 		#	print_color $c label
 		#done
+		#exit
 
 		((accent_count > accent_limit))
 	do
 		(( treshold += 2 ))
 	done
+
+	#accents+=( "150;29;13;_24;34;29;_#18211c" )
 
 	compensate_accents() {
 		local exclude="${final_accents[*]:-${accents[*]}}"
@@ -921,7 +968,7 @@ else
 				mal = 0
 				c = ""
 
-				tr = (range) ? range : 10
+				tr = (range) ? range : 12
 
 				for (i in ar1) {
 					if (!ar1[i]) {
@@ -965,14 +1012,16 @@ else
 							pc = (tr < 10) ? 1 : ((i <= dal - ddsai && ai <= dal - ddsai && acl > 5) ||
 								(i > dal - ddsai && ai > dal - ddsai))
 
-							pc = (tr < 10) ? 1 : ((i <= dal && ai <= dal && acl > 5) || (i > dal && ai > dal))
+							pc = (tr < 12) ? 1 : ((i <= dal && ai <= dal && acl > 6) || (int(i) > dal && int(ai) > dal))
 
 							split(ar1[i], acp, "[;_]")
 							split(ar2[ai], arp, "[;_]")
 							hd = sqrt((acp[2] - arp[2]) ^ 2)
-							tdh = ((acp[2] >= 330 && arp[2] <= 10) || (arp[2] >= 330 && acp[2] <= 10))
+							tdh = ((acp[2] >= 320 && arp[2] <= 10) || (arp[2] >= 320 && acp[2] <= 10))
 
-							if (del && pc && dc >= 2 && acl >= 6 && (hd <= 40 || tdh)) {
+							#if (acp[1] == 104) print "HERE", ar1[i], ar2[ai]
+
+							if (del && pc && dc >= 2 && acl >= 6 && (hd <= 60 || tdh)) {
 								aci = get_color_index(acp)
 								ari = get_color_index(arp)
 
@@ -993,7 +1042,8 @@ else
 
 							if (!del && similar(ar1[i], ar2[ai]) && !(ar1[i] in sc)) sc[ar1[i]] = length(aac)
 
-							if (del && pc && int(clab) < pds && acl > 5) {
+							#if (del && pc && int(clab) < pds && acl > 5) {
+							if ((hd < 60 || tdh || 1) && del && pc && int(clab) < pds && acl > 5) {
 								#print "HERE", i, ar1[i], ai, ar2[ai], lab, ds, clab, pds, dal, ddsai, acl
 
 								if (i <= dal && odc - ddsai == 1) continue
@@ -1034,7 +1084,9 @@ else
 
 										acl--
 
+										#print adi, dc, dal, ddsai
 										if ((dc == 3 && acl == 7) || (dc == 2 && acl == 5)) { dc--; dal = dc + ddsai }
+										#if ((dc == 3 && acl == 7) || (dc == 2 && acl == 5)) { dal = dc + ddsai; dc--;  }
 										break
 								}
 							} else lc++
@@ -1135,57 +1187,109 @@ else
 				li = 0
 				svd = sqrt((s - v) ^ 2)
 
-				if ((s < 10 && svd > 55) || (s < 15 && svd > 65)) return li
+				#if ((s < 10 && svd > 55) || (s < 15 && svd > 65)) return li
+				#print "MUTED", mc[(length(color[1]) ? color ? $0)]
+
+				#print "MUTED", idx, mc[(idx) ? idx : NR], lh
+				#if ((s < 10 && svd > 70) || mc[(idx) ? idx : NR]) return li
+				if (s < 10 && svd > 70) return li
+				#if ((s < 10 && svd > 70) || mc[(length(color[1])) ? lh : ccp[2]]) return li
 
 				if (lh <= 30 && sqrt((r - g) ^ 2) > 20) {
-					if ((length(color[1]) && r > 240 && sqrt((r - g) ^ 2) < 110) || !(b < g)) return li
+					rgd = sqrt((r - g) ^ 2)
+					#if ((length(color[1]) && r > 240 && rgd > 70 && rgd < 140) || !(b <= g)) return li
+					if ((length(color[1]) && r > 225 && rgd > 70 && rgd < 140) || !(b <= g)) return li
 
-					if (lh >= 5 &&
-						(v > 55 && (sqrt((r - g) ^ 2) < ((r > 240) ? 140 : (r > 200) ? 110 : (r > 155) ? 55 : 30))) ||
+					if (lh > 5 &&
+						#(v > 55 && (sqrt((r - g) ^ 2) < ((r > 240) ? 140 : (r >= 200) ? 110 : (r > 156) ? 50 : 25))) ||
+						(v > 55 && (sqrt((r - g) ^ 2) < ((r > 240) ? 140 : (r >= 200) ? 110 : (r > 156) ? 60 : 25))) ||
 						(v < 55 && 0)) {
 					#if (lh >= 5 && (sqrt((r - g) ^ 2) < (((r < 160) ? 30 : (r < 200) ? 50 : (r < 240) ? 80 : 100) + ((lh > 10) ? 0 : 0)))) {
 						li = 8
 						ls = r + g
+					#} else if (sqrt((r - g) ^ 2) > 50) {
 					} else {
-						li = (b < 150) ? 6 : 5
-						ls = r - g
+						li = (b > 150 || sqrt((r - g) ^ 2) < 50) ? 5 : 6
+						#li = (sqrt((g - b) ^ 2) > 10) ? 6 : 5
+						ls = r + ((li == 5) ? s : -g)
 					}
 				} else if (lh > 25 && lh < 100 && g > 70) {
-					if ((lh > 40 && g + ((r >= 165) ? -20 : (r > 130) ? 15 : 0) >= r) ||
-						(lh < 45 && g + ((r > 130 && r < 180) ? 15 : 5) > r))
-						{ li = 4; ls = g } else { li = 8; ls = r + g }
-				} else if (lh >= 100 && lh < 180) {
-					if ((g > 200 && g - b > 30) ||
-						(g < 200 && g >= 165 && g > b + ((r > 120) ? 10 : 15)) ||
-						((g < 165 || v < 50) && g > b + ((r > 110) ? 10 : 0))) { li = 4; ls = g + s }
-						else { li = 3; ls = b + s }
+					#if ((lh > 40 && g + ((r >= 165) ? -30 : (r > 130) ? 15 : (r > 100) ? 5 : 0) >= r) ||
+					if ((lh > 40 && g + ((r >= 180) ? -10 : (r >= 160) ? -20 : (r > 115) ? 15 : (r > 100) ? 5 : 0) >= r) ||
+						(lh < 45 && g + ((r < 130) ? 20 : (r > 130 && r < 170) ? 15 : 5) > r))
+						#{ li = 4; ls = g } else { li = 8; ls = r + g }
+						{
+							if (sqrt((b - g) ^ 2) > 20) { li = 3; ls = b + s } else { li = 4; ls = g }
+						} else if (r > 155) { li = 8; ls = r + g }
+						#{ li = (g - b <= 25) ? 3 : 4; ls = g } else { li = 8; ls = r + g }
+				#} else if (lh >= 100 && lh < 180) {
+				} else if (lh >= 100 && lh < 180 && v + s > 30) {
+					#if ((g > 200 && g - b > 30) ||
+					#	(g < 200 && g >= 165 && g > b + ((r > 155) ? 40 : (r > 120) ? 10 : 15)) ||
+					if ((g > 210 && g - b > 30) ||
+						#(g < 210 && g >= 165 && g > b + ((r > 170) ? 15 : (r > 155) ? 40 : (r > 120) ? 10 : 15)) ||
+						#(g < 210 && g >= 165 && g > b + ((r > 170) ? 15 : (r > 155) ? 30 : (r > 120) ? 10 : 15)) ||
+						(g < 210 && g >= 165 && g > b + ((r > 170 || r < 100) ? \
+							15 : (r > 150) ? 30 : (r > 120) ? 10 : (r > 100) ? 20 : 5)) ||
+						#((g < 165 || v < 50) && g > b + ((r > 130) ? 15 : (r > 110) ? 10 : 5))) { li = 4; ls = g + s }
+							((g < 165 || v < 50) && g > b + ((v <= 50 || r > 90) ? 0 : (r > 140) ? 15 : (r >= 105) ? 10 : 0))) {
+							li = 4; ls = g + s
+						} else { li = 3; ls = b + s }
 				} else if (lh >= 180 && lh < 280 && s && (s > 10 || sqrt((s - v) ^ 2) <= 55)) {
 					if (lh > 230) {
-						if ((v > 50 && s >= 10 &&
-							sqrt((r - b) ^ 2) < ((b > 200) ? 60 : (b > 170) ? 50 : 35))) { li = 5; ls = r + s }
-						else if (s > 17 || (g + 10 > b && r < g + 5)) { li = (g + 10 > b) ? 4 : 2; ls = ((li == 2) ? b : g) + s }
+						#if ((v > 30 && s >= 10 && r > 105 &&
+						if ((v > 30 && s >= 10 && s + v > 80 &&
+							sqrt((r - b) ^ 2) < ((b > 200) ? 70 : (b > 170) ? 50 : (b > 100) ? 95 : 15))) { li = 5; ls = r + s }
+						#else if (s >= 17 || (s > 10 && g + 15 > b && r < g + 5)) {
+						else if (((s >= 17 && v > 40) || (s > 10 && g + 15 > b && r < g + 5)) && g + b > 140) {
+							li = (b - g >= 15) ? 2 : (g - b < 10) ? 4 : 3; ls = ((li == 4) ? g : b) + s
+							#li = (g + 15 > b) ? 3 : (g + 10 > b) ? 4 : 2; ls = ((li == 4) ? g : b) + s
+						}
 					} else {
-						if ((v < 55 && g >= 100 && g < 130 &&
-							(sqrt((g - b) ^ 2) > 5 || g - r > 10)) ||
-							(v > 25 && g < 100 && g > 60 && b < 100 && g + 10 > b) ||
+						#if ((v < 52 && g > 100 && g < 130 &&
+						#if ((v < 55 && g > 100 && g < 140 &&
+						if ((v < 60 && g > 100 && g < 150 &&
+							#b - g < 20 && (sqrt((g - b) ^ 2) >= ((g > 130) ? 0 : 5) || g - r > 10)) ||
+							b - g < 20 && r > 70 && (sqrt((g - b) ^ 2) >= ((g > 130) ? 0 : 5) || g - r > 10)) ||
+							#(v > 25 && g < 100 && g > 60 && b < 100 && g + 10 > b) ||
+							(v > 25 && g < 100 && g > 60 && b < 110 && g + 15 > b) ||
 							#sqrt((g - b) ^ 2) > ((g - r > 10) ? 10 : 5)) ||
-							(g > 170 && g + 5 >= b && sqrt((r - b) ^ 2))) { li = 4; ls = g + s }
+							(g > 170 && g + 5 >= b && sqrt((r - b) ^ 2 < 50))) { li = 4; ls = g + s }
 						else {
-							li = (b - g > ((r < 50) ? 50 : (r > 110 && r < 145) ? 20 : ((b > 210) ? (sqrt((r - g) ^ 2) > 10 ? 60 : 35) : 35)) ||
-								(v < 70 && b - g >= 15 && !bcs[2]) || (v < 45 && b > g)) ? 2 : 3; ls = b + s }
-					}
-				}
+							#li = (b - g > ((r < 50) ? 50 : (r > 110 && r < 145) ? 20 : ((b > 210) ? (sqrt((r - g) ^ 2) > 10 ? 60 : 35) : 35)) ||
+							#	(v < 70 && b - g >= 15 && !bcs[2]) || (v < 45 && b > g)) ? 2 : 3; ls = b + s }
 
-				else if (lh >= 280 && r > 100) {
+							#li = (b - g > ((r < 50) ? 50 : (r > 110 && r < 145) ? 20 : (r < 110) ? 55 : \
+							#li = (b - g > ((r < 50) ? 50 : (r > 115 && r < 145) ? 20 : (r < 115 && r > 90) ? 60 : \
+
+							#li = (b - g >= ((r < 50) ? 50 : (r > 115 && r < 145) ? 30 : (r < 115 && r > 90) ? 60 : (r < 90 && r > 50) ? 30 : \
+							#	((b > 210) ? (sqrt((r - g) ^ 2) > 10 ? 60 : 35) : 25)) ||
+							li = (b - g > ((r < 50) ? 50 : (r > 115 && r < 145) ? 30 : (r < 115 && r > 90) ? 60 : (r < 90 && r > 50) ? 30 : \
+								((b > 210) ? (sqrt((r - g) ^ 2) > 10 ? 60 : 35) : 35)) ||
+								#(r > 50 && r < 100 && b > 100 && g - r > b - g) ||
+
+								#(r < 100 && b > 100 && g - r > b - g) ||
+								#(v < 70 && b - g >= 15 && !color[1] && !bcs[2]) || (v < 45 && b > g)) ? 2 : 3; ls = b + s }
+
+								#(v < 70 && b - g >= 20 && !color[1] && !bcs[2]) || (v < 45 && b > g)) ? 2 : 3; ls = b + s }
+								(v < 45 && b > g)) ? 2 : 3; ls = b + s }
+
+								#(v < 70 && b - g >= 15 && !bcs[2]) || (v < 45 && b > g)) ? 2 : 3; ls = b + s }
+					}
+				} else if (lh >= 280 && r > 100) {
 					if (g + 10 > r) {
 						li = 4; ls g + s
 					} else if (s > 10) {
-						if (lh >= 355) {
-							if (sqrt((r - g) ^ 2) < 35) { li = 8; ls = r + g } else { li = 6; ls = r}
-					} else if (sqrt((r - b) ^ 2) > \
-						((r > 205) ? 100 : (r > 165) ? 80 : (r > 130) ? 50 : 30) ||
-						((r > 100 && b < 100) && r - b < 33))
-							{ li = 6; ls = r - g } else { li = 5; ls = r + s }
+						#if (lh >= 350) {
+						#	#if (sqrt((r - g) ^ 2) < 35) { li = 8; ls = r + g } else { li = 6; ls = r}
+						#	if (g > 160) { li = 8; ls = r + g } else { li = 6; ls = r}
+						#if (lh >= 350 && g > 160) { li = 8; ls = r + g }
+						if (lh >= 350 && r < 180 && r - g > 75) { li = 8; ls = r + g }
+						else if (sqrt((r - b) ^ 2) > \
+							((r > 205) ? 90 : (r > 190) ? 55 : (r > 165) ? 65 : (r > 135) ? 50 : 20) ||
+							#((r > 205) ? 100 : (r > 165) ? 80 : (r > 130) ? 50 : 30) ||
+							((r > 100 && b < 100) && r - b < 33))
+								{ li = 6; ls = r - g } else { li = 5; ls = r + s }
 					}
 				}
 
@@ -1195,7 +1299,7 @@ else
 			function get_base_colors() {
 				lh = ccp[2]; ls = ccp[1]; s = ccp[3]; v = ccp[4]
 				li = get_color_index()
-				if (!bcs[li] || (ccp[1] >= 50 && ccp[3] >= 10 && ls - bcs[li] > 0)) { bc[li] = $0; bcs[li] = ls }
+				if (!bcs[li] || (ccp[1] >= 50 && ccp[3] >= 8 && ls - bcs[li] > 0)) { bc[li] = $0; bcs[li] = ls }
 			}
 
 			{
@@ -1204,9 +1308,15 @@ else
 				rgba[1] = r; rgba[2] = g; rgba[3] = b
 				asort(rgba)
 
-				get_base_colors()
+				rgbs = r + g + b
+				rgbd = int((rgba[3] - rgba[1]) / 1)
+				mc[ccp[2]] = rgbd < 20
 
-				if ("'"$skip"'" && /'"$skip"'/) {
+				skc = ("'"$skip"'" && /'"$skip"'/)
+
+				if (!skc || (skc && !"'"$skip_base"'")) get_base_colors()
+
+				if (skc) {
 					if (NR == 1) rmva = 1
 					next
 				}
@@ -1214,15 +1324,15 @@ else
 				sbc = ((r > 210 && g > 210 && b > 185) ||
 					(r > 185 && g > 210 && b > 210))
 
-				rgbs = r + g + b
-				rgbd = int((rgba[3] - rgba[1]) / 1)
+				#rgbs = r + g + b
+				#rgbd = int((rgba[3] - rgba[1]) / 1)
 
 				d1 = sqrt((rgba[1] - rgba[2]) ^ 2)
 				d2 = sqrt((rgba[2] - rgba[3]) ^ 2)
 				fd = sqrt((d1 - d2) ^ 2)
 
 				#print rgbs / 3, fd, rgbd, r, g, b, $0
-				if (ccp[1] <= 100 && ((acl > 6 && acl <= 9 && (sbc || (rgbs / 3 > 190 && \
+				if (ccp[1] <= 100 && ((acl > 6 && acl <= 9 && (sbc || (rgbs / 3 > 222 && \
 					((d1 < 30 && d2 < 30 && fd <= 10 && d1 + d2 < 40) || (rgbd < 30))))) ||
 					(acl > 7 && rgbs / 3 >= 210))) {
 							if (NR == 1) rmva = 1
@@ -1234,6 +1344,7 @@ else
 				if (rmva && ccp[1] > mvav) { mva = $0; mvav = ccp[1] }
 
 				ac[++i] = $0
+				#ac[i] = $0
 				sub(";.*", "", $1)
 				tsv += $1
 			}
@@ -1275,7 +1386,7 @@ else
 				#for (x in ac) print x, ac[x]
 				#print ""
 
-				get_color(ac, ac, tc > 5)
+				if (!"'"$keep_all"'") get_color(ac, ac, tc > 5)
 
 				#for (x in ac) print x, ac[x]
 				#print ""
@@ -1337,6 +1448,7 @@ else
 				if (length(dl) && length(ac) >= 3) la = avl / length(dl)
 
 				for (fai=2; fai<5; fai++) {
+				#for (fai=2; fai<6; fai++) {
 					if (length(ac)) {
 						do {
 							tac[1] = aac[fai - 1]
@@ -1362,18 +1474,20 @@ else
 
 				for (di in dac) aac[4 + ++daci] = dac[di]
 				for (ai=1; ai<=6; ai++) print aac[ai]
+				#for (di in dac) aac[5 + ++daci] = dac[di]
+				#for (ai=1; ai<=7; ai++) print aac[ai]
 			}'
 	}
 
 	if [[ $no_accents ]]; then
-		accent_colors=( $(get_colors accents) )
+		accent_colors=( $(get_colors accents | sed 's/\([^ ]*\)\s*\([^ ]*\)$/\2 \1/') )
 	else
 		accents=( $(tr ' ' '\n' <<< "${final_accents[*]}" |
 			awk -F ';' '{ print $2 + $3 ";" $0 }') )
 
 		swap=
 
-		print_accents light_accent_colors[@]
+		print_accents light_accent_colors[@] true
 		if [[ ! $skip && ! $non_interactive ]]; then
 			read -p 'Skip accent? (single or comma-separated list) ' skip_index
 
@@ -1412,6 +1526,13 @@ else
 		fi
 	fi
 
+	swap_accents() {
+		local i1=$1 i2=$2
+		local swap_accent=${accent_colors[i2-1]}
+		accent_colors[i2-1]=${accent_colors[i1-1]}
+		accent_colors[i1-1]=$swap_accent
+	}
+
 	if [[ ! $non_interactive ]]; then
 		id=$(xdotool getactivewindow)
 		color_fifo=/tmp/picked_color.fifo
@@ -1419,7 +1540,9 @@ else
 
 		options=(
 			'[s]wap'
+			'[r]eposition'
 			"$main_accent"
+			"$border_color"
 			"[M]ode ($mode)"
 			'[S]ave color'
 			'[a]djust color'
@@ -1444,7 +1567,11 @@ else
 		do
 			main_rgb="${accent_colors[${main_accent_index:-2} - 1]#*_}"
 			main_rgb="${main_rgb%;*}"
-			options[1]="\033[38;2;${main_rgb}m[m]ain color\033[0m"
+			options[2]="\033[38;2;${main_rgb}m[m]ain color\033[0m"
+
+			border_rgb="${accent_colors[${border_index:-6} - 1]#*_}"
+			border_rgb="${border_rgb%;*}"
+			options[3]="\033[38;2;${border_rgb}m[b]order color\033[0m"
 
 			for option_index in "${!options[@]}"; do
 				((!option_index)) && echo -e "\n"
@@ -1456,11 +1583,51 @@ else
 			if [[ "${options[*]}" == *\[$option\]* ]]; then
 				case $option in
 					s)
-						read -p $'\nEnter accent indices to swap, comma-separated (e.g. 1,2): ' indices
-						i1=${indices%,*} i2=${indices#*,}
-						swap_accent=${accent_colors[i2-1]}
-						accent_colors[i2-1]=${accent_colors[i1-1]}
-						accent_colors[i1-1]=$swap_accent
+						while
+							read -p $'\nEnter accent indices to swap, comma-separated (e.g. 1,2): ' indices
+							i1=${indices%,*} i2=${indices#*,}
+							((i1 < 1 || i1 > 6 || i2 < 1 || i2 > 6))
+						do
+							echo "Indices $i1 or $i2 are outside of allowed range (1..6), repeat.."
+							sleep 2
+							continue
+						done
+
+						swap_accents $i1 $i2
+						;;
+					r)
+						while
+							read -p $'\nEnter accent index to reposition (1..6): ' reposition_index
+							read -p 'Enter index of new position (1..6): ' new_position_index
+							((reposition_index < 1 || reposition_index > 6 ||
+								new_position_index < 1 || new_position_index > 6))
+						do
+							echo "Reposition index $reposition_index or new index position $new_position_index are outside of allowed range (1..6), repeat.."
+							sleep 2
+							continue
+						done
+
+						while
+							((reposition_index != new_position_index))
+						do
+							((reposition_index > new_position_index)) &&
+								next_position=$((reposition_index - 1)) || next_position=$((reposition_index + 1))
+							swap_accents $reposition_index $next_position
+							reposition_index=$next_position
+						done
+
+
+						#reposition_range=(
+						#	$(cat <<- EOF | sort -n | xargs seq
+						#		$reposition_index
+						#		$new_position_index
+						#	EOF
+						#	)
+						#)
+
+						#for new_position in ${reposition_range[*]:1}; do
+						#	swap_accents $((new_position - 1)) $new_position
+						#done
 						;;
 					M)
 						while
@@ -1477,12 +1644,13 @@ else
 
 						set_mode
 						;;
-					m|S)
+					m|b|S)
 						while
-							read -p $'\nEnter the index of main accent color '"(1-${#accent_colors[*]}): " accent_index
-							((accent_index > ${#accent_colors[*]}))
+							read -p $'\nEnter the color index '"(1-${#accent_colors[*]}): " accent_index
+							#((accent_index > ${#accent_colors[*]}))
+							((accent_index < 0 && accent_index > 6))
 						do
-							echo "$accent_index is outside the index range (1-${#accent_colors[*]}).."
+							echo "$accent_index is outside the index range (1-6).."
 							sleep 2
 						done
 
@@ -1497,7 +1665,9 @@ else
 									~/.config/orw/colorschemes/colors
 								exit
 						else
-							main_accent_index=$accent_index
+							[[ $option == b ]] &&
+								border_index=$accent_index ||
+								main_accent_index=$accent_index
 						fi
 						;;
 					a)
@@ -1533,7 +1703,7 @@ else
 							accent_colors[accent]="0;${offset_color// /_}"
 						done
 						;;
-					k) keep_all=true;;
+					k) keep_all_accents=true;;
 				esac
 			else
 				echo "Option $option is not supported, choose again.."
@@ -1544,7 +1714,6 @@ else
 	else
 		echo -e "\nChosen colors:\n"
 		for color in ${!accent_colors[*]}; do
-			#printf 'accent%d: ' $((color + 1))
 			echo -ne "$((color + 1))  "
 			print_color "${accent_colors[color]}" label
 		done
@@ -1552,7 +1721,7 @@ else
 
 	((${#accent_colors[*]} == 5)) &&
 		accent_colors=( ${accent_colors[*]::4} $dbg ${accent_colors[-1]} )
-	[[ $keep_all ]] && cfg_hex=${accent_colors[4]##*_}
+	[[ $keep_all_accents ]] && cfg_hex=${accent_colors[4]##*_}
 fi
 
 read {rgb,hex}_a{1..6} <<< \
@@ -1572,221 +1741,6 @@ if ((${#accent_colors[*]} < 6)) && [[ ! $no_accents ]]; then
 	exit
 fi
 
-test() {
-	set_vim() {
-		cat <<- EOF
-			let g:bg = 'none'
-			let g:fg = '$hex_term_fg'
-			let g:sfg = '$hex_a1'
-			let g:vfg = '$hex_a2'
-			let g:cfg = '${cfg_hex:-$hex_a3}'
-			let g:ifg = '$hex_a4'
-			let g:ffg = '$hex_a6'
-			let g:nbg = 'none'
-			let g:nfg = '$hex_pbg'
-			let g:lbg = '$hex_sbg'
-			let g:lfg = '$hex_a2'
-			let g:syfg = '$hex_a3'
-			let g:cmfg = '$hex_sfg'
-			let g:slbg = '$hex_sbg'
-			let g:slfg = '$hex_sfg'
-			let g:fzfhl = '$hex_a2'
-			let g:bcbg = '$hex_a6'
-			let g:bdbg = '$hex_a2'
-			let g:nmbg = '$hex_a4'
-			let g:imbg = '$hex_a1'
-			let g:vmbg = '$hex_a3'
-		EOF
-	}
-
-	set_rofi() {
-		local {rgb,hex}_rofi_{s,a,}bg
-		read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -5)
-		read {rgb,hex}_rofi_hpfg <<< $(get_sbg $hex_pbg ${sign}15)
-		read {rgb,hex}_rofi_pbg <<< $(get_sbg $hex_tbg ${sign}5)
-
-		[[ $sign == + ]] &&
-			bg_transparency=e esbg='#ffffff04' ||
-			bg_transparency=d esbg='#00000014'
-
-		cat <<- EOF
-			bg: $hex_tbg;
-			dmbg: $hex_tbg;
-			dmbg: $hex_sbg;
-			dmfg: $hex_pfg;
-			dmsbg: $hex_pbg;
-			hpfg: $hex_rofi_hpfg;
-			tbg: argb:f0${hex_tbg#\#};
-			tbg: argb:ea${hex_tbg#\#};
-			tbg: argb:dd${hex_tbg#\#};
-			tbg: argb:${bg_transparency}0${hex_tbg#\#};
-			tbg: $hex_tbg${bg_transparency}0;
-			tbg: argb:${bg_transparency}a${hex_tbg#\#};
-			mbg: argb:f0${hex_bg#\#};
-			msbg: argb:70${hex_rofi_pbg#\#};
-			fg: $hex_sfg;
-			bc: $hex_a6;
-			bc: $hex_tbg;
-			ibg: $hex_tbg;
-			ibc: $hex_pbg;
-			ibc: $hex_tbg;
-			abg: #08080855;
-			abg: #08080866;
-			abg: #08080844;
-			abg: ${hex_rofi_abg}b0;
-			abg: ${hex_rofi_abg}dd;
-			afg: $hex_pfg;
-			ebg: $hex_tbg;
-			esbg: $esbg;
-			efg: $hex_ma;
-			sbg: #e0e0e00e;
-			sbg: #fafafa0a;
-			sbg: #eeeeee0a;
-			sbg: #cccccc0a;
-			sbg: #dddddd0d;
-			sbg: ${hex_rofi_pbg}b0;
-			sbg: ${hex_rofi_pbg}d0;
-			sfg: $hex_ma;
-			sul: $hex_ma;
-			lpc: $hex_fg;
-			dpc: $hex_fg;
-			btc: $hex_tbg;
-			sbtc: $hex_tbg;
-			btbc: $hex_tbg;
-			ftbg: #00000000;
-			sbbg: ${hex_ma}aa;
-			sbsbg: #11111144;
-			smbg: #03030333;
-		EOF
-	}
-
-	under_join_bar() {
-		#read {rgb,hex}_a2_dr <<< $(get_sbg $hex_a2 -22)
-		#read {rgb,hex}_a2_br <<< $(get_sbg $hex_a2  +15)
-		read {rgb,hex}_ma_dr <<< $(get_sbg $hex_ma -18)
-		read {rgb,hex}_ma_br <<< $(get_sbg $hex_ma  +18)
-
-		local {{rgb,hex}_,}bar_bg
-		read {rgb,hex}_bar_bg <<< $(get_sbg $hex_bg +3)
-
-		local transparency=dd
-
-		local single_hex_bg=$hex_tbg
-		local single_hex_bg="#$transparency${hex_bar_bg#\#}"
-
-		cat <<- EOF
-			bg ${single_hex_bg:-$bar_bg}
-			fc ${single_hex_bg:-$bar_bg}
-			pfc ${single_hex_bg:-$hex_ma_br}
-			sfc ${single_hex_bg:-$hex_a6_dr}
-			sfc ${single_hex_bg:-$hex_bg}
-			pfc ${single_hex_bg:-$hex_ma_br}
-			sfc ${single_hex_bg:-$hex_a6_dr}
-			sfc $hex_sfg
-			bfc ${single_hex_bg:-#$transparency${hex_bg#\#}}
-			bfc ${single_hex_bg:-$bar_bg}
-			bbg ${single_hex_bg:-$bar_bg}
-			bbg $hex_bg
-			jbg ${single_hex_bg:-$hex_bg}
-			jpfg ${single_hex_fg:-$hex_a6_br}
-			jsfg ${single_hex_fg:-$hex_a6_dr}
-			jpfg ${single_hex_fg:-$hex_bar_pfg}
-			jsfg ${single_hex_fg:-$hex_pfg}
-			pbg ${single_hex_bg:-$hex_bg}
-			pfg ${single_hex_fg:-$hex_bar_pfg}
-			pfg $hex_bar_pfg
-			sbg ${single_hex_bg:-$hex_bg}
-			sfg ${single_hex_fg:-$hex_pfg}
-			pbefg $hex_ma
-			pbfg $hex_pfg
-			mlfg $hex_a4
-			msbg $hex_tbg
-			mpfg $hex_bar_pfg
-			mpbg $hex_pbg
-			tbfg $hex_pfg
-			Apfg $hex_bar_pfg
-			Abfg $hex_a6
-			Acbfg $hex_a6_dr
-			Wsfg $hex_pfg
-			Wpfg $hex_bar_pfg
-			Nsbg $hex_pbg
-			Tsbg $hex_pbg
-			Tpbg $hex_pbg
-			Ppbg $hex_ma
-			Ppfg $hex_ma_br
-			Ppfc $hex_ma_br
-			Bpbg $hex_pbg
-			tsbg $hex_pbg
-		EOF
-	}
-
-	set_bar() {
-		bar_conf=$(sed -n 's/^last_.*=\([^,]*\).*/\1/p' ~/.orw/scripts/barctl.sh)
-		colorscheme=$(sed -n 's/\(\([^-]*\)-[^c]*\)c\s*\([^, ]*\).*/\3/p' \
-			~/.config/orw/bar/configs/$bar_conf)
-		#transparency=$(sed -n '/#bar/,/^$/ { s/^bg.*#\(.*\)\w\{6\}.*/\1/p }' \
-		#	~/.config/orw/colorschemes/$colorscheme.ocs)
-
-		unset single_bg transparency
-		transparency=d0
-
-		read {rgb,hex}_bar_bg <<< $(get_sbg $hex_pbg +5 -1)
-
-		[[ ! $single_bg ]] &&
-			local bar_bg="#$transparency${hex_pbg#\#}" ||
-			local single_hex_bg="#$transparency${hex_bg#\#}" single_hex_fg=$hex_fg
-		read {rgb,hex}_abg <<< $(get_sbg $hex_bg +8)
-
-		((mono)) && local hex_a6=$hex_fg
-
-		read {rgb,hex}_bar_pfg <<< $(get_sbg $hex_fg -15 -5)
-		read {rgb,hex}_bar_lpbg <<< $(get_sbg $hex_pbg +5)
-		read {rgb,hex}_bar_lpfg <<< $(get_sbg $hex_pfg +11)
-
-		bar_bg=$hex_pbg
-
-		local {rgb,hex}_a2_{b,d}r
-
-		under_join_bar
-	}
-
-	replace_colors() {
-		local conf=${1}_conf
-		[[ $1 =~ bar|rofi|nb|vifm|qb|home_css|sxiv ]] && local separator=' '
-		local output="$(set_$1)"
-		local new_colors="$(tr '\n' '|' <<< "$output" | sed "s/|/\\\n$2/g")"
-
-		awk -i inplace '
-			function insert_new_colors() {
-				print "'"$2${new_colors%\\n*}"'"
-			}
-
-			/^\s*'"${new_colors%%${separator:-=}*}"'/ { if(!length(r)) r = 1 }
-			r && /^}?$/ { r = 0; insert_new_colors() }
-			r { next } { print }
-			ENDFILE {
-				if(r) insert_new_colors()
-				r = ""
-			}' ${!conf}
-
-		[[ $1 =~ bash|nb|sxiv|vifm ]] &&
-			echo -e "\n#$1\n$(set_$1 print)" || echo -e "\n#$1\n$output"
-	}
-
-	#vim_conf=~/.orw/dotfiles/.config/nvim/colors/orw.vim
-	#replace_colors vim | sed 's/.*:\([^ ]*\)[^'\'']*.\(.\w*\).*/\1 \2/'
-	rofi_conf=~/.orw/dotfiles/.config/rofi/theme.rasi
-	replace_colors rofi '\t'
-	bar_conf=~/.orw/dotfiles/.config/orw/colorschemes/auto_generated.ocs
-	replace_colors bar
-}
-
-#image_height=$(file $wallpaper | awk -F ',' '{
-#		g = $(NF - (("'"${wallpaper##*.}"'" == "png") ? 2 : 1))
-#		sub(".*x[^0-9]*", "", g)
-#		print 10 / int(100 / (g / 100))
-#	}')
-
 vertical=$(file "$wallpaper" | awk -F ',' '{
 		g = $(NF - (("'"${wallpaper##*.}"'" == "png") ? 2 : 1))
 		split(g, ga, "\\s*x\\s*")
@@ -1795,23 +1749,15 @@ vertical=$(file "$wallpaper" | awk -F ',' '{
 
 gradient="\( gradient:black-white -posterize 30 -white-threshold 90% \)"
 
-#((avg_saturation > 25)) &&
-#	preview_opacity='aa' || preview_opacity='dd'
-
 for rgb_color in rgb_{fg,{,s,p}bg} ${!rgb_a*}; do
 	printf '%-8s' $rgb_color
 	print_color "0_${!rgb_color}_0" label
 	hex_color=${rgb_color/rgb/hex}
 
 	[[ $hex_color =~ hex_(fg|a5) ]] && continue
-	#preview_colors+="\( -size 20x15 xc:${!hex_color} $gradient -compose copyopacity -composite \) "
 	((vertical)) &&
 		preview_colors+="\( -size 8x20 xc:${!hex_color}$preview_opacity \) " ||
 		preview_colors+="\( -size 20x8 xc:${!hex_color}$preview_opacity \) "
-
-	#((vertical)) &&
-	#	preview_colors+="\( -size 20x20 xc:${!hex_color}a0 \( $gradient \) -compose copyopacity -composite \) " ||
-	#	preview_colors+="\( -size 13x33 xc:${!hex_color}a0 \( $gradient \) -compose copyopacity -composite -rotate 90 \) "
 done
 
 set_term() {
@@ -1849,41 +1795,6 @@ set_term() {
 		' <(tr ' ' '\n' <<< "${base_colors[*]}") $term_conf |
 			{ read -r ac; tr "," "\n" <<< "$ac"; cat > $term_conf; }
 }
-
-
-
-
-
-
-#sleep 3
-#term_conf=~/.orw/dotfiles/.config/alacritty/alacritty.toml
-#set_term > ~/test.ocs
-
-#test
-#exit
-
-
-#unset hex_ma{i,}
-#echo ${!rgb*} #| cut -d ' ' -f 12,13
-#sed -e 's/\(^\| \)/\1\$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!rgb*} 
-##echo ${!hex*}
-#sed -e 's/\(^\| \)/\1\$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!rgb*} | cut -d ' ' -f 2,3,5,6,12,13,17,18
-##eval echo $(sed -e 's/\(^\| \)/ \$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!rgb*} | cut -d ' ' -f 2,3,5,6,12,13,17,18)
-##exit
-##eval $(sed -e 's/\(^\| \)/ \$/g' -e 's/ \$[^ ]*i\b//g' \
-##	<<< \${!hex*} | cut -d ' ' -f 2,3,5,6,12,13,16,17)
-##exit
-
-#sed -e 's/\(^\| \)/ \$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!rgb*} 
-#unset hex_ma
-#sed -e 's/\(^\| \)/\1\$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!rgb*} | cut -d ' ' -f 1,2,4,5,12,13,17,18
-#sed -e 's/\(^\| \)/\1\$/g' -e 's/ \$[^ ]*i\b//g' <<< ${!hex*} | cut -d ' ' -f 1,2,4,5,12,13,17,18
-#exit
-
-#unset hex_mai
-#sed -e 's/\(^\| \)/ \$/g' -e 's/ \$[^ ]*i\b//g' \
-#		<<< ${!hex*} | cut -d ' ' -f 2,3,5,6,12,13,16,17
-#exit
 
 [[ $mode == light ]] && term_prefix='term_'
 read ccc ${term_prefix}hex_{sbgi,pbgi,pfgi,mai} <<< \
@@ -2015,12 +1926,22 @@ if ((mono)); then
 	read {rgb,hex}_a6_dr <<< $(get_sbg $hex_pfg +28)
 	read {rgb,hex}_a6_br <<< $(get_sbg $br_dr_color +10)
 else
-	read {rgb,hex}_a6_dr <<< $(get_sbg $hex_a6 -9)
-	read {rgb,hex}_a6_br <<< $(get_sbg $hex_a6  +9)
+	[[ ! $border_index ]] &&
+		border_color=$hex_a6 ||
+		border_color=${accent_colors[border_index - 1]##*_}
+
+	#read {rgb,hex}_a6_dr <<< $(get_sbg $border_color -9)
+	#read {rgb,hex}_a6_br <<< $(get_sbg $border_color  +9)
+	read {rgb,hex}_a6_dr <<< $(get_sbg $hex_ma -9)
+	read {rgb,hex}_a6_br <<< $(get_sbg $hex_ma  +9)
+	#read {rgb,hex}_a6_dr <<< $(get_sbg $border_color -5)
+	#read {rgb,hex}_a6_br <<< $(get_sbg $border_color  +5)
 fi
 
 set_ob() {
+	[[ $mode == light ]] && local hex_ma=$hex_a6_dr
 	local hex_a6_br=$hex_pfg hex_a6_dr=$hex_pbg
+
 	cat <<- EOF
 		#ob
 		t $hex_a6_dr
@@ -2043,15 +1964,15 @@ set_ob() {
 		mfg $hex_pfg
 		mtbg $hex_sbg
 		mtfg $hex_pfg
-		msbg $hex_pbg
+		msbg $hex_sbg
 		msfg $hex_ma
 		mb $hex_sbg
 		ms $hex_sbg
 		bfg $hex_sbg
-		bsfg $hex_pbg
+		bsfg $hex_sbg
 		osd $hex_sbg
 		osdh $hex_ma
-		osdu $hex_pbg
+		osdu $hex_sbg
 		s $hex_a6_dr
 	EOF
 
@@ -2071,15 +1992,25 @@ set_ob() {
 		$1 ~ "inactive.button.image.color" { $NF = "'$hex_bg'" }
 		$1 ~ "inactive." button { $NF = "'$hex_bg'" }
 
+		#$1 ~  "menu" {
+		#	if ($1 ~ "menu.*active.text.color") $NF = "'$hex_ma'"
+		#	if ($1 ~ "menu.*active.bg.color") $NF = "'$hex_pbg'"
+		#	if ($1 ~ "menu.title.text.color") $NF = "'$hex_pfg'"
+		#	if ($1 ~ "menu.items.text.color") $NF = "'$hex_pfg'"
+		#	if ($1 ~ "menu." menu) $NF = "'$hex_sbg'"
+		#}
+
+		#$1 ~ "bullet.selected.image" { $NF = "'$hex_pbg'" }
+
 		$1 ~  "menu" {
 			if ($1 ~ "menu.*active.text.color") $NF = "'$hex_ma'"
-			if ($1 ~ "menu.*active.bg.color") $NF = "'$hex_pbg'"
-			if ($1 ~ "menu.title.text.color") $NF = "'$hex_pfg'"
-			if ($1 ~ "menu.items.text.color") $NF = "'$hex_pfg'"
-			if ($1 ~ "menu." menu) $NF = "'$hex_sbg'"
+			if ($1 ~ "menu.*active.bg.color") $NF = "'$hex_sbg'"
+			if ($1 ~ "menu.title.text.color") $NF = "'$hex_sfg'"
+			if ($1 ~ "menu.items.text.color") $NF = "'$hex_sfg'"
+			if ($1 ~ "menu." menu) $NF = "'$hex_bg'"
 		}
 
-		$1 ~ "bullet.selected.image" { $NF = "'$hex_pbg'" }
+		$1 ~ "bullet.selected.image" { $NF = "'$hex_sbg'" }
 
 		#$1 ~ "inactive." active { $NF = "'$hex_a6_dr'" }
 		#$1 ~ "\\.active." active { $NF = "'$hex_a6_br'" }
@@ -2095,11 +2026,18 @@ set_ob() {
 		$1 ~ "inactive.button..*" button_end { $NF = "'$hex_sbg'" }
 
 		$1 ~ "\\.active." active { $NF = "'$hex_a6_dr'" }
-		$1 ~ "\\.active.button..*" button_end { $NF = "'$hex_sfg'" }
+		#$1 ~ "\\.active.button..*" button_end { $NF = "'$hex_sfg'" }
+		$1 ~ "\\.active.button..*" button_end { $NF = "'$hex_a6_br'" }
 		$1 ~ "\\.active." button { $NF = "'$hex_a6_br'" }
-
+		
 		$1 ~ "\\.active.label.*color" { $NF = "'$hex_a6_dr'" }
 		$1 ~ "colorTo" { $NF = "'$hex_a6_dr'" }
+
+		#$1 ~ "\\.active." active { $NF = "'$hex_sbg'" }
+		##$1 ~ "\\.active.title.bg.color" { $NF = "'$hex_a6_br'" }
+		##$1 ~ "\\.active.title..*border" { $NF = "'$hex_a6_dr'" }
+		#$1 ~ "\\.active.title.bg.color" { $NF = "'$hex_a6_dr'" }
+		#$1 ~ "\\.active.title..*border" { $NF = "'$hex_a6_br'" }
 
 		$1 ~ "osd.unhilight" { $NF = "'$hex_pbg'" }
 		$1 ~ "osd.hilight" { $NF = "'$hex_ma'" }
@@ -2289,7 +2227,7 @@ duo_bar() {
 	local {{rgb,hex}_,}bar_bg
 	read {rgb,hex}_bar_bg <<< $(get_sbg $hex_bg +3)
 
-	local bar_bg=$hex_bg
+	local bar_bg=$hex_tbg
 	#local transparency=ff
 	#local single_hex_bg=$hex_tbg
 	#local single_hex_bg="#$transparency${hex_bar_bg#\#}"
@@ -2334,6 +2272,111 @@ duo_bar() {
 		Ppbg $hex_ma
 		Ppfg $hex_ma_br
 		tsbg $hex_sbg
+	EOF
+}
+
+border_bar() {
+	#read {rgb,hex}_a2_dr <<< $(get_sbg $hex_a2 -22)
+	#read {rgb,hex}_a2_br <<< $(get_sbg $hex_a2  +15)
+	read {rgb,hex}_ma_dr <<< $(get_sbg $hex_ma -11)
+	read {rgb,hex}_ma_br <<< $(get_sbg $hex_ma  +11)
+
+	local {{rgb,hex}_,}bar_bg
+	read {rgb,hex}_bar_bg <<< $(get_sbg $hex_bg +3)
+
+	local single_hex_bg=$hex_sbg
+	#local transparency=ff
+	#local single_hex_bg=$hex_tbg
+	#local single_hex_bg="#$transparency${hex_bar_bg#\#}"
+	#local single_hex_bg="#$transparency${hex_bar_bg#\#}"
+
+	local {rgb,hex}_bar_pfg
+	[[ $mode == dark ]] &&
+		read {rgb,hex}_bar_pfg <<< $(get_sbg $hex_fg +5) ||
+		read {rgb,hex}_bar_pfg <<< $(get_sbg $hex_sfg ${sign}15)
+
+	#local hex_pfg=$hex_sfg
+	[[ $mode == light ]] && local hex_pfg=$hex_sfg
+
+	cat <<- EOF
+		bg ${single_hex_bg:-$bar_bg}
+		fc ${single_hex_bg:-$bar_bg}
+		pfc ${single_hex_bg:-$hex_ma_br}
+		sfc ${single_hex_bg:-$hex_a6_dr}
+		sfc ${single_hex_bg:-$hex_bg}
+		pfc ${single_hex_bg:-$hex_ma_br}
+		sfc ${single_hex_bg:-$hex_a6_dr}
+		sfc $hex_sfg
+		bfc ${single_hex_bg:-#$transparency${hex_bg#\#}}
+		bfc $hex_pbg
+		bbg ${single_hex_bg:-$bar_bg}
+		bbg $hex_bg
+		jbg ${single_hex_bg:-$hex_bg}
+		jpfg ${single_hex_fg:-$hex_a6_br}
+		jsfg ${single_hex_fg:-$hex_a6_dr}
+		jpfg ${single_hex_fg:-$hex_bar_pfg}
+		jsfg ${single_hex_fg:-$hex_sfg}
+		pbg ${single_hex_bg:-$hex_pbg}
+		pfg ${single_hex_fg:-$hex_bar_pfg}
+		pfg $hex_bar_pfg
+		sbg ${single_hex_bg:-$hex_sbg}
+		sfg ${single_hex_fg:-$hex_pfg}
+		pbefg $hex_a6_dr
+		pbfg $hex_pfg
+		Wpfg $hex_a6_dr
+	EOF
+}
+
+split_bar() {
+	#read {rgb,hex}_a2_dr <<< $(get_sbg $hex_a2 -22)
+	#read {rgb,hex}_a2_br <<< $(get_sbg $hex_a2  +15)
+	read {rgb,hex}_ma_dr <<< $(get_sbg $hex_ma -11)
+	read {rgb,hex}_ma_br <<< $(get_sbg $hex_ma  +11)
+
+	local {{rgb,hex}_,}bar_bg
+	read {rgb,hex}_bar_bg <<< $(get_sbg $hex_bg +3)
+
+	#local single_hex_bg=$hex_bg
+	local bar_bg="#00${hex_bg: -6}"
+	#local transparency=ff
+	#local single_hex_bg=$hex_tbg
+	#local single_hex_bg="#$transparency${hex_bar_bg#\#}"
+	#local single_hex_bg="#$transparency${hex_bar_bg#\#}"
+
+	cat <<- EOF
+		bg $bar_bg
+		fc ${single_hex_bg:-$bar_bg}
+		pfc ${single_hex_bg:-$hex_ma_br}
+		sfc ${single_hex_bg:-$hex_a6_dr}
+		sfc ${single_hex_bg:-$hex_bg}
+		pfc ${single_hex_bg:-$hex_ma_br}
+		sfc ${single_hex_bg:-$hex_a6_dr}
+		sfc $hex_a6_br
+		sfc $hex_sfg
+		bfc ${single_hex_bg:-#$transparency${hex_bg#\#}}
+		bfc $hex_a3
+		bbg ${single_hex_bg:-$bar_bg}
+		bbg $hex_bg
+		jbg ${single_hex_bg:-$hex_bg}
+		jpfg ${single_hex_fg:-$hex_a6_br}
+		jsfg ${single_hex_fg:-$hex_a6_dr}
+		jpfg ${single_hex_fg:-$hex_bar_pfg}
+		jsfg ${single_hex_fg:-$hex_pfg}
+		pbg ${single_hex_bg:-$bar_bg}
+		pfg ${single_hex_fg:-$hex_bar_pfg}
+		pfg $hex_bar_pfg
+		sbg ${single_hex_bg:-$bar_bg}
+		sfg ${single_hex_fg:-$hex_pfg}
+		pbefg $hex_ma
+		pbfg $hex_pfg
+		mlfg $hex_a4
+		mpfg $hex_bar_pfg
+		mpbg $hex_pbg
+		tbfg $hex_pfg
+		Apfg $hex_bar_pfg
+		Abfg $hex_a6
+		Acbfg $hex_a6_dr
+		Wpfg $hex_bar_pfg
 	EOF
 }
 
@@ -2625,11 +2668,14 @@ bar_under_dock_joined_reversed() {
 }
 
 set_bar() {
-	bar_conf=$(sed -n 's/^last_.*=\([^,]*\).*/\1/p' ~/.orw/scripts/barctl.sh)
-	colorscheme=$(sed -n 's/\(\([^-]*\)-[^c]*\)c\s*\([^, ]*\).*/\3/p' \
-		~/.config/orw/bar/configs/$bar_conf)
-	#transparency=$(sed -n '/#bar/,/^$/ { s/^bg.*#\(.*\)\w\{6\}.*/\1/p }' \
-	#	~/.config/orw/colorschemes/$colorscheme.ocs)
+	#bar_conf=$(sed -n 's/^last_.*=\([^,]*\).*/\1/p' ~/.orw/scripts/barctl.sh)
+	#colorscheme=$(sed -n 's/\(\([^-]*\)-[^c]*\)c\s*\([^, ]*\).*/\3/p' \
+	#	~/.config/orw/bar/configs/$bar_conf)
+	##transparency=$(sed -n '/#bar/,/^$/ { s/^bg.*#\(.*\)\w\{6\}.*/\1/p }' \
+	##	~/.config/orw/colorschemes/$colorscheme.ocs)
+
+	bar_conf=$(sed -n 's/^last_.*=//p' ~/.orw/scripts/barctl.sh)
+	colorscheme=~/.config/orw/colorschemes/auto_generated.ocs
 
 	unset single_bg transparency
 	transparency=d0
@@ -2652,11 +2698,15 @@ set_bar() {
 
 	local {rgb,hex}_a2_{b,d}r
 
-	#under_join_bar
-	#colors_bar
-	duo_bar
-	#uno_bar
-	#mono_bar
+	for conf in ${bar_conf//,/ }; do
+		${conf}_bar
+	done
+
+	##under_join_bar
+	##colors_bar
+	#duo_bar
+	##uno_bar
+	##mono_bar
 }
 
 set_bash() {
@@ -2666,6 +2716,8 @@ set_bash() {
 	[[ $mode == light ]] &&
 		local rgb_pbg=$term_rgb_pbg rgb_pfg=$term_rgb_pfg rgb_tbg=$term_rgb_tbg \
 		hex_pbg=$term_hex_pbg hex_pfg=$term_hex_pfg hex_tbg=$term_hex_tbg
+
+	#[[ $mode == light ]] && local rgb_pfg=$rgb_pbg
 
 	eval "color_string=\$(sed -e 's/\(^\| \)/\1\$/g' -e 's/ \$[^ ]*i\b//g' \
 		<<< \${!${type:-hex}*} | cut -d ' ' -f 1,2,3,6,12,13,16,17)"
@@ -2807,7 +2859,143 @@ set_rofi() {
 	EOF
 }
 
+set_rofi() {
+	local {rgb,hex}_rofi_{{s,a,}bg,bc}
+	#read {rgb,hex}_rofi_bc <<< $(get_sbg $hex_sbg ${sign}5)
+	read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -5)
+	read {rgb,hex}_rofi_hpfg <<< $(get_sbg $hex_pbg ${sign}15)
+	read {rgb,hex}_rofi_pbg <<< $(get_sbg $hex_tbg ${sign}5)
+
+	[[ $sign == + ]] &&
+		bg_transparency=e esbg='#ffffff04' ||
+		bg_transparency=c esbg='#00000014'
+
+	bg_transparency=e
+	cat <<- EOF
+		bg: $hex_tbg;
+		dmbg: $hex_tbg;
+		dmbg: $hex_sbg;
+		dmfg: $hex_pfg;
+		dmsbg: $hex_pbg;
+		hpfg: $hex_rofi_hpfg;
+		tbg: argb:f0${hex_tbg#\#};
+		tbg: argb:ea${hex_tbg#\#};
+		tbg: argb:dd${hex_tbg#\#};
+		tbg: argb:${bg_transparency}8${hex_tbg#\#};
+		tbg: $hex_tbg${bg_transparency}0;
+		tbg: argb:${bg_transparency}d${hex_tbg#\#};
+		tbg: $hex_tbg;
+		mbg: argb:f0${hex_bg#\#};
+		msbg: argb:70${hex_rofi_pbg#\#};
+		fg: $hex_pfg;
+		bc: $hex_a6;
+		bc: $hex_pbg;
+		ibg: $hex_tbg;
+		ibc: $hex_pbg;
+		ibc: $hex_tbg;
+		abg: #08080855;
+		abg: #08080866;
+		abg: #08080844;
+		abg: ${hex_rofi_abg}b0;
+		abg: ${hex_rofi_abg}dd;
+		abg: #00000050;
+		afg: $hex_pbg;
+		ebg: $hex_tbg;
+		esbg: $esbg;
+		efg: $hex_ma;
+		sbg: #e0e0e00e;
+		sbg: #fafafa0a;
+		sbg: #eeeeee0a;
+		sbg: #cccccc0a;
+		sbg: #dddddd0d;
+		sbg: ${hex_rofi_pbg}b0;
+		sbg: ${hex_rofi_pbg}d0;
+		sfg: $hex_ma;
+		sul: $hex_ma;
+		lpc: $hex_fg;
+		dpc: $hex_fg;
+		btc: $hex_tbg;
+		sbtc: $hex_tbg;
+		btbc: $hex_tbg;
+		ftbg: #00000000;
+		sbbg: ${hex_ma}aa;
+		sbsbg: #11111144;
+		smbg: #03030333;
+	EOF
+}
+
+set_rofi() {
+	local {rgb,hex}_rofi_{{s,a,}bg,bc}
+	#read {rgb,hex}_rofi_bc <<< $(get_sbg $hex_sbg ${sign}5)
+	read {rgb,hex}_rofi_abg <<< $(get_sbg $hex_sbg -5)
+	read {rgb,hex}_rofi_hpfg <<< $(get_sbg $hex_pbg ${sign}15)
+	read {rgb,hex}_rofi_pbg <<< $(get_sbg $hex_tbg ${sign}5)
+
+	[[ $sign == + ]] &&
+		bg_transparency=e esbg='#ffffff04' ||
+		bg_transparency=c esbg='#00000014'
+
+	bg_transparency=e
+	cat <<- EOF
+		bg: $hex_tbg;
+		dmbg: $hex_tbg;
+		dmbg: $hex_sbg;
+		dmfg: $hex_pfg;
+		dmsbg: $hex_pbg;
+		hpfg: $hex_rofi_hpfg;
+		tbg: argb:f0${hex_tbg#\#};
+		tbg: argb:ea${hex_tbg#\#};
+		tbg: argb:dd${hex_tbg#\#};
+		tbg: argb:${bg_transparency}8${hex_tbg#\#};
+		tbg: $hex_tbg${bg_transparency}0;
+		tbg: argb:${bg_transparency}d${hex_tbg#\#};
+		tbg: $hex_tbg;
+		mbg: argb:f0${hex_bg#\#};
+		msbg: argb:70${hex_rofi_pbg#\#};
+		msbg: $hex_rofi_pbg;
+		msfg: $hex_a6_dr;
+		fg: $hex_pfg;
+		bc: $hex_a6;
+		bc: $hex_pbg;
+		ibg: $hex_tbg;
+		ibc: $hex_pbg;
+		ibc: $hex_tbg;
+		abg: #08080855;
+		abg: #08080866;
+		abg: #08080844;
+		abg: ${hex_rofi_abg}b0;
+		abg: ${hex_rofi_abg}dd;
+		abg: #00000050;
+		afg: $hex_pbg;
+		ebg: $hex_tbg;
+		ebg: $hex_a6_dr;
+		esbg: $esbg;
+		efg: $hex_ma;
+		efg: $hex_a6_br;
+		sbg: #e0e0e00e;
+		sbg: #fafafa0a;
+		sbg: #eeeeee0a;
+		sbg: #cccccc0a;
+		sbg: #dddddd0d;
+		sbg: ${hex_rofi_pbg}b0;
+		sbg: ${hex_rofi_pbg}d0;
+		sfg: $hex_ma;
+		sul: $hex_ma;
+		lpc: $hex_fg;
+		dpc: $hex_fg;
+		btc: $hex_tbg;
+		sbtc: $hex_tbg;
+		btbc: $hex_tbg;
+		ftbg: #00000000;
+		sbbg: ${hex_ma}aa;
+		sbsbg: #11111144;
+		smbg: #03030333;
+	EOF
+}
+
 set_vim() {
+	[[ $mode == light ]] && local hex_sfg=$hex_pfg
+
 	cat <<- EOF
 		let g:bg = 'none'
 		let g:fg = '$hex_term_fg'
@@ -2853,13 +3041,13 @@ set_dunst() {
 	cat <<- EOF
 		background = \"$hex_tbg\"
 		foreground = \"$hex_fg\"
-		frame_color = \"$hex_a6\"
+		frame_color = \"$hex_pbg\"
 	EOF
 }
 
 set_dunst_custom() {
 	[[ $mode == dark ]] &&
-		local sbg=$hex_pbg || local sbg=$hex_sbg
+		local sbg=$hex_pbg || local sbg=$hex_sbg #hex_ma=$hex_a6_dr
 	cat <<- EOF
 		sbg=\"$sbg\"
 		pbfg=\"$hex_ma\"
@@ -2930,13 +3118,22 @@ set_ncmpcpp() {
 			replace_color((/playing/) ? "'${term_hex_pfgi:-$hex_pfgi}'" : "'${term_hex_pbgi:-$hex_pbgi}'")
 		}
 
-		/(elapsed|visualizer)_color/ { replace_color("'${term_hex_mai:-$hex_mai}'") }
+		#/(elapsed|visualizer)_color/ { replace_color("'${term_hex_mai:-$hex_mai}'") }
+		/elapsed_color/ { replace_color("'${term_hex_mai:-$hex_mai}'") }
+		/visualizer_color/ {
+			mai = "'${term_hex_mai:-$hex_mai}'" + 1
+			pfgi = "'${term_hex_pfgi:-$hex_pfgi}'" + 1
+			pbgi = "'${term_hex_pbgi:-$hex_pbgi}'" + 1
+			sbgi = "'${term_hex_sbgi:-$hex_sbgi}'" + 1
+			$NF = mai "," mai "," pfgi "," pbgi "," sbgi
+		}
 		/progressbar_color/ { replace_color("'${term_hex_sbgi:-$hex_sbgi}'") }
 
 		{ print }' $ncmpcpp_conf
 
+	[[ $hex_ma != $hex_a2 ]] && cava_hex=$hex_a2
 	sed -i "/^[^;].*color_1\|foreground/ s/[^ ]*$/'$hex_ma'/" ~/.config/cava/config
-	sed -i "/^[^;].*color_2/ s/[^ ]*$/'$hex_a1'/" ~/.config/cava/config
+	sed -i "/^[^;].*color_2/ s/[^ ]*$/'${cava_hex:-$hex_a1}'/" ~/.config/cava/config
 }
 
 set_zathura() {
@@ -2947,12 +3144,14 @@ set_zathura() {
 }
 
 set_qb() {
+	[[ $mode == light ]] && local hex_ma=$hex_a6_dr
+
 	cat <<- EOF
 		bg = '$hex_sbg'
 		fg = '$hex_sfg'
 		sbg = '$hex_bg'
 		sfg = '$hex_ma'
-		mfg = '$hex_a2'
+		mfg = '$hex_ma'
 		sbbg = '$hex_bg'
 	EOF
 }
@@ -2963,11 +3162,13 @@ set_home_css() {
 		--fg: $hex_sfg;
 		--sbg: $hex_bg;
 		--sfg: $hex_pfg;
-		--mfg: $hex_a6;
+		--mfg: $hex_ma;
 	EOF
 }
 
 set_sxiv() {
+	[[ $mode == light ]] && local hex_ma=$hex_a6_dr
+
 	awk '
 		/^Sxiv/ {
 			p = substr($1, 6, 1)
@@ -3044,7 +3245,9 @@ replace_colors() {
 }
 
 colorscheme_name="${wallpaper_name%.*}"
+[[ $custom_suffix ]] && colorscheme_name+="_$custom_suffix"
 colorscheme=~/.orw/dotfiles/.config/orw/colorschemes/${colorscheme_name// /_}.ocs
+
 ob_conf=~/.orw/themes/theme/openbox-3/themerc
 bash_conf=~/.orw/dotfiles/.bashrc
 vim_conf=~/.orw/dotfiles/.config/nvim/colors/orw.vim
