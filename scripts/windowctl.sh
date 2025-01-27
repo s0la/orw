@@ -2409,6 +2409,7 @@ while ((argument_index <= $#)); do
 				[[ $id ]] &&
 					xwininfo -id $id | parse_properties ||
 					xwininfo -name $name | parse_properties
+				exit
 
 				[[ $display_orientation == h ]] && index=1 || index=2
 				get_display_properties $index
@@ -2432,7 +2433,8 @@ while ((argument_index <= $#)); do
 					echo "$x_border $y_border ${properties[*]:1}"
 				fi
 
-				exit;;
+				exit
+				;;
 			o) overwrite=true;;
 			a) align_adjacent;;
 			?) continue;;
