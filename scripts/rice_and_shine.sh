@@ -470,9 +470,11 @@ set_rofi() {
 		c && $1 ~ "^\\w{1,3}[cg]:" {
 			cp = $1
 			sub(":", "", cp)
-			cv = substr(p[cp], 2)
-			s = substr($NF, length($NF) - (length(cv) + 0))
-			sub(s, substr(p[cp], 2) ";")
+			l = (/tbg/) ? 2 : 0
+			l = 0
+			cv = substr(p[cp], 2 + l)
+			s = substr($NF, length($NF) - length(cv))
+			sub(s, cv ";")
 		}
 		/^\*/ { c = 1 }
 		{ print }' <(cat) $rofi_conf
@@ -867,7 +869,8 @@ function get_term() {
 function get_term() {
 	awk '
 		/background|forground/ {
-			gsub("'\''", "", $NF)
+			#gsub("'\''", "", $NF)
+			gsub("\"", "", $NF)
 			print substr($1, 0, 1) "g", $NF
 		}' $term_conf
 }
@@ -1085,7 +1088,8 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 				new_color=$color
 				new_color_index=$color_index
 				unset color offset color_index
-			fi;;
+			fi
+			;;
 		e) edit_colorscheme=~/.config/orw/colorschemes/$OPTARG.ocs;;
 		R)
 			replace_color=true
@@ -1115,7 +1119,8 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 					reload_tmux_hidden=true
 					tmux_conf=$tmux_hidden_conf
 				fi
-			fi;;
+			fi
+			;;
 		C)
 			arg=${!OPTIND}
 			[[ $arg && ! $arg == -[[:alpha:]] ]] && colorscheme=$colorschemes/$arg.ocs && shift || colorscheme=$bar_conf
@@ -1123,7 +1128,8 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 		M) inherited_module=$OPTARG;;
 		P)
 			inherited_property=$OPTARG
-			assign_offset ${!OPTIND} && shift;;
+			assign_offset ${!OPTIND} && shift
+			;;
 		[Bb])
 			[[ $flag == [[:lower:]] ]] && backup=true || backup=all
 			assign_value backup_name ${!OPTIND} && shift;;
@@ -1144,8 +1150,11 @@ function inherit() {
 			get_color ${inherited_property:-$property} || multiple_colors=true
 	else
 		#[[ $edit_colorscheme && ! $inherited_module ]] && colorscheme=$edit_colorscheme
-		[[ $inherited_property ]] && property_to_check=inherited_property || property_to_check=property
-		[[ ${!property_to_check} && ! ${!property_to_check//[A-Za-z_]/} ]] && get_color $(parse_module)
+		[[ $inherited_property ]] &&
+			property_to_check=inherited_property || property_to_check=property
+
+		[[ ${!property_to_check} && ! ${!property_to_check//[A-Za-z_]/} ]] &&
+			get_color $(parse_module)
 	fi
 }
 
