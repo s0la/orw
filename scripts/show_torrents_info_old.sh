@@ -4,12 +4,14 @@ icon=
 icon=''
 tn_span="<span foreground='\\\$fg'>"
 pd_span="<span font='Roboto Mono 3' foreground='\\\$pbfg'>"
+pd_span="<span foreground='\\\$pbfg'>"
 pr_span="<span foreground='\\\$sbg'>"
 end_span='</span></span></span>'
 
 torrent_info=$(transmission-remote -l | awk '
 	function print_progress(percent) {
-		if(percent > 0) return gensub(/ /, "▀", "g", sprintf("%*s", percent, " "))
+		#if(percent > 0) return gensub(/ /, "▀", "g", sprintf("%*s", percent, " "))
+		if(percent > 0) return gensub(/ /, "━", "g", sprintf("%*s", percent, " "))
 	}
 
 	NR == 1 {
@@ -23,7 +25,7 @@ torrent_info=$(transmission-remote -l | awk '
 			tn = substr($0, ns)
 			tnl = length(tn)
 			if(tnl > mtnl) mtnl = tnl
-			s = 5
+			s = 7
 			pd = sprintf("%.0f", $2 / s)
 			pr = 100 / s - pd
 			at[tc,1] = tn
@@ -42,4 +44,4 @@ torrent_info=$(transmission-remote -l | awk '
 		print ft
 	}' 2> /dev/null)
 
-~/.orw/scripts/notify.sh -pP 3 -o 3 "$torrent_info"
+~/.orw/scripts/notify.sh -t 5 -pP 3 -o 3 "$torrent_info"
