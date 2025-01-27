@@ -38,6 +38,11 @@ shift $((arg_count * 2))
 
 ffmpeg -y -f x11grab -r ${fps-60} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
 	-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	#-f pulse -async 1 -i alsa_output.usb-C-Media_Electronics_Inc._USB_PnP_Sound_Device-00.analog-stereo.monitor -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	#-c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+exit
+
 	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 -af 'afftdn=nf=-25' $full_path/$filename.mp4
 	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 -af 'volume=4' $full_path/$filename.mp4
 	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 -af "highpass=f=200, lowpass=f=3000" $full_path/$filename.mp4
