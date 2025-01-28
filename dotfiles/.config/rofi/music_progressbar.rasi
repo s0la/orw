@@ -1,6 +1,10 @@
 @import "theme"
 @import "cover_art"
 
+* {
+	element-radius: 50%;
+}
+
 prompt {
   background-color: transparent;
   expand:           false;

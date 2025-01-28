@@ -3,7 +3,7 @@
 <channel name="thunar" version="1.0">
   <property name="misc-volume-management" type="empty"/>
   <property name="shortcuts-icon-size" type="string" value="THUNAR_ICON_SIZE_SMALLEST"/>
-  <property name="last-view" type="string" value="ThunarCompactView"/>
+  <property name="last-view" type="string" value="ThunarIconView"/>
   <property name="last-icon-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_75_PERCENT"/>
   <property name="hidden-devices" type="array">
     <value type="string" value="Floppy Disk"/>
@@ -19,11 +19,11 @@
   </property>
   <property name="last-location-bar" type="string" value="void"/>
   <property name="last-side-pane" type="string" value="ThunarShortcutsPane"/>
-  <property name="last-window-width" type="int" value="540"/>
-  <property name="last-window-height" type="int" value="668"/>
+  <property name="last-window-width" type="int" value="539"/>
+  <property name="last-window-height" type="int" value="239"/>
   <property name="last-window-maximized" type="bool" value="false"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_50_PERCENT"/>
-  <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,242,50,81,420,50,50,50,50,50"/>
+  <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,242,50,81,369,50,50,50,50,50"/>
   <property name="last-details-view-visible-columns" type="string" value="THUNAR_COLUMN_NAME"/>
   <property name="last-menubar-visible" type="bool" value="false"/>
   <property name="last-separator-position" type="int" value="137"/>
@@ -34,7 +34,7 @@
   <property name="last-sort-column" type="string" value="THUNAR_COLUMN_NAME"/>
   <property name="last-sort-order" type="string" value="GTK_SORT_ASCENDING"/>
   <property name="misc-thumbnail-mode" type="string" value="THUNAR_THUMBNAIL_MODE_ALWAYS"/>
-  <property name="last-compact-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_150_PERCENT"/>
+  <property name="last-compact-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_75_PERCENT"/>
   <property name="last-details-view-fixed-columns" type="bool" value="false"/>
   <property name="last-toolbar-item-order" type="string" value="0,1,2,3,4,5,6,7,8,9,19,14,13,10,11,12,15,16,17,18"/>
   <property name="last-toolbar-visible-buttons" type="string" value="1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0"/>

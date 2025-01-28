@@ -3,11 +3,11 @@
 @import "theme"
 
 * {
-	font:                  "Iosevka Orw 9";
-	font:                  "SFMono Medium 9";
 	font:                  "SFMono Medium 7";
 
 	lines:                 5;
+
+	y-offset:              0px;
 
 	window-width:          22%;
 	window-margin:         0px 0;

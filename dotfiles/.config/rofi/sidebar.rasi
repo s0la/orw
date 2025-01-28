@@ -14,6 +14,8 @@ configuration {
 
 	lines:                 7;
 
+	y-offset:              40px;
+
 	window-width:          23%;
 	window-margin:         0px 0;
 	window-padding:        2% 1%;
@@ -39,6 +41,7 @@ mainbox {
     background-color:            transparent;
     orientation:                 horizontal;
     children:                    [  "box" , "listbox" ];
+	border-radius:         3px;
 }
 
 #window {

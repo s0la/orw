@@ -1,43 +1,29 @@
 @import "theme"
+@import "cover_art"
 
 * {
-	y-offset: 20px;
-	x-offset: 60px;
+	y-offset: -30px;
+	x-offset: 0px;
+
+	window-width:   250px;
+	window-padding: 15px 15px 15px 15px;
+
+	font:             "SFMono Medium 8";
 }
 
 window {
   border:  2px;
-  width:   250px;
-  height:  420px;
-  padding: 15px 15px 0 15px;
+  width:   @window-width;
+  height:  410px;
+  padding: @window-padding;
 }
 
 prompt {
-  font:             "Iosevka Orw 9";
-  font:             "SFMono Medium 8";
-  // horizontal-align: 0.50;
+  background-color: transparent;
   expand:           false;
   text-color:       @lpc;
+  width:            100%;
   padding:          30px 0 10px 0;
-}
-
-#space {
-	expand: true;
-	background-color:            transparent;
-}
-
-#prompt-wrapper {
-  children:         [ space, prompt, space ];
-	background-color:            #888888;
-  orientation: horizontal;
-  extand: false;
-  padding: 135px 0 10px 0;
-  height: 35px;
-}
-
-cover-art {
-  background-image: url("/tmp/rofi_cover_art.png", both);
-  padding: 10px 10px 206px 10px;
 }
 
 inputbar {
@@ -45,44 +31,32 @@ inputbar {
   orientation:      vertical;
   horizontal-align: 0.50;
   expand:           false;
-  height: 200px;
+  height:           200px;
 }
 
 listview {
+  spacing: 0px;
   layout:            horizontal;
   background-color:  transparent;
-  // padding:           10px 0 0 0;
-  padding:           15px 3px 0;
-}
-
-box {
-	expand: false;
-    orientation:                 horizontal;
-	background-color:            inherit;
-    children:                    [  "space" , "listview", "space" ];
-}
-
-mainbox {
-  height:  370px;
-	children: [ inputbar, listview ];
+  padding:           15px 2px 0;
 }
 
 element {
-  margin: 3px;
+  margin: 0px;
   border-radius:	2px;
 }
 
 element-text {
-  padding:		8px 9px;
+  padding:		8px 13px;
   font:			"remix 12";
   background-color: inherit;
 }
 
-#element.normal.normal, element.urgent.normal, element.alternate.normal, element.alternate.urgent {
+#element.normal.normal, element.normal.urgent, element.alternate.normal, element.alternate.urgent {
   background-color: argb:00000000;
 }
 
-#element-text normal.normal, element-text urgent.normal, element-text alternate.normal, element-text alternate.urgent {
+#element-text normal.normal, element-text normal.urgent, element-text alternate.normal, element-text alternate.urgent {
 	text-color:       @fg;
 }
 

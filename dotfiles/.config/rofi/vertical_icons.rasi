@@ -24,10 +24,13 @@
 	window-location:        west;
 	window-padding:         3px 3px;
 	// window-margin:          0 7px;
-	window-radius:          5px;
-	window-width:           55px;
+	window-radius:          0px;
+	window-border:          2px;
+	window-width:           59px;
 
 	background-color: @ftbg;
+	esbg: transparent;
+	afg: @abg;
 }
 
 configuration {
@@ -40,8 +43,8 @@ mainbox {
 }
 
 #window {
-	border:           0;
 	width:            @window-width;
+	border:           @window-border;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @window-padding;
@@ -103,6 +106,14 @@ mainbox {
 
 #element.selected.active {
 	text-color:       @efg;
-	// background-color: @bg;
+	background-color: @esbg;
 	border:           @element-border;
+}
+
+#element.normal.active, element.alternate.active {
+	background-color: @esbg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
 }

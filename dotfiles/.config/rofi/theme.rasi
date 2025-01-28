@@ -1,52 +1,57 @@
 /* color definition */
 
 * {
-	bg: #12171b;
-	dmbg: #151c20;
-	dmbg: #151c20;
-	dmfg: #323e45;
-	dmsbg: #25272c;
-	hpfg: #3d4a52;
-	tbg: argb:ed12171b;
-	tbg: argb:ed12171b;
-	tbg: argb:ed12171b;
-	tbg: argb:ed12171b;
-	tbg: #ed12171b;
-	tbg: argb:ed12171b;
-	mbg: argb:f00d1114;
-	msbg: argb:701b2227;
-	fg: #323e45;
-	bc: #12171b;
-	bc: #12171b;
-	ibg: #12171b;
-	ibc: #12171b;
-	ibc: #12171b;
-	abg: #00000030;
-	abg: #00000030;
-	abg: #00000030;
-	abg: #00000030;
-	abg: #00000030;
-	abg: #00000030;
-	afg: #2c383e;
-	ebg: #12171b;
-	esbg: #ffffff04;
-	efg: #63a585;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sbg: #1b2227d0;
-	sfg: #63a585;
-	sul: #5c5e96;
-	lpc: #999391;
-	dpc: #999391;
-	btc: #12171b;
-	sbtc: #12171b;
-	btbc: #12171b;
+	bg: #9faeb9;
+	dmbg: #9faeb9;
+	dmbg: #8899a5;
+	dmfg: #677886;
+	dmsbg: #7a8b98;
+	hpfg: #536471;
+	tbg: argb:f09faeb9;
+	tbg: argb:ea9faeb9;
+	tbg: argb:dd9faeb9;
+	tbg: argb:e89faeb9;
+	tbg: #9faeb9e0;
+	tbg: argb:ed9faeb9;
+	tbg: #9faeb9;
+	mbg: argb:f097a7b2;
+	msbg: argb:7090a0ac;
+	msbg: #90a0ac;
+	msfg: #4c7783;
+	fg: #677886;
+	bc: #815b5f;
+	bc: #7a8b98;
+	ibg: #9faeb9;
+	ibc: #7a8b98;
+	ibc: #9faeb9;
+	abg: #08080855;
+	abg: #08080866;
+	abg: #08080844;
+	abg: #7a8b98b0;
+	abg: #7a8b98dd;
+	abg: #00000050;
+	afg: #7a8b98;
+	ebg: #9faeb9;
+	ebg: #4c7783;
+	esbg: #00000014;
+	efg: #608e9a;
+	efg: #75a4b0;
+	sbg: #e0e0e00e;
+	sbg: #fafafa0a;
+	sbg: #eeeeee0a;
+	sbg: #cccccc0a;
+	sbg: #dddddd0d;
+	sbg: #90a0acb0;
+	sbg: #90a0acd0;
+	sfg: #608e9a;
+	sul: #608e9a;
+	lpc: #606366;
+	dpc: #606366;
+	btc: #9faeb9;
+	sbtc: #9faeb9;
+	btbc: #9faeb9;
 	ftbg: #00000000;
-	sbbg: #63a585aa;
+	sbbg: #608e9aaa;
 	sbsbg: #11111144;
 	smbg: #03030333;
 
@@ -57,6 +62,8 @@
 	window-border: 2px;
 	input-border:  0 0 2px;
 
+	element-radius: 0%;
+
 	highlight:     bold;
 }
 
@@ -66,6 +73,7 @@
 }
 
 #element.normal.normal, element.alternate.normal, {
+	border-radius: @element-radius;
 	background-color: @bg;
 }
 
@@ -74,6 +82,7 @@
 }
 
 #element.normal.urgent, element.alternate.urgent, element.selected.urgent, element.alternate.selected.urgent {
+	border-radius: @element-radius;
 	background-color: @smbg;
 	text-color:       @sfg;
 }
@@ -89,6 +98,7 @@
 }
 
 #element.normal.active, element.alternate.active {
+	border-radius: @element-radius;
 	background-color: @abg;
 }
 
@@ -98,6 +108,7 @@
 }
 
 #element.selected.normal {
+	border-radius: @element-radius;
 	border-color:     @sul;
 	background-color: @sbg;
 }
@@ -108,6 +119,7 @@
 }
 
 #element.selected.active {
+	border-radius: @element-radius;
 	border-color:     @sul;
 	background-color: @abg;
 }

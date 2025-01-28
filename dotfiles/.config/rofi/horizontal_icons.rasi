@@ -3,37 +3,47 @@
 @import "theme.rasi"
 
 * {
-	bg: @tbg;
+	// bg: @tbg;
 
 	font:                   "material 10";
 
 	window-orientation:     horizontal;
 
-	list-spacing:           3px;
+	list-spacing:           5px;
 
 	input-margin:           0 0 5px;
 
 	entry-margin:           0 5px;
 
-	element-padding:        18px 18px;
+	element-padding:        14px 16px;
 	element-border:         0 0 0px;
-	element-radius:         5px;
 
 	window-location:        center;
 	window-padding:         3px 3px;
 	// window-margin:          0 7px;
-	window-radius:          5px;
-	window-width:           335px;
+	window-radius:          0px;
+	window-border:          2px;
+	window-width:           345px;
 
-	y-offset:               50px;
+	y-offset:               85px;
+
+	element-radius:         3px;
 
 	background-color: @ftbg;
 	sbg: #dddddd0d;
 	sbg: #00000014;
 	sbg: #ffffff04;
-	abg: #08080844;
-	abg: #03030330;
+	// abg: #08080844;
+	// abg: #03030330;
 	smbg: #0303031a;
+
+	sbg: transparent;
+	// afg: @abg;
+	// afg: #3a4545;
+	esbg: @sbg;
+
+	// afg: @efg;
+	// efg: @fg;
 }
 
 configuration {
@@ -49,13 +59,13 @@ mainbox {
 }
 
 #window {
-	border:           0;
 	width:            @window-width;
+	border:           @window-border;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @list-spacing;
 	padding:          @window-padding;
-	border-radius:    @window-radius;
+	border-radius:    @element-radius;
 	children:         [ horibox ];
     background-color:            transparent;
     background-color:            @bg;
@@ -105,13 +115,41 @@ mainbox {
 }
 
 #element.selected.normal {
-	text-color:       @efg;
 	background-color: @esbg;
-	border:           @element-border;
 }
 
 #element.selected.active {
-	text-color:       @efg;
-	background-color: @abg;
-	border:           @element-border;
+	background-color: @esbg;
+}
+
+#element.normal.active, element.alternate.active {
+	background-color: @esbg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
+}
+
+/* rounded settings */
+
+/*
+#element.normal.normal, element.alternate.normal, element.normal.active, element.alternate.active {
+	background-color: @ebg;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color: @efg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
+}
+*/
+
+#element.selected.normal, element.selected.active, element.selected.urgent {
+	background-color: @efg;
+}
+
+#element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
+	color: @ebg;
 }

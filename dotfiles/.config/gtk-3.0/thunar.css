@@ -1,13 +1,13 @@
-@define-color bg #101114;
-@define-color pbg #25272c;
-@define-color sbg #1a1c20;
-@define-color bbg #5c5e96;
-@define-color hlbg #16171b;
-@define-color tbg rgba(16,17,20,0.90);
-@define-color fg #939199;
-@define-color pfg #3d4045;
-@define-color sfg #36393e;
-@define-color afg #56a5b8;
+@define-color bg #97a7b2;
+@define-color pbg #7a8b98;
+@define-color sbg #8899a5;
+@define-color bbg #608e9a;
+@define-color hlbg #9faeb9;
+@define-color tbg rgba(151,167,178,0.85);
+@define-color fg #606366;
+@define-color pfg #677886;
+@define-color sfg #718390;
+@define-color afg #608e9a;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {

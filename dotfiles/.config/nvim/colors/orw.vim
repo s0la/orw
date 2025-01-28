@@ -11,26 +11,26 @@ let s:dd = '#a66c6c'
 let s:dc = '#EBCB8B'
 
 let g:bg = 'none'
-let g:fg = '#b2b2b2'
-let g:sfg = '#c76568'
-let g:vfg = '#63a585'
-let g:cfg = '#5c769c'
-let g:ifg = '#c1856a'
-let g:ffg = '#6b525e'
+let g:fg = '#d8d8d8'
+let g:sfg = '#a6bbed'
+let g:vfg = '#608e9a'
+let g:cfg = '#937eb9'
+let g:ifg = '#cbad9d'
+let g:ffg = '#815b5f'
 let g:nbg = 'none'
-let g:nfg = '#1e272c'
-let g:lbg = '#151c20'
-let g:lfg = '#63a585'
-let g:syfg = '#5c769c'
-let g:cmfg = '#2c383e'
-let g:slbg = '#151c20'
-let g:slfg = '#2c383e'
-let g:fzfhl = '#63a585'
-let g:bcbg = '#6b525e'
-let g:bdbg = '#63a585'
-let g:nmbg = '#c1856a'
-let g:imbg = '#c76568'
-let g:vmbg = '#5c769c'
+let g:nfg = '#18222c'
+let g:lbg = '#111820'
+let g:lfg = '#608e9a'
+let g:syfg = '#937eb9'
+let g:cmfg = '#25303e'
+let g:slbg = '#111820'
+let g:slfg = '#25303e'
+let g:fzfhl = '#608e9a'
+let g:bcbg = '#815b5f'
+let g:bdbg = '#608e9a'
+let g:nmbg = '#a99184'
+let g:imbg = '#93a5d1'
+let g:vmbg = '#937eb9'
 
 "let g:bcbg = '#666662'
 "let g:bdbg = '#7ec197'
@@ -173,6 +173,7 @@ exe 'hi! Floaterm guibg='.g:slbg
 exe 'hi! FloatermBorder guibg=' . g:slbg . '  guifg='.g:slbg
 
 exe 'hi! Floaterm guibg='.g:lbg
-exe 'hi! FloatermBorder guibg=' . g:lbg . '  guifg='.g:lbg
+"exe 'hi! FloatermBorder guibg=' . g:lbg . '  guifg='.g:lbg
+exe 'hi! FloatermBorder guibg=' . g:slbg . '  guifg='.g:slbg
 
 set cursorline

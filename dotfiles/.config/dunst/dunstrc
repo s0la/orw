@@ -32,7 +32,7 @@
 
     #geometry = "750x55-80+80"
 	origin = top-right
-	height = (0, 100)
+	height = (0, 500)
 	width = (0, 750)
 	offset = 80x80
 
@@ -59,14 +59,16 @@
     separator_height = 2
 
     # Padding between text and separator.
-    padding = 0
+    padding = 5
 
     # Horizontal padding.
-    horizontal_padding = 0
+    horizontal_padding = 5
+
+	text_icon_padding = 15
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
-    frame_width = 0
+    frame_width = 2
 
     # Defines color of the frame around the notification window.
     frame_color = "#aaaaaa"
@@ -221,7 +223,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 3
+    corner_radius = 0
 
     ### Legacy
 
@@ -290,9 +292,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#12171b"
-	foreground = "#999391"
-	frame_color = "#6b525e"
+	background = "#9faeb9"
+	foreground = "#606366"
+	frame_color = "#7a8b98"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

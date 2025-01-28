@@ -1,6 +1,10 @@
 @import "theme"
 @import "cover_art"
 
+* {
+	element-radius: 10%;
+}
+
 prompt {
   background-color: transparent;
   expand:           false;
@@ -18,7 +22,8 @@ inputbar {
 }
 
 listview {
-  spacing: 0px;
+  spacing:           7px;
+  // spacing:           0px;
   layout:            horizontal;
   background-color:  transparent;
   padding:           0 2px;
@@ -26,11 +31,12 @@ listview {
 
 element {
   margin: 0px;
-  border-radius:	2px;
+  border-radius:	@element-radius;
 }
 
 element-text {
-  padding:		8px 13px;
+  padding:		8px 10px;
+  // padding:		8px 13px;
   font:			"remix 12";
   background-color: inherit;
 }
@@ -51,3 +57,20 @@ element-text {
 	text-color:       @sfg;
 	background-color: @msbg;
 }
+
+/* rounded settings */
+
+#element.normal.normal, element.alternate.normal, {
+  background-color: transparent;
+}
+
+/*
+#element-text normal.normal, element-text alternate.normal {
+	text-color:       @efg;
+}
+
+#element-text selected.normal {
+	background-color: @efg;
+	text-color:       @ebg;
+}
+*/

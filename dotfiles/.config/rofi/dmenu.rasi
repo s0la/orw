@@ -6,7 +6,7 @@
 	window-border:        0px;
 	window-padding:       0px;
 
-	y-offset:             44px;
+	y-offset:             50px;
 
 	element-padding:      5px 15px;
 	element-border:       0 0 2px;
