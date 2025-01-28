@@ -16,11 +16,15 @@ set_position() {
 	#	awk '$1 == '$current_display' { print $1 }')
 	#	#awk 'NR == '$current_display' { print $1 }')
 
-	read mapped_display{,_{w,h}_ratio} <<< $(~/.orw/scripts/display_mapper.sh | awk '
-		$1 == '$current_display' { wr = $4 / '$primary_w'; hr = $5 / '$primary_h' }
-		NR == '$current_display' { md = $1 }
-		END { print md, wr, hr }')
+	read primary addition mapped_display{,_{w,h}_ratio} <<< \
+		$(~/.orw/scripts/display_mapper.sh | awk '
+			$1 == '$current_display' { wr = $4 / '$primary_w'; hr = $5 / '$primary_h' }
+			$3 { a = ("'"$display"'") ? '${display:-0}' == NR : '$current_display' == $1; p = NR }
+			NR == '$current_display' { md = $1 }
+			END { print p, !a, md, wr, hr }')
+
 	#echo $primary_w $primary_h, $mapped_display: $mapped_display_w_ratio, $mapped_display_h_ratio
+	#unset mapped_display_{w,h}_ratio
 	#exit
 
 	#echo $display
@@ -71,11 +75,21 @@ set_position() {
 			else if (ny == "b" || (!ny && wx < rwx + 10)) wx = dh - wh - int(xo / 2)
 			else wy = int((dh - wh - bto - bbo) / 2)
 
-			print e, wx, wy, int(ww * '${mapped_display_w_ratio:-1}'), int(wh * '${mapped_display_h_ratio:-1}')
+			#print e, int(wx * '${mapped_display_w_ratio:-1}'), int(wy * '${mapped_display_h_ratio:-1}'), ww + 80, wh
+			#print e, int(wx * '${mapped_display_w_ratio:-1}'), int(wy * '${mapped_display_h_ratio:-1}'), ww, wh
+			#print e, wx, wy, int(ww * '${mapped_display_w_ratio:-1}'), int(wh * '${mapped_display_h_ratio:-1}')
+			print e, int(wx), int(wy), ww + '${additional_width:-0}', wh + '${additional_height:-0}'
 		}' ~/.config/orw/config)
 
+	additional_width=80 additional_height=30
+	if ((addition || (!display && d != primary))); then 
+		#echo $addition, $d, $primary, $display, $((!display && d != primary)), $additional_width, $additional_height
+		((w+=additional_width))
+		((h+=additional_height))
+	fi
 	display=$(~/.orw/scripts/display_mapper.sh | awk 'NR == '$d' { print $1 }')
 
+	#~/.orw/scripts/set_geometry.sh -c dropdown -m $display -x $x -y $y -w $w -h $h
 	~/.orw/scripts/set_geometry.sh -c dropdown -m $display -x $x -y $y -w $w -h $h
 	return
 
@@ -164,8 +178,8 @@ set_position() {
 		~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 
-x_position=c
-y_position=t
+x_position=r
+y_position=c
 	
 current_desktop=$(xdotool get_desktop)
 focused_window=$(xdotool getwindowfocus getwindowname)
