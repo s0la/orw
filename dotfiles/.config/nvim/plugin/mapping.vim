@@ -34,8 +34,14 @@ inoremap <silent> <C-k> <C-o>:resize -3<cr>
 inoremap <silent> <C-h> <C-o>:vert resize +3<cr>
 inoremap <silent> <C-l> <C-o>:vert resize -3<cr>
 
+vnoremap <silent> <C-j> :m +1<cr><S-v>
+vnoremap <silent> <C-k> :m -2<cr><S-v>
+"inoremap <silent> <C-j> <C-o>:m +1<cr>
+"inoremap <silent> <C-k> <C-o>:m -2<cr>
+
 "insert mode
 "inoremap ,, <C-x><C-o><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
+inoremap <silent> <C-k> <C-n><C-r>=pumvisible() ? "\<lt>Up>\<lt>C-p>\<lt>Up>" : ""<CR>
 inoremap <silent> <C-j> <C-n><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
 "inoremap ,: <C-x><C-f><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
 "inoremap ,= <C-x><C-l><C-r>=pumvisible() ? "\<lt>Down>\<lt>C-p>\<lt>Down>" : ""<CR>
