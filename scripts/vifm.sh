@@ -22,6 +22,7 @@ done
 
 args="${@:arg_count + 1}"
 run_command="~/.config/vifm/scripts/run_with_image_preview --server-name $title"
+run_command="~/.config/vifm/scripts/run_with_image_preview"
 
 if [[ $instance ]]; then
 	~/.orw/scripts/set_geometry.sh -c size -w ${width:-400} -h ${height:-500}
