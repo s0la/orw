@@ -5,8 +5,8 @@ if winwidth(0) > 350
 	let s:height = 0.9
 	let s:position = 'right'
 else
-	let s:width = 0.8
-	let s:height = 0.6
+	let s:width = 0.7
+	let s:height = 0.5
 	let s:position = 'center'
 endif
 
