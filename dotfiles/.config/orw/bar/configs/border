@@ -1,0 +1,7 @@
+#/home/sasa/.orw/scripts/bar/run.sh -x 400 -y 15 -h 30 -F 2 -a 7 -p 15 -c auto_generated -n border -m p:s12bo10,b:cptn,i:s22o10i,t:o10 -c -W i:cc,o:1 -r -i only -s 0 -j d:3 -N -D -R -t -X -j -i -T o:5,P:s20d -e -v -d 'b_d|I:M'
+#/home/sasa/.orw/scripts/bar/run.sh -x c -w 1000 -y 10 -h 30 -F 2 -S 1 -a 7 -p 13 -c auto_generated -n border -m p:s20bo10,b:cptn,i:s22o10i,t:o10 -c -W i:rsf,o:1 -r -i only -s 0 -p 8 -j d:3 -N -D -R -t -X -j -i -T o:5,P:s20d -e -v -d 'b_d|I:M' -O 5 #-i icons -P i,f:13,o:12,a:Lrlo,s:20x15
+
+#/home/sasa/.orw/scripts/bar/run.sh -x c -w 1000 -y 10 -h 30 -F 2 -S 1 -a 7 -p 13 -c auto_generated -n border -m P:f,T:bi,p:s20o5b,S:f,b:o5cptn,i:s22o5i,t:o10 -c -W i:msf,o:0 -r -i only -s 0 -p 8 -j d:3 -N -D -R -t -X -j -i -e -v -d 'b_d|I:M' -O 5 #-i icons -P i,f:13,o:12,a:Lrlo,s:20x15
+
+#/home/sasa/.orw/scripts/bar/run.sh -x c -w 1000 -y 10 -h 30 -F 2 -S 1 -a 7 -p 13 -c auto_generated -n border -m p:s20o5b,S:f,b:o5cptn,i:s22o5i,t:o10 -c -W i:msf,o:0 -r -i only -s 0 -p 8 -j d:3 -N -D -R -t -X -j -i -e -v -d 'b_d|I:M' -O 5
+/home/sasa/.orw/scripts/bar/run.sh -x c -w 1000 -y 10 -h 30 -F 2 -S 1 -a 7 -p 13 -c auto_generated -n border -m p:s20b,S:f,b:o5cptn,i:s22o5i,t:o10 -c -W i:msf,o:0 -r -i only -s 0 -p 8 -j d:3 -N -D -R -t -X -j -i -e -v -d 'b_d|I:M' -O 5

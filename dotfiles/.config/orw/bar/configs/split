@@ -1,0 +1,4 @@
+#/home/sasa/.orw/scripts/bar/run.sh -w a -y 10 -h 30 -f a:2 -a 7 -p 15 -s 5 -c auto_generated -n split -m p:s12bo10,b:cptn,i:s22o10i,t:o10 -O 40 -C -W i:cc,o:2,p:22 -C -O 40 -i only -j d:3 -N -D -R -t -X -j -i icons -e -v -d 'b_d|_I:M'
+#/home/sasa/.orw/scripts/bar/run.sh -w a -y 10 -h 28 -f a:2 -a 7 -p 15 -s 5 -c auto_generated -n split -m p:s20bo10,b:S1cptn,i:s22d3o10i,t:o10 -O 40 -C -W i:cc,o:1,p:22 -C -O 40 -e -v -d 'b_d|I:M'
+/home/sasa/.orw/scripts/bar/run.sh -w a -y 13 -h 30 -S 1 -f a:2 -a 7 -p 15 -s 5 -c auto_generated -n split -i icons -P i,f:13,o:12,a:Lrlo,s:20x15 -m p:s20bo10,b:S1cptn,i:s22d3o10i,t:o10 -O 50 -C -W i:cc,o:1,p:22 -C -O 50 -i only -j d:3 -N -D -R -t -X -j -i icons -T P:s20d -e -v -d 'b_d|I:M'
+
