@@ -330,9 +330,6 @@
     </keybind>
     <keybind key="A-m">
       <action name="Execute">
-        <!--
-		   <command>~/.orw/scripts/rofi_scripts/music.sh</command>
-		  -->
         <command>~/.orw/scripts/rofi_scripts/dmenu.sh display</command>
       </action>
     </keybind>
@@ -1136,8 +1133,8 @@
       <focus>no</focus>
       <position force="yes">
         <monitor>2</monitor>
-        <x>center</x>
-        <y>center</y>
+        <x>562</x>
+        <y>270</y>
       </position>
       <size>
         <width>150</width>
@@ -1146,6 +1143,7 @@
     </application>
 
     <application class="custom_size">
+      <decor>yes</decor>
       <focus>yes</focus>
       <position force="yes">
         <monitor>Active</monitor>
@@ -1153,8 +1151,8 @@
         <y>default</y>
       </position>
       <size>
-        <height>250</height>
-        <width>350</width>
+        <height>100</height>
+        <width>100</width>
       </size>
     </application>
 
@@ -1211,8 +1209,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>center</x>
-        <y>center</y>
+        <x>562</x>
+        <y>270</y>
       </position>
       <size>
         <width>150</width>
@@ -1260,12 +1258,12 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>572</x>
-        <y>84</y>
+        <x>711</x>
+        <y>310</y>
       </position>
       <size>
-        <width>100</width>
-        <height>100</height>
+        <width>150</width>
+        <height>150</height>
       </size>
     </application>
     <!--
@@ -1299,7 +1297,7 @@
     # each rule element can be left out or set to 'default' to specify to not 
     # change that attribute of the window
 
-    <decor>yes</decor>
+    <decor>no</decor>
     # enable or disable window decorations
 
     <shade>no</shade>
