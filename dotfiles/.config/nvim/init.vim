@@ -10,6 +10,8 @@ source $HOME/.config/nvim/plugin_configs/fzf.vim
 source $HOME/.config/nvim/plugin_configs/floaterm.vim
 " source $HOME/.config/nvim/plugin_configs/cmp.lua
 
+set guicursor=a:ver25
+
 "set guifont=iosevka-orw-regular:h8
 "set guifont=iosevka-orw-regular:h8
 set completeopt=menu,menuone,noselect
