@@ -120,12 +120,26 @@ color_content() {
 	echo "\[\033[${1}8;2;${2%;}m\]"
 }
 
+color_content() {
+	echo "\1\e[${1}8;2;${2%;}m\2"
+}
+
+is_vi_mode=$(set -o | awk '$1 == "vi" { print ($NF == "on") }')
+((is_vi_mode)) &&
+	format_start='\1\e[' format_end='m\2' ||
+	format_start='\[\033[' format_end='m\]'
+color_content() {
+	echo "$format_start${1}8;2;${2%;}$format_end"
+}
+
 format_module() {
 	local OPTIND B b f c
 
 	while getopts :b:f:c:B flag; do
 		case $flag in
-			B) local bold='\[\033[1m\]' unbold='\[\033[0m\]';;
+			#B) local bold='\[\033[1m\]' unbold='\[\033[0m\]';;
+			#B) local bold='\1\e[1m\2' unbold='\1\e[0m\2';;
+			B) local bold="${format_start}1$format_end" unbold="${format_start}0$format_end";;
 			b)
 				if [[ $mode == rice ]]; then
 					if [[ $edge_mode == flat ]]; then
@@ -279,7 +293,9 @@ set_edge() {
 }
 
 color_modules() {
-	default='\[\033[0m\]'
+	#default='\[\033[0m\]'
+	#default='\1\e[0m\2'
+	default="${format_start}0$format_end"
 
 	for module in ${modules//,/ }; do
 		case $module in
@@ -336,6 +352,14 @@ color_modules() {
 					format_module -b default -c "$separator"
 					before_separator_content_length=$content_length
 				fi
+				;;
+			m)
+				if [[ $vi_mode ]]; then
+					local icon=$(sed -n "s/^vi_${vi_mode}.*=//p" ~/.orw/scripts/icons)
+					#local vi_mode="$(color_content 3 $vc) $icon $clear"
+					format_module -b default -f $vc -Bc " $icon"
+				fi
+				;;
 		esac
 
 		[[ $module == ${modules##*,} ]] && last_module=true
@@ -390,20 +414,31 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="50;66;82;"
-	sc="50;66;82;"
-	dc="50;66;82;"
-	ic="96;142;154;"
-	sec="129;91;95;"
-	gcc="129;91;95;"
-	gdc="147;165;209;"
-	vc="147;126;185;"
+	fg="88;84;90;"
+	sc="88;84;90;"
+	dc="88;84;90;"
+	ic="84;191;189;"
+	sec="106;84;109;"
+	gcc="106;84;109;"
+	gdc="255;51;114;"
+	vc="255;182;140;"
 
-	clean='\[\033[0m\]'
+	#clean='\[\033[0m\]'
+	#clean='\1\e[0m\2'
+	clean="${format_start}0$format_end"
 
 	((exit_code)) && sc=$sec || sc=$sc
 
 	pid=$$
+
+	local vi_mode=$1
+	if [[ $vi_mode ]]; then
+		[[ $vi_mode == i ]] &&
+			local vi_color=$gcc || local vi_color=$vc
+		local vi_icon=$(sed -n "s/^vi_${vi_mode}.*=//p" ~/.orw/scripts/icons)
+		#local vi_mode="$(color_content 3 $vc) $icon $clear"
+		#format_module -b default -f $vc -Bc " $icon"
+	fi
 
     if [[ $(ps -ef | awk '/tmux.*ncmpcpp_with_cover_art/ && !/awk/ && $2 + 1 == '$pid' {print "cover"}') ]]; then
 		echo ''
@@ -413,11 +448,12 @@ generate_ps1() {
 
 		set_edge
 
-		info_module="u,┃"
+		#info_module="u,┃"
 		[[ $mode == simple ]] &&
 			info_module='u,|' || info_module="u"
 		git_module="s,m,i,a,d,u"
 
+		#modules="i,W,g,v,m"
 		modules="i,W,g,v"
 
 		full_length=$(tput cols)
@@ -436,7 +472,11 @@ generate_ps1() {
 				#prompt_start='┌─' prompt_end='└─╼'
 				#prompt_start='╭─' prompt_end='╰─›'
 				#prompt_start='┌─' prompt_end='└─•›'
-				prompt_start='\[\033[1m\]• ' prompt_end='• ›'
+
+				#prompt_start='\[\033[1m\]• ' prompt_end='• ›'
+				#prompt_start='\1\e[1m\2• ' prompt_end='• ›'
+				prompt_start="${format_start}1$format_end• " prompt_end='• ›'
+
 				#prompt_start='┌─' prompt_end='└─›'
 			if [[ $prompt_start ]]; then
 				start="$(color_content 3 $sc)$prompt_start"
@@ -444,6 +484,13 @@ generate_ps1() {
 			fi
 
 			[[ $reverse ]] || format_module -f $fg -Bc " ]"
+			#format_module -b default -f $vc -Bc " $vi_icon "
+			#format_module -b $vc -Bc "${vi_mode^}"
+
+			#[[ $vi_mode ]] &&
+			#	format_module -b default -f $vi_color -Bc " ${vi_mode^} "
+			[[ $vi_mode ]] &&
+				format_module -b default -f $vi_color -Bc " $vi_icon "
 
 			if [[ $prompt_end ]]; then
 				all_modules+='\n'
@@ -453,8 +500,6 @@ generate_ps1() {
 				#format_module -f $sc -Bc '━›'
 				#format_module -f $sc -Bc '━'
 			fi
-
-			echo -e "$all_modules" >> ~/b.log
 		else
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
@@ -488,7 +533,7 @@ redraw_prompt() {
 
 regenerate_ps1() {
 	source ~/.bashrc
-	clear
+	#clear
 }
 
 trap regenerate_ps1 USR1
@@ -496,6 +541,33 @@ trap regenerate_ps1 USR1
 [[ $blank ]] &&
 	PROMPT_COMMAND='PS1=""' ||
 	PROMPT_COMMAND='PS1="$(generate_ps1)"'
+
+reset_readline_prompt_mode_strings () {
+	bind "set vi-ins-mode-string \"$(generate_ps1) \1\e[1;32m\2i:\1\e[0m\2\""
+	bind "set vi-cmd-mode-string \"$(generate_ps1) \1\e[1;31m\2c?\1\e[0m\2\""
+}
+
+reset_readline_prompt_mode_strings() {
+	vc="255;182;140;"
+	#bind "set vi-ins-mode-string \"$(generate_ps1) \1\e[38;2;${gcc%;}m\2 i:\1\e[0m\2\""
+	#bind "set vi-ins-mode-string \"$(generate_ps1 i) \1\e[1m\2 $(color_content 3 $vc) i:\1\e[0m\2\""
+	#bind "set vi-cmd-mode-string \"$(generate_ps1 c) \1\e[1;31m\2c?\1\e[0m\2\""
+	bind "set vi-ins-mode-string \"$(generate_ps1 i)\""
+	bind "set vi-cmd-mode-string \"$(generate_ps1 c)\""
+}
+
+#            
+#PROMPT_COMMAND=reset_readline_prompt_mode_strings
+#PS1=' '
+
+if [[ $blank ]]; then
+	PROMPT_COMMAND='PS1=""'
+else
+	((!is_vi_mode)) &&
+		PROMPT_COMMAND='PS1="$(generate_ps1)"' ||
+		PROMPT_COMMAND=reset_readline_prompt_mode_strings
+	PS1=' '
+fi
 
 ras() {
 	~/.orw/scripts/rice_and_shine.sh $@
@@ -602,9 +674,6 @@ fi
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-. "$HOME/.cargo/env"
-
-#neovim
-alias nvim='/opt/nvim-linux64/bin/nvim'
+#. "$HOME/.cargo/env"
 
 #[ -f ~/.fzf.bash ] && source ~/.fzf.bash
