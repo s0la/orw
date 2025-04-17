@@ -4,7 +4,10 @@
 	font:                   "SFMono 8";
 
 	bg:                     @tbg;
+	// bg: #b9b1aeaa;
+	bg: @ivbg;
 	sbg:                    #ffffff0a;
+	sbg: @esbg;
 	abg:                    #03030333;
 
 	element-padding:        5px 5px;
@@ -55,7 +58,7 @@ element-icon {
 
 #element-text {
 	horizontal-align: 0.50;
-	font:             "SFMono 1";
+	font:             "SFMono 5";
 }
 
 #element.normal.normal, element.alternate.normal {
@@ -64,7 +67,8 @@ element-icon {
 }
 
 #element-text normal.normal, element-text alternate.normal {
-	color:        transparent;
+	// color:        transparent;
+	color:        @fg;
 	background-color: @bg;
 	background-color: transparent;
 }
@@ -82,10 +86,12 @@ element-icon {
 #element-text selected.normal, element-text selected.active {
 	color:            @dpc;
 	color:        transparent;
+	color:        @fg;
 }
 
 element-text alternate.active, element-text normal.active {
 	color:        transparent;
+	color:        @fg;
 }
 
 #inputbar {

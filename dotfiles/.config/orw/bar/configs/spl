@@ -1,1 +1,1 @@
-/home/sasa/.orw/scripts/bar/run.sh -w a -y 10 -h 30 -f a:2 -a 7 -p 15 -s 5 -c auto_generated -n spl -m p:s12bo10,b:cptn,i:s22o10i,t:o10 -O 30 -C -W i:cs,o:0,p:15 -C -O 30 -i only -j d:3 -N -D -R -t -X -j -i icons -e -v -d 'b_d|_I:M'
+/home/sola/.orw/scripts/bar/run.sh -w a -y 10 -h 30 -f a:2 -a 7 -p 15 -s 5 -c auto_generated -n spl -m p:s12bo10,b:cptn,i:s22o10i,t:o10 -O 30 -C -W i:cs,o:0,p:15 -C -O 30 -i only -j d:3 -N -D -R -t -X -j -i icons -e -v -d 'b_d|_I:M'

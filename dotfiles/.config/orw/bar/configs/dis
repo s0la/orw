@@ -1,4 +1,4 @@
-#.orw/scripts/bar/generate_bar.sh -x 300 -F 2 -f 2 -n dis -M -l -W -c -d a,_d_b_I:M -r -E t -e -v
-#.orw/scripts/bar/generate_bar.sh -x 300 -F 3 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -m p6,s15,i -l -E t -e -v
-#.orw/scripts/bar/generate_bar.sh -x 300 -F 3 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -l -E t -e -v
-.orw/scripts/bar/generate_bar.sh -x 300 -F 2 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -l -m s16,i -E t -e -v
+#/home/sola/bar/generate_bar.sh -x 300 -F 2 -f 2 -n dis -M -l -W -c -d a,_d_b_I:M -r -E t -e -v
+#/home/sola/bar/generate_bar.sh -x 300 -F 3 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -m p6,s15,i -l -E t -e -v
+#/home/sola/bar/generate_bar.sh -x 300 -F 3 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -l -E t -e -v
+/home/sola/bar/generate_bar.sh -x 300 -F 2 -f 2 u -n dis -M -W -c -d a,_d_b_I:M -r -l -m s16,i -E t -e -v

@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -y 10 -w a -h 45 -a 11 -b -f 3 u -M -n dock_clone -O 25 -l -L s2,o11 -O 25 
+/home/sola/scripts/bar/generate_bar.sh -x c -y 10 -w a -h 45 -a 11 -b -f 3 u -M -n dock_clone -O 25 -l -L s2,o11 -O 25 

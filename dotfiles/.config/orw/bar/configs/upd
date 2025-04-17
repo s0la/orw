@@ -1,1 +1,1 @@
-.orw/scripts/bar/generate_bar.sh -x c -w a -f 2 -n upd -i -R -N
+/home/sola/bar/generate_bar.sh -x c -w a -f 2 -n upd -i -R -N

@@ -33,6 +33,8 @@ configuration {
 	switcher-width:        3.3%;
 
 	element-padding:       5px 5px;
+
+	sfg: @ebg;
 }
 
 mainbox {

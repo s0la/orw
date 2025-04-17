@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 20 -h 30 -a 8 -c bar_ws_top bar_gruv -M -n ws_top -p 35 -W o2,ih
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -y 20 -h 30 -a 8 -c bar_ws_top bar_gruv -M -n ws_top -p 35 -W o2,ih

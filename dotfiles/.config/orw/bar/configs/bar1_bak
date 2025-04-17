@@ -1,5 +1,5 @@
-#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -c -W -r -t c,b -N -B p -v -d
-#~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,T,s15,d3 -t c,b -N -H -B p -v -d
-#~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,s15,d3 -t c,b -N -H -B p -v -d
-#~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,s15,d3 -l -t c,b -N -H -B p -v -d
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -s 10 -F 2 -f 2 u -i -n bar1_bak -M -l -A -l -r -m p6,i,s15,d3 -t b -N -H -B p -v -d
+#/home/sola/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -c -W -r -t c,b -N -B p -v -d
+#/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,T,s15,d3 -t c,b -N -H -B p -v -d
+#/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,s15,d3 -t c,b -N -H -B p -v -d
+#/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -F 2 -f 2 u -i -n bar1 -M -l -A -l -r -m p6,i,s15,d3 -l -t c,b -N -H -B p -v -d
+/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -s 10 -F 2 -f 2 u -i -n bar1_bak -M -l -A -l -r -m p6,i,s15,d3 -t b -N -H -B p -v -d

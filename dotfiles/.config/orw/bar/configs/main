@@ -1,7 +1,7 @@
-#.orw/scripts/bar/generate_bar.sh -x c -w a -p 20 -f 2 -n main -M -l -e -v -W -H -R -d
-#.orw/scripts/bar/generate_bar.sh -x c -w a -p 20 -f 2 a -a 7 -n main -M -l -e -v -l -W -l -H -R -d
-#.orw/scripts/bar/generate_bar.sh -x c -w a -p 20 -F 2 -f 2 u -a 7 -n main -M -l -e -v -l -W -l -H -R -d
-#.orw/scripts/bar/generate_bar.sh -x c -w a -p 20 -f 2 a -a 7 -n main -M -l -e -v -W -H -R -d
-#.orw/scripts/bar/generate_bar.sh -F 2 -n main -M -l -t c -r -R -N -v -d
-#.orw/scripts/bar/generate_bar.sh -F 2 -n main -i -M -l -t c -r -B p -N -v -d
-.orw/scripts/bar/generate_bar.sh -x c -w a -p 20 -F 2 -f 0 u -n main -M -i -l -e -v -E t belgrade -l -W -l -H -R -u -d
+#/home/sola/bar/generate_bar.sh -x c -w a -p 20 -f 2 -n main -M -l -e -v -W -H -R -d
+#/home/sola/bar/generate_bar.sh -x c -w a -p 20 -f 2 a -a 7 -n main -M -l -e -v -l -W -l -H -R -d
+#/home/sola/bar/generate_bar.sh -x c -w a -p 20 -F 2 -f 2 u -a 7 -n main -M -l -e -v -l -W -l -H -R -d
+#/home/sola/bar/generate_bar.sh -x c -w a -p 20 -f 2 a -a 7 -n main -M -l -e -v -W -H -R -d
+#/home/sola/bar/generate_bar.sh -F 2 -n main -M -l -t c -r -R -N -v -d
+#/home/sola/bar/generate_bar.sh -F 2 -n main -i -M -l -t c -r -B p -N -v -d
+/home/sola/bar/generate_bar.sh -x c -w a -p 20 -F 2 -f 0 u -n main -M -i -l -e -v -E t belgrade -l -W -l -H -R -u -d

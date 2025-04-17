@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -h 20 -a 8 -b -f 2 -n lah_bot -M -l -m c,P,s20,i,p 
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -h 20 -a 8 -b -f 2 -n lah_bot -M -l -m c,P,s20,i,p 

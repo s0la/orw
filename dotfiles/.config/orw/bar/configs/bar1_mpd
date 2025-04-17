@@ -1,4 +1,4 @@
-#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -i -n test -F 2 -t -r -H -B p -v -d
-.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -i -n bar1_mpd -F 2 -M -m c,p,i,v,s20,d3 -r -H -R -B p -v -d
-#.orw/scripts/bar/generate_bar.sh -n bar1_mpd -F 2 -i -M -m c,p,i,T,v,s20,d3 -r -H -e -R -B p -v -d
-#.orw/scripts/bar/generate_bar.sh -w a -s 10 -n bar1_mpd -F 2 -i -M -m c,p,i,T,v,s20,d3 -W -E t -N -H -e -U -B p -v -d
+#/home/sola/bar/generate_bar.sh -x 0 -y 0 -i -n test -F 2 -t -r -H -B p -v -d
+/home/sola/bar/generate_bar.sh -x 0 -y 0 -i -n bar1_mpd -F 2 -M -m c,p,i,v,s20,d3 -r -H -R -B p -v -d
+#/home/sola/bar/generate_bar.sh -n bar1_mpd -F 2 -i -M -m c,p,i,T,v,s20,d3 -r -H -e -R -B p -v -d
+#/home/sola/bar/generate_bar.sh -w a -s 10 -n bar1_mpd -F 2 -i -M -m c,p,i,T,v,s20,d3 -W -E t -N -H -e -U -B p -v -d

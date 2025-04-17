@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 250 -h 30 -f 2 u -a 8 -c bar_jund bar_4pt -M -n jund -c -l -j 250 -m P,s22,of5,i,of15,v -W -i only -j 0 -e -u -N -i icon -v -j -d
+/home/sola/scripts/bar/generate_bar.sh -x 250 -h 30 -f 2 u -a 8 -c bar_jund bar_4pt -M -n jund -c -l -j 250 -m P,s22,of5,i,of15,v -W -i only -j 0 -e -u -N -i icon -v -j -d

@@ -69,19 +69,19 @@ sbbg #14100e
 bg #14100e
 fg #989898
 br_black #5c534e
-br_blue #70799a
-br_cyan #7dceef
+br_blue #aebee1
+br_cyan #cde2f6
 br_green #a9d3c7
 br_magenta #ceacbf
-br_red #d47468
+br_red #9f797d
 br_white #b6b6b6
 br_yellow #ffdea0
 black #3e3530
-blue #525b7c
-cyan #5fb0d1
+blue #90a0c3
+cyan #afc4d8
 green #8bb5a9
 magenta #b08ea1
-red #b6564a
+red #815b5f
 white #989898
 yellow #ffc082
 
@@ -216,7 +216,6 @@ c2 #DBBD7D
 pc #2c2421
 pec #8bb5a9
 vc #8bb5a9
-[exited]
 
 #sxiv
 bg #14100e

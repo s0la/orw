@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x r 50 -y 120 -w 160 -h 80 -f 30 o -a 55 -c bar_ww -M -n wwi -c -l -i only -E t belgrade
+/home/sola/scripts/bar/generate_bar.sh -x r 50 -y 120 -w 160 -h 80 -f 30 o -a 55 -c bar_ww -M -n wwi -c -l -i only -E t belgrade

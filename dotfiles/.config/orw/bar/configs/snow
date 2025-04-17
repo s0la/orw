@@ -1,1 +1,1 @@
-.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 20 -a 9 -n snow -M -m p,s20,i,v -c -W -r -R -e -v -d
+/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 20 -a 9 -n snow -M -m p,s20,i,v -c -W -r -R -e -v -d

@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -y 10 -w a -h 19 -a 11 -b -f 0 -F 12 -M -c dock -n dock -O 18 -L s5,o8 -O 18 
+/home/sola/scripts/bar/generate_bar.sh -x c -y 10 -w a -h 19 -a 11 -b -f 0 -F 12 -M -c dock -n dock -O 18 -L s5,o8 -O 18 

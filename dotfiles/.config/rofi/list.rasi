@@ -24,6 +24,8 @@
 	entry-margin:          0 3px 0;
 
 	element-padding:       8px 8px;
+
+	sfg: @ebg;
 }
 
 #mainbox {

@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/run.sh -x c:-40 -y 45,b -w 230 -h 35 -p 0 -a 7,o:9 -c auto_generated -n hmpwi -O 10 -m S:f,R:s,i:o3s26d2i10t
+/home/sola/scripts/bar/run.sh -x c:-40 -y 45,b -w 230 -h 35 -p 0 -a 7,o:9 -c auto_generated -n hmpwi -O 10 -m S:f,R:s,i:o3s26d2i10t

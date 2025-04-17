@@ -1,3 +1,3 @@
-#~/.orw/scripts/bar/generate_bar.sh -x c -w 500 -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -c -l -i -j 50 -v -p 5 -s 20 -j -L o10 -p 30 -P -d
-#~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -l -i -j 50 -v -p 5 -W o3,id -s 20 -p 10 -C -e -j -m c:cptn,s22,of10,i -p 20 -d
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -l -i -j 50 -v -p 5 -W o3,id -s 20 -p 10 -C -e -j -m c:cptn,s22,of10,i -p 20 -d
+#/home/sola/scripts/bar/generate_bar.sh -x c -w 500 -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -c -l -i -j 50 -v -p 5 -s 20 -j -L o10 -p 30 -P -d
+#/home/sola/scripts/bar/generate_bar.sh -x c -w a -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -l -i -j 50 -v -p 5 -W o3,id -s 20 -p 10 -C -e -j -m c:cptn,s22,of10,i -p 20 -d
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -y 50 -h 25 -a 7 -F 2 -f 2 -c bar_join -M -n join -l -i -j 50 -v -p 5 -W o3,id -s 20 -p 10 -C -e -j -m c:cptn,s22,of10,i -p 20 -d

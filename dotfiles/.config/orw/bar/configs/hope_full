@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 26 -f 2 u -a 8 -c bar_hope_full bar_fg_full -M -n hope_full -l -A c,o0 -l -c -W o2,ih -r -s 0 -p 20 -i -N -e -u -v -d -P 33x18 i,s22,o15,Llro bar_fg_full
+/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -h 26 -f 2 u -a 8 -c bar_hope_full bar_fg_full -M -n hope_full -l -A c,o0 -l -c -W o2,ih -r -s 0 -p 20 -i -N -e -u -v -d -P 33x18 i,s22,o15,Llro bar_fg_full

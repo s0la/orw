@@ -1,42 +1,42 @@
-#~/bar_new/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30 -C -R -t -V -j
-#~/bar_new/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:1,p:10 -j -O 200 -T P:10d -j 10 -C -R -e -v -t -V -j
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:1,p:10 -j -O 200 -p 10 -j 10,ss30 -C -V -t -j
-#~/bar_new/run.sh -y 20,b -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -t -e -R
+#/home/sola/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30 -C -R -t -V -j
+#/home/sola/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:1,p:10 -j -O 200 -T P:10d -j 10 -C -R -e -v -t -V -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:1,p:10 -j -O 200 -p 10 -j 10,ss30 -C -V -t -j
+#/home/sola/run.sh -y 20,b -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -t -e -R
 
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 200 -p 10 -j 10,ss30 -T P:10d -C -R -e -v -t -V -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,se -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 200 -p 10 -j 10,ss30 -T P:10d -C -R -e -v -t -V -j
 
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 200 -p 10 -j 10,ssb50 -V -R -C -e -v -t -j
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 50 -p 5 -j 30 -t 'a,_b_Y__I:M' -C -j -O 50 -p 2 -j 5,ssb50 -i only -N -R -e -v -i true -T P:10d -V -j
-
-
-#~/.orw/scripts/bar/run_reload_both.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 50 -p 5 -j 30 -t 'a,_b_Y__I:M' -C -j -O 50 -p 2 -j 5,seb50 -i only -N -R -e -v -i true -T P:10d -V -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 200 -p 10 -j 10,ssb50 -V -R -C -e -v -t -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 50 -p 5 -j 30 -t 'a,_b_Y__I:M' -C -j -O 50 -p 2 -j 5,ssb50 -i only -N -R -e -v -i true -T P:10d -V -j
 
 
+#/home/sola/scripts/bar/run_reload_both.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j 30,ssf -m p:s10bo20,S,b:S2cptn,o:10,i:s20d,o:20 -W i:cs,o:0,p:10 -j -O 50 -p 5 -j 30 -t 'a,_b_Y__I:M' -C -j -O 50 -p 2 -j 5,seb50 -i only -N -R -e -v -i true -T P:10d -V -j
 
 
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j d:30,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -O 50 -p 5 -j d:50 -t 'a,_b_Y__I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j -O 50 -p 2 -j d:5,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
-
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -f a:2 -c auto_generated -n new_join -c -j d:30,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -O 50 -p 5 -j d:50 -t 'a,_b_Y__I:M' -i icon -P i,f:17,o:15,a:Lrlo,s:25x15 -j -O 50 -p 0 -j d:3,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -f a:2 -c auto_generated -n new_join -j d:50,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -p 5 -c -j d:50 -t 'a,_b_Y__I:M' -i icon -P i,f:17,o:15,a:Lrlo,s:25x15 -j -r -p 0 -j d:3,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
-
-#~/.orw/scripts/bar/run.sh -y 20 -h 32 -f a:3 -s 0 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:1,p:0 -j -A c,o:20 -c -t 'a,_b_Y__I:M' -r -T P:5d -j d:5,p:15 -i only -N -R -v -j -i icons -e -P i,f:17,o:15,a:Lrlo,s:25x15 
-
-#~/.orw/scripts/bar/run.sh -y 10 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:0,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -j d:3,p:15 -i only -N -R -v -j -i icons -j d:20,p:10 -e -t 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
-#~/.orw/scripts/bar/run.sh -y 10 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:1,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -i icons -j d:12,p:10 -e -i only -N -t -R -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
-
-#~/.orw/scripts/bar/run.sh -y 10 -x 400 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -D -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
-#~/.orw/scripts/bar/run.sh -y 10 -x 300 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s13bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:1,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -i only -j d:5,p:10 -t -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
 
 
-#~/.orw/scripts/bar/run.sh -y 10 -x 420 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
-#~/.orw/scripts/bar/run.sh -y 10 -x 410 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -v -j -i icons -p 10 -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15
-#~/.orw/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -j -j d:15,p:10 -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -w a -x c -f a:2 -c auto_generated -n new_join -j d:30,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -O 50 -p 5 -j d:50 -t 'a,_b_Y__I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j -O 50 -p 2 -j d:5,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
 
-#~/.orw/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -c -W i:cc,o:1,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
-#~/.orw/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -f a:2 -c auto_generated -n new_join -c -j d:30,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -O 50 -p 5 -j d:50 -t 'a,_b_Y__I:M' -i icon -P i,f:17,o:15,a:Lrlo,s:25x15 -j -O 50 -p 0 -j d:3,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -f a:2 -c auto_generated -n new_join -j d:50,s:sf,p:10 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:0,p:0 -j -p 5 -c -j d:50 -t 'a,_b_Y__I:M' -i icon -P i,f:17,o:15,a:Lrlo,s:25x15 -j -r -p 0 -j d:3,s:eb50,p:15 -i only -N -R -e -v -i true -T P:5d -V -j
+
+#/home/sola/scripts/bar/run.sh -y 20 -h 32 -f a:3 -s 0 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo20,S,b:S2cptn,o:10,i:s20d -W i:cs,o:1,p:0 -j -A c,o:20 -c -t 'a,_b_Y__I:M' -r -T P:5d -j d:5,p:15 -i only -N -R -v -j -i icons -e -P i,f:17,o:15,a:Lrlo,s:25x15 
+
+#/home/sola/scripts/bar/run.sh -y 10 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:0,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -j d:3,p:15 -i only -N -R -v -j -i icons -j d:20,p:10 -e -t 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+#/home/sola/scripts/bar/run.sh -y 10 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s10bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:1,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -i icons -j d:12,p:10 -e -i only -N -t -R -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+
+#/home/sola/scripts/bar/run.sh -y 10 -x 400 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -D -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+#/home/sola/scripts/bar/run.sh -y 10 -x 300 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s13bo10,S,b:S2cptn,i:s20d2o10i -j -c -j d:30,p:10 -W i:cs,o:1,p:0 -A c:bc,o:20 -j -r -i -p 15 -T P:5d -i only -j d:5,p:10 -t -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
 
 
-#~/.orw/scripts/bar/run.sh -y 10 -x 200 -h 30 -a 8 -f a:3 -F 0 -s 10 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -c -W i:cc,o:1,p:15 -r -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
-#~/.orw/scripts/bar/run.sh -y 10 -x c -w a -h 30 -a 8 -f a:3 -F 0 -s 7 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -O 50 -C -W i:cf,o:1,p:15 -C -O 50 -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 10 -x 420 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -v -j -i icons -j d:20,p:10 -e -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
+#/home/sola/scripts/bar/run.sh -y 10 -x 410 -h 26 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -v -j -i icons -p 10 -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 15 -T P:16d -i only -j d:5,p:10 -X -t -N -R -e -j -j d:15,p:10 -v -d 'b_d_I:M' -P i,f:17,o:15,a:Lrlo,s:25x15 -j
 
-~/.orw/scripts/bar/run.sh -y 10 -x c -w a -h 26 -a 7 -f a:3 -F 0 -s 0 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -O 50 -C -W i:cf,o:1,p:15 -C -O 50 -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -c -W i:cc,o:1,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 10 -x 415 -h 26 -a 8 -f a:0 -F 3 -s 5 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10i -j -c -W i:cc,o:1,p:10 -r -i -p 10 -T P:16d -i only -j d:4,p:10 -X -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+
+
+#/home/sola/scripts/bar/run.sh -y 10 -x 200 -h 30 -a 8 -f a:3 -F 0 -s 10 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -c -W i:cc,o:1,p:15 -r -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+#/home/sola/scripts/bar/run.sh -y 10 -x c -w a -h 30 -a 8 -f a:3 -F 0 -s 7 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -O 50 -C -W i:cf,o:1,p:15 -C -O 50 -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15
+
+/home/sola/scripts/bar/run.sh -y 10 -x c -w a -h 26 -a 7 -f a:3 -F 0 -s 0 -p 15 -c auto_generated -n new_join -j d:50,p:15 -m p:s12bo15,S,b:S2cptn,i:s20d2o10io10t -j -O 50 -C -W i:cf,o:1,p:15 -C -O 50 -i -p 15 -T P:16d -i only -j d:4,p:15 -X -N -R -t -j -i icons -e -v -d 'b_d_I:M' #-P i,f:17,o:15,a:Lrlo,s:25x15

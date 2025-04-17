@@ -1,2 +1,2 @@
-#.orw/scripts/bar/generate_bar.sh -p 15 -x 0 -y 0 -F 2 -i -n trans -M -m c,p,S,i,v,s20,d3 -c -W -r -e -R -B p -v -d
-.orw/scripts/bar/generate_bar.sh -p 20 -x 0 -y 0 -F 2 -i -n trans -M -t -r -H -e -B p -v -d
+#/home/sola/bar/generate_bar.sh -p 15 -x 0 -y 0 -F 2 -i -n trans -M -m c,p,S,i,v,s20,d3 -c -W -r -e -R -B p -v -d
+/home/sola/bar/generate_bar.sh -p 20 -x 0 -y 0 -F 2 -i -n trans -M -t -r -H -e -B p -v -d

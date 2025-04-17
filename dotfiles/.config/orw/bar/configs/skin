@@ -1,2 +1,2 @@
-#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -F 4 -a 7 -n skin -M -c -A
-.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 18 -b -F 4 -a 7 -n skin -M -c -A
+#/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 18 -F 4 -a 7 -n skin -M -c -A
+/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 18 -b -F 4 -a 7 -n skin -M -c -A

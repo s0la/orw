@@ -97,23 +97,23 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#355c66;fill-rule:evenodd;stroke-opacity:0;stroke:#355c66;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#3fa2a1;fill-rule:evenodd;stroke-opacity:0;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#55818d;fill-rule:evenodd;stroke-opacity:1;stroke:#355c66;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#6bdbd8;fill-rule:evenodd;stroke-opacity:1;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <path
      inkscape:connector-curvature="0"
-     style="fill-opacity:1;fill:#355c66;stroke-opacity:0;strokenone"
+     style="fill-opacity:1;fill:#3fa2a1;stroke-opacity:0;strokenone"
      d="m 254.55972,214.81067 0,108.03182 50.1127,28.00825 0,-136.04007 -50.1127,0 z"
      id="path3291" />
   <path
      inkscape:connector-curvature="0"
      id="path3335"
      d="m 200.44701,214.81067 0,136.04007 50.11271,-28.00825 0,-108.03182 -50.11271,0 z"
-     style="fill-opacity:1;fill:#355c66;stroke-opacity:0;strokenone" />
+     style="fill-opacity:1;fill:#3fa2a1;stroke-opacity:0;strokenone" />
 </svg>

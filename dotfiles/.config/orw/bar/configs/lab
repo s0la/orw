@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 21 -a 8 -M -n lab -m i,p -c -W ih -r -E t -e -v -d 
+/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -h 21 -a 8 -M -n lab -m i,p -c -W ih -r -E t -e -v -d 

@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -y o20,b -F 3 -f 2,u -h 30 -a 8 -c auto_generated -n ocsgen_dock -l -L a,s0,o10
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -y o20,b -F 3 -f 2,u -h 30 -a 8 -c auto_generated -n ocsgen_dock -l -L a,s0,o10

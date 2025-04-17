@@ -50,12 +50,14 @@ element-text {
 }
 
 #element.selected.normal {
-	background-color: argb:00000000;
+	// background-color: argb:00000000;
+	background-color: transparent;
 }
 
 #element-text selected.normal {
-	text-color:       @sfg;
+	text-color:       @msfg;
 	background-color: @msbg;
+	// background-color: @efg;
 }
 
 /* rounded settings */

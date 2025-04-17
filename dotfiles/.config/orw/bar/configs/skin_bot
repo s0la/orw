@@ -1,3 +1,3 @@
-#.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 20 -F 4 -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -c -R -C -T -v -d
-#.orw/scripts/bar/generate_bar.sh -x c -w a -y 10 -h 20 -b -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -t p -R -C -T -v -d
-.orw/scripts/bar/generate_bar.sh -x c -w a -y 10 -h 20 -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -t p -R -C -T -v -d
+#/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 20 -F 4 -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -c -R -C -T -v -d
+#/home/sola/bar/generate_bar.sh -x c -w a -y 10 -h 20 -b -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -t p -R -C -T -v -d
+/home/sola/bar/generate_bar.sh -x c -w a -y 10 -h 20 -p 15 -s 10 -f 3 u -a 8 -n skin_bot -M -l -t p -R -C -T -v -d

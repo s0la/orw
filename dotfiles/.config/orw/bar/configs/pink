@@ -1,2 +1,2 @@
-#.orw/scripts/bar/generate_bar.sh -w a -h 20 -s 0 -a 8 -F 2 -M -n pink -O 20 -W -O 50 -R -v -d
-.orw/scripts/bar/generate_bar.sh -w a -h 20 -s 0 -a 8 -F 2 -M -n pink -O 20 -W -O 50 -e -R -v -d 'a,_b_d_I:M'
+#/home/sola/bar/generate_bar.sh -w a -h 20 -s 0 -a 8 -F 2 -M -n pink -O 20 -W -O 50 -R -v -d
+/home/sola/bar/generate_bar.sh -w a -h 20 -s 0 -a 8 -F 2 -M -n pink -O 20 -W -O 50 -e -R -v -d 'a,_b_d_I:M'

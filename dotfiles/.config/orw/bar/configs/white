@@ -1,2 +1,2 @@
-#~/.orw/scripts/bar/generate_bar.sh -x 450 -y 20 -h 25 -a 8 -f 2 -c bar_white bar_bw -M -n white -i -s 20 -l -p 10 -m of22,oe10,p4,P,of10,c:cptn -c -W o2,id -r -t b -e -v -d -P 30x24 s24,i,lro bar_white
-~/.orw/scripts/bar/generate_bar.sh -x 450 -y 20 -h 25 -a 8 -f 2 -c bar_white bar_bw -M -n white -i -s 20 -l -p 10 -m of22,oe10,p4,P,of10,c:cptn -c -W o2,ih -r -t b8 -H -e -v -d -P 30x24 s24,i,lro bar_white
+#/home/sola/scripts/bar/generate_bar.sh -x 450 -y 20 -h 25 -a 8 -f 2 -c bar_white bar_bw -M -n white -i -s 20 -l -p 10 -m of22,oe10,p4,P,of10,c:cptn -c -W o2,id -r -t b -e -v -d -P 30x24 s24,i,lro bar_white
+/home/sola/scripts/bar/generate_bar.sh -x 450 -y 20 -h 25 -a 8 -f 2 -c bar_white bar_bw -M -n white -i -s 20 -l -p 10 -m of22,oe10,p4,P,of10,c:cptn -c -W o2,ih -r -t b8 -H -e -v -d -P 30x24 s24,i,lro bar_white

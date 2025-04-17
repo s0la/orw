@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/run.sh -y 10,b -h 30 -w a -x c -a 7 -f u:3 -c auto_generated -n under_dock -L o:20
+/home/sola/scripts/bar/run.sh -y 10,b -h 30 -w a -x c -a 7 -f u:3 -c auto_generated -n under_dock -L o:20

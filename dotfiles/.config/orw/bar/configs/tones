@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w 1400 -y 35 -h 33 -a 7 -c  bar_zen -M -n tones -i -p 10 -s 7 -W o4,r,ih -p 4 -m c,P,s22,of5,i -c -r -s 0 -p 22 -e -E t novi_sad -s 7 -v -d 
+/home/sola/scripts/bar/generate_bar.sh -x c -w 1400 -y 35 -h 33 -a 7 -c  bar_zen -M -n tones -i -p 10 -s 7 -W o4,r,ih -p 4 -m c,P,s22,of5,i -c -r -s 0 -p 22 -e -E t novi_sad -s 7 -v -d 

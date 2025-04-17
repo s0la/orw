@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -y 59 -x  c r 0 -w 190 -h 69 -b -a 11 -p 5 -n n_mwc -c bar_n_mw -M -m of100,oe7,c:pctcn
+/home/sola/scripts/bar/generate_bar.sh -y 59 -x  c r 0 -w 190 -h 69 -b -a 11 -p 5 -n n_mwc -c bar_n_mw -M -m of100,oe7,c:pctcn

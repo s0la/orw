@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 32 -f 2 u -a 8 -c bar_full_launchers bar_full -M -n full_launchers -l -m oe5,c:cptn,s22,of5,i -l -c -W o3,ib -r -i -s 0 -p 15 -e -C -R -D -u -v -d
+/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -h 32 -f 2 u -a 8 -c bar_full_launchers bar_full -M -n full_launchers -l -m oe5,c:cptn,s22,of5,i -l -c -W o3,ib -r -i -s 0 -p 15 -e -C -R -D -u -v -d

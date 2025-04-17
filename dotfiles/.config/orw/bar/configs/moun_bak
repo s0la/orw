@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x o0 -y o30 -h 24 -a 8 -f 3 -c bar_moun -n moun -A c -c -W o3,ih -r -s 0 -p 15 -l -j d40 -m s22,oe40,i -H -e -v -j -d -O 2
+/home/sola/scripts/bar/generate_bar.sh -x o0 -y o30 -h 24 -a 8 -f 3 -c bar_moun -n moun -A c -c -W o3,ih -r -s 0 -p 15 -l -j d40 -m s22,oe40,i -H -e -v -j -d -O 2

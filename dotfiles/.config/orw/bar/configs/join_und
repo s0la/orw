@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -y 20 -b -h 27 -f 3 u -a 7 -n join_und -c join_und -M -l -j 30 -H -E t belgrade -e -N -u -v -j -d 
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -y 20 -b -h 27 -f 3 u -a 7 -n join_und -c join_und -M -l -j 30 -H -E t belgrade -e -N -u -v -j -d 

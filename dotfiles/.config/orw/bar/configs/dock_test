@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w a -h 33 -a 16 -b -f 0 -F 3 -M -c dock_test -i -n dock_test -O 3 -L s3,o11 -O 3
+/home/sola/scripts/bar/generate_bar.sh -x c -w a -h 33 -a 16 -b -f 0 -F 3 -M -c dock_test -i -n dock_test -O 3 -L s3,o11 -O 3

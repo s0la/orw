@@ -1,1 +1,2 @@
-~/.orw/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -f 2 u -a 7 -c bar_full -M -n full -l -A c,o5 -l -c -W ih -r -s 0 -p 15 -e -u -B -v -d 
+#/home/sola/scripts/bar/generate_bar.sh -x 0 -y 0 -h 22 -f 2 u -a 7 -c bar_full -M -n full -l -A c,o5 -l -c -W ih -r -s 0 -p 15 -e -u -B -v -d 
+/home/sola/.orw/scripts/bar/run.sh -y 10 -x 200 -h 21 -F 3 -S 1 -a 7 -s 3 -p 10 -c auto_generated -n full -m p:s25b,S:f,b:o5cptn,i:s22o5i,t:o10t -c -f u:2 -W i:n,o:8 -r -f -i only -j d:3 -N -D -R -t -B -X -j -i -T o:5,P:s20d -b -e -v -d 'b_d|I:M' -i only -P i,f:13,o:12,a:Lrlo,s:20x15

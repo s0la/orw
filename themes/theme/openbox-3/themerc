@@ -14,143 +14,143 @@ window.label.text.justify: center
 menu.border.width: 12
 menu.overlap.x: -17
 menu.overlap.y: 0
-menu.border.color: #97a7b2
+menu.border.color: #a5979f
 
 menu.title.bg: flat solid
-menu.title.bg.color: #97a7b2
-menu.title.text.color: #718390
+menu.title.bg.color: #a5979f
+menu.title.text.color: #86747e
 menu.title.text.justify: right
 
 menu.items.bg: flat solid
-menu.items.bg.color: #97a7b2
-menu.items.text.color: #718390
+menu.items.bg.color: #a5979f
+menu.items.text.color: #86747e
 menu.items.disabled.text.color: #575757
 
 menu.items.active.bg: flat
-menu.items.active.bg.color: #8899a5
-menu.items.active.text.color: #4c7783
+menu.items.active.bg.color: #a5979f
+menu.items.active.text.color: #6bdbd8
 
-menu.separator.color: #97a7b2
+menu.separator.color: #a5979f
 menu.separator.width: 1
 menu.separator.padding.width: 3
 menu.separator.padding.height: 3
 
-menu.bullet.image.color: #97a7b2
-menu.bullet.selected.image.color: #8899a5
+menu.bullet.image.color: #a5979f
+menu.bullet.selected.image.color: #a5979f
 
 # Window - Active
-window.active.border.color: #7a8b98
-window.active.client.color: #7a8b98
+window.active.border.color: #988891
+window.active.client.color: #988891
 
 window.active.grip.bg: flat solid
-window.active.grip.bg.color: #7a8b98
+window.active.grip.bg.color: #988891
 
 window.active.handle.bg: flat solid
-window.active.handle.bg.color: #7a8b98
+window.active.handle.bg.color: #988891
 
 window.active.button.disabled.bg: Parentrelative
-window.active.button.disabled.bg.color: #7a8b98
-window.active.button.disabled.image.color: #677886
+window.active.button.disabled.bg.color: #988891
+window.active.button.disabled.image.color: #988891
 
 window.active.button.hover.bg: Parentrelative
-window.active.button.hover.image.color: #677886
+window.active.button.hover.image.color: #907e88
 
 window.active.button.pressed.bg: Parentrelative
-window.active.button.pressed.image.color: #677886
+window.active.button.pressed.image.color: #86747e
 
 Window.active.button.toggled.bg: Parentrelative
-window.active.button.toggled.image.color: #677886
+window.active.button.toggled.image.color: #86747e
 
 window.active.button.unpressed.bg: Parentrelative
-window.active.button.unpressed.image.color: #677886
+window.active.button.unpressed.image.color: #86747e
 
 #specific buttons
-window.active.button.max.unpressed.image.color: #677886
-window.active.button.max.pressed.image.color: #677886
-window.active.button.max.hover.image.color: #677886
+window.active.button.max.unpressed.image.color: #86747e
+window.active.button.max.pressed.image.color: #86747e
+window.active.button.max.hover.image.color: #907e88
 
-window.active.button.close.unpressed.image.color: #677886
-window.active.button.close.pressed.image.color: #677886
-window.active.button.close.hover.image.color: #677886
+window.active.button.close.unpressed.image.color: #86747e
+window.active.button.close.pressed.image.color: #86747e
+window.active.button.close.hover.image.color: #907e88
 
-window.active.button.iconify.unpressed.image.color: #677886
-window.active.button.iconify.pressed.image.color: #677886
-window.active.button.iconify.hover.image.color: #677886
+window.active.button.iconify.unpressed.image.color: #86747e
+window.active.button.iconify.pressed.image.color: #86747e
+window.active.button.iconify.hover.image.color: #907e88
 
 #window.active.title.bg: Flat Gradient Vertical
-#window.active.title.bg.border.color: #7a8b98
-#window.active.title.separator.color: #7a8b98
-#window.active.title.bg.colorTo: #7a8b98
-#window.active.title.bg.color: #7a8b98
+#window.active.title.bg.border.color: #988891
+#window.active.title.separator.color: #988891
+#window.active.title.bg.colorTo: #988891
+#window.active.title.bg.color: #988891
 
 window.active.title.bg: Flat Solid
-window.active.title.bg.color: #7a8b98
-window.active.title.bg.border.color: #7a8b98
+window.active.title.bg.color: #988891
+window.active.title.bg.border.color: #988891
 
 window.active.label.text.font: shadow=n
 window.active.label.bg: Parentrelative
-window.active.label.text.color: #7a8b98
+window.active.label.text.color: #988891
 
 # Window - Inactive
-window.inactive.border.color: #8899a5
-window.inactive.client.color: #8899a5
+window.inactive.border.color: #a5979f
+window.inactive.client.color: #a5979f
 
 window.inactive.grip.bg: flat solid
-window.inactive.grip.bg.color: #8899a5
+window.inactive.grip.bg.color: #a5979f
 
 window.inactive.handle.bg: flat solid
-window.inactive.handle.bg.color: #8899a5
+window.inactive.handle.bg.color: #a5979f
 
 window.inactive.button.disabled.bg: Solid Flat
-window.inactive.button.disabled.bg.color: #8899a5
-window.inactive.button.disabled.image.color: #8899a5
+window.inactive.button.disabled.bg.color: #a5979f
+window.inactive.button.disabled.image.color: #a5979f
 
 window.inactive.button.hover.bg: Solid Flat
-window.inactive.button.hover.bg.color: #8899a5
-window.inactive.button.hover.image.color: #8899a5
+window.inactive.button.hover.bg.color: #a5979f
+window.inactive.button.hover.image.color: #86747e
 
 window.inactive.button.pressed.bg: Solid Flat
-window.inactive.button.pressed.bg.color: #8899a5
-window.inactive.button.pressed.image.color: #8899a5
+window.inactive.button.pressed.bg.color: #a5979f
+window.inactive.button.pressed.image.color: #a5979f
 
 window.inactive.button.toggled.bg: Solid Flat
-window.inactive.button.toggled.bg.color: #8899a5
-window.inactive.button.toggled.image.color: #8899a5
+window.inactive.button.toggled.bg.color: #a5979f
+window.inactive.button.toggled.image.color: #a5979f
 
 window.inactive.button.unpressed.bg: Solid Flat
-window.inactive.button.unpressed.bg.color: #8899a5
-window.inactive.button.unpressed.image.color: #8899a5
+window.inactive.button.unpressed.bg.color: #a5979f
+window.inactive.button.unpressed.image.color: #a5979f
 
 window.inactive.title.bg: Solid Flat
-window.inactive.title.separator.color: #8899a5
-window.inactive.title.bg.color: #8899a5
+window.inactive.title.separator.color: #a5979f
+window.inactive.title.bg.color: #a5979f
 
 window.inactive.label.text.font: shadow=n
 window.inactive.label.bg: Parentrelative
-window.inactive.label.text.color: #8899a5
+window.inactive.label.text.color: #a5979f
 
 # OSD
 osd.bg: Solid Flat
-osd.bg.color: #8899a5
-osd.bg.border.color: #8899a5
+osd.bg.color: #a5979f
+osd.bg.border.color: #a5979f
 osd.label.bg: parentrelative
-osd.label.text.color: #8899a5
+osd.label.text.color: #a5979f
 
-osd.hilight.bg: flat #4c7783
-osd.hilight.bg.color: #4c7783
+osd.hilight.bg: flat #5d4860
+osd.hilight.bg.color: #5d4860
 
-osd.unhilight.bg: flat #7a8b98
-osd.unhilight.bg.color: #7a8b98
+osd.unhilight.bg: flat #a5979f
+osd.unhilight.bg.color: #a5979f
 
 osd.button.unpressed.bg: flat border
-osd.button.unpressed.bg.color: #8899a5
-osd.button.unpressed.*.border.color: #8899a5
+osd.button.unpressed.bg.color: #a5979f
+osd.button.unpressed.*.border.color: #a5979f
 
 osd.button.pressed.bg: flat border
-osd.button.pressed.bg.color: #8899a5
-osd.button.pressed.*.border.color: #8899a5
+osd.button.pressed.bg.color: #a5979f
+osd.button.pressed.*.border.color: #a5979f
 
 osd.button.focused.bg: flat solid border
-osd.button.focused.bg.color: #8899a5
-osd.button.focused.*.border.color: #8899a5
-osd.button.focused.box.color: #8899a5
+osd.button.focused.bg.color: #a5979f
+osd.button.focused.*.border.color: #a5979f
+osd.button.focused.box.color: #a5979f

@@ -285,9 +285,9 @@
     context = ctrl+shift+period
 
 [urgency_normal]
-	background = "#9faeb9"
-	foreground = "#606366"
-	frame_color = "#7a8b98"
+	background = "#b9b0b5"
+	foreground = "#636066"
+	frame_color = "#988891"
 
 [urgency_low]
     # IMPORTANT: colors have to be defined in quotation marks.
@@ -352,6 +352,10 @@
 #        If the notification is already drawn, it won't get undrawn.
 # pushback: same as delay, but when switching into fullscreen, the notification will get
 #           withdrawn from screen again and will get delayed like a new notification
+
+#[fullscreen_show_normal]
+#    msg_urgency = normal
+#    fullscreen = show
 
 #[fullscreen_delay_everything]
 #    fullscreen = delay

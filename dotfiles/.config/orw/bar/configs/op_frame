@@ -1,1 +1,1 @@
-~/.orw/scripts/bar/generate_bar.sh -x c -w 500 -y 50 -h 25 -a 8 -c bar_op_frame,bar_moun -n op_frame -f 3,o -j d20 -R -j -e -f -r -f 3,u -j d20 -v -j -d
+/home/sola/scripts/bar/generate_bar.sh -x c -w 500 -y 50 -h 25 -a 8 -c bar_op_frame,bar_moun -n op_frame -f 3,o -j d20 -R -j -e -f -r -f 3,u -j d20 -v -j -d

@@ -1,2 +1,2 @@
-#.orw/scripts/bar/generate_bar.sh -x c -w a -b -n bottom_tasks -F 2 -f 2 o -M -l -t c -l
-.orw/scripts/bar/generate_bar.sh -x c -w a -b -n bottom_tasks -f 2 o -M -l -t c -l
+#/home/sola/bar/generate_bar.sh -x c -w a -b -n bottom_tasks -F 2 -f 2 o -M -l -t c -l
+/home/sola/bar/generate_bar.sh -x c -w a -b -n bottom_tasks -f 2 o -M -l -t c -l

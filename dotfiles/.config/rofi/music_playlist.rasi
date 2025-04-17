@@ -46,6 +46,10 @@ listview {
 	padding:                     @element-padding;
 }
 
+element-text selected.normal, element-text selected.alternate {
+	color: @ebg;
+}
+
 element-text selected.active, element-text selected.alternate.active {
 	color: @efg;
 }

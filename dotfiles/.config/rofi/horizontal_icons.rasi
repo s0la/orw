@@ -9,41 +9,46 @@
 
 	window-orientation:     horizontal;
 
-	list-spacing:           5px;
+	list-spacing:           3px;
 
 	input-margin:           0 0 5px;
 
 	entry-margin:           0 5px;
 
-	element-padding:        14px 16px;
+	element-padding:        16px 18px;
 	element-border:         0 0 0px;
 
 	window-location:        center;
 	window-padding:         3px 3px;
 	// window-margin:          0 7px;
 	window-radius:          0px;
-	window-border:          2px;
-	window-width:           345px;
+	window-border:          0px;
+	window-width:           349px;
 
-	y-offset:               85px;
+	y-offset:               115px;
 
-	element-radius:         3px;
+	element-radius:         10%;
+	element-radius:         5px;
 
+	// background-color: @tbg;
 	background-color: @ftbg;
-	sbg: #dddddd0d;
-	sbg: #00000014;
-	sbg: #ffffff04;
-	// abg: #08080844;
-	// abg: #03030330;
-	smbg: #0303031a;
+	// sbg: #dddddd0d;
+	// sbg: #00000014;
+	// sbg: #ffffff06;
+	// sbg: #00000014;
+	// // abg: #08080844;
+	// smbg: #0303031a;
 
-	sbg: transparent;
-	// afg: @abg;
-	// afg: #3a4545;
-	esbg: @sbg;
+	// sbg: transparent;
+	// // afg: @abg;
+	// // afg: #3a4545;
+	// esbg: @sbg;
 
 	// afg: @efg;
 	// efg: @fg;
+
+	abg: #03030330;
+	sbg: @esbg;
 }
 
 configuration {
@@ -67,8 +72,10 @@ mainbox {
 	padding:          @window-padding;
 	border-radius:    @element-radius;
 	children:         [ horibox ];
-    background-color:            transparent;
-    background-color:            @bg;
+    // background-color:            @bg;
+	// background-color: #608985;
+    background-color:            @tbg;
+    // background-color:            transparent;
 }
 
 #horibox {
@@ -80,7 +87,9 @@ mainbox {
 	spacing:     @list-spacing;
 	lines:       1;
 	columns: 4;
+    background-color:            #608985;
     background-color:            transparent;
+    background-color:            #00000000;
 }
 
 #inputbar {
@@ -99,34 +108,34 @@ mainbox {
 #element {
 	padding:        @element-padding;
 	border-radius:  @element-radius;
-	background-color: @bg;
+	border-radius:  @window-radius;
 }
 
 #element-text {
+	background-color: transparent;
 	horizontal-align: 0.50;
 }
 
 #element.normal.normal, element.alternate.normal {
+	background-color: #608985;
 	background-color: transparent;
 }
 
 #element-text normal.normal, element-text alternate.normal {
+	background-color: transparent;
 	color: @fg;
 }
 
-#element.selected.normal {
-	background-color: @esbg;
-}
-
-#element.selected.active {
-	background-color: @esbg;
+#element.selected.normal, element.selected.active {
+	background-color: @abg;
 }
 
 #element.normal.active, element.alternate.active {
-	background-color: @esbg;
+	background-color: @abg;
 }
 
 #element-text normal.active, element-text alternate.active {
+	background-color: transparent;
 	color: @afg;
 }
 
@@ -135,21 +144,26 @@ mainbox {
 /*
 #element.normal.normal, element.alternate.normal, element.normal.active, element.alternate.active {
 	background-color: @ebg;
+	background-color: transparent;
 }
 
 #element-text normal.normal, element-text alternate.normal {
+	background-color: transparent;
 	color: @efg;
 }
 
 #element-text normal.active, element-text alternate.active {
+	background-color: transparent;
 	color: @afg;
 }
 */
 
 #element.selected.normal, element.selected.active, element.selected.urgent {
-	background-color: @efg;
+	background-color: @sbg;
+	// background-color: @sbg;
 }
 
 #element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
-	color: @ebg;
+	color: @efg;
+	// color: @sfg;
 }
