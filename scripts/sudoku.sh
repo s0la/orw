@@ -126,6 +126,8 @@ do
 done
 
 read {,in}correct <<< $(sed -n 's/^\s*\(gd\|i\)c.*"\(.*\);.*/\2/p' ~/.bashrc | xargs)
+[[ $incorrect ]] || incorrect='255;0;0'
+[[ $correct ]] || correct='0;255;0'
 
 tput sc
 
