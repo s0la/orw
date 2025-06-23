@@ -9,6 +9,7 @@
 	sbg:                    #ffffff0a;
 	sbg: @esbg;
 	abg:                    #03030333;
+	sbg:                    #03030333;
 
 	element-padding:        5px 5px;
 

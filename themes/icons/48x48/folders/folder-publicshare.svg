@@ -93,14 +93,14 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#3fa2a1;fill-rule:evenodd;stroke-opacity:0;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#2b525e;fill-rule:evenodd;stroke-opacity:0;stroke:#2b525e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#6bdbd8;fill-rule:evenodd;stroke-opacity:1;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#548697;fill-rule:evenodd;stroke-opacity:1;stroke:#2b525e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <g
      id="g3847"
@@ -109,17 +109,17 @@
        id="g3926"
        transform="translate(-110.63437,51.517802)">
       <g
-         style="color:#3fa2a1;fill:#3fa2a1"
+         style="color:#2b525e;fill:#2b525e"
          transform="matrix(8.9938447,0,0,8.9938447,117.31224,-7286.5546)"
          id="g3265">
         <path
-           style="fill-opacity:1;fill:#3fa2a1"
+           style="fill-opacity:1;fill:#2b525e"
            inkscape:connector-curvature="0"
            d="m 291,178.03125 a 1.96875,1.96875 0 1 1 -3.9375,0 1.96875,1.96875 0 1 1 3.9375,0 z"
            transform="matrix(1.50794,0,0,1.50794,-391.84057,531.50893)"
            id="path3267" />
         <path
-           style="fill-opacity:1;fill:#3fa2a1"
+           style="fill-opacity:1;fill:#2b525e"
            inkscape:connector-curvature="0"
            d="m 47.0002,787 -4.00436,2.60053 2.33814,0.36339 -2.00985,5.80655 c 2.24125,-0.43289 4.38456,0.75975 4.89844,3.25272 l 4.64422,-4.60121 1.13341,1.69492 1,-5.1169 -4.81381,0.19547 1.27128,1.56728 -4.45747,2.74488 0.60769,-4.98335 2.21537,0.45428 z"
            id="path3269" />

@@ -1,19 +1,19 @@
-#bar
-bg #b818191d
-fc #576662
-bfc #608985
-bbg #b818191d
-bsbg #b818191d
+#bar 
+bg #191b20
+fc #191b20
+bfc #191b20
+bbg #131519
+bsbg #d70d0e12
 bsfg #5c5d5f
-pbg #b818191d
-pfg #999999
-sbg #b818191d
-sfg #5c5d5f
-pbefg #608985
+pbg #272b31
+pfg #7e737b
+sbg #272b31
+sfg #3f434a
+pbefg #74a9bc
 msfg #47484a
-mlfg #7a8d90
-pbfg #494643
-mpfg #999999
+mlfg #878f85
+pbfg #3f434a
+mpfg #636660
 mfc #608985
-Apbg #bf1f2024
+Apbg #df15161a
 Tafg #785A5A

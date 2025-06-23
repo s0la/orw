@@ -414,14 +414,14 @@ generate_ps1() {
 	local exit_code=$?
 
 	bg="default"
-	fg="88;84;90;"
-	sc="88;84;90;"
-	dc="88;84;90;"
-	ic="84;191;189;"
-	sec="106;84;109;"
-	gcc="106;84;109;"
-	gdc="255;51;114;"
-	vc="255;182;140;"
+	fg="63;67;74;"
+	sc="63;67;74;"
+	dc="63;67;74;"
+	ic="91;142;160;"
+	sec="104;101;142;"
+	gcc="104;101;142;"
+	gdc="162;112;166;"
+	vc="158;117;123;"
 
 	#clean='\[\033[0m\]'
 	#clean='\1\e[0m\2'
@@ -548,7 +548,7 @@ reset_readline_prompt_mode_strings () {
 }
 
 reset_readline_prompt_mode_strings() {
-	vc="255;182;140;"
+	vc="158;117;123;"
 	#bind "set vi-ins-mode-string \"$(generate_ps1) \1\e[38;2;${gcc%;}m\2 i:\1\e[0m\2\""
 	#bind "set vi-ins-mode-string \"$(generate_ps1 i) \1\e[1m\2 $(color_content 3 $vc) i:\1\e[0m\2\""
 	#bind "set vi-cmd-mode-string \"$(generate_ps1 c) \1\e[1;31m\2c?\1\e[0m\2\""

@@ -93,14 +93,14 @@
        height="44.56144"
        width="183.68008"
        id="rect2984"
-       style="fill-opacity:1;fill:#3fa2a1;fill-rule:evenodd;stroke-opacity:0;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill-opacity:1;fill:#2b525e;fill-rule:evenodd;stroke-opacity:0;stroke:#2b525e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
     <rect
        y="115.20763"
        x="8.6949148"
        height="326.0593"
        width="493.43646"
        id="rect2982"
-       style="fill:#6bdbd8;fill-rule:evenodd;stroke-opacity:1;stroke:#3fa2a1;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
+       style="fill:#548697;fill-rule:evenodd;stroke-opacity:1;stroke:#2b525e;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
   <g
      transform="translate(226.5678,445.61441)"
@@ -111,15 +111,15 @@
       <g
          id="g3006"
          transform="matrix(8.5,0,0,8.5837823,-84.722069,-224.01175)"
-         style="fill-opacity:1;fill:#3fa2a1">
+         style="fill-opacity:1;fill:#2b525e">
         <path
            d="M 11,2 C 6.3731,2 2.5674,5.508 2.0625,10 H 0 l 3,4 3,-4 H 4.0938 C 4.581,6.61 7.4752,4 11,4 c 3.866,0 7,3.134 7,7 0,3.866 -3.134,7 -7,7 -2.1871,0 -4.121,-1.0257 -5.4062,-2.5938 l -1.4375,1.4375 c 1.6431,1.933 4.1035,3.156 6.8437,3.156 4.9706,0 9,-4.0294 9,-9 0,-4.9706 -4.0294,-9 -9,-9 z"
-           style="fill-opacity:1;fill:#3fa2a1;fill-rule:evenodd"
+           style="fill-opacity:1;fill:#2b525e;fill-rule:evenodd"
            id="path3288"
            inkscape:connector-curvature="0" />
         <path
            d="m 10,6 v 5.5 l 3.6875,3.375 0.687,-0.687 L 10.9995,11 V 6 h -1 z"
-           style="color:#3fa2a1;fill:#3fa2a1"
+           style="color:#2b525e;fill:#2b525e"
            id="rect3740"
            inkscape:connector-curvature="0" />
       </g>

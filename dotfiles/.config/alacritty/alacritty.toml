@@ -35,28 +35,28 @@ y = 15
 draw_bold_text_with_bright_colors = false
 
 [colors.primary]
-background = "#1a171c"
-foreground = "#d8d8d8"
+background = "#131519"
+foreground = "#a59ca2"
 
 [colors.bright]
-black = "#625e64"
-blue = "#6fb6d0"
-cyan = "#72dddb"
-green = "#caf2e9"
-magenta = "#e292b9"
-red = "#ff5190"
-white = "#f6f6f6"
-yellow = "#ffd4aa"
+black = "#575a61"
+blue = "#b0afe0"
+cyan = "#79acbe"
+green = "#aeb68f"
+magenta = "#d3bce8"
+red = "#bc9399"
+white = "#c3bac0"
+yellow = "#ffed79"
 
 [colors.normal]
-black = "#444046"
-blue = "#5198b2"
-cyan = "#54bfbd"
-green = "#acd4cb"
-magenta = "#c4749b"
-red = "#ff3372"
-white = "#d8d8d8"
-yellow = "#ffb68c"
+black = "#393c43"
+blue = "#9291c2"
+cyan = "#5b8ea0"
+green = "#909871"
+magenta = "#b59eca"
+red = "#9e757b"
+white = "#a59ca2"
+yellow = "#fbcf5b"
 
 [[colors.indexed_colors]]
 color = "#B3836B"
@@ -971,25 +971,21 @@ color = "#4b464d"
 index = 243
 
 [[colors.indexed_colors]]
-color = "#201828"
+color = "#282116"
 index = 244
 
 [[colors.indexed_colors]]
-color = "#2a2034"
+color = "#342b1e"
 index = 245
 
 [[colors.indexed_colors]]
-color = "#4c3d5a"
+color = "#5a4d3a"
 index = 246
 
 [[colors.indexed_colors]]
-color = "#beb7b5"
+color = "#c37b87"
 index = 247
 
 [[colors.indexed_colors]]
-color = "#cac6c5"
+color = "#bb9dab"
 index = 248
-
-[[colors.indexed_colors]]
-color = "#f0f0f0"
-index = 249

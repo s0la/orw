@@ -1,1 +1,2 @@
-/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 22 -b -F 5 -f 2 u -a 8 -n ws_bot -M -l -c -W l
+#/home/sola/bar/generate_bar.sh -x 0 -y 0 -h 22 -b -F 5 -f u:2 -a 8 -n ws_bot -c -W l
+/home/sola/.orw/scripts/bar/run.sh -x 0 -y 0,b -h 60 -F 5 -c auto_generated -n ws_bot -c -W i:b,o:50,s:5

@@ -1,0 +1,155 @@
+/* list config */
+
+@import "theme.rasi"
+
+* {
+	// bg: @tbg;
+
+	font:                   "material 10";
+
+	window-orientation:     horizontal;
+
+	list-spacing:           5px;
+
+	input-margin:           0 0 5px;
+
+	entry-margin:           0 5px;
+
+	element-padding:        10px 12px;
+	element-border:         0 0 0px;
+
+	window-location:        center;
+	window-padding:         4px 5px;
+	// window-margin:          0 7px;
+	window-radius:          0px;
+	window-border:          2px;
+	window-width:           337px;
+
+	y-offset:               85px;
+
+	element-radius:         10%;
+	element-radius:         3px;
+
+	background-color: @ftbg;
+	sbg: #dddddd0d;
+	sbg: #00000014;
+	sbg: #ffffff04;
+	// abg: #08080844;
+	// abg: #03030330;
+	smbg: #0303031a;
+
+	sbg: transparent;
+	// afg: @abg;
+	// afg: #3a4545;
+	esbg: @sbg;
+
+	// afg: @efg;
+	// efg: @fg;
+}
+
+configuration {
+	kb-row-up:        "";
+	kb-row-down:      "";
+	kb-row-left:      "Ctrl+k";
+	kb-row-right:     "Ctrl+j";
+}
+
+mainbox {
+    spacing:                     0px;
+    background-color:            transparent;
+}
+
+#window {
+	width:            @window-width;
+	border:           @window-border;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @list-spacing;
+	padding:          @window-padding;
+	border-radius:    @element-radius;
+	children:         [ horibox ];
+    background-color:            transparent;
+    background-color:            @bg;
+}
+
+#horibox {
+	children:    [ listview ];
+}
+
+#listview {
+	flow:      @window-orientation;
+	spacing:     @list-spacing;
+	lines:       1;
+	columns: 4;
+    background-color:            transparent;
+}
+
+#inputbar {
+	margin:       @input-margin;
+	border-color: @bg;
+}
+
+#entry {
+	margin: @entry-margin;
+}
+
+#prompt {
+	color:        @fg;
+}
+
+#element {
+	padding:        @element-padding;
+	border-radius:  @element-radius;
+	background-color: @bg;
+}
+
+#element-text {
+	horizontal-align: 0.50;
+}
+
+#element.normal.normal, element.alternate.normal {
+	background-color: transparent;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color: @fg;
+}
+
+#element.selected.normal, element.selected.active {
+	border-radius:  10%;
+	background-color: @esbg;
+}
+
+#element.normal.active, element.alternate.active {
+	background-color: @esbg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
+}
+
+/* rounded settings */
+
+/*
+#element.normal.normal, element.alternate.normal, element.normal.active, element.alternate.active {
+	background-color: @ebg;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color: @efg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
+}
+*/
+
+#element.selected.normal, element.selected.active, element.selected.urgent {
+	background-color: @efg;
+	// background-color: @sbg;
+}
+
+#element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
+	color: @ebg;
+	// color: @sfg;
+}

@@ -1,0 +1,119 @@
+/* list config */
+
+@import "theme.rasi"
+
+* {
+	bg: @tbg;
+
+	font:                   "material 9";
+
+	window-orientation:     vertical;
+
+	list-spacing:                5px;
+
+	input-margin:           0 0 5px;
+
+	entry-margin:           0 5px;
+
+	element-padding:        17px 17px;
+	element-border:         0 0 0px;
+	element-radius:         5px;
+
+	x-offset:               6px;
+
+	window-location:        west;
+	window-padding:         3px 3px;
+	// window-margin:          0 7px;
+	window-radius:          0px;
+	window-border:          2px;
+	window-width:           59px;
+
+	background-color: @ftbg;
+	esbg: transparent;
+	afg: @abg;
+}
+
+configuration {
+	fixed-num-lines: false;
+}
+
+mainbox {
+    spacing:                     0px;
+    background-color:            transparent;
+}
+
+#window {
+	width:            @window-width;
+	border:           @window-border;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @window-padding;
+	border-radius:    @window-radius;
+	children:         [ horibox ];
+    background-color: transparent;
+    background-color: @bg;
+}
+
+#horibox {
+	orientation: @window-orientation;
+	children:    [ listview ];
+}
+
+#listview {
+	layout:      @window-orientation;
+	spacing:     @list-spacing;
+	lines:       0.260417;
+    background-color:            transparent;
+	/*background-color: argb:00000000;*/
+}
+
+#inputbar {
+	margin:       @input-margin;
+	border-color: @bg;
+}
+
+#entry {
+	margin: @entry-margin;
+}
+
+#prompt {
+	color:        @fg;
+}
+
+#element {
+	padding:        @element-padding;
+	border-radius:  @element-radius;
+	background-color: @ebg;
+	background-color: @bg;
+}
+
+#element.normal.normal, element.alternate.normal {
+	background-color: @bg;
+	background-color: @ebg;
+	background-color: transparent;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	color: @hpfg;
+	color: @fg;
+}
+
+#element.selected.normal {
+	text-color:       @efg;
+	background-color: @esbg;
+	border:           @element-border;
+}
+
+#element.selected.active {
+	text-color:       @efg;
+	background-color: @esbg;
+	border:           @element-border;
+}
+
+#element.normal.active, element.alternate.active {
+	background-color: @esbg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	color: @afg;
+}

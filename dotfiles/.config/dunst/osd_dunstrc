@@ -32,7 +32,7 @@
 
     #geometry = "200x192+860+720"
 
-	offset = 0x200
+	offset = 0x150
 	width = (190, 250)
 	height = 300
 	origin = bottom-center
@@ -47,7 +47,7 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.).
-	transparency = 30
+	transparency = 25
 
     # The height of the entire notification.  If the height is smaller
     # than the font height and padding combined, it will be raised
@@ -260,9 +260,9 @@
     per_monitor_dpi = false
 
 [urgency_normal]
-	background = "#b9b0b5"
-	foreground = "#636066"
-	frame_color = "#988891"
+	background = "#191b20"
+	foreground = "#72666e"
+	frame_color = "#272b31"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

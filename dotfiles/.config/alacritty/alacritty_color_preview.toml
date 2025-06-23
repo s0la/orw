@@ -32,5 +32,5 @@ y = 10
 draw_bold_text_with_bright_colors = true
 
 [colors.primary]
-background = "#bc82bf"
-foreground = "#7d5c7f"
+background = "#e3c384"
+foreground = "#a38c5e"

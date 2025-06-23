@@ -10,11 +10,11 @@ playlist_display_mode = "classic"
 message_delay_time = "1"
 playlist_disable_highlight_delay = 1
 
-now_playing_prefix = "$(242)"
+now_playing_prefix = "$(114)"
 now_playing_suffix = "$0"
-selected_item_prefix = "$(241)"
-current_item_prefix = "$(241)$r"
-browser_playlist_prefix = "$241»$241 "
+selected_item_prefix = "$(113)"
+current_item_prefix = "$(113)$r"
+browser_playlist_prefix = "$113»$113 "
 
 colors_enabled = "yes"
 cyclic_scrolling = "yes"
@@ -26,10 +26,10 @@ titles_visibility = "no"
 statusbar_visibility = "yes"
 display_remaining_time = "yes"
 
-volume_color = "241"
-statusbar_color = "241"
-header_window_color = "241"
-main_window_color = "241"
+volume_color = "113"
+statusbar_color = "113"
+header_window_color = "113"
+main_window_color = "113"
 empty_tag_color = "6"
 color2 = "4"
 
@@ -40,9 +40,9 @@ window_border_color = "white"
 active_window_border = "cyan"
 alternative_ui_separator_color = "black"
 
-progressbar_color = "241"
+progressbar_color = "113"
 progressbar_look = "━━━"
-progressbar_elapsed_color = "197"
+progressbar_elapsed_color = "122"
 
 #visualizer_data_source = "/tmp/mpd.fifo"
 #visualizer_data_source = "localhost:5555"
@@ -55,10 +55,10 @@ visualizer_look = "▋"
 #visualizer_look = "▋"
 #visualizer_look = "▋"
 visualizer_type = "ellipse" (spectrum/wave)
-#visualizer_color = 241,242,197,197
-#visualizer_color = 241,242,197,197
-#visualizer_color = 241,242,197,197
-#visualizer_color = 241,242,197,197
-visualizer_color = 241,242,197,197
+#visualizer_color = 246,247,249,249
+#visualizer_color = 246,247,249,249
+#visualizer_color = 246,247,249,249
+#visualizer_color = 246,247,249,249
+visualizer_color = 113,114,122,122
 
 execute_on_song_change = "~/.orw/scripts/song_notification.sh &> /dev/null"

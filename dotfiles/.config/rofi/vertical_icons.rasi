@@ -15,18 +15,18 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        17px 17px;
+	element-padding:        19px 19px;
 	element-border:         0 0 0px;
 	element-radius:         5px;
 
-	x-offset:               6px;
+	x-offset:               8px;
 
 	window-location:        west;
 	window-padding:         3px 3px;
 	// window-margin:          0 7px;
 	window-radius:          0px;
-	window-border:          2px;
-	window-width:           59px;
+	window-border:          0;
+	window-width:           56px;
 
 	background-color: @ftbg;
 	esbg: transparent;
@@ -50,8 +50,8 @@ mainbox {
 	padding:          @window-padding;
 	border-radius:    @window-radius;
 	children:         [ horibox ];
-    background-color: transparent;
     background-color: @bg;
+    background-color: transparent;
 }
 
 #horibox {
@@ -112,8 +112,33 @@ mainbox {
 
 #element.normal.active, element.alternate.active {
 	background-color: @esbg;
+	background-color: @abg;
 }
 
 #element-text normal.active, element-text alternate.active {
 	color: @afg;
+}
+
+
+
+
+
+#element-text {
+	background-color: transparent;
+	horizontal-align: 0.50;
+}
+
+#element.normal.normal, element.alternate.normal {
+	background-color: transparent;
+	background-color: @tbg;
+}
+
+#element.selected.normal, element.selected.active, element.selected.urgent {
+	background-color: @sbg;
+	// background-color: @sbg;
+}
+
+#element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
+	color: @efg;
+	// color: @sfg;
 }
