@@ -1,0 +1,2 @@
+/home/sola/.orw/scripts/bar/run.sh -y 10,b -w a -x c -h 15 -F 7 -S 1 -a 7 -s 3 -p 10 -c auto_generated -n buttons -f a:1 -f -m R:s,S:f,b:fS2P12ptn,p:s25o10bo5,i:d3s22o5i,t:o5t 
+#/home/sola/.orw/scripts/bar/run.sh -y 10,b -w a -x c -h 15 -F 7 -S 1 -a 7 -s 3 -p 0 -c auto_generated -n buttons -f a:1 -f -p 20 -m R:s,p:s25bo10,b:fS2P12ptn,i:d3s22o5i,t:o5t 

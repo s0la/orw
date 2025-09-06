@@ -1,13 +1,20 @@
-@define-color bg #151519;
-@define-color pbg #2c2c31;
-@define-color sbg #202025;
-@define-color bbg #3f6c7b;
-@define-color hlbg #1b1b20;
-@define-color tbg rgba(21,21,25,0.85);
+@define-color bg #17171c;
+@define-color bg #17171c;
+@define-color pbg #2d2d34;
+@define-color pbg #2d2d34;
+@define-color sbg #222228;
+@define-color nbg #3d434d;
+@define-color bbg #7390ad;
+@define-color bbg #7390ad;
+@define-color bfg #517683;
+@define-color hlbg #1d1d23;
+@define-color nbg #3d434d;
+@define-color nbg #2f333b;
+@define-color tbg rgba(23,23,28,0.85);
 @define-color fg #666064;
-@define-color pfg #46464a;
-@define-color sfg #3e3e43;
-@define-color afg #a87e99;
+@define-color pfg #46464d;
+@define-color sfg #404046;
+@define-color afg #7390ad;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
@@ -23,7 +30,8 @@ window.thunar treeview {
 
 window.thunar paned grid {
 	background: @hlbg;
-	padding: 0 0 0 20px;
+	/* padding: 0 0 0 20px; */
+	padding: 0 5px;
 }
 
 window.thunar grid *:selected,
@@ -52,7 +60,12 @@ window.thunar treeview.view header button {
 	background: none;
 	box-shadow: none;
 	border: none;
-	color: @pfg;
+	color: transparent;
+	min-height: 0px;
+	max-height: 0px;
+	padding: 0px;
+	margin: 0px;
+	border: none;
 }
 
 window.thunar treeview:selected {
@@ -64,12 +77,9 @@ window.thunar .frame {
 	border: 0
 }
 
-window.thunar toolbar button:hover {
-}
-
 window.thunar toolbar {
 	background: @bg;
-	padding: 3px;
+	padding: 0px;
 	color: @pfg;
 }
 
@@ -81,16 +91,24 @@ window.thunar toolbar * {
 }
 
 window.thunar toolbar button {
-	border-radius: 1px;
+	border-radius: 50%;
+	background: @bg;
 	box-shadow: none;
-	padding: 1px;
 	border: none;
+	color: @bfg;
+	min-height: 0;
+	padding: 1px;
+	margin: 3px;
 }
 
 window.thunar toolbar button:hover {
-	background: @hlbg;
+	background: @nbg;
 	transition: 0;
-	color: @pfg;
+	color: #000000;
+}
+
+.thunar toolbar image {
+	color: #ffaa00;
 }
 
 /*path-bar of thunar*/
@@ -112,21 +130,22 @@ window.thunar toolbar#location-toolbar > button {
 	background: @pbg;
 	outline: none;
 	border: none;
-	padding: 1px;
 	box-shadow: none;
 }
 
 .thunar toolbar entry {
 	border-radius: 1px;
-	background: @sbg;
 	padding-left: 0px;
 	box-shadow: none;
-	background: @hlbg;
+	background: @nbg;
 	/* background: #31363d; */
 	font-size: 9px;
 	color: @afg;
 	color: @pfg;
 	border: 0;
+	min-height: 0;
+	padding: 0px;
+	margin: 3px;
 }
 
 window.thunar separator {
@@ -180,3 +199,5 @@ window.thunar toolbar > toolitem > widget > widget.linked.path-bar > button.path
 	border: none;
 box-shadow: none; }
 */
+
+/* .thunar toolbar * {padding: 0;} */

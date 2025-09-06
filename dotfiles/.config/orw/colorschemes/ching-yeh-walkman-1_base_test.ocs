@@ -197,11 +197,11 @@ fg #46464a
 dfg #2c2c31
 efg #46464a
 cbg #202025
-cfg #3f6c7b
+cfg #726e71
 sfg #202025
 tfg #202025
-slbg #202025
-slfg #46464a
+slbg #3f6c7b
+slfg #2c2c31
 
 #ncmpcpp
 npp #46464a
@@ -231,6 +231,7 @@ pfg #202025
 pbg default
 ifg #46464a
 ibg #2c2c31
+
 #thunar
 bg #151519
 sbg #202025

@@ -411,17 +411,15 @@ fading_blocks() {
 }
 
 generate_ps1() {
-	local exit_code=$?
-
 	bg="default"
-	fg="63;67;74;"
-	sc="63;67;74;"
-	dc="63;67;74;"
-	ic="91;142;160;"
-	sec="104;101;142;"
-	gcc="104;101;142;"
-	gdc="162;112;166;"
-	vc="158;117;123;"
+	fg="70;70;77;"
+	sc="70;70;77;"
+	dc="70;70;77;"
+	ic="115;144;173;"
+	sec="160;120;127;"
+	gcc="160;120;127;"
+	gdc="171;110;173;"
+	vc="140;147;111;"
 
 	#clean='\[\033[0m\]'
 	#clean='\1\e[0m\2'
@@ -538,9 +536,9 @@ regenerate_ps1() {
 
 trap regenerate_ps1 USR1
 
-[[ $blank ]] &&
-	PROMPT_COMMAND='PS1=""' ||
-	PROMPT_COMMAND='PS1="$(generate_ps1)"'
+#[[ $blank ]] &&
+#	PROMPT_COMMAND='PS1=""' ||
+#	PROMPT_COMMAND='PS1="$(generate_ps1)"'
 
 reset_readline_prompt_mode_strings () {
 	bind "set vi-ins-mode-string \"$(generate_ps1) \1\e[1;32m\2i:\1\e[0m\2\""
@@ -560,6 +558,7 @@ reset_readline_prompt_mode_strings() {
 #PROMPT_COMMAND=reset_readline_prompt_mode_strings
 #PS1=' '
 
+exit_code=$?
 if [[ $blank ]]; then
 	PROMPT_COMMAND='PS1=""'
 else

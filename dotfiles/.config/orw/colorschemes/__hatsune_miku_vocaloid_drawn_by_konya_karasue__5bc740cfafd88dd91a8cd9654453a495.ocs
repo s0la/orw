@@ -1,0 +1,124 @@
+#ob
+t #517886
+tb #517886
+b #517886
+c #517886
+it #a0a0a5
+itb #a0a0a5
+ib #a0a0a5
+ic #a0a0a5
+cbt #67919f
+mabt #67919f
+mibt #67919f
+cbth #868690
+mabth #868690
+mibth #868690
+ibt #a0a0a5
+ibth #67919f
+mbg #a0a0a5
+mfg #7b7b86
+mtbg #a0a0a5
+mtfg #7b7b86
+msbg #a0a0a5
+msfg #bebed6
+mb #a0a0a5
+ms #a0a0a5
+bfg #a0a0a5
+bsfg #a0a0a5
+osd #a0a0a5
+osdh #517886
+osdu #a0a0a5
+s #517886
+
+#bar
+bg #b9b9b9
+fc #b9b9b9
+pfc #bebed6
+sfc #7c7c9d
+sfc #a0a0a5
+bfc #b9b9b9
+bbg #b0b0b2
+jbg #b0b0b2
+jpfg #5b5b69
+jsfg #868690
+pbg #a0a0a5
+pfg #5b5b69
+sbg #a0a0a5
+sfg #868690
+pbefg #bebed6
+pbfg #868690
+Wpbg #868690
+Ppbg #bebed6
+Ppfg #9c9cba
+Vpfg #bebed6
+Tbefg #99c2c8
+Vpbg #967d7b
+Vsbg #967d7b
+Vpfg 111;85;83; #6f5553
+Vsfg 111;85;83; #6f5553
+dpbg #a59e81
+dsbg #a59e81
+dpfg 126;119;90; #7e775a
+dsfg 126;119;90; #7e775a
+
+#qb
+bg #a0a0a5
+fg #868690
+sbg #b0b0b2
+sfg #7c7c9d
+mfg #7c7c9d
+sbbg #b0b0b2
+
+#term
+bg #121c18
+fg #d8d8d8
+br_black #51645d
+br_blue #b0afe0
+br_cyan #b7e0e6
+br_green #7aa3b1
+br_magenta #babad8
+br_red #bc9399
+br_white #f6f6f6
+br_yellow #c3bc9f
+black #33463f
+blue #9291c2
+cyan #99c2c8
+green #5c8593
+magenta #9c9cba
+red #9e757b
+white #d8d8d8
+yellow #a59e81
+
+#bash
+bg default
+fg #445a52
+sc #445a52
+dc #445a52
+ic #9c9cba
+sec #5c8593
+gcc #5c8593
+gdc #99c2c8
+vc #967d7b
+
+#vim
+bg none
+fg #d8d8d8
+sfg #99c2c8
+vfg #9c9cba
+cfg #967d7b
+ifg #a59e81
+ffg #5c8593
+nbg none
+nfg #24342e
+lbg #1b2823
+lfg #9c9cba
+syfg #967d7b
+cmfg #33463f
+slbg #1b2823
+slfg #33463f
+fzfhl #9c9cba
+bcbg #5c8593
+bdbg #9c9cba
+nmbg #a59e81
+imbg #99c2c8
+vmbg #967d7b
