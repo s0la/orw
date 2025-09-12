@@ -16,7 +16,7 @@ configuration {
 
 	y-offset:              40px;
 
-	window-width:          23%;
+	window-width:          25%;
 	window-margin:         0px 0;
 	window-padding:        2% 1%;
 	window-location:       center;
@@ -30,7 +30,7 @@ configuration {
 
 	entry-margin:          0 3px 0;
 
-	switcher-width:        3.3%;
+	switcher-width:        3.5%;
 
 	element-padding:       5px 5px;
 

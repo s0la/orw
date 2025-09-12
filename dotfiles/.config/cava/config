@@ -97,10 +97,11 @@ bar_spacing = 1
 # Or defined by hex code '#xxxxxx' (hex code must be within ''). User defined colors requires a
 # terminal that can change color definitions such as Gnome-terminal or rxvt.
 ; background = black
-foreground = '#bb9dab'
+foreground = '#7f9385'
 gradient = 1
-gradient_color_1 = '#5b8ea0'
-gradient_color_2 = '#a270a6'
+gradient_color_1 = '#7f9385'
+gradient_color_2 = '#9dccbd'
+gradient_color_2 = '#9dccbd'
 gradient_count = 2
 
 # Gradient mode, only hex defined colors are supported, background must also be defined in hex

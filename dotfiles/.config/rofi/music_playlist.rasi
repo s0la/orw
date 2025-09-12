@@ -9,7 +9,7 @@
 	lines:            6;
 
 	art-vertical-padding:        10px 10px 206px 10px;
-	art-horizontal-padding:      10px 205px 10px 10px;
+	art-horizontal-padding:      10px 188px 10px 10px;
 
 	list-vertical-margin:         10px 0 0;
 	list-horizontal-margin:       0 0 0 10px;

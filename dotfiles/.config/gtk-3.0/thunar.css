@@ -1,20 +1,14 @@
-@define-color bg #17171c;
-@define-color bg #17171c;
-@define-color pbg #2d2d34;
-@define-color pbg #2d2d34;
-@define-color sbg #222228;
-@define-color nbg #3d434d;
-@define-color bbg #7390ad;
-@define-color bbg #7390ad;
+@define-color bg #1c1c1c;
+@define-color pbg #343434;
+@define-color sbg #282828;
+@define-color bbg #7f9385;
 @define-color bfg #517683;
-@define-color hlbg #1d1d23;
-@define-color nbg #3d434d;
-@define-color nbg #2f333b;
-@define-color tbg rgba(23,23,28,0.85);
-@define-color fg #666064;
-@define-color pfg #46464d;
-@define-color sfg #404046;
-@define-color afg #7390ad;
+@define-color hlbg #232323;
+@define-color tbg rgba(28,28,28,0.85);
+@define-color fg #666060;
+@define-color pfg #4d4d4d;
+@define-color sfg #464646;
+@define-color afg #9dccbd;
 @define-color sbbg rgba(22,26,27,0);
 
 window.thunar {
@@ -137,7 +131,7 @@ window.thunar toolbar#location-toolbar > button {
 	border-radius: 1px;
 	padding-left: 0px;
 	box-shadow: none;
-	background: @nbg;
+	background: @bg;
 	/* background: #31363d; */
 	font-size: 9px;
 	color: @afg;

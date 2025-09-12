@@ -286,6 +286,7 @@ set_edge() {
 	[[ $edge_mode != flat ]] && case $edge_mode in
 		flat_fade)
 			[[ $reverse ]] && local position=end || local position=start
+			position=end
 			edge_symbol=$(fading_blocks $position);;
 		sharp) [[ $reverse ]] && edge_symbol='' || edge_symbol='';;
 		round) [[ $reverse ]] && edge_symbol='' || edge_symbol='';;
@@ -411,15 +412,17 @@ fading_blocks() {
 }
 
 generate_ps1() {
+	local exit_code=$?
+
 	bg="default"
-	fg="70;70;77;"
-	sc="70;70;77;"
-	dc="70;70;77;"
-	ic="115;144;173;"
-	sec="160;120;127;"
-	gcc="160;120;127;"
-	gdc="171;110;173;"
-	vc="140;147;111;"
+	fg="77;77;77;"
+	sc="77;77;77;"
+	dc="77;77;77;"
+	ic="157;204;189;"
+	sec="127;147;133;"
+	gcc="127;147;133;"
+	gdc="211;124;135;"
+	vc="211;124;135;"
 
 	#clean='\[\033[0m\]'
 	#clean='\1\e[0m\2'
@@ -442,7 +445,7 @@ generate_ps1() {
 		echo ''
 	else
 		mode=simple
-		edge_mode=flat
+		edge_mode=flat_fade
 
 		set_edge
 
@@ -473,7 +476,9 @@ generate_ps1() {
 
 				#prompt_start='\[\033[1m\]• ' prompt_end='• ›'
 				#prompt_start='\1\e[1m\2• ' prompt_end='• ›'
-				prompt_start="${format_start}1$format_end• " prompt_end='• ›'
+				prompt_start="${format_start}1$format_end┌─ " prompt_end='└─ •›'
+				#prompt_start="${format_start}1$format_end• " prompt_end='• ›'
+				#prompt_end=''
 
 				#prompt_start='┌─' prompt_end='└─›'
 			if [[ $prompt_start ]]; then
@@ -558,7 +563,6 @@ reset_readline_prompt_mode_strings() {
 #PROMPT_COMMAND=reset_readline_prompt_mode_strings
 #PS1=' '
 
-exit_code=$?
 if [[ $blank ]]; then
 	PROMPT_COMMAND='PS1=""'
 else
@@ -671,8 +675,8 @@ if [[ `tty` == '/dev/tty1' ]]; then
 fi
 
 export NVM_DIR="$HOME/.config/nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+if [ -s "$NVM_DIR/nvm.sh" ]; then \. "$NVM_DIR/nvm.sh"; fi # This loads nvm
+if [ -s "$NVM_DIR/bash_completion" ]; then \. "$NVM_DIR/bash_completion"; fi  # This loads nvm bash_completion
 #. "$HOME/.cargo/env"
 
 #[ -f ~/.fzf.bash ] && source ~/.fzf.bash

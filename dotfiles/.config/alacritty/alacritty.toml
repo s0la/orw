@@ -8,7 +8,6 @@ style = "Beam"
 size = 7
 
 [font.bold]
-#family = "Iosevka Orw"
 family = "SFMono"
 style = "Heavy"
 
@@ -29,34 +28,33 @@ lines = 25
 [window.padding]
 x = 20
 y = 15
-#tabspaces = 4
 
 [colors]
 draw_bold_text_with_bright_colors = false
 
 [colors.primary]
-background = "#17171c"
-foreground = "#a59ca2"
+background = "#1c1c1c"
+foreground = "#a59c9c"
 
 [colors.bright]
-black = "#5e5e64"
-blue = "#c7c5f4"
-cyan = "#91aecb"
-green = "#aab18d"
-magenta = "#d3bce8"
-red = "#be969d"
-white = "#c3bac0"
-yellow = "#f4dcef"
+black = "#646464"
+blue = "#66667c"
+cyan = "#bbeadb"
+green = "#9db1a3"
+magenta = "#f19aa5"
+red = "#ed8275"
+white = "#c3baba"
+yellow = "#fff0cd"
 
 [colors.normal]
-black = "#404046"
-blue = "#a9a7d6"
-cyan = "#7390ad"
-green = "#8c936f"
-magenta = "#b59eca"
-red = "#a0787f"
-white = "#a59ca2"
-yellow = "#d6bed1"
+black = "#464646"
+blue = "#48485e"
+cyan = "#9dccbd"
+green = "#7f9385"
+magenta = "#d37c87"
+red = "#cf6457"
+white = "#a59c9c"
+yellow = "#e8d2af"
 
 [[colors.indexed_colors]]
 color = "#B3836B"
@@ -67,953 +65,305 @@ color = "#8fa398"
 index = 17
 
 [[colors.indexed_colors]]
-color = "#7FA891"
+color = "#282828"
 index = 18
 
 [[colors.indexed_colors]]
-color = "#89b2a8"
+color = "#343434"
 index = 19
 
 [[colors.indexed_colors]]
-color = "#807773"
+color = "#5a5a5a"
 index = 20
 
 [[colors.indexed_colors]]
-color = "#5f6a73"
+color = "#5daca3"
 index = 21
 
 [[colors.indexed_colors]]
-color = "#756367"
+color = "#281b1b"
 index = 22
 
 [[colors.indexed_colors]]
-color = "#b2adae"
+color = "#342424"
 index = 23
 
 [[colors.indexed_colors]]
-color = "#1a1f20"
+color = "#5a4444"
 index = 24
 
 [[colors.indexed_colors]]
-color = "#252b2c"
+color = "#86a98c"
 index = 25
 
 [[colors.indexed_colors]]
-color = "#3d4445"
+color = "#282423"
 index = 26
 
 [[colors.indexed_colors]]
-color = "#c8a789"
+color = "#34302f"
 index = 27
 
 [[colors.indexed_colors]]
-color = "#191720"
+color = "#4d4a49"
 index = 28
 
 [[colors.indexed_colors]]
-color = "#23212c"
+color = "#5badaa"
 index = 29
 
 [[colors.indexed_colors]]
-color = "#3a3745"
+color = "#b5d6d1"
 index = 30
 
 [[colors.indexed_colors]]
-color = "#f2b599"
+color = "#1d2128"
 index = 31
 
 [[colors.indexed_colors]]
-color = "#201e1f"
+color = "#272c34"
 index = 32
 
 [[colors.indexed_colors]]
-color = "#2c2a2b"
+color = "#4a505a"
 index = 33
 
 [[colors.indexed_colors]]
-color = "#454545"
+color = "#9acfd3"
 index = 34
 
 [[colors.indexed_colors]]
-color = "#ad7361"
+color = "#3e434d"
 index = 35
 
 [[colors.indexed_colors]]
-color = "#0d201f"
+color = "#222828"
 index = 36
 
 [[colors.indexed_colors]]
-color = "#132c2b"
+color = "#2d3434"
 index = 37
 
 [[colors.indexed_colors]]
-color = "#214544"
+color = "#464d4d"
 index = 38
 
 [[colors.indexed_colors]]
-color = "#d45957"
+color = "#547f7c"
 index = 39
 
 [[colors.indexed_colors]]
-color = "#1c1c20"
+color = "#282622"
 index = 40
 
 [[colors.indexed_colors]]
-color = "#28282c"
+color = "#34322d"
 index = 41
 
 [[colors.indexed_colors]]
-color = "#424245"
+color = "#4d4b46"
 index = 42
 
 [[colors.indexed_colors]]
-color = "#e34e68"
+color = "#282223"
 index = 43
 
 [[colors.indexed_colors]]
-color = "#172020"
+color = "#342d2f"
 index = 44
 
 [[colors.indexed_colors]]
-color = "#212c2c"
+color = "#4d4648"
 index = 45
 
 [[colors.indexed_colors]]
-color = "#374545"
+color = "#6790c3"
 index = 46
 
 [[colors.indexed_colors]]
-color = "#a07479"
+color = "#0b1a28"
 index = 47
 
 [[colors.indexed_colors]]
-color = "#0c201f"
+color = "#0f2234"
 index = 48
 
 [[colors.indexed_colors]]
-color = "#112c2b"
+color = "#1a344d"
 index = 49
 
 [[colors.indexed_colors]]
-color = "#1e4544"
+color = "#97d8d8"
 index = 50
 
 [[colors.indexed_colors]]
-color = "#dd5d64"
+color = "#282020"
 index = 51
 
 [[colors.indexed_colors]]
-color = "#0f1720"
+color = "#342b2b"
 index = 52
 
 [[colors.indexed_colors]]
-color = "#15202c"
+color = "#4d4343"
 index = 53
 
 [[colors.indexed_colors]]
-color = "#243445"
+color = "#50c2a5"
 index = 54
 
 [[colors.indexed_colors]]
-color = "#ca7b7c"
+color = "#232826"
 index = 55
 
 [[colors.indexed_colors]]
-color = "#191f20"
+color = "#2f3432"
 index = 56
 
 [[colors.indexed_colors]]
-color = "#232b2c"
+color = "#494d4c"
 index = 57
 
 [[colors.indexed_colors]]
-color = "#3a4445"
+color = "#bac49b"
 index = 58
 
 [[colors.indexed_colors]]
-color = "#ac8e75"
+color = "#62954d"
 index = 59
 
 [[colors.indexed_colors]]
-color = "#191d20"
+color = "#688768"
 index = 60
 
 [[colors.indexed_colors]]
-color = "#23282c"
+color = "#281d1f"
 index = 61
 
 [[colors.indexed_colors]]
-color = "#3a4045"
+color = "#342729"
 index = 62
 
 [[colors.indexed_colors]]
-color = "#9e8f80"
+color = "#4d3e40"
 index = 63
 
 [[colors.indexed_colors]]
-color = "#1f2020"
+color = "#9d7f9c"
 index = 64
 
 [[colors.indexed_colors]]
-color = "#2c2c2c"
+color = "#28261b"
 index = 65
 
 [[colors.indexed_colors]]
-color = "#be5879"
+color = "#343224"
 index = 66
 
 [[colors.indexed_colors]]
-color = "#121a20"
+color = "#4d4b39"
 index = 67
 
 [[colors.indexed_colors]]
-color = "#1a242c"
+color = "#858f91"
 index = 68
 
 [[colors.indexed_colors]]
-color = "#2c3a45"
+color = "#1d0f28"
 index = 69
 
 [[colors.indexed_colors]]
-color = "#f05171"
+color = "#261434"
 index = 70
 
 [[colors.indexed_colors]]
-color = "#1e1e20"
+color = "#3a214d"
 index = 71
 
 [[colors.indexed_colors]]
-color = "#2a2a2c"
+color = "#ff7d9c"
 index = 72
 
 [[colors.indexed_colors]]
-color = "#d15cb4"
+color = "#10ffd9"
 index = 73
 
 [[colors.indexed_colors]]
-color = "#cdb3af"
+color = "#4d4a49"
 index = 74
 
 [[colors.indexed_colors]]
-color = "#1d1c20"
+color = "#aad893"
 index = 75
 
 [[colors.indexed_colors]]
-color = "#29282c"
+color = "#87876b"
 index = 76
 
 [[colors.indexed_colors]]
-color = "#434245"
+color = "#282322"
 index = 77
 
 [[colors.indexed_colors]]
-color = "#c8929c"
+color = "#342f2d"
 index = 78
 
 [[colors.indexed_colors]]
-color = "#ffb771"
+color = "#4d4846"
 index = 79
 
 [[colors.indexed_colors]]
-color = "#201d19"
+color = "#7f9182"
 index = 80
 
 [[colors.indexed_colors]]
-color = "#2c2823"
+color = "#4d4d4d"
 index = 81
 
 [[colors.indexed_colors]]
-color = "#45403a"
+color = "#7ea79f"
 index = 82
 
 [[colors.indexed_colors]]
-color = "#c7ae84"
+color = "#7a9186"
 index = 83
 
 [[colors.indexed_colors]]
-color = "#201e1e"
+color = "#93b0a9"
 index = 84
 
 [[colors.indexed_colors]]
-color = "#2c2a2a"
+color = "#507070"
 index = 85
 
 [[colors.indexed_colors]]
-color = "#d3bd72"
+color = "#89b7a1"
 index = 86
 
 [[colors.indexed_colors]]
-color = "#121520"
+color = "#8bb8af"
 index = 87
 
 [[colors.indexed_colors]]
-color = "#1a1e2c"
+color = "#828b85"
 index = 88
 
 [[colors.indexed_colors]]
-color = "#2c3245"
+color = "#90bba3"
 index = 89
 
 [[colors.indexed_colors]]
-color = "#feb672"
+color = "#7d8f84"
 index = 90
 
 [[colors.indexed_colors]]
-color = "#ffb871"
+color = "#93bba2"
 index = 91
 
 [[colors.indexed_colors]]
-color = "#1c2020"
+color = "#7f9385"
 index = 92
 
 [[colors.indexed_colors]]
-color = "#282c2c"
+color = "#94c0b0"
 index = 93
-
-[[colors.indexed_colors]]
-color = "#424545"
-index = 94
-
-[[colors.indexed_colors]]
-color = "#ff858f"
-index = 95
-
-[[colors.indexed_colors]]
-color = "#20201c"
-index = 96
-
-[[colors.indexed_colors]]
-color = "#2c2c28"
-index = 97
-
-[[colors.indexed_colors]]
-color = "#454542"
-index = 98
-
-[[colors.indexed_colors]]
-color = "#cf7277"
-index = 99
-
-[[colors.indexed_colors]]
-color = "#171720"
-index = 100
-
-[[colors.indexed_colors]]
-color = "#21212c"
-index = 101
-
-[[colors.indexed_colors]]
-color = "#373745"
-index = 102
-
-[[colors.indexed_colors]]
-color = "#201a11"
-index = 103
-
-[[colors.indexed_colors]]
-color = "#2c2418"
-index = 104
-
-[[colors.indexed_colors]]
-color = "#524532"
-index = 105
-
-[[colors.indexed_colors]]
-color = "#71a08f"
-index = 106
-
-[[colors.indexed_colors]]
-color = "#252525"
-index = 107
-
-[[colors.indexed_colors]]
-color = "#313131"
-index = 108
-
-[[colors.indexed_colors]]
-color = "#4a4a4a"
-index = 109
-
-[[colors.indexed_colors]]
-color = "#7e937a"
-index = 110
-
-[[colors.indexed_colors]]
-color = "#1d2025"
-index = 111
-
-[[colors.indexed_colors]]
-color = "#272b31"
-index = 112
-
-[[colors.indexed_colors]]
-color = "#3f434a"
-index = 113
-
-[[colors.indexed_colors]]
-color = "#5e8ba2"
-index = 114
-
-[[colors.indexed_colors]]
-color = "#5b87a0"
-index = 115
-
-[[colors.indexed_colors]]
-color = "#5e849d"
-index = 116
-
-[[colors.indexed_colors]]
-color = "#081825"
-index = 117
-
-[[colors.indexed_colors]]
-color = "#0b2031"
-index = 118
-
-[[colors.indexed_colors]]
-color = "#14324a"
-index = 119
-
-[[colors.indexed_colors]]
-color = "#64c2a8"
-index = 120
-
-[[colors.indexed_colors]]
-color = "#5b8ea0"
-index = 121
-
-[[colors.indexed_colors]]
-color = "#141e25"
-index = 122
-
-[[colors.indexed_colors]]
-color = "#1b2831"
-index = 123
-
-[[colors.indexed_colors]]
-color = "#2c3e4a"
-index = 124
-
-[[colors.indexed_colors]]
-color = "#5d8a91"
-index = 125
-
-[[colors.indexed_colors]]
-color = "#152522"
-index = 126
-
-[[colors.indexed_colors]]
-color = "#1d312d"
-index = 127
-
-[[colors.indexed_colors]]
-color = "#2f4a45"
-index = 128
-
-[[colors.indexed_colors]]
-color = "#698e87"
-index = 129
-
-[[colors.indexed_colors]]
-color = "#8fc4b2"
-index = 130
-
-[[colors.indexed_colors]]
-color = "#111f20"
-index = 131
-
-[[colors.indexed_colors]]
-color = "#182b2c"
-index = 132
-
-[[colors.indexed_colors]]
-color = "#325052"
-index = 133
-
-[[colors.indexed_colors]]
-color = "#a073a0"
-index = 134
-
-[[colors.indexed_colors]]
-color = "#112012"
-index = 135
-
-[[colors.indexed_colors]]
-color = "#182c1a"
-index = 136
-
-[[colors.indexed_colors]]
-color = "#325235"
-index = 137
-
-[[colors.indexed_colors]]
-color = "#b57170"
-index = 138
-
-[[colors.indexed_colors]]
-color = "#241d25"
-index = 139
-
-[[colors.indexed_colors]]
-color = "#302731"
-index = 140
-
-[[colors.indexed_colors]]
-color = "#493f4a"
-index = 141
-
-[[colors.indexed_colors]]
-color = "#b494cc"
-index = 142
-
-[[colors.indexed_colors]]
-color = "#5a8f9b"
-index = 143
-
-[[colors.indexed_colors]]
-color = "#629aa7"
-index = 144
-
-[[colors.indexed_colors]]
-color = "#6090a8"
-index = 145
-
-[[colors.indexed_colors]]
-color = "#112011"
-index = 146
-
-[[colors.indexed_colors]]
-color = "#182c18"
-index = 147
-
-[[colors.indexed_colors]]
-color = "#325232"
-index = 148
-
-[[colors.indexed_colors]]
-color = "#8b849b"
-index = 149
-
-[[colors.indexed_colors]]
-color = "#251825"
-index = 150
-
-[[colors.indexed_colors]]
-color = "#312131"
-index = 151
-
-[[colors.indexed_colors]]
-color = "#4a354a"
-index = 152
-
-[[colors.indexed_colors]]
-color = "#59bac4"
-index = 153
-
-[[colors.indexed_colors]]
-color = "#111c20"
-index = 154
-
-[[colors.indexed_colors]]
-color = "#18272c"
-index = 155
-
-[[colors.indexed_colors]]
-color = "#324a52"
-index = 156
-
-[[colors.indexed_colors]]
-color = "#b07267"
-index = 157
-
-[[colors.indexed_colors]]
-color = "#111120"
-index = 158
-
-[[colors.indexed_colors]]
-color = "#18182c"
-index = 159
-
-[[colors.indexed_colors]]
-color = "#323252"
-index = 160
-
-[[colors.indexed_colors]]
-color = "#a5a58c"
-index = 161
-
-[[colors.indexed_colors]]
-color = "#111720"
-index = 162
-
-[[colors.indexed_colors]]
-color = "#18202c"
-index = 163
-
-[[colors.indexed_colors]]
-color = "#323f52"
-index = 164
-
-[[colors.indexed_colors]]
-color = "#b3c2d1"
-index = 165
-
-[[colors.indexed_colors]]
-color = "#bfa49e"
-index = 166
-
-[[colors.indexed_colors]]
-color = "#201120"
-index = 167
-
-[[colors.indexed_colors]]
-color = "#2c182c"
-index = 168
-
-[[colors.indexed_colors]]
-color = "#523252"
-index = 169
-
-[[colors.indexed_colors]]
-color = "#c4999d"
-index = 170
-
-[[colors.indexed_colors]]
-color = "#1d1120"
-index = 171
-
-[[colors.indexed_colors]]
-color = "#28182c"
-index = 172
-
-[[colors.indexed_colors]]
-color = "#4b3252"
-index = 173
-
-[[colors.indexed_colors]]
-color = "#ed9a6d"
-index = 174
-
-[[colors.indexed_colors]]
-color = "#5af2ff"
-index = 175
-
-[[colors.indexed_colors]]
-color = "#150825"
-index = 176
-
-[[colors.indexed_colors]]
-color = "#1c0b31"
-index = 177
-
-[[colors.indexed_colors]]
-color = "#2c144a"
-index = 178
-
-[[colors.indexed_colors]]
-color = "#b0b296"
-index = 179
-
-[[colors.indexed_colors]]
-color = "#111525"
-index = 180
-
-[[colors.indexed_colors]]
-color = "#171d31"
-index = 181
-
-[[colors.indexed_colors]]
-color = "#262e4a"
-index = 182
-
-[[colors.indexed_colors]]
-color = "#3a7ba1"
-index = 183
-
-[[colors.indexed_colors]]
-color = "#49b1c1"
-index = 184
-
-[[colors.indexed_colors]]
-color = "#202325"
-index = 185
-
-[[colors.indexed_colors]]
-color = "#2c2f31"
-index = 186
-
-[[colors.indexed_colors]]
-color = "#46484a"
-index = 187
-
-[[colors.indexed_colors]]
-color = "#809ba0"
-index = 188
-
-[[colors.indexed_colors]]
-color = "#201211"
-index = 189
-
-[[colors.indexed_colors]]
-color = "#2c1a18"
-index = 190
-
-[[colors.indexed_colors]]
-color = "#523532"
-index = 191
-
-[[colors.indexed_colors]]
-color = "#72c1c3"
-index = 192
-
-[[colors.indexed_colors]]
-color = "#112020"
-index = 193
-
-[[colors.indexed_colors]]
-color = "#182c2c"
-index = 194
-
-[[colors.indexed_colors]]
-color = "#325252"
-index = 195
-
-[[colors.indexed_colors]]
-color = "#54bfbd"
-index = 196
-
-[[colors.indexed_colors]]
-color = "#1a1d25"
-index = 197
-
-[[colors.indexed_colors]]
-color = "#232731"
-index = 198
-
-[[colors.indexed_colors]]
-color = "#383d4a"
-index = 199
-
-[[colors.indexed_colors]]
-color = "#1b2125"
-index = 200
-
-[[colors.indexed_colors]]
-color = "#252c31"
-index = 201
-
-[[colors.indexed_colors]]
-color = "#3b444a"
-index = 202
-
-[[colors.indexed_colors]]
-color = "#6396ad"
-index = 203
-
-[[colors.indexed_colors]]
-color = "#6aa3b4"
-index = 204
-
-[[colors.indexed_colors]]
-color = "#201111"
-index = 205
-
-[[colors.indexed_colors]]
-color = "#2c1818"
-index = 206
-
-[[colors.indexed_colors]]
-color = "#523232"
-index = 207
-
-[[colors.indexed_colors]]
-color = "#a87e99"
-index = 208
-
-[[colors.indexed_colors]]
-color = "#3f6c7b"
-index = 209
-
-[[colors.indexed_colors]]
-color = "#575757"
-index = 210
-
-[[colors.indexed_colors]]
-color = "#232525"
-index = 211
-
-[[colors.indexed_colors]]
-color = "#303131"
-index = 212
-
-[[colors.indexed_colors]]
-color = "#081b25"
-index = 213
-
-[[colors.indexed_colors]]
-color = "#0b2431"
-index = 214
-
-[[colors.indexed_colors]]
-color = "#194257"
-index = 215
-
-[[colors.indexed_colors]]
-color = "#232125"
-index = 216
-
-[[colors.indexed_colors]]
-color = "#2f2d31"
-index = 217
-
-[[colors.indexed_colors]]
-color = "#565657"
-index = 218
-
-[[colors.indexed_colors]]
-color = "#293e45"
-index = 219
-
-[[colors.indexed_colors]]
-color = "#251e15"
-index = 220
-
-[[colors.indexed_colors]]
-color = "#31281d"
-index = 221
-
-[[colors.indexed_colors]]
-color = "#574939"
-index = 222
-
-[[colors.indexed_colors]]
-color = "#1d1725"
-index = 223
-
-[[colors.indexed_colors]]
-color = "#271f31"
-index = 224
-
-[[colors.indexed_colors]]
-color = "#483d57"
-index = 225
-
-[[colors.indexed_colors]]
-color = "#112125"
-index = 226
-
-[[colors.indexed_colors]]
-color = "#172c31"
-index = 227
-
-[[colors.indexed_colors]]
-color = "#2f4f57"
-index = 228
-
-[[colors.indexed_colors]]
-color = "#202025"
-index = 229
-
-[[colors.indexed_colors]]
-color = "#2c2c31"
-index = 230
-
-[[colors.indexed_colors]]
-color = "#46464a"
-index = 231
-
-[[colors.indexed_colors]]
-color = "#1a1e25"
-index = 232
-
-[[colors.indexed_colors]]
-color = "#232831"
-index = 233
-
-[[colors.indexed_colors]]
-color = "#383f4a"
-index = 234
-
-[[colors.indexed_colors]]
-color = "#444b57"
-index = 235
-
-[[colors.indexed_colors]]
-color = "#251818"
-index = 236
-
-[[colors.indexed_colors]]
-color = "#312121"
-index = 237
-
-[[colors.indexed_colors]]
-color = "#574040"
-index = 238
-
-[[colors.indexed_colors]]
-color = "#262228"
-index = 239
-
-[[colors.indexed_colors]]
-color = "#322d34"
-index = 240
-
-[[colors.indexed_colors]]
-color = "#58545a"
-index = 241
-
-[[colors.indexed_colors]]
-color = "#6a546d"
-index = 242
-
-[[colors.indexed_colors]]
-color = "#4b464d"
-index = 243
-
-[[colors.indexed_colors]]
-color = "#282116"
-index = 244
-
-[[colors.indexed_colors]]
-color = "#342b1e"
-index = 245
-
-[[colors.indexed_colors]]
-color = "#5a4d3a"
-index = 246
-
-[[colors.indexed_colors]]
-color = "#c37b87"
-index = 247
-
-[[colors.indexed_colors]]
-color = "#bb9dab"
-index = 248
-
-[[colors.indexed_colors]]
-color = "#726e71"
-index = 249
-
-[[colors.indexed_colors]]
-color = "#1b2823"
-index = 250
-
-[[colors.indexed_colors]]
-color = "#24342e"
-index = 251
-
-[[colors.indexed_colors]]
-color = "#282423"
-index = 252
-
-[[colors.indexed_colors]]
-color = "#34302f"
-index = 253
-
-[[colors.indexed_colors]]
-color = "#5a5857"
-index = 254
-
-[[colors.indexed_colors]]
-color = "#aad893"
-index = 255

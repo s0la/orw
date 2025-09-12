@@ -15,7 +15,7 @@
 
 	entry-margin:           0 5px;
 
-	element-padding:        16px 18px;
+	element-padding:        18px 20px;
 	element-border:         0 0 0px;
 
 	window-location:        center;
@@ -23,9 +23,9 @@
 	// window-margin:          0 7px;
 	window-radius:          0px;
 	window-border:          0px;
-	window-width:           349px;
+	window-width:           353px;
 
-	y-offset:               115px;
+	y-offset:               65px;
 
 	element-radius:         10%;
 	element-radius:         5px;
@@ -165,5 +165,5 @@ mainbox {
 
 #element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
 	color: @efg;
-	// color: @sfg;
+	color: @sfg;
 }

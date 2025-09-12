@@ -245,8 +245,8 @@ fileviewer *.bmp,*.jpg,*.jpeg,*.png,*.svg,*.xpm
         \ image_preview clear
 
 " opening text files
-command! open termite -e "nvim %c:p" &> /dev/null &
-nnoremap o :open<cr>
+command! Open termite -e "nvim %c:p" &> /dev/null &
+nnoremap o :Open<cr>
 
 " smart splitting
 command! smartsplit smart_split "%a %f" &

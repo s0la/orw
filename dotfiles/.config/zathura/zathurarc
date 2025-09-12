@@ -1,17 +1,17 @@
 set recolor   
 set recolor-lightcolor          ""
-set recolor-darkcolor           "#666064"
+set recolor-darkcolor           "#666060"
 set recolor-keephue
 
-set default-fg                  "#666064"
+set default-fg                  "#666060"
 set default-bg                  ""
 
 set completion-bg               ""
-set completion-fg               "#666064"
+set completion-fg               "#666060"
 set completion-highlight-bg     ""
 set completion-highlight-fg     ""
 set completion-group-bg         ""
-set completion-group-fg         "#666064"
+set completion-group-fg         "#666060"
 
 set statusbar-fg                ""
 set statusbar-bg                ""

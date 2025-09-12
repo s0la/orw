@@ -32,7 +32,7 @@
 
     #geometry = "200x192+860+720"
 
-	offset = 0x150
+	offset = 0x200
 	width = (190, 250)
 	height = 300
 	origin = bottom-center
@@ -260,9 +260,9 @@
     per_monitor_dpi = false
 
 [urgency_normal]
-	background = "#1d1d23"
-	foreground = "#666064"
-	frame_color = "#2d2d34"
+	background = "#232323"
+	foreground = "#666060"
+	frame_color = "#343434"
 
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable

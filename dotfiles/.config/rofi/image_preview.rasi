@@ -6,21 +6,33 @@
 	bg:                     @tbg;
 	// bg: #b9b1aeaa;
 	bg: @ivbg;
-	sbg:                    #ffffff0a;
-	sbg: @esbg;
-	abg:                    #03030333;
-	sbg:                    #03030333;
+	// sbg:                    #ffffff0a;
+	// sbg: @esbg;
+	// abg:                    #03030333;
+	// sbg:                    #03030333;
 
-	element-padding:        5px 5px;
+	element-padding:        15px 15px;
 
 	input-padding:          10px;
 
+	x-offset:               5px;
+
+	radius:                 5px;
+
 	window-orientation:     vertical;
 	window-location:        west;
-	window-padding:         3px 3px;
+	window-padding:         13px 13px;
 	window-width:           130px;
 
 	show-icons:             true;
+
+	// esbg:                   #ffffff0a;
+	// bg: #191b20aa;
+	sbg: #ffffff0a;
+}
+
+configuration {
+	fixed-num-lines: false;
 }
 
 #mainbox {
@@ -28,26 +40,30 @@
 }
 
 #window {
+	// border:           2px;
+	// border-color:     #608985;
 	border:           0;
+	border-radius:    @radius;
 	width:            @window-width;
 	anchor:           @window-location;
 	location:         @window-location;
 	padding:          @window-padding;
-	border-radius:    0;
-    background-color:            transparent;
+    background-color: transparent;
 	background-color: @bg;
+	children:         [ inputbar, listview ];
 }
 
 #listview {
 	flow:                 @window-orientation;
 	spacing:              0;
-	lines:                9;
+	lines:                @lines;
 	columns:              1;
     background-color:     transparent;
 }
 
 element-icon {
 	size:                 95px;
+	border-radius:        @radius;
     background-color:     transparent;
 }
 
@@ -59,7 +75,8 @@ element-icon {
 
 #element-text {
 	horizontal-align: 0.50;
-	font:             "SFMono 5";
+	font:             "SFMono 1";
+	color:            transparent;
 }
 
 #element.normal.normal, element.alternate.normal {
@@ -72,12 +89,17 @@ element-icon {
 	color:        @fg;
 	background-color: @bg;
 	background-color: transparent;
+	color: transparent;
 }
 
 #element.selected.normal, element.selected.active {
 	border:           0;
 	background-color: @dmsbg;
-	background-color: @esbg;
+	background-color: @sbg;
+	border-radius:    @radius;
+	border-color:     #608985;
+	border-color:     @sfg;
+	border:           0px;
 }
 
 #element.normal.active {
@@ -86,20 +108,21 @@ element-icon {
 
 #element-text selected.normal, element-text selected.active {
 	color:            @dpc;
-	color:        transparent;
 	color:        @fg;
+	color:        transparent;
 }
 
 element-text alternate.active, element-text normal.active {
-	color:        transparent;
 	color:        @fg;
+	color:        transparent;
 }
 
 #inputbar {
+	enabled:          false;
 	border:           0;
 	margin:           0;
 	padding:          @input-padding;
-	children:         [ textbox-prompt-colon, entry ];
+	// children:         [ textbox-prompt-colon, entry ];
 	orientation:      horizontal;
 	background-color: transparent;
 }

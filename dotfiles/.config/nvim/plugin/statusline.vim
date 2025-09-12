@@ -2,7 +2,8 @@ source ~/.config/nvim/colors/orw.vim
 
 exe 'hi None guibg=none guifg=none'
 exe 'hi StatusLight guibg=' . g:lbg . ' guifg=' . g:lfg
-exe 'hi Statusline guibg=' . g:slbg . ' guifg=' . g:slfg . ' cterm=none'
+exe 'hi StatuslineNone guibg=' . g:bg . ' guifg=' . g:slfg
+" exe 'hi StatusLine guibg=' . g:slbg . ' guifg=' . g:slfg
 
 let s:settings = ''
 let s:settings .= 'NMC.nmbg.;'
@@ -18,11 +19,9 @@ let s:settings .= 'b.b.;'
 "let s:settings .= 'cpi.m.● ;'
 let s:settings .= 'cpi.ffg.● ;'
 " let s:settings .= 'c.imbg. ●.f;'
-let s:settings .= 'e.f.;'
+let s:settings .= 'e.sn.;'
 "let s:settings .= 'ln.fr.  %l:%c  .fr;'
-"let s:settings .= 'ln.fr. line: %l, column: %c .fr;'
-"let s:settings .= 'ln.fr. ln: %l, cl: %c .fr;'
-"let s:settings .= 'ln.fr. %l |┃ %c .fr;'
+"let s:settings .= 'ln.fr. line: %l, column: %c .frf;'
 "let s:settings .= 'ln.vfg. %l│%c .fr;'
 "let s:settings .= 'ln.vfg. %l|%c .fr;'
 "let s:settings .= 'ln.vmbg. %l/%c .fr;'
@@ -74,7 +73,9 @@ func! MapModule(module)
 	elseif a:module ==? 'r'
 		let l:var = 'ReadOnly'
 	elseif a:module ==? 's'
-		let l:var = 'Statusline'
+		let l:var = 'StatusLine'
+	elseif a:module ==? 'sn'
+		let l:var = 'StatuslineNone'
 	elseif a:module ==? 'd'
 		let l:var = 'StatusDark'
 	elseif a:module ==? 'l'
@@ -167,7 +168,8 @@ func! GetHiGroup(module, hi_group)
 endf
 
 func! GetHiGroupColors(hi_group)
-	return split(execute('hi ' . a:hi_group), '\s\+')[2:]
+	" return split(execute('hi ' . a:hi_group), '\s\+')[2:]
+	return split(execute('hi ' . a:hi_group), '\s\+')[-2:]
 endf
 
 func! GetAdjacentModuleBg(module, direction)
@@ -188,6 +190,8 @@ func! GetAdjacentModuleBg(module, direction)
 		endif
 	endfor
 
+	" echo GetHiGroupColors('StatusLine')
+	" echo split(execute('hi ' . 'StatusLineNone'), '\s\+')[-2:]
 	return GetHiGroupColors(l:adjacent_hi_group)[1]
 endf
 
