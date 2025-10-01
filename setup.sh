@@ -27,7 +27,8 @@ get_app() {
 		done
 
 		if [[ $1 == install ]]; then
-			make && sudo make install
+			[[ "${@:4}" != *make* ]] && make
+			sudo make install
 			(( $? > 0 )) && return 1
 		fi
 
@@ -106,6 +107,7 @@ function deps() {
 		cmake
 		wget
 		bc
+		picom
 		alacritty
 		neovim
 		vifm
@@ -116,6 +118,7 @@ function deps() {
 		xdotool
 		wmctrl
 		dunst
+		cava
 		slop
 		feh
 		hsetroot
@@ -140,10 +143,10 @@ function deps() {
 			handle_failure "$failure_message"
 
 		#termite installation
-		install_termite
+		#install_termite
 
 		#dunst dependencies
-		sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
+		#sudo apt install -y libdbus-1-dev libx11-dev libxinerama-dev libxrandr-dev libxss-dev libglib2.0-dev libpango1.0-dev libgtk-3-dev libxdg-basedir-dev
 
 		#cleaning
 		echo 'cleaning..'
@@ -172,7 +175,7 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pipewire{,-pulse} xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip dunst mpfr openssl wpa_supplicant meson uthash \
+			gtk-engine-murrine unzip mpfr openssl wpa_supplicant meson uthash \
 			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
 			handle_failure "$failure_message"
 
@@ -202,7 +205,7 @@ function apps() {
 	python -m pip install pynput &> /dev/null
 
 	#picom with kawase blur
-	install_picom
+	#install_picom
 
 	#neovim python3 installation
 	sudo ln -s /usr/lib/libffi.so.6 /usr/lib/libffi.so.7
@@ -212,9 +215,9 @@ function apps() {
 	#sudo pip3 install ueberzug &> $output || handle_failure "Failed to install ueberzug."
 
 	#cava installation
-	get_app install karlstav cava ./autogen.sh ./configure || handle_failure "Failed to install cava."
+	#get_app install karlstav cava ./autogen.sh ./configure || handle_failure "Failed to install cava."
 
-	#lemonbar installation
+	lemonbar installation
 	get_app install krypt-n bar ~/.orw/scripts/add_borders_to_bar_source.sh || handle_failure "Failed to install bar."
 
 	#dunst installation
@@ -238,6 +241,8 @@ function apps() {
 	#cd ~/Downloads/sfeed
 	#make && sudo make install
 	#cd && rm -rf ~/Downloads/sfeed
+
+	get_app install ttzhou setroot "make xinerama=1"
 }
 
 function backup() {
@@ -296,7 +301,8 @@ function orw() {
 	nvim -c UpdateRemotePlugins +qall! &> /dev/null
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)
-	sed -i "s/$ex_user/$(whoami)/" $orw/{scripts/{bar/generate_bar,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
+	sed -i "s/$ex_user/$(whoami)/" $orw/{scripts/{bar/run,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
+	sed -i "s/^\\(#\?\)(.[^\/]*\)\{2\}/\1${HOME//\//\\/}/" $orw/dotfiles/.config/orw/bar/configs/*
 
 	[[ ! -f ~/.config/orw/config ]] && $orw/scripts/generate_orw_config.sh
 
