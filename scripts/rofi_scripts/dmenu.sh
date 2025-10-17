@@ -1,24 +1,5 @@
 #!/bin/bash
 
-wait_to_proceed() {
-	while true; do
-		sleep 0.1
-	done &
-	local while_pid=$!
-	wait $while_pid
-	kill $while_pid
-}
-
-toggle() {
-	local signal force=$1
-	if [[ $style =~ ^((vertical_)?icons|dmenu)$ || $force ]] &&
-		((tiling_workspace)); then
-			[[ $script == *image_preview* ]] &&
-				signal=image_preview || signal=rofi_toggle
-			~/.orw/scripts/signal_windows_event.sh $signal
-	fi
-}
-
 get_rofi_width() {
 	local width font_size=9 force=$1
 
@@ -70,6 +51,25 @@ get_rofi_width() {
 		#theme_str+="$extra"
 		#~/.orw/scripts/notify.sh "ic: $item_count, $style, $theme_str"
 		return 0
+}
+
+wait_to_proceed() {
+	while true; do
+		sleep 0.1
+	done &
+	local while_pid=$!
+	wait $while_pid
+	kill $while_pid
+}
+
+toggle() {
+	local signal force=$1
+	if [[ $style =~ ^((vertical_)?icons|dmenu)$ || $force ]] &&
+		((tiling_workspace)); then
+			[[ $script == *image_preview* ]] &&
+				signal=image_preview || signal=rofi_toggle
+			~/.orw/scripts/signal_windows_event.sh $signal
+	fi
 }
 
 set_theme_str() {
