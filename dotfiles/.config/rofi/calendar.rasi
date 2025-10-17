@@ -1,0 +1,176 @@
+/* list config */
+
+@import "theme.rasi"
+
+* {
+	// bg: @tbg;
+
+	font:                   "SFMono 8";
+
+	window-orientation:     horizontal;
+
+	list-spacing:           0px;
+
+	input-margin:           0 0 15px;
+
+	entry-margin:           0 15px;
+
+	element-padding:        15px 15px;
+	element-border:         0 0 0px;
+
+	window-location:        center;
+	window-padding:         3px 3px;
+	// window-margin:          0 7px;
+	window-radius:          0px;
+	window-border:          0px;
+	window-width:           350px;
+
+	y-offset:               65px;
+
+	element-radius:         10%;
+	element-radius:         5px;
+
+	// background-color: @tbg;
+	background-color: @ftbg;
+	// sbg: #dddddd0d;
+	// sbg: #00000014;
+	// sbg: #ffffff06;
+	// sbg: #00000014;
+	// // abg: #08080844;
+	// smbg: #0303031a;
+
+	// sbg: transparent;
+	// // afg: @abg;
+	// // afg: #3a4545;
+	// esbg: @sbg;
+
+	// afg: @efg;
+	// efg: @fg;
+
+	abg: #03030330;
+	sbg: @esbg;
+}
+
+configuration {
+	kb-row-up:        "";
+	kb-row-down:      "";
+	kb-row-left:      "Ctrl+k";
+	kb-row-right:     "Ctrl+j";
+}
+
+mainbox {
+    spacing:                     0px;
+    background-color:            transparent;
+}
+
+#window {
+	width:            @window-width;
+	border:           @window-border;
+	anchor:           @window-location;
+	location:         @window-location;
+	padding:          @list-spacing;
+	padding:          @window-padding;
+	border-radius:    @element-radius;
+	children:         [ vertbox ];
+    // background-color:            @bg;
+	// background-color: #608985;
+    background-color:            @tbg;
+    // background-color:            transparent;
+}
+
+#vertbox {
+	orientation: vertical;
+	children:    [ inputbar, listview ];
+}
+
+#listview {
+	flow:                        @window-orientation;
+	spacing:                     @list-spacing;
+	lines:                       5;
+	columns:                     7;
+    background-color:            #608985;
+    background-color:            transparent;
+    background-color:            #00000000;
+}
+
+#prompt {
+    expand:       false;
+	padding:      10px 0;
+	border-radius: @element-radius;
+	background-color: #cccccc;
+	color:        @fg;
+}
+
+#entry {
+	margin: @entry-margin;
+}
+
+#inputbar {
+	enabled:      true;
+	//margin:       @input-margin;
+	border-color: @bg;
+	children:    [ prompt, entry ];
+}
+
+#element {
+	padding:        @element-padding;
+	border-radius:  @element-radius;
+	border-radius:  @window-radius;
+}
+
+#element-text {
+	background-color: transparent;
+	horizontal-align: 0.50;
+}
+
+#element.normal.normal, element.alternate.normal {
+	background-color: #608985;
+	background-color: transparent;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	background-color: transparent;
+	color: @fg;
+}
+
+#element.selected.normal, element.selected.active {
+	background-color: @abg;
+}
+
+#element.normal.active, element.alternate.active {
+	background-color: @abg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	background-color: transparent;
+	color: @afg;
+}
+
+/* rounded settings */
+
+/*
+#element.normal.normal, element.alternate.normal, element.normal.active, element.alternate.active {
+	background-color: @ebg;
+	background-color: transparent;
+}
+
+#element-text normal.normal, element-text alternate.normal {
+	background-color: transparent;
+	color: @efg;
+}
+
+#element-text normal.active, element-text alternate.active {
+	background-color: transparent;
+	color: @afg;
+}
+*/
+
+#element.selected.normal, element.selected.active, element.selected.urgent {
+	background-color: @sbg;
+	// background-color: @sbg;
+}
+
+#element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
+	color: @efg;
+	color: @sfg;
+}
