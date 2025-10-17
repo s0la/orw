@@ -34,10 +34,19 @@ read resolution position <<< $(awk '\
 shift $((arg_count * 2))
 [[ $@ ]] && filename="$@" || filename=$(date +"%Y-%m-%d-%H:%M")
 
-~/.orw/scripts/notify.sh -s osd -i   'recording started' &> /dev/null &
+~/.orw/scripts/notify.sh -s osd -i   -t 1 'recording started' &> /dev/null &
 
+#pw-jack ffmpeg -y -f x11grab -r ${fps-60} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
 ffmpeg -y -f x11grab -r ${fps-60} -s $resolution -draw_mouse 1 -i $DISPLAY$position \
 	-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	#-f pulse -i default \
+	#-c:a aac -b:a 192k -ac 2 \
+	#-ar 48000 -af "highpass=f=80,lowpass=f=8000,volume=0.5" \
+	#-c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+	##-f pulse -i default -af "afftdn=nf=-25" -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+
+	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
+
 	#-f pulse -async 1 -i alsa_output.usb-C-Media_Electronics_Inc._USB_PnP_Sound_Device-00.analog-stereo.monitor -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
 	#-f pulse -async 1 -i default -c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
 	#-c:v libx264 -preset ultrafast -vsync 1 $full_path/$filename.mp4
