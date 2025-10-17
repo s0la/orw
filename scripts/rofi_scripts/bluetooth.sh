@@ -35,11 +35,15 @@ rfkill unblock bluetooth
 
 #read {scan,action}_icon <<< $(sed -n 's/^.*\(scan\|action\)=//p' $icons | xargs)
 read {scan,action}_icon <<< $(sed -n 's/^bluetooth_.*=//p' $icons | xargs)
-for sec in {1..4}; do
-	((sec % 2)) && fg='sbg' || fg='pbfg'
-	~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C $fg -i "$scan_icon" 'scanning..'
-	sleep 0.8
+for i in {0..5}; do
+	~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C sbg -i "$scan_icon" -w $i 'scanning'
+	sleep 0.6
 done &
+#for sec in {1..4}; do
+#	((sec % 2)) && fg='sbg' || fg='pbfg'
+#	~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C $fg -i "$scan_icon" 'scanning..'
+#	sleep 0.8
+#done &
 
 style=list
 bluetoothctl --timeout 4 scan on &> /dev/null
@@ -118,17 +122,23 @@ while
 			if [[ ${submenu[sub_index],} == transfer ]]; then
 				if [[ $active != *$index* ]]; then
 					pidof obexd &> /dev/null ||
-						/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+						/usr/lib/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+						#/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
 					#obexctl connect "$selected_device"
 					~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -i "$action_icon" "FILE TRANSFER: ON" &> /dev/null
 					new_active="$active,$index"
 				fi
 			else
 				#~/.orw/scripts/notify.sh -s osd -t 5 -i "$action_icon" "${action^^}ING.." &> /dev/null
-				for sec in {1..6}; do
-					((sec % 2)) && fg='sbg' || fg='pbfg'
-					~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C $fg -i "$action_icon" "${action^^}ING.." &> /dev/null
-					sleep 1
+				#for sec in {1..6}; do
+				#	((sec % 2)) && fg='sbg' || fg='pbfg'
+				#	~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C $fg -i "$action_icon" "${action^^}ING.." &> /dev/null
+				#	sleep 1
+				#done &
+
+				for i in {0..5}; do
+					~/.orw/scripts/notify.sh -s osd -t 1100m -r 11 -C sbg -i "$scan_icon" -w $i "${action^^}ING" &> /dev/null
+					sleep 0.8
 				done &
 
 					#bluetoothctl --timeout=22 scan on &
@@ -140,11 +150,14 @@ while
 					#exit
 
 
+				echo "ERE: $action: $selected_device"
 
 				/usr/bin/expect <<- EOF &> /dev/null
-					set timeout 3
+					set timeout 5
 					spawn bluetoothctl
 					send "scan on\n"
+					sleep 5
+					send "scan off\n"
 
 					send "$action $selected_device\n"
 
