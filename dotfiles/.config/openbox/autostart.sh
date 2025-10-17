@@ -17,6 +17,6 @@ mpd &
 path=~/.orw/scripts
 $path/wallctl.sh -r &
 $path/barctl.sh
-$path/spy_windows.sh &>> ~/w.log &
+$path/spy_windows.sh & #>> ~/w.log &
 
 xrdb -load ~/.config/X11/xresources
