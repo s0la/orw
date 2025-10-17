@@ -21,11 +21,23 @@ make_bluetooth_content() {
 }
 
 get_bluetooth_devices() {
-	local device=$1
-	bluetoothctl info $device | awk '
-		$1 == "Device" { d = $2 }
-		$1 == "Icon:" { sub(".*-", "", $NF); ad[d] = $NF }
-		END { for (d in ad) printf "[%s]=%s ", d, ad[d] }'
+	local device_id=$1 wait_for_device=$2
+
+	until
+		device=$(bluetoothctl info $device_id | awk '
+			$1 == "Device" { d = $2 }
+			#$1 == "Icon:" { sub(".*-", "", $NF); ad[d] = $NF }
+			$1 == "Icon:" { sub(".*-", "", $NF); i = $NF }
+			$1 == "Battery" { gsub("[()]", "", $NF); ad[d] = i "_" $NF }
+			END { for (d in ad) printf "[%s]=%s ", d, ad[d] }')
+
+		#~/.orw/scripts/notify.sh -t 15 "${BASH_LINENO[*]}   $has     WAITING: $wait_for_device - $device"
+		[[ ($wait_for_device && $device) || -z $wait_for_device ]]
+	do
+		sleep 1
+	done
+
+	echo "$device"
 }
 
 get_bluetooth() {
@@ -42,8 +54,13 @@ get_bluetooth() {
 	#~/.orw/scripts/notify.sh -t 11 "$bluetooth $icon"
 
 	if ((show_full)); then
+		#~/.orw/scripts/notify.sh "SHOWING: ${bluetooth_devices[*]}"
 		for bluetooth_device in ${!bluetooth_devices[*]}; do
-			icon+="$bluetooth_distance\${cjpfg:-\${jpfg}}$(get_icon ${bluetooth_devices[$bluetooth_device]})"
+			IFS='_' read device battery <<< ${bluetooth_devices[$bluetooth_device]}
+			#[[ $battery ]] && battery="$inner\${cjsfg:-\${jsfg}}$battery"
+			[[ $battery ]] && battery="$inner$battery"
+			#~/.orw/scripts/notify.sh "DEV: $device: $battery"
+			icon+="$bluetooth_distance\${cjpfg:-\${jpfg}}$(get_icon $device)$battery"
 		done
 	fi
 }
@@ -61,7 +78,11 @@ set_bluetooth_actions() {
 }
 
 check_bluetooth() {
+	local running=$(sudo systemctl status bluetooth |
+		awk -F '"' '/Status/ { print $(NF - 1) == "Running" }')
+	((running)) || sudo systemctl restart bluetooth &> /dev/null
 	rfkill unblock bluetooth
+	#~/.orw/scripts/notify.sh -t 5 "BT: $running"
 
 	declare -A bluetooth_devices
 	eval bluetooth_devices=( $(get_bluetooth_devices) )
@@ -72,7 +93,7 @@ check_bluetooth() {
 	print_module bluetooth
 
 	while read device state; do
-		#~/.orw/scripts/notify.sh -t 5 "BT: $device: $state"
+		#~/.orw/scripts/notify.sh -t 5 "BT: $device ${state}ed"
 		case $device in
 			bluetooth)
 				bluetooth=$state
@@ -82,7 +103,9 @@ check_bluetooth() {
 			*)
 				[[ ${state,} == disconnect ]] &&
 					unset bluetooth_devices[$device] ||
-					eval bluetooth_devices+=( $(get_bluetooth_devices $device) )
+					eval bluetooth_devices+=( $(get_bluetooth_devices $device wait) )
+
+				#~/.orw/scripts/notify.sh -t 5 "$(get_bluetooth_devices $device)"
 				#eval "bluetooth_devices$(get_bluetooth_devices $device)"
 				;;
 				#if [[ $state == Connect ]]; then
