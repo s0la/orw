@@ -28,42 +28,49 @@ margin_options=(
 	margin_decrease
 )
 
-#style=list
-orw_conf=~/.config/orw/config
-read direction full <<< $(awk '
-	$1 == "reverse" { r = ($NF == "true") }
-	$1 == "direction" {
-		if ($NF == "h") f = (r) ? "left" : "right"
-		else f = (r) ? "top" : "bottom"
-		print $NF ".*_direction", f "_side"
-	}' ~/.config/orw/config)
+get_full() {
+	read direction full <<< $(awk '
+		$1 == "reverse" { r = ($NF == "true") }
+		$1 == "direction" {
+			if ($NF == "h") f = (r) ? "left" : "right"
+			else f = (r) ? "top" : "bottom"
+			print $NF ".*_direction", f "_side"
+		}' ~/.config/orw/config)
+}
 
-for option in ${options[*]} ${direction_options[*]} ${margin_options[*]} ${offset_options[*]}; do
-	if [[ $style != *icons* ]]; then
-		[[ $option =~ ^(direction|margin|offset)_.* ]] &&
-			label=${option#*_} || label=$option
-	else
-		[[ $option == full ]] && label=$full
-		[[ $option == direction ]] && label=$direction
-		[[ $option == direction_* ]] && label="${option#*_}_direction"
+get_icons() {
+	for option in ${options[*]} ${direction_options[*]} ${margin_options[*]} ${offset_options[*]}; do
+		if [[ $style != *icons* ]]; then
+			[[ $option =~ ^(direction|margin|offset)_.* ]] &&
+				label=${option#*_} || label=$option
+		else
+			[[ $option == full ]] && label=$full
+			[[ $option == direction ]] && label=$direction
+			[[ $option == direction_* ]] && label="${option#*_}_direction"
 
-		if [[ $option == offset_* ]]; then
-			if [[ $option == *horizontal* ]]; then
-				[[ $option == *increase* ]] &&
-					label=right || label=left
-			else
-				[[ $option == *increase* ]] &&
-					label=down || label=up
+			if [[ $option == offset_* ]]; then
+				if [[ $option == *horizontal* ]]; then
+					[[ $option == *increase* ]] &&
+						label=right || label=left
+				else
+					[[ $option == *increase* ]] &&
+						label=down || label=up
+				fi
+				label="arrow_${label}_circle_empty"
 			fi
-			label="arrow_${label}_circle_empty"
+
+			label=$(sed -n "s/^${label:-$option}=//p" $icons)
 		fi
 
-		label=$(sed -n "s/^${label:-$option}=//p" $icons)
-	fi
+		eval $option=$label
+		unset label
+	done
+}
 
-	eval $option=$label
-	unset label
-done
+#style=list
+orw_conf=~/.config/orw/config
+get_full
+get_icons
 
 declare -A submenus=(
 	[$direction]="$direction_auto $direction_horizontal $direction_vertical"
@@ -87,27 +94,30 @@ trap : USR1
 toggle
 
 set_value() {
-	local property=$1 value=$2 icon=${1}_icon state
-	read state active <<< $(awk -i inplace '
-			/^'$property'/ {
-				v = "'"$value"'"
-				i = "'"$index"'"
-				a = "'"${active#* }"'"
+	local property=$1 value=$2 state
+	read state active <<< \
+		$(~/.orw/scripts/wmctl.sh set_value "$property" "$value" "$index" "$active" "$option")
 
-				$NF = (v) ? (v ~ "[-+][0-9]*") ? $NF + v : v \
-					: ($NF == "true") ? "false" : "true"
+	#read state active <<< $(awk -i inplace '
+	#		/^'$property'/ {
+	#			v = "'"$value"'"
+	#			i = "'"$index"'"
+	#			a = "'"${active#* }"'"
 
-				if ($NF == "false") gsub(",?" i "|" i ",?", "", a)
-				else if ($NF == "true") a = (a) ? a "," i : i
+	#			$NF = (v) ? (v ~ "[-+][0-9]*") ? $NF + v : v \
+	#				: ($NF == "true") ? "false" : "true"
 
-				s = (v) ? v : ($NF == "true") ? "enabled" : "disabled"
-			} { print }
+	#			if ($NF == "false") gsub(",?" i "|" i ",?", "", a)
+	#			else if ($NF == "true") a = (a) ? a "," i : i
 
-			END { print s, (a) ? "-a " a : "" }
-		' $orw_conf)
+	#			s = (v) ? v : ($NF == "true") ? "enabled" : "disabled"
+	#		} { print }
 
-	~/.orw/scripts/notify.sh -r 22 -t 1200m -s osd -i $option "$property: ${state^^}" &> /dev/null
-	~/.orw/scripts/signal_windows_event.sh update
+	#		END { print s, (a) ? "-a " a : "" }
+	#	' $orw_conf)
+
+	#~/.orw/scripts/notify.sh -r 22 -t 1200m -s osd -i $option "$property: ${state^^}" &> /dev/null
+	#~/.orw/scripts/signal_windows_event.sh update
 
 	#toggle-able features, they call this function directly (not from other/nested function)
 	#thus then call depth is 3
@@ -150,14 +160,21 @@ set_margin() {
 	set_theme_str
 
 	while
-		read index margin_direction <<< $(echo -e '\n' |
+		#read index margin_direction <<< $(echo -e '\n' |
+		read index margin_direction <<< $(echo -e "$margin_increase\n$margin_decrease" |
 			rofi -dmenu -format 'i s' -theme-str "$theme_str" \
 			-selected-row ${index:-1} -theme main)
 		[[ $margin_direction ]]
 	do
-		[[ $margin_direction ==  ]] && direction=+ || direction=-
-		update_value m 5
+		[[ $margin_direction == $margin_increase ]] && direction=+ || direction=-
+		echo update_value m 5
 	done
+}
+
+set_margin() {
+	[[ $option == $margin_increase ]] &&
+		local offset_direction=+ || local offset_direction=-
+	update_value m 5
 }
 
 set_offset() {
@@ -330,10 +347,12 @@ do
 		fi
 	else
 		if [[ ${submenu[*]} == *$option* ]]; then
+			echo ${submenu[*]}, $option
 			case $option in
 				$offset_horizontal_increase|$offset_horizontal_decrease| \
 					$offset_vertical_decrease|$offset_vertical_increase) set_offset;;
 				$direction_auto|$direction_horizontal|$direction_vertical) set_direction;;
+				$margin_increase|$margin_decrease) set_margin;;
 			esac
 		else
 			selected_option=$option
@@ -347,7 +366,12 @@ do
 				$margin) set_margin;;
 				$move) ~/.orw/scripts/signal_windows_event.sh mv;;
 				$interactive) set_value interactive;;
-				$reverse) set_value reverse;;
+				$reverse)
+					set_value reverse
+					get_full
+					get_icons
+					#~/.orw/scripts/notify.sh -r 22 -t 5 "$direction: $full"
+					;;
 			esac
 
 			#if ((item_count > base_count)); then
