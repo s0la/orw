@@ -5,7 +5,8 @@ check_visualizer() {
 }
 
 check_controls() {
-	controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^h?mp?wc$" { print "true" }')
+	#controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^h?mp?wc$" { print "true" }')
+	controls_running=$(ps aux | awk '/lemonbar/ && $NF ~ "^h?mp?_?(wc|b)$" { print "true" }')
 }
 
 check_cover() {
@@ -97,8 +98,8 @@ cover() {
 	}
 
 	local title='cover_art_widget' 
-	previous_geometry='70x70'
-	previous_bg='#e80a0a0a'
+	previous_geometry='57x57'
+	previous_bg='#bb232323'
 
 	check_cover
 
@@ -108,6 +109,7 @@ cover() {
 		if [[ ! -f $cover ]]; then
 			cover=~/Music/covers/placeholder.png
 			convert -size ${size}x${size} xc:$bg $cover
+			cp $cover /tmp/widget_cover.jpg
 		fi
 
 		if [[ ! $geometry ]]; then
@@ -115,7 +117,7 @@ cover() {
 
 			if [[ $controls_running ]]; then
 				border=$(awk '/^border/ { print $NF * 2 }' ~/.orw/themes/theme/openbox-3/themerc)
-				horizontal=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw" { print ($NF ~ /^h/); exit }')
+				horizontal=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw?" { print ($NF ~ /^h/); exit }')
 
 				if ((horizontal)); then
 					((size)) || size=$(awk '{
@@ -134,12 +136,17 @@ cover() {
 						}
 
 						/^[^#]/ {
-							gsub("^.*-[Hhf]\\s*|\\s.*", "")
-							s += $NF
-						} END { print s - '$border' }' ~/.config/orw/bar/configs/mpw*)
+							#gsub("^.*-[Hhf]\\s*|\\s.*", "")
+							#s += $NF
+							s += get_value("F") * 2
+							s += get_value("f")
+							s += get_value("h")
+						} END { print s - '$border' }' ~/.config/orw/bar/configs/mp_{b,p,v})
+						#} END { print s - '$border' }' ~/.config/orw/bar/configs/mpw*)
 				fi
 
-				read x y <<< $(xwininfo -name ${bar_name_start}mpw${bar_name_end:-i} |
+				#read x y <<< $(xwininfo -name ${bar_name_start}mpw${bar_name_end:-i} |
+				read x y <<< $(xwininfo -name ${bar_name_start}mp_${bar_name_end:-v} |
 					awk '/Absolute/ { if (/X/) $NF -= '${sub_size:-$size}'; print $NF }' | xargs)
 				~/.orw/scripts/set_geometry.sh -t $title -x $x -y $y
 				openbox --reconfigure
@@ -150,15 +157,22 @@ cover() {
 			fi
 		fi
 
-		[[ ! $bg ]] && bg=$(sed -n 's/^bg //p' ~/.config/orw/colorschemes/bar_n_mw.ocs)
+		#[[ ! $bg ]] && bg=$(sed -n 's/^bg //p' ~/.config/orw/colorschemes/bar_n_mw.ocs)
+		[[ ! $bg ]] && bg=$(sed -n 's/^bg //p' ~/.config/orw/colorschemes/auto_generated.ocs)
 
 		replace default
 
-		feh --title $title -.g ${geometry:-$previous_geometry} --image-bg $bg "$cover" &
+		local current_active_window=$(xdotool getactivewindow)
+		local cover=/tmp/widget_cover.jpg
+		[[ -f $cover ]] &&
+			feh --title $title -.g ${geometry:-$previous_geometry} --image-bg $bg "$cover" &
+			#sxiv -N $title -g ${geometry:-$previous_geometry} -b "$cover" &
 
 		write geometry
 		write bg
 		sleep 0.1
+
+		wmctrl -ia $current_active_window
 	fi
 
 	[[ $cover_pid ]] && kill $cover_pid
@@ -239,14 +253,20 @@ weather() {
 }
 
 bar_player() {
-	local running_bar=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw" { print; exit }')
-	[[ $running_bar ]] && ~/.orw/scripts/barctl.sh -b "${running_bar:: -1}*" -k
+	#local running_bar=$(ps aux | awk '/lemonbar/ && $NF ~ "mpw" { print; exit }')
+	#local running_bar=$(ps aux | awk '/lemonbar/ && $NF ~ "mp_" { print $NF; exit }')
+	#[[ $running_bar ]] && ~/.orw/scripts/barctl.sh -b "${running_bar:: -1}+" -k
 
-	if [[ $1 == k ]]; then
+	if [[ $1 == *k* ]]; then
+		local running_bar=$(ps aux | awk '/lemonbar/ && $NF ~ "mp_" { print $NF; exit }')
+		[[ $running_bar ]] && ~/.orw/scripts/barctl.sh -b "${running_bar:: -1}+" -k
+		check_cover
+		((cover_pid)) && kill $cover_pid
 		exit
 	else
 		if [[ $1 == h ]]; then
-			~/.orw/scripts/barctl.sh -b hmpw*
+			#~/.orw/scripts/barctl.sh -b hmpw*
+			~/.orw/scripts/barctl.sh -b mp_+
 			cover
 		else
 			~/.orw/scripts/barctl.sh -b mpw*
