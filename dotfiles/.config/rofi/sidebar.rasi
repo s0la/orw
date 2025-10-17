@@ -11,6 +11,7 @@ configuration {
 	font:                  "SFMono Medium 10";
 	font:                  "Iosevka Orw 9";
 	font:                  "SFMono Medium 7";
+	font:                  "Iosevka Orw 7";
 
 	lines:                 7;
 

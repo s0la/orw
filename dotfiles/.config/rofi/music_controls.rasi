@@ -37,7 +37,7 @@ element {
 element-text {
   padding:		8px 10px;
   // padding:		8px 13px;
-  font:			"remix 12";
+  font:			"material 12";
   background-color: inherit;
 }
 
