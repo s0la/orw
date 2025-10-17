@@ -38,7 +38,7 @@ running="$(wmctrl -lG | awk '\
 	}')"
 
 if [[ $style =~ icons|dmenu ]]; then
-	[[ $running ]] && active="-a ${running#*,}"
+	[[ ${running// } ]] && active="-a ${running#*,}"
 	default_label= vertical_label= split_label= cover_label= visualizer_label= dual_h_label= dual_v_label= 
 else
 	indicator='●'
