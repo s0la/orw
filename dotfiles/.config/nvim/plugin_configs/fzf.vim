@@ -14,9 +14,9 @@ function! FloatingFZF()
 	let buf = nvim_create_buf(v:false, v:true)
 	call setbufvar(buf, '&signcolumn', 'no')
 
-	let height = float2nr(&lines * 0.25)
-	let width = float2nr(&columns * 0.7)
-	let vertical = float2nr((&lines / 5 * 3.5) * 1)
+	let height = float2nr(&lines * 0.2)
+	let width = float2nr(&columns * 0.6)
+	let vertical = float2nr((&lines / 5 * 2.2) * 1)
 	let horizontal = float2nr((&columns - width) / 2)
 
 	let opts = {
@@ -25,10 +25,13 @@ function! FloatingFZF()
 				\ 'col': horizontal,
 				\ 'width': width,
 				\ 'height': height,
-				\ 'style': 'minimal'
+				\ 'style': 'minimal',
+				\ 'border': ''
 				\ }
 
-	call nvim_open_win(buf, v:true, opts)
+	"call nvim_open_win(buf, v:true, opts)
+	let win = nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+	call setwinvar(win, '&winhighlight', 'NormalFloat:TabLine')
 endfunction
 
 let g:fzf_colors = {
@@ -58,6 +61,13 @@ let g:fzf_history_dir = '~/.local/share/fzf-history'
 let g:fzf_preview_window = ['right:50%', 'ctrl-/']
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 let $FZF_DEFAULT_OPTS="--layout reverse --margin=1,3 --scrollbar="
+" let g:fzf_layout = {
+" 		\ 'up': '50%',
+"  	    \ 'window': {
+"  	        \ 'width': 0.6,
+"  			\ 'height': 0.2
+"  		\ }
+"  	\ }
 
 command! -bang -nargs=? -complete=dir Files call fzf#vim#files(<q-args>, 
 	\{ 'options': '--prompt="" --bind=tab:down,ctrl-p:up' },

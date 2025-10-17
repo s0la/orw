@@ -1,8 +1,8 @@
 let g:floaterm_keymap_toggle = 'tt'
 
-if winwidth(0) > 350
+if winwidth(0) > 150
 	let s:width = 0.45
-	let s:height = 0.9
+	let s:height = 0.7
 	let s:position = 'right'
 else
 	let s:width = 0.7
