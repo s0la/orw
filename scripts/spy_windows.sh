@@ -837,22 +837,24 @@ get_alignment() {
 }
 
 get_workspace_windows() {
-	[[ $1 ]] &&
-		local display=$1 ||
-		display=${workspaces[$id]#*_}
+	if ((${#windows[*]})); then
+		[[ $1 ]] &&
+			local display=$1 ||
+			display=${workspaces[$id]#*_}
 
-	echo ${BASH_LINENO[*]}: ${FUNCNAME[*]} - DIS $display: ${displays[*]}, ${display_properties[*]}, $id, ${workspaces[$id]}
+		echo ${BASH_LINENO[*]}: ${FUNCNAME[*]} - DIS $display: ${displays[*]}, ${display_properties[*]}, $id, ${workspaces[$id]}
 
-	[[ ${FUNCNAME[*]: -3:1} != update_values ]] &&
-		display_properties=( ${displays[$display]} )
+		[[ ${FUNCNAME[*]: -3:1} != update_values ]] &&
+			display_properties=( ${displays[$display]} )
 
-	windows=()
-	for window in ${!workspaces[*]}; do
-		[[ ${workspaces[$window]} == ${closing_id_workspace:-$workspace}_${display} ]] &&
-			windows[$window]="${all_windows[$window]}"
-	done
+		windows=()
+		for window in ${!workspaces[*]}; do
+			[[ ${workspaces[$window]} == ${closing_id_workspace:-$workspace}_${display} ]] &&
+				windows[$window]="${all_windows[$window]}"
+		done
 
-	#[[ ${all_windows[twg]} ]] && windows[twg]="${all_windows[twg]}"
+		#[[ ${all_windows[twg]} ]] && windows[twg]="${all_windows[twg]}"
+	fi
 }
 
 adjust_workspaces() {
@@ -1343,7 +1345,7 @@ update_aligned_windows() {
 			fi
 		done
 
-		[[ ${tabbed_windows_ids[*]} ]] && align_tabbed_windows
+		((${#tabbed_windows_ids[*]})) && align_tabbed_windows
 	fi
 
 	all_aligned_windows=()
@@ -4364,9 +4366,9 @@ move_windows_to_display() {
 }
 
 test() {
-	local remove="$1" tiling_id=$(select_tiling_win)
-	echo $tiling_id
-	return
+	#local remove="$1" tiling_id=$(select_tiling_win)
+	#echo $tiling_id
+	#return
 	#echo TEST
 	#local properties=( $id ${properties[*]} )
 	#set_alignment_properties h
@@ -5982,6 +5984,7 @@ get_tabbed_windows_properties() {
 }
 
 align_tabbed_windows() {
+	echo TABBED TRACE: ${BASH_LINENO[*]}: ${FUNCNAME[*]}
 	local tabbed_windows_{x,y,w,h} original_id=$id
 	local tabbed_space=20 tabbed_window_count="${#tabbed_windows_ids[*]}"
 	#local tabbed_windows_x=$tabbed_windows_x tabbed_windows_y=$tabbed_windows_y
@@ -6215,6 +6218,7 @@ shm_alignments=/tmp/alignments
 shm_floating_properties=/tmp/shm_floating_properties
 
 while read change new_value; do
+	#echo DISPLAY $change: $id, ${properties[*]}, $display: ${display_properties[*]}
 	if [[ $change == desktop ]]; then
 		unset notification
 		previous_workspace=$workspace
@@ -6408,6 +6412,7 @@ while read change new_value; do
 						done
 				fi
 
+				#echo CLOSING $id: ${properties[*]}, $closing_id_workspace: ${workspaces[$current_id]}, $display: ${display_properties[*]}
 
 				[[ ! ${windows[*]} ]] &&
 					signal_event "workspaces" "close" "$workspace"
@@ -6439,7 +6444,7 @@ while read change new_value; do
 
 						#$1 ~ "'"${current_id#0x}"'" { i = ($NF ~ "('${blacklist//,/|}')") }
 						$1 ~ "'"${current_id#0x}"'" {
-							i = (($NF ~ "('${blacklist//,/|}')") || $(di + 2) >= dd)
+							i = (($NF ~ "('${blacklist//,/|}')") || $(di + 2) >= dd || $2 < 0)
 						}
 						$2 == '$workspace' && $di >= ds && $di + 0 <= de \
 							{ if($NF !~ "('${blacklist//,/|}')") cwc++ }
@@ -6460,12 +6465,16 @@ while read change new_value; do
 					if ((missing_window)); then
 						missing_id=$current_id
 					else
-						if ((current_window_count == 1)); then
-							id=$current_id
-							handle_first_window
-							alignments[$id]=$display_orientation
-						else
-							if [[ ${tabbed_windows_ids[*]} == *$id* ]]; then
+						echo NEW WINDOW $current_window_count: $current_id, ${properties[*]}
+						list_windows
+						#if ((current_window_count == 1)); then
+						#	id=$current_id
+						#	handle_first_window
+						#	alignments[$id]=$display_orientation
+						#else
+						if ((current_window_count > 1)); then
+							if [[ $id == 0x* && ${tabbed_windows_ids[*]} == *$id* ]]; then
+								echo TWG ASSIGN: "^$id^, ^${properties[*]}^, ^${tabbed_windows_ids[*]}^"
 								id=twg
 								tabbed_properties=( ${tabbed_windows_properties[*]} )
 								((tabbed_properties[2] > tabbed_properties[3])) &&
@@ -6510,6 +6519,7 @@ while read change new_value; do
 								update_aligned_windows $current_id
 								((window_count++))
 
+								echo TWG ID: $id, ${properties[*]}, ${tabbed_windows_ids[*]}
 								if [[ $id == twg ]]; then
 									unset {all_,}windows[$id] tabbed_direction
 									align_tabbed_windows
@@ -6519,10 +6529,15 @@ while read change new_value; do
 								[[ ${input_ids[*]} ]] &&
 									id=$current_id properties=( ${windows[$current_id]} )
 							fi
+						else
+							id=$current_id
+							handle_first_window
+							alignments[$id]=$display_orientation
 						fi
 
 						workspaces[$current_id]=${workspace}_${display}
 
+						echo NEW $display: ${display_properties[*]}
 						read x y w h xb yb <<< ${windows[$current_id]}
 						new_x=$((x + (w - new_window_size) / 2 - ${display_properties[0]}))
 						new_y=$((y + (h - new_window_size) / 2 - ${display_properties[1]}))
