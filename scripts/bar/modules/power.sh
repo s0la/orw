@@ -3,7 +3,7 @@
 make_power_action() {
 	#[[ $2 ]] && local power_action="&& ${2:-sudo systemctl ${1/ }}"
 	local power_action="&& ${2:-sudo systemctl ${1/ }}"
-	[[ $1 == close ]] && local afg="$pbefg" || local afg='$fg'
+	[[ $1 == close ]] && local afg="${Ppfg:-$pbefg}" || local afg='$fg'
 
 	[[ ! $power_offset ]] && local separator='%{O$separator}'
 	local icon=$(get_icon "power_bar_${1// /_}") offset=$power_offset
@@ -35,11 +35,11 @@ assign_power_args() {
 	esac
 }
 
-launch_power_bar() {
-	echo -e "$power_bar_content" | \
-		lemonbar -d -p -B $power_bar_bg -F $power_bar_fg -R ${Pfc:-$fc} -r 3 \
-		-f "$power_bar_font" -o 0 -g $power_bar_geometry -n power_bar | bash
-}
+#launch_power_bar() {
+#	echo -e "$power_bar_content" | \
+#		lemonbar -d -p -B $power_bar_bg -F $power_bar_fg -R ${Pfc:-$fc} -r 3 \
+#		-f "$power_bar_font" -o 0 -g $power_bar_geometry -n power_bar | bash
+#}
 
 make_power_bar_script() {
 	power_actions+="$(make_power_action 'close')"
@@ -76,6 +76,8 @@ make_power_bar_script() {
 	#		-f "\$font" -g \$geometry -n power_bar | bash
 	#EOF
 
+	[[ $Ppfc == $pfc ]] && local fc=${sbg:3:7}
+
 	power_bar="$(cat <<- EOF
 		pid='\$(ps -C lemonbar -o pid= --sort=-start_time | head -1)'
 
@@ -84,7 +86,7 @@ make_power_bar_script() {
 
 		bg='#$transparency${Psbg: -7:6}'
 		fg='${Psfg//[%{F\}]}'
-		fc='${Ppfc:-$sfc}'
+		fc='${fc:-${Ppfc:-$sfc}}'
 		font='$font'
 		geometry='$geometry'
 
