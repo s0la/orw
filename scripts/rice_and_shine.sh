@@ -29,7 +29,8 @@ qb_conf=$config/qutebrowser/config.py
 bar_configs_path=$config/orw/bar/configs
 tmux_hidden_conf=$config/tmux/tmux_hidden.conf
 tmux_conf=$config/tmux/tmux.conf
-picom_conf=$config/picom/picom.conf
+picom_conf=$config/picom/picom_animations.conf
+thunar_conf=$config/gtk-3.0/thunar.css
 wpm_conf=~/.wpmrc
 
 themes=$root/themes
@@ -168,6 +169,7 @@ function ob() {
 			local patterns+=( "\.${inactive}active.*title" )
 			patterns+=( "\.${inactive}active.*button.*bg" )
 			patterns+=( "\.${inactive}active.button.disabled.image" );;
+		ts) local patterns="\.${inactive}active.title.separator";;
 		b)
 			local patterns=( "\.${inactive}active.*border" )
 
@@ -218,6 +220,9 @@ function ob() {
 		osdh) local pattern='osd.hilight';;
 		osdu) local pattern='osd.unhilight';;
 		s)
+			sed -i "/^shadow-color/ s/\".*\"/\"${new_color:-$color}\"/" $picom_conf
+			return
+
 			read red green blue <<< $($colorctl -chd ' ' ${new_color:-$color})
 
 			awk -i inplace \
@@ -263,7 +268,7 @@ function gtk() {
 			folders_flat=folders folders_papirus=folders_papirus
 
 		[[ $1 == fill ]] && folder_property=ff || folder_property=fs
-		current_color=$(parse_module $folder_property)
+		#current_color=$(parse_module $folder_property)
 
 		if [[ $current_color != ${2:-$color} ]]; then
 			flat $@
@@ -395,18 +400,18 @@ get_bar_configs() {
 
 		if [[ $bar_configs ]]; then
 			bar_colorschemes=$(awk '
-				{
+				/^[^#]/ {
 					#c = gensub(/.*-c ([^ ]{3,}) .*/, "\\1", 1)
 					#c = gensub(/.*-c *([^-][^ ]*) .*/, "\\1", 1)
 					#c = gensub(/([^-]*-[^c])*[^-]*-c *([^,]*),.*/, "\\2", 1)
 					c = gensub(/([^-]*-[^c])*[^-]*-c *([^, ]*).*/, "\\2", 1)
-					if(c ~ "^-") c = "orw_default"
+					if (c ~ "^-") c = "orw_default"
 
-					if(cp !~ c) {
+					if (cp !~ c) {
 						aca[++ci] = c
 						cp = cp "," c
 					}
-				} END { for(ci in aca) printf "%s ", "'"$colorschemes"'/" aca[ci] ".ocs "
+				} END { for (ci in aca) printf "%s ", "'"$colorschemes"'/" aca[ci] ".ocs "
 			}' $bar_configs)
 		fi
 	fi
@@ -455,8 +460,10 @@ set_bash() {
 }
 
 set_vim() {
+	[[ $specified_modules != *term* ]] &&
+		local base_pattern='(s?l|n)[bf]g'
 	awk -i inplace '
-		NR == FNR { p[$1] = $2 }
+		NR == FNR && $1 !~ "^'$base_pattern'$" { p[$1] = $2 }
 		NR > FNR && /^let/ {
 			cp = substr($2, 3)
 			if (cp in p) sub("#\\w*", p[cp], $NF)
@@ -473,7 +480,9 @@ set_rofi() {
 			l = (/tbg/) ? 2 : 0
 			l = 0
 			cv = substr(p[cp], 2 + l)
-			s = substr($NF, length($NF) - length(cv))
+			nl = length($NF) - length(cv)
+			s = substr($NF, (nl) ? nl : 2)
+			#if (/tbg/) print "HERE", cv, s, nl
 			sub(s, cv ";")
 		}
 		/^\*/ { c = 1 }
@@ -496,6 +505,7 @@ set_ob() {
 		NR > FNR {
 			if (/active.label.text.*#/) { change("t") }
 			if (/active.(title|button.*(bg|disabled.image)).*#/) { change("tb") }
+			if (/active.title.separator.*#/) { change("ts") }
 			if (/active.*border.*#/) { change("b") }
 			if (/active.*client.*#/) { change("c") }
 			if (/active.button.((close|max|iconify).)?((un)?pressed|hover).*image.*#/) {
@@ -518,7 +528,8 @@ set_ob() {
 		} END { print p["s"] o }' <(cat) $ob_conf 2> /dev/null |
 			{ read s; { echo $s >&1; cat > $ob_conf; } })"
 
-		read red green blue <<< $($colorctl -chd ' ' $shadow_color)
+		sed -i "/^shadow-color/ s/\".*\"/\"$shadow\"/" $picom_conf
+		#read red green blue <<< $($colorctl -chd ' ' $shadow_color)
 }
 
 set_tmux() {
@@ -563,8 +574,15 @@ set_ncmpcpp() {
 		NR > FNR && $1 ~ "^(" substr(ap, 2) ")$" {
 			cp = gensub("(.)[^_]*_?", "\\1", "g", $1)
 			s = (/browser/) ? 1 : 0
-			gsub("([0-9]+)", p[cp], $(NF - s))
-		} { print }' <(echo -e "$colors") ~/.config/orw/colorschemes/colors $ncmpcpp_conf
+
+			#if (cp == "vc") {
+			#	#if (/^visualizer_color/) p[cp] = p["npp"] "," p["pc"] "," p[cp] "," p[cp]
+			#}
+
+			if (cp == "vc") v = (/^volume/) ? p["sip"] : p["pc"] "," p["npp"] "," p[cp] "," p[cp]
+			else v = p[cp]
+			gsub("([0-9,]+)", v, $(NF - s))
+		} { print }' <(echo -e "$colors") ~/.config/orw/colorschemes/colors ${ncmpcpp_conf}*
 }
 
 set_dunst() {
@@ -590,15 +608,6 @@ set_term() {
 		}' <(cat) $term_conf
 }
 
-set_lock() {
-	awk -i inplace '
-		NR == FNR { o = o $1 "=" substr($2, 4, 6) substr($2, 2, 2) "\n" }
-		NR > FNR {
-			if (p) print
-			if (/^$/) { print o; p = 1 }
-		}' <(cat) $lock_conf
-}
-
 set_sxiv() {
 	awk -i inplace '{
 		if (NR == FNR) ap[$1] = $NF
@@ -608,6 +617,58 @@ set_sxiv() {
 			print
 		}
 	}' <(cat) $sxiv_conf
+}
+
+set_lock() {
+	awk -i inplace '
+		NR == FNR { o = o $1 "=" substr($2, 4, 6) substr($2, 2, 2) "\n" }
+		NR > FNR {
+			if (p) print
+			if (/^$/) { print o; p = 1 }
+		}' <(cat) $lock_conf
+}
+
+set_thunar() {
+	read f{f,s} <<< $(awk --non-decimal-data '
+		NR == FNR { ap[$1] = $2 }
+		NR > FNR {
+			if ($2 in ap) { sub("#[^;]*", ap[$2]) }
+			else if ($2 == "tbg") {
+				rgb = sprintf("%d,%d,%d,", "0x" substr(ap["bg"], 2, 2), "0x" substr(ap["bg"], 4, 2), "0x" substr(ap["bg"], 6, 2))
+				sub("([0-9]*,){3}", rgb)
+			}
+			wo = wo "\n" $0
+		} END {
+			print ap["ff"], ap["fs"]
+			print substr(wo, 2)
+		}
+	' <(cat) $thunar_conf |
+		{ read fc; echo $fc; cat > $thunar_conf; })
+
+	for fc in f{f,s}; do
+		property=$fc color=${!fc}
+		gtk
+	done
+}
+
+set_vifm() {
+	awk -i inplace '{
+		if (NR == FNR) {
+			ap[$NF] = ap[$NF] "," $1
+			o++
+		} else {
+			if (o && NR == FNR + o) {
+				if ($NF in ap) {
+					split(substr(ap[$NF], 2), ip, ",")
+					for (p in ip) ai[ip[p]] = FNR - 1
+				}
+			} else if (/^let/) {
+				p = substr($2, 2)
+				if (p in ai) $NF = ai[p]
+			}
+
+			print
+		}}' <(cat) ~/.config/orw/colorschemes/colors $vifm_conf
 }
 
 function bar() {
@@ -797,10 +858,10 @@ function get_ob() {
 		echo mibt$hover $(get_ob_property ".*\.iconify.$state")
 	}
 
-	awk -F '[ ;]' '{
+	awk -F '[ ;]' '/^[^#]/ {
 		i = (/inactive/) ? "i" : ""
 		if(/.*active.label.text.*#/) print i "t", $NF
-		else if(/.*active.*title.bg.*#/) print i "tb", $NF
+		else if(/active.*title.bg.color.*#/) print i "tb", $NF
 		else if(/.*active.*border.*#/) print i "b", $NF
 		else if(/.*active.client.*#/) print i "c", $NF
 		else if(/button.*(close|iconify|max).(unpressed|hover).*#/) {
@@ -868,7 +929,7 @@ function get_term() {
 
 function get_term() {
 	awk '
-		/background|forground/ {
+		/background|foreground/ {
 			#gsub("'\''", "", $NF)
 			gsub("\"", "", $NF)
 			print substr($1, 0, 1) "g", $NF
@@ -904,7 +965,8 @@ get_nb() {
 function get_bar() {
 	get_bar_configs
 	[[ $bar_colorschemes ]] &&
-		sed -n '/^#bar/,/^\($\|#\)/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
+		sed -n '/^#bar/,/^\($\|#bar\)/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
+		#sed -n '/^#bar/,/^\($\|#\)/ { /^[^#]/p }' $bar_colorschemes | sort -k 1,1 -u
 }
 
 function get_ncmpcpp() {
@@ -1096,6 +1158,7 @@ while getopts :o:O:tCp:e:Rs:S:m:cM:P:Bbr:Wwl flag; do
 			[[ ${!OPTIND} =~ ^a ]] && replace_all_modules=( ${all_modules[*]} ) && shift;;
 		m)
 			module="${OPTARG//,/ }"
+			specified_modules="$module"
 			[[ $module =~ ':' ]] && multiple_modules=true
 
 			if [[ $module =~ bar ]]; then
@@ -1416,7 +1479,8 @@ else
 			[[ $module =~ $set_modules ]] || continue
 			eval reload_$module=true
 
-			sed -n "/^#$module/,/^$/ { /^\(#\|$\)/!p }" $colorscheme | set_$module &> /dev/null &
+			sed -n "/^#$module/,/^$/ { /^\(#\|$\)/!p }" $colorscheme | set_$module #&> /dev/null &
+			exit
 		done
 		wait
 	else
