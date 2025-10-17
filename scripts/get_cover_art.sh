@@ -12,8 +12,10 @@ if [[ ! -f "${cover//[()]/}" ]]; then
 	full_path="$root/$file"
 
 	if ! eval ffmpeg -loglevel quiet -i \"$full_path\" -vf scale=300:300 \"$cover\"; then
-		[[ ! $(grep "$album" ~/Music/covers/missing_cover_arts.txt) ]] &&
+		if ! grep "$album" ~/Music/covers/missing_cover_arts.txt; then
 			echo "$artist - $album" >> ~/Music/covers/missing_cover_arts.txt
+			cover="$HOME/Music/covers/template.png"
+		fi
 	fi
 fi
 
