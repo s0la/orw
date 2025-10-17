@@ -75,22 +75,28 @@ else
 		update)
 			coproc (mpc -q update &)
 			pid=$((COPROC_PID + 1))
-			coproc (notify_on_finish &);;
+			coproc (notify_on_finish &)
+			;;
 		refresh);;
 		add_all)
 			mpc add "$current"
-			back;;
-		*.mp3|*.ogg|*.m4a)
+			back
+			;;
+		*.[Mm]p3|*.ogg|*.m4a)
 			[[ $current ]] && current+='/'
-			mpc add "$current${arg// /\ }";;
+			mpc add "$current${arg// /\ }"
+			;;
 		*)
 			file="${arg// /\ }"
 			[[ $current ]] && current+="/$file" || current="$file"
-			set_current "$current";;
+			set_current "$current"
+			;;
 	esac
 fi
 
 [[ $current ]] && echo -e 'back'
+echo -en '\0keep-selection\x1ftrue\n'
 echo -en "update\nrefresh\nadd_all\n$dashed_separator\0nonselectable\x1ftrue\n"
+#echo -en "update\nrefresh\nadd_all\n$dashed_separator\0nonselectable\x1ftrue\n\0keep-selection\x1ftrue\n"
 
 mpc ls "$current" | awk -F '/' '!/m3u$/ { print $NF }'
