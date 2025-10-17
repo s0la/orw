@@ -74,7 +74,7 @@ get_icon() {
 	}' $icons_file
 }
 
-singles=( rec tiling power )
+singles=( rec tiling power vis )
 multiframe_modules=( workspaces windows launchers )
 labeled_modules=( rss emails volume counter vanter torrents \
 	network power display rec bluetooth battery weather )
@@ -97,7 +97,9 @@ set_module_frame() {
 	if [[ $frame_type == all ]]; then
 		module_frame_start="%{B\$${short_module}sfc}%{U\$${short_module}sfc}$frame_start"
 		module_active_frame_start="%{B\$${short_module}pfc}%{U\$${short_module}pfc}$frame_start"
+		module_active_frame_end="%{B\$${short_module}pfc}$frame_end%{B-}"
 		module_frame_end="%{B\$${short_module}sfc}$frame_end%{B-}"
+		#module_frame_end="%{B\${${short_module}afc:-\${${short_module}pfc:-\${${short_module}sfc}}}}$frame_end%{B-}"
 		#module_frame_start="%{B${frame_mode//_/s}}%{U${frame_mode//_/s}}$frame_start"
 		#module_active_frame_start="%{B${frame_mode//_/p}}%{U${frame_mode//_/p}}$frame_start"
 		#module_frame_end="%{B${frame_mode//_/s}}$frame_end%{B-}"
@@ -131,7 +133,7 @@ get_module() {
 		d) module=date;;
 		#C) module=counter;;
 		N) module=network;;
-		V) module=vanter;;
+		V) module=vis;;
 		A) module=windows;;
 		W) module=workspaces;;
 		T) module=torrents;;
@@ -201,6 +203,7 @@ make_module() {
 	fi
 
 	eval ${module}_content="$full_module"
+	#[[ $module == vis ]] && ~/.orw/scripts/notify.sh -t 11 "VIS: $visualizer_content"
 }
 
 get_joiner_frame() {
@@ -342,6 +345,32 @@ print_module() {
 
 		} 11< $joiner_modules_file
 
+		#{
+		#	exec 11> $joiner_lock_file
+		#	flock -e 11
+
+		#	local joiner_group_index=${joiner_modules[$short]}
+		#	local joiner_group="${joiner_groups[joiner_group_index - 1]}"
+
+		#	local active_modules=$(sed -n "${joiner_group_index}p" $joiner_modules_file)
+		#	local new_active_modules=$active_modules
+
+		#	[[ ${active_modules: -1} == $short ]] && local end_module=true
+		#	[[ ${active_modules::1} == $short ]] && local start_module=true
+
+		#	[[ $short == [$active_modules] && ! "${!module}" ]] &&
+		#		new_active_modules="${active_modules/$short}"
+		#	[[ $short != [$active_modules] && "${!module}" ]] &&
+		#		new_active_modules="${joiner_group//[^$active_modules$short]}"
+
+		#	if [[ ! $2 ]]; then
+		#		[[ $new_active_modules != $active_modules ]] &&
+		#			sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
+		#	fi
+
+		#	flock -u 11
+		#}
+
 		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{f,p,s}fg switch_bg
 		read joiner_{distance,padding,frame_{start,end}} switch_bg <<< \
 			"${joiners[joiner_group_index - 1]}"
@@ -445,6 +474,8 @@ print_module() {
 			done
 		fi
 	else
+		#[[ $module == vis ]] &&
+		#	~/.orw/scripts/notify.sh "$content: $output_content"
 		[[ $short != $last_module && ${!module} ]] && local separator="$bar_separator"
 		[[ ${!module} && $frame_type && ! ${multiframe_modules[*]} =~ $module ]] &&
 			output_content="$module_frame_start$output_content$module_frame_end"
@@ -460,20 +491,25 @@ set_colors() {
 	unset $color_variables
 
 	eval $(awk '\
-		/#bar/ { nr = NR }
+		#/#bar/ { nr = NR }
 
-		nr && NR > nr && /^[^#]/ {
-			if ($1 ~ "^(b?bg|.*c)$") c = $2
-			else {
-				l = length($1)
-				p = substr($1, l - 1, 1)
-				c = "%{" toupper(p) $2 "}"
+		#nr && NR > nr && /^[^#]/,/^$/ {
+		/^#bar/,/^$/ {
+			if (/^[^#]/) {
+				h = ("'"$bottom_y"'") ? "#" substr($2, length($2) - 6 + 1) : $2
+				if ($1 ~ "^(b?bg|.*c)$") c = h
+				else {
+					l = length($1)
+					p = substr($1, l - 1, 1)
+					c = "%{" toupper(p) h "}"
+				}
+
+				if ($1) print $1 "=\"" c "\""
 			}
+		}' $colorscheme)
 
-			if ($1) print $1 "=\"" c "\""
-		}
-
-		nr && (/^$/) { exit }' $colorscheme)
+	#~/.orw/scripts/notify.sh -t 5 "$Vpfg, $bbg, $sbg"
+		#nr && (/^$/) { exit }' $colorscheme)
 
 	[[ $bottom_y ]] && bg=$bbg
 	[[ $bar_frame_width ]] && bar_frame="-R$bfc -r $bar_frame_width"
@@ -711,32 +747,68 @@ geometry="${bar_width}x${bar_height}+${bar_x}+${bar_y}"
 #fonts
 [[ $font_size ]] || font_size=8
 icon_size=$((font_size + font_size / 2))
+icon_font="material:size=$icon_size"
 
-font="SFMono:style=Medium:size=$font_size"
-bold_font="SFMono:style=Heavy:size=$font_size"
+#font="SFMono:style=Medium:size=$font_size"
+#bold_font="SFMono:style=Heavy:size=$font_size"
+#bar_font="SFMono:style=Heavy:size=$font_size"
+#bar_font="Iosevka Orw:style=Heavy:size=$font_size"
 
-font="SFMono:style=Medium:size=$font_size"
-bold_font="SFMono:style=Bold:size=$font_size"
+#font="SFMono:style=Medium:size=$font_size"
+#bold_font="SFMono:style=Bold:size=$font_size"
+#font="Iosevka Orw:style=Medium:size=$font_size"
+#bold_font="Iosevka Orw:style=Heavy:size=$font_size"
+#icon_font="material:size=$icon_size"
+#bar_font="SFMono-Medium:size=11"
+#bar_font="SFMono-Medium:size=$icon_size"
+#bar_font="SFMono:style=Medium:size=$font_size"
+#bar_font="SFMono:style=Heavy:size=$font_size"
+#bar_font="Iosevka Orw:style=Heavy:size=$font_size"
+
 font="Iosevka Orw:style=Medium:size=$font_size"
 bold_font="Iosevka Orw:style=Heavy:size=$font_size"
-icon_font="material:size=$icon_size"
-bar_font="SFMono-Medium:size=11"
-bar_font="SFMono-Medium:size=$icon_size"
-bar_font="SFMono:style=Medium:size=$font_size"
-bar_font="SFMono:style=Heavy:size=$font_size"
-bar_font="Iosevka Orw:style=Heavy:size=$font_size"
-
+bar_font="Iosevka Orw:style=Heavy:size=$((font_size - 0))"
+vbar_font="SFMono:style=Heavy:size=$((font_size - 1))"
+#bar_font="SFMono:style=Heavy:size=$font_size"
 font_offset=${font_offset:-0}
+
+#tabler_icon_font="icomoon_tabler:size=$icon_size"
+tabler_icon_font="tabler_filled:size=$icon_size"
+#bar_font="SFMono:style=Medium:size=$font_size"
+#bold_font="SFMono:style=Heavy:size=$font_size"
 
 remove_fifos() {
 	local fifo
 	for fifo in ${fifos_to_remove[*]}; do
 		[[ -e $fifo ]] && rm $fifo
 	done
+
+	#ps -C cava -o pid=,ppid=,args=
+
+	#echo $running_modules
+	#ps -ef | awk '/cava.raw/ { print $2, $3, ($3 ~ "'"$running_modules"'") }'
+
+	#ps -ef | awk '
+	#	/(bt|nmcli )mon|cava.raw/ && !/awk/ {
+	#		if ($3 ~ "'"$running_modules"'") print $2
+	#	}' | xargs -r sudo kill -9
+
+	local pattern
+	for module in ${!shorts[*]}; do
+		case $module in
+			vis) pattern+="|cava.raw";;
+			network) pattern+="|nmcli mon";;
+			bluetooth) pattern+="|btmon";;
+		esac
+	done
+
+	#ps aux | awk '/(bt|nmcli )mon|cava.raw/ && !/awk/ { print $2 }' | xargs -r sudo kill -9
+	[[ $pattern ]] &&
+		ps aux | awk '/'"${pattern#\|}"'/ && !/awk/ { print $2 }' | xargs -r sudo kill -9
 }
 
 trap self_kill INT
-trap remove_fifos INT EXIT KILL TERM
+trap remove_fifos INT KILL TERM
 
 run_modules() {
 	[[ $running_modules ]] && kill $running_modules
@@ -846,10 +918,12 @@ done < $fifo | adjust_bar_width |
 	lemonbar -d -B$bg -F$fg -u 0 \
 	-f "$font" -o $font_offset \
 	-f "$bold_font" -o $font_offset \
-	-f "$bar_font" -o $((font_offset + 0)) \
+	-f "$bar_font" -o $((font_offset - 1)) \
+	-f "$vbar_font" -o $((font_offset - 2)) \
 	-f "$icon_font" -o $((font_offset + 0)) \
 	-a 150 -u ${largest_frame_size:-0} $bar_frame \
 	-g "$geometry" -n "$bar_name" | bash &
+	#-f "$tabler_icon_font" -o $((font_offset + 0)) \
 
 sleep 0.5
 xdo lower -N Bar
