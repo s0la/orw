@@ -41,6 +41,7 @@ case $1 in
 	untile) sig=57;;
 	layout) sig=58;;
 	display) sig=59;;
+	tabs) sig=61;;
 	test) sig=63;;
 	kill)
 		pidof -x spy_windows.sh | xargs kill -9
