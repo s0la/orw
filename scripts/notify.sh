@@ -2,7 +2,7 @@
 
 time=3
 
-while getopts :i:F:f:o:r:c:t:P:ps:b:v:TC: flag; do
+while getopts :i:F:f:o:r:c:t:P:ps:b:v:TC:w: flag; do
 	case $flag in
 		p) padding='\n';;
 		v) value=$OPTARG;;
@@ -27,14 +27,16 @@ while getopts :i:F:f:o:r:c:t:P:ps:b:v:TC: flag; do
 				style_config=dunstrc || style_config=${style}_dunstrc;;
 		i) [[ -f "$OPTARG" ]] && image="-i $OPTARG" || font_icon=$OPTARG;;
 		C) font_color=$OPTARG;;
+		w) waiting_index=$OPTARG;;
 	esac
 done
 
 read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 	{ if(nr && NR > nr && NR <= nr + 2) print $2 }' ~/.config/dunst/dunstrc | xargs)
 
-sbg="#8899a5"
-pbfg="#608e9a"
+sbg="#343434"
+#pbfg="#7f9385"
+pbfg="#607667"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -196,11 +198,25 @@ if [[ $style ]]; then
 					l = length(m)
 					d = (20 - l) / 2
 					printf("%*.s%s%*.s", d, " ", m, d, " ") }' <<< "${value:-${@: -1}}")
-				info="<span font='Iosevka Orw $info_size' foreground='$fg'>$info_offset</span>"
+
+
+				if [[ $waiting_index ]]; then
+					#local waiting{,_fg}
+					waiting="\n<span font='Iosevka Orw 6'>"
+					for i in {1..3}; do
+						((i == waiting_index % 3 + 1)) &&
+							waiting_fg=$pbfg || waiting_fg=$sbg
+						waiting+="<span foreground='$waiting_fg'>  </span>"
+					done
+					waiting+="</span>\n"
+				fi
+
+				info="<span font='Iosevka Orw ${font_size:-$info_size}' "
+				info+="foreground='$fg'>$info_offset</span>"
 			fi
 
 			padding_height=3
-			message="<span>\n$icon\n\n\n${bar:-$info}</span>";;
+			message="<span>\n$icon\n$waiting\n\n${bar:-$info}</span>";;
 		vertical)
 			font='SFMono'
 			font='DejaVu Sans Mono'
