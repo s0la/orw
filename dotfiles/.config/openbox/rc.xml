@@ -62,7 +62,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Roboto</name>
-      <size>7</size>
+      <size>8</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -124,13 +124,14 @@
 
        use obconf if you want to change these without having to log out
        and back in -->
-    <number>4</number>
+    <number>5</number>
     <firstdesk>2</firstdesk>
     <names>
       <name>web</name>
       <name>development</name>
       <name>media</name>
       <name>upwork</name>
+      <name>tmp</name>
     </names>
     <popupTime>0</popupTime>
     <!-- The number of milliseconds to show the popup for when switching
@@ -190,6 +191,11 @@
     </keybind>
     <keybind key="W-b">
       <action name="ToggleDecorations"/>
+    </keybind>
+	<keybind key="C-S-p">
+      <action name="Execute">
+        <command>~/Documents/projects/youtube/lastpass/lastpass.sh</command>
+      </action>
     </keybind>
     <keybind key="A-Tab">
       <action name="Execute">
@@ -355,7 +361,7 @@
     </keybind>
     <keybind key="A-p">
       <action name="Execute">
-        <command>~/.orw/scripts/rofi_scripts/music_playlist.sh</command>
+        <command>~/.orw/scripts/rofi_scripts/music_playlist.sh h</command>
       </action>
     </keybind>
     <keybind key="A-S-p">
@@ -1122,8 +1128,8 @@
       <focus>yes</focus>
       <layer>below</layer>
       <position force="yes">
-        <x>center</x>
-        <y>center</y>
+        <x>default</x>
+        <y>default</y>
       </position>
     </application>
 
@@ -1133,8 +1139,8 @@
       <focus>no</focus>
       <position force="yes">
         <monitor>2</monitor>
-        <x>562</x>
-        <y>270</y>
+        <x>624</x>
+        <y>336</y>
       </position>
       <size>
         <width>150</width>
@@ -1143,7 +1149,7 @@
     </application>
 
     <application class="custom_size">
-      <decor>yes</decor>
+      <decor>no</decor>
       <focus>yes</focus>
       <position force="yes">
         <monitor>Active</monitor>
@@ -1174,8 +1180,19 @@
       <layer>below</layer>
       <desktop>all</desktop>
       <position force="yes">
-        <x>747</x>
-        <y>1000</y>
+        <x>798</x>
+        <y>1011</y>
+      </position>
+    </application>
+
+    <application name="cover_art_widget">
+      <decor>no</decor>
+      <focus>no</focus>
+      <layer>below</layer>
+      <desktop>all</desktop>
+      <position force="yes">
+        <x>798</x>
+        <y>1011</y>
       </position>
     </application>
 
@@ -1194,12 +1211,12 @@
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
         <monitor>2</monitor>
-        <x>480</x>
-        <y>45</y>
+        <x>288</x>
+        <y>36</y>
       </position>
       <size>
-        <width>1040</width>
-        <height>495</height>
+        <width>944</width>
+        <height>378</height>
       </size>
     </application>
 
@@ -1209,8 +1226,8 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>562</x>
-        <y>270</y>
+        <x>624</x>
+        <y>336</y>
       </position>
       <size>
         <width>150</width>
@@ -1223,12 +1240,25 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>810</x>
-        <y>490</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>300</width>
         <height>100</height>
+      </size>
+    </application>
+
+    <application title="*_input">
+      <focus>yes</focus>
+      <decor>no</decor>
+      <layer>above</layer>
+      <position force="yes">
+        <x>center</x>
+        <y>center</y>
+      </position>
+      <size>
+        <width>300</width>
       </size>
     </application>
 
@@ -1258,8 +1288,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>711</x>
-        <y>310</y>
+        <x>518</x>
+        <y>717</y>
       </position>
       <size>
         <width>150</width>
