@@ -546,7 +546,8 @@ fi
 #	exit
 #fi
 
-bluetooth_device=$(bluetoothctl devices | awk '{
+bluetooth_device=$(bluetoothctl devices |
+	awk '$1 == "Device" {
 		dn = $0
 		sub(".*" $2 "\\s+", "", dn)
 		if (dn ~ "^'"$option"'($|\\s)") { print $2; exit }
@@ -557,11 +558,12 @@ if [[ $bluetooth_device ]]; then
 	#files_to_send="${multiple_files:-$file}"
 
 	pidof obexd &> /dev/null ||
-		/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+		/usr/lib/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+		#/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
 	files_to_send="${multiple_files:-$current}"
 	#echo "send \"send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n\"" > ~/bt.log
 	/usr/bin/expect <<- EOF &> ~/bt.log
-		set timeout 10
+		set timeout 20
 		spawn obexctl
 
 		expect "Client" {
@@ -572,7 +574,7 @@ if [[ $bluetooth_device ]]; then
 			send "send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n"
 		}
 
-		sleep 5
+		sleep 15
 		interact
 	EOF
 
@@ -603,7 +605,7 @@ if [[ $options == options ]]; then
 		options+=( 'add_torrent' 'start_torrent' 'select_torrent_destination' 'select_torrent_content' )
 
 	[[ $multiple_files ]] && options+=( 'set_as_wallpaper' 'edit_text' )
-	[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.mpd/mpd.conf)"
+	[[ ! $music_directory ]] && set music_directory "$(sed -n 's/^music_directory.*\"\(.*\)\/\?\"/\1/p' ~/.config/mpd/mpd.conf)"
 	[[ "$current" =~ "$music_directory" ]] && options+=( 'add_to_playlist' )
 	options+=( 'set_as_wallpaper_directory' 'add_wallpaper_directory' 'remove_wallpaper_directory' 'view_all_images' 'open_in_terminal' )
 
