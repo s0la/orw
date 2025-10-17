@@ -17,6 +17,7 @@ title=$(wmctrl -l | awk '$1 == "'$id'" { print $NF }')
 maxed=$(awk '$1 == "'$id'" { m = ($NF == "maxed") } END { if(m) print "-a 1" }' $properties)
 
 toggle
+#trap toggle EXIT
 
 action=$(cat <<- EOF | rofi -dmenu $maxed -theme main
 	$close
@@ -38,4 +39,6 @@ if [[ $action ]]; then
 			tmux_session=$($tmux_command ls | awk -F ':' '$1 == "'$title'" { print $1 }')
 			[[ $tmux_session ]] && $tmux_command kill-session -t $tmux_session
 	esac
+else
+	toggle
 fi
