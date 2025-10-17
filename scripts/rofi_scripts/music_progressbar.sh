@@ -20,7 +20,7 @@ while
 
 			NR > FNR && FNR < 3 {
 				if (FNR == 1) {
-					l = int(sprintf("%.0f", (w - 2 * wp) / (f / 1.1)))
+					l = int(sprintf("%.0f", (w - 2 * wp) / (f / 1.3)))
 					so = ($1 == "0%")
 				}
 

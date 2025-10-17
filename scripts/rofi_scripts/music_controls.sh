@@ -20,7 +20,7 @@ while
 
 			NR > FNR && FNR < 3 {
 				if (FNR == 1) {
-					l = int(sprintf("%.0f", (w - 2 * wp) / (f / 1.1)))
+					l = int(sprintf("%.0f", (w - 2 * wp) / (f / 1.3)))
 					so = ($1 == "0%")
 				}
 
@@ -47,7 +47,7 @@ while
 				gsub(" ", "━", ep)
 				gsub(" ", "━", rp)
 
-				printf "\n\n%s  %s%s%s  %s", $2, ep, "•", rp, $3
+				printf "\n\n%s  %s%s%s  %s", $2, ep, "●", rp, $3
 			}' ~/.config/rofi/cover_art.rasi \
 				<(
 					mpc current -f '%artist%\n%title%'
