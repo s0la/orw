@@ -105,7 +105,8 @@ function write_wallpapers() {
 				w = " \"'"$1"'\""
 			} {
 				if(/^desktop_'${all_desktops:-$current_desktop}'/) {
-					$0 = (wi > dc) ? $0 w : gensub(" [^\"]*(\"[^\"]*\")*", w, wi)
+					#$0 = (wi > dc) ? $0 w : gensub(" [^\"]*(\"[^\"]*\")*", w, wi)
+					$0 = gensub(" [^\"]*(\"[^\"]*\")*", w, wi)
 				}
 				print
 			}' $config
@@ -290,7 +291,7 @@ display_count=${#displays[*]}
 
 [[ "$@" =~ -U ]] && unsplash=true
 
-while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmx flag; do
+while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmxC: flag; do
 	case $flag in
 		x) no_xinerama=true;;
 		i) index=$((OPTARG - 1));;
@@ -301,6 +302,7 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmx flag; do
 		w)
 			desktop=true
 			current_desktop=$((OPTARG - 1));;
+		C) color=$OPTARG;;
 		s)
 			add_wallpaper() {
 				local arg="${arg//\\ / }"
@@ -353,7 +355,12 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmx flag; do
 				for wall in $(seq 0 $arg_count); do
 					arg_index=$((initial_index + wall))
 					arg="${!arg_index}"
-					add_wallpaper $wall
+					#add_wallpaper $((${display_mapper[$((wall + 1))]} - 1))
+					((display_number)) || display_value=$((${display_mapper[$((wall + 1))]} - 1))
+					add_wallpaper ${display_value:-0}
+					#echo $display_number: $display_value
+					#add_wallpaper $((${display_mapper[$((wall + 1))]} - 1))
+					#add_wallpaper $wall
 				done
 			fi
 
@@ -1254,7 +1261,7 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 				print wp[(wi + wc) % wc]
 			}
 		}' $config <(eval find "$directory" "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" | sort))
-	
+
 	for wallpaper_index in "${!wallpapers[@]}"; do
 		write_wallpapers "${wallpapers[wallpaper_index]}" $((wallpaper_index + 1))
 	done
@@ -1303,9 +1310,22 @@ else
 		#	wallpapers_to_set+="$aspect $xinerama "$wallpaper_path" "
 		#fi
 
-		[[ ${wallpaper//\"/} == \#* ]] &&
-			wallpaper_to_add="-sc \\$wallpaper" ||
-			wallpaper_to_add="-z ${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
+		color='#333333'
+		wallpaper_to_set="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/\"$wallpaper\""
+		#color=$(eval "magick "$wallpaper_to_set" -format '%[hex:u.p{1,1}]\n' info:")
+		#wallpaper_to_set="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/$wallpaper"
+		#color=$(eval "magick "$wallpaper_to_set" -format '%[hex:u.p{1,1}]\n' info:")
+		#eval magick "$wallpaper_to_set" -format '%[hex:u.p{1,1}]\n' info:
+		#wallpaper_to_set="${wallpaper_directories[wallpaper_index]:-${directory%/\{*}}/$wallpaper"
+		#color=$(magick $wallpaper_to_set -format "%[hex:u.p{1,1}]\n" info:)
+		#echo "magick $wallpaper_to_set -format "%[hex:u.p{1,1}]\n" info:"
+
+		if [[ ${wallpaper//\"/} == \#* ]]; then
+			wallpaper_to_add="-sc \\$wallpaper"
+		else
+			color=$(eval "magick $wallpaper_to_set -format '%[hex:u.p{15,15}]\n' info:")
+			wallpaper_to_add="--bg-color '#${color::6}' -z $wallpaper_to_set"
+		fi
 			#set_aspect "$wallpaper_path"
 
 		wallpapers_to_set+="--on $wallpaper_index "$wallpaper_to_add" "
