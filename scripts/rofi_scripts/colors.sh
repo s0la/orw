@@ -9,9 +9,15 @@ vim_colors=$(awk '
 ocs_root=~/.config/orw/colorschemes
 current_ocs=$(grep -zlP "#vim\n$vim_colors" $ocs_root/*.ocs | sed 's/[()]/\\&/g')
 
-command='wall="$(sed "s/.ocs.png//" <<< "${element##*/}")";'
-command+='~/.orw/scripts/wallctl.sh -s ~/Downloads/"$wall"* & '
-command+='~/.orw/scripts/rice_and_shine.sh -tC "$wall"'
+#command='wall="$(sed "s/.ocs.png//" <<< "${element##*/}")";'
+#command+='~/.orw/scripts/wallctl.sh -s ~/Downloads/"$wall"* & '
+#command+='~/.orw/scripts/rice_and_shine.sh -tC "$wall"'
+
+#command+='~/.orw/scripts/wallctl.sh -C $element'
+
+#command='~/.orw/scripts/wallctl.sh -s ~/Downloads/"${element/.ocs}" & '
+#command+='~/.orw/scripts/rice_and_shine.sh -tC "${element%.*.*}"'
+command+='~/.orw/scripts/rofi_scripts/select_module.sh "${element#.*}"'
 
 (
 	echo "$command"
