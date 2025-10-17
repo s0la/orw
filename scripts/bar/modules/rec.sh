@@ -18,9 +18,12 @@ set_rec_actions() {
 }
 
 check_rec() {
-	rec_color=$(awk '$1 == "red" { gsub("\"", "", $NF); r = $NF } END { print r }' \
+	rec_color=$(awk '$1 == "red" { gsub("\"", "", $NF); r = $NF } END { print "%{F" r "}" }' \
 		~/.config/alacritty/alacritty.toml)
-	rec_icon="%{F$rec_color}$(get_icon '^rec')"
+	[[ $Xpfg == $pfg ]] &&
+		local rec_fg=$rec_color || local rec_fg=$Xpfg
+	#rec_fg=$rec_color
+	rec_icon="$rec_fg$(get_icon '^rec')"
 
 	while true; do
 		get_rec
