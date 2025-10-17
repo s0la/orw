@@ -3,6 +3,7 @@
 get_directory() {
 	read depth directory <<< $(awk '\
 		/^directory|depth/ { sub("[^ ]* ", ""); print }' $config | xargs -d '\n')
+	directory="${directory/wallpapers/wallpapers\/cache}"
 	root="${directory%/\{*}"
 }
 
@@ -46,7 +47,7 @@ if [[ -z $@ ]]; then
 
 	#works with rofi image preview
 	(
-		((image_preview)) && echo '~/.orw/scripts/wallctl.sh -s "$element"'
+		((image_preview)) && echo "~/.orw/scripts/wallctl.sh -s ${root/\/cache}/\"\$element\""
 		eval find $directory/ "$maxdepth" -type f -iregex "'.*\(jpe?g\|png\)'" |
 			sort -t '/' -k 1 | awk '{
 					if ($0 ~ "('"${current_wallpapers//\|/\\\\\\\\|}"')$") i = i "," NR - 1
@@ -61,5 +62,5 @@ if [[ -z $@ ]]; then
 	) #| ${0%/*}/dmenu.sh image_preview
 else
 	wall="$@"
-	eval ~/.orw/scripts/wallctl.sh -s "$root/'$wall'"
+	eval ~/.orw/scripts/wallctl.sh -s "${root/\/cache}/'$wall'"
 fi
