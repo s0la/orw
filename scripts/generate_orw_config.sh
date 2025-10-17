@@ -30,16 +30,7 @@
 #		}'
 #}
 
-conf=~/.config/orw/config
-
 wm() {
-	part=1
-	ratio=2
-	x_offset=20
-	y_offset=10
-	offset=false
-	reverse=false
-
 	read x_border y_border <<< $(~/.orw/scripts/print_borders.sh)
 
 	properties=(
@@ -47,8 +38,8 @@ wm() {
 		"margin 10"
 		"x_border $x_border"
 		"y_border $y_border"
-		"x_offset 50"
-		"y_offset 50"
+		"x_offset $default_offset"
+		"y_offset $default_offset"
 		"mode tiling"
 		"full false"
 		"reverse false"
@@ -63,8 +54,8 @@ display() {
 	get_bar_offset() {
 		local current_bars="${current_running//,/ }"
 
-		read default_y_offset primary_display <<< \
-			$(awk -F '[_ ]' '/^(y_offset|primary)/ { print $NF }' ~/.config/orw/config | xargs)
+		#read default_y_offset primary_display <<< \
+		#	$(awk -F '[_ ]' '/^(y_offset|primary)/ { print $NF }' ~/.config/orw/config | xargs)
 
 		while read bar_config; do
 				read display bottom offset <<< $(awk '
@@ -81,7 +72,7 @@ display() {
 						b = (y ~ "b")
 						if (y) {
 							gsub("[^0-9]", "", y)
-						} else y = '${default_y_offset:-0}'
+						} else y = '${default_offset:-0}'
 
 						h = get_flag("h")
 						if (h) get_value(h)
@@ -126,7 +117,7 @@ display() {
 	}
 
 	declare -A offsets
-	get_bar_offset
+	#get_bar_offset
 
 	while read -r display_index name primary width height x y; do
 		((index++))
@@ -149,7 +140,7 @@ display() {
 	#								i = 3 + p
 	#								print $1, p, $i, $(i + 1), $(i + 2), $(i + 3) }' | sort -n)
 
-	((primary_display_index)) || xrandr --output $first_display_name --primary
+	#((primary_display_index)) || xrandr --output $first_display_name --primary
 
 	#primary_display="primary display_${primary_display_index:-$first_display_index}"
 	primary_display="primary display_$first_display_index"
@@ -171,6 +162,11 @@ wallpapers() {
 
 	echo "#wallpapers\ndepth 0\ndirectory \n${desktops%\\n}"
 }
+
+conf=~/.config/orw/config
+default_x_offset=30
+default_y_offset=30
+default_offset=30
 
 if [[ -f $conf ]]; then
 	for arg in $@; do
