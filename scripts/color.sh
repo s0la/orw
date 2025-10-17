@@ -27,7 +27,7 @@ until
 	if [[ $answer == [Pp] ]] then
 		toggle_windows
 		echo -e "\nPick a color.."
-		bg=$(colorpicker --short --one-shot)
+		bg=$(colorpicker -od)
 		read h s v {b,f}g <<< $(~/.orw/scripts/convert_colors.sh -Bh $bg)
 		set_term_colors
 		toggle_windows
