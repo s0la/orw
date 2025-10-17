@@ -6,8 +6,11 @@ get_bars() {
 }
 
 kill_bar() {
-	local pid=$(ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs)
-	[[ $pid ]] && kill $pid
+	#local pid=$(ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs)
+	#[[ $pid ]] && kill $pid
+	ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs -r kill
+	#ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) printf "%s\n\n", $0 }'
+	#kill $pids
 }
 
 kill_running_script() {
@@ -26,16 +29,20 @@ add_bar() {
 	sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
 }
 
+keep_running() {
+	echo
+}
+
+trap keep_running SIGHUP
+
 configs=~/.config/orw/bar/configs
-last_running=border
+last_running=solid3
 
 while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
 		g)
 			bar=$(sed "s/.*-n \(\w*\).*/\1/" <<< $@)
 			kill_bar
-
-			echo $bar
 
 			[[ -f $configs/$bar ]] && overwrite=-o
 			~/.orw/scripts/bar/run.sh ${@:2} $overwrite
@@ -52,6 +59,7 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 			[[ $@ =~ -k ]] && remove=true
 
+			#echo $bar_expr: ${BASH_REMATCH[*]} ${bar_expr//[[:alnum:]_-]/} = $pattern
 			read current_running bar_array <<< $(ls $configs | awk -F '/' '\
 				BEGIN {
 					r = "'$remove'"
@@ -63,22 +71,34 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 					if (!r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
 					ub = ub "," b
 				} END {
-					if(r) {
-						ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", lr)
-						if (ab ~ /^,/) sub("^,", "", ab)
-					} else {
-						if (nb && ! lr) sub("^,", "", nb)
-						ab = lr nb
-					}
+					#if(r) {
+					#	ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", lr)
+					#	if (ab ~ /^,/) sub("^,", "", ab)
+					#} else {
+					#	if (nb && ! lr) sub("^,", "", nb)
+					#	ab = lr nb
+					#}
+					#print (ab) ? ab : "none", gensub(",", " ", "g", (nb) ? nb : ub)
 
-					print (ab) ? ab : "none", gensub(",", " ", "g", (nb) ? nb : ub)
+					if(r) {
+						dub = ub; gsub(",", "|", dub)
+						gsub(",?\\<(" dub ")\\>", "", lr)
+						if (lr ~ /^,/) sub("^,", "", lr)
+					} else if (nb && ! lr) sub("^,", "", nb)
+
+					print (lr nb) ? lr nb : "none", gensub(",", " ", "g", (nb) ? nb : ub)
 				}')
+
+			#echo $current_running: $bar_array
+			#exit
 
 			[[ $current_running == none ]] && unset current_running
 			[[ $current_running != $last_running ]] && recalculate_offsets=true
 
 			bars=( $bar_array )
 			bar_count=${#bars[*]}
+			#echo $current_running: ${bars[*]}
+			#exit
 
 			sed -i "/^last_running/ s/[^=]*$/$current_running/" $0;;
 		M) memory_tolerance=$OPTARG;;
