@@ -89,18 +89,35 @@ get_network() {
 	#~/.orw/scripts/notify.sh -t 11 "NET: ^$network^"
 }
 
+#kill_nmcli() {
+#	~/.orw/scripts/notify.sh "PID: $nmcli_pid"
+#	kill $nmcli_pid
+#}
+#
+#trap kill_nmcli INT EXIT KILL TERM
+
 check_network() {
 	get_network
 	#print_module network
 
-	nmcli monitor |
-		awk '$1 ~ ":$" && $2 ~ "(connected|available)$" {
-			print $1 $2
-			fflush()
-		}' | while IFS=':' read device status; do
+	while IFS=':' read device status; do
 			get_network
-			#print_module network
-		done
+	done < <(nmcli monitor |
+			awk '$1 ~ ":$" && $2 ~ "(connected|available)$" {
+				print $1 $2
+				fflush()
+			}')
+	#nmcli_pid=$!
+	#wait $nmcli_pid
+
+	#nmcli monitor |
+	#	awk '$1 ~ ":$" && $2 ~ "(connected|available)$" {
+	#		print $1 $2
+	#		fflush()
+	#	}' | while IFS=':' read device status; do
+	#		get_network
+	#		#print_module network
+	#	done
 }
 
 make_network_content() {
