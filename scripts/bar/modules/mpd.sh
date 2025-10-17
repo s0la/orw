@@ -49,14 +49,20 @@ get_mpd_stats() {
 					et = ert[1]
 					tt = ert[2]
 					ft = "%{T2}" et "┃%{T-}" tt
+					ft = "%{T2}" et "❙%{T-}" tt
+					ft = "%{T2}" et "❚%{T-}" tt
 					to = "'"$mpd_time_offset"'"
 					teo = "'"${mpd_time_ending_offset:-$mpd_time_offset}"'"
 					ft = to "%{T2}" et "|%{T-}" tt teo
+					#ft = to "%{T2}" et "❙%{T-}" tt teo
+					#ft = "%{T2}" et "┃%{T-}" tt
 
 					es = get_seconds(et)
 					ts = get_seconds(tt)
 					ss = es % int(ts / pbs)
 
+					ns = "❙"
+					ns = "❚"
 					ns = "┃"
 					ns = "|"
 					fn = a ns t
@@ -180,7 +186,7 @@ assign_mpd_info_components() {
 	esac
 
 	#mpd_info_components="$mpd_bg$mpd_fg$mpd_info_components"
-	mpd_info_components="$mpfg$mpd_info_components"
+	mpd_info_components="$mpd_bg$mpfg$mpd_info_components"
 }
 
 assign_mpd_progressbar_components() {
@@ -211,6 +217,12 @@ assign_mpd_buttons_components() {
 				icon_style='' || icon_style='_circle_empty'
 			;;
 		o) mpd_buttons+="%{O$component_value}";;
+		f)
+			mpd_button_start_frame="%{U$msfc}%{B$msfc}%{O1}%{+u}%{+o}$mpd_bg"
+			mpd_button_end_frame="%{B$msfc}%{O1}%{-u}%{-o}$mpd_bg"
+			mpd_button_bg="${mbbg:-$msbg}"
+			;;
+		P) mpd_button_padding="%{O$component_value}";;
 		S) mpd_button_separator="%{O$component_value}";;
 	esac
 
@@ -219,10 +231,24 @@ assign_mpd_buttons_components() {
 			mpd_button_icon='$toggle' ||
 			mpd_button_icon="$(get_icon "${mpd_button}${icon_style}=")" \
 			mpd_button_icon="%{A:mpc -q $mpd_button:}$mpd_button_icon%{A}"
-		mpd_buttons+="$mpd_button_icon$mpd_button_separator"
+		#mpd_buttons+="$mpd_button_icon$mpd_button_separator"
+		mpd_buttons+="$mpd_button_start_frame$mpd_button_bg"
+		mpd_buttons+="$mpd_button_padding%{T4}$mpd_fg$mpd_button_icon%{T-}$mpd_button_padding"
+		mpd_buttons+="$mpd_button_end_frame$mpd_button_separator"
+		#~/.orw/scripts/notify.sh -t 22 "MBS: $mpd_buttons"
+		#mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
+	else
+		#[[ $mpd_buttons && $mpd_button_separator ]] && ~/.orw/scripts/notify.sh -t 22 "pre MBS: $mpd_buttons" && mpd_buttons="${mpd_buttons%\%*}" &&
+			#~/.orw/scripts/notify.sh -t 22 "post MBS: $mpd_buttons"
+		[[ $mpd_buttons && $mpd_button_separator ]] &&
+			mpd_buttons="${mpd_buttons%\%*}" &&
+			unset mpd_button_separator
+		#[[ $mpd_buttons && $mpd_button_separator ]] &&
+		#	mpd_buttons="${mpd_buttons%\%*}" && unset mpd_button_separator ||
+		#	return
 	fi
 
-	mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
+	#mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
 }
 
 assign_mpd_time_components() {
@@ -237,7 +263,11 @@ assign_mpd_time_components() {
 }
 
 make_mpd_content() {
-	local mpd_bg=$msbg mpd_fg=$msfg
+	#limiter_icon='%{I}%{I}'
+	limiter_icon='%{I}%{I}'
+	#local mpd_bg=$msbg mpd_fg=$msfg
+	[[ ${joiner_modules[m]} ]] ||
+		local mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs=$mfs mpd_fe=$mfe
 
 	for arg in ${1//,/ }; do
 		value=${arg:2}
@@ -259,6 +289,7 @@ make_mpd_content() {
 					color="\${m${value:1:1}bg}" || color='%{B-}'
 				eval restore_${side}_color="$color$side_frame_end"
 				[[ $side_frame_end ]] && unset side_frame_end mfe
+				mpd_bg='%{B-}'
 				;;
 			[PS]) switch_color="\$m${arg,}${value:-g\$m${arg,}f}g";;
 			P*) mpd_components+="\$mp${value:-g\$mpf}g";;
@@ -303,6 +334,8 @@ make_mpd_content() {
 				buttons="${value:-ptn}"
 
 				assign_components mpd_buttons "$buttons"
+				[[ $mpd_button_separator ]] && mpd_buttons="${mpd_buttons%\%*}"
+				#~/.orw/scripts/notify.sh -t 22 "MB: $mpd_buttons, $mpd_button_separator"
 
 				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
 				#	mpd_buttons="$restore_start_color$switch_bg_color$switch_fg_color$mpd_buttons$restore_end_color"
@@ -334,11 +367,11 @@ make_mpd_content() {
 		esac
 	done
 
+	#~/.orw/scripts/notify.sh -t 22 "$mpd_components"
+
 	full_mpd_components="$mpd_components"
 	#short_mpd_components='$mpd_toggle$mpd_info$mpd_time'
 
-	[[ ${joiner_modules[m]} ]] ||
-		local mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs=$mfs mpd_fe=$mfe
 	mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding$mpd_fe"
 }
 
@@ -354,8 +387,8 @@ switch_mpd_volume_buttons() {
 }
 
 check_mpd() {
-	local limiter_icon='%{I}%{I}'
-	local limiter_icon='%{I}%{I}'
+	#local limiter_icon='%{I}%{I}'
+	#local limiter_icon='%{I}%{I}'
 
 	print_mpd
 
