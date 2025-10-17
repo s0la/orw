@@ -10,6 +10,7 @@ make_list() {
 	local module_frame_type=${module}_frame_type
 	local module_frame_start=${module}_frame_start module_frame_end=${module}_frame_end
 	local module_active_frame_start=${module}_active_frame_start
+	local module_active_frame_end=${module}_active_frame_end
 
 	for index in ${!list[*]}; do
 		item=${list[index]}
@@ -25,10 +26,12 @@ make_list() {
 		if [[ $module == windows ]]; then
 			label="$cwfg${windows_titles[$item]:-$item}"
 		else
-			[[ $workspace_icons == [iln] ]] &&
+			[[ $workspace_icons == [biln]* ]] &&
 				label="${workspaces_icons[index]}" ||
 				label="\${workspace_${current_icon}_icon:-$item}"
 		fi
+
+		#~/.orw/scripts/notify.sh -t 11 "$label"
 
 		if [[ $module == workspaces ||
 			($module == windows && ! $only_current_window) ]]; then
@@ -52,11 +55,12 @@ make_list() {
 		if [[ ! ${joiner_modules[$short]} ]]; then
 			item="\$$short${current}bg$item"
 
-			if [[ ${!module_frame_type} == single || ${!separator} ]]; then
+			if [[ ${!module_frame_type} == single || ${!separator} || $workspace_icons == b* ]]; then
 				local frame_mode=${!module_frame_start}
-				[[ $current_icon == p && ${!module_frame_type} == single ]] && 
+				[[ $current_icon == p && (${!module_frame_type} == single || $workspace_icons == b*) ]] && 
 					frame_mode=${!module_active_frame_start}
-									[[ $current_icon == s && $module == workspaces ]] && unset frame_mode
+				[[ $current_icon == s && $module == workspaces && ${!module_frame_type} == single ]] && unset frame_mode
+				#~/.orw/scripts/notify.sh -t 22 "WS, $current_icon: $frame_mode"
 			fi
 
 			if [[ $padding ]]; then
@@ -66,13 +70,22 @@ make_list() {
 			if ((index == ${#list[*]} - 1)); then
 				[[ $padding ]] && unset frame_mode_end
 			else
-				local frame_mode_end=${!module_frame_end}
+				#[[ $workspace_icons == b* && $current_icon == p ||
+				#	$workspace_icons != b* ]] && local frame_mode_end=${!module_frame_end}
+
+				#[[ $workspace_icons == b* && $current_icon != p ]] &&
+				#	unset frame_mode_end || local frame_mode_end=${!module_frame_end}
+				[[ $workspace_icons == b* && $current_icon == p ]] &&
+					local frame_mode_end=${!module_active_frame_end} ||
+					local frame_mode_end=${!module_frame_end}
+				#~/.orw/scripts/notify.sh -t 11 "FME: $index $frame_mode_end"
 			fi
 
+			#~/.orw/scripts/notify.sh -t 22 "WS, $current_icon: $frame_mode, $Wsfc, $workspace_icons - $item"
 			[[ (${!module_frame_type} == all && ${!separator}) ||
-				(($module == windows || ($workspace_icons == [iln] && $current_icon != s)) &&
+				(($module == windows || ($workspace_icons == [biln]* && $current_icon != s)) &&
 				${!module_frame_type} == single) ]] &&
-					item="$frame_mode$item$frame_mode_end"
+				item="$frame_mode$item$frame_mode_end"
 		fi
 
 		eval $module+=\"$item\"
@@ -178,6 +191,7 @@ get_tiling() {
 		label='FLOAT' icon='floating'
 
 	icon=$(get_icon "wm_mode_$icon")
+	#icon=$(get_icon "${wm_label::1}.*_direction")
 
 	[[ $tiling_icon ]] &&
 		tiling=$icon || tiling=$label
@@ -291,6 +305,7 @@ make_workspaces_content() {
 		workspaces_frame_type=$frame_type
 		workspaces_frame_start=$module_frame_start
 		workspaces_active_frame_start=$module_active_frame_start
+		workspaces_active_frame_end=$module_active_frame_end
 		workspaces_frame_end=$module_frame_end
 	fi
 
@@ -303,7 +318,7 @@ make_workspaces_content() {
 			p) workspace_padding="%{O$value}";;
 			s) workspace_separator="%{B\$bg}%{O$value}";;
 			i)
-				if ((${#value} > 1)); then
+				if [[ ${#value} -gt 1 && $value != b* ]]; then
 					icon_type=$(sed 's/\w/&\[^_]*_/g' <<< "W$value")
 					read workspace_{p,c,s}_icon <<< $(get_icon "${icon_type}[pcs]" | xargs)
 					[[ $value == *b* ]] && workspace_p_icon="%{O3}$workspace_p_icon%{O3}"
@@ -311,11 +326,19 @@ make_workspaces_content() {
 					workspace_icons=$value
 					while read ws_name; do
 						case $workspace_icons in
+							b*)
+								size=${value#b}
+								#~/.orw/scripts/notify.sh -t 11 "SINGLE: ^${size:-50}^"
+								workspaces_icons+=( "%{O${size:-50}}" )
+								#workspaces_icons+=( "" )
+								#~/.orw/scripts/notify.sh -t 11 "${workspaces_icons[*]}"
+								;;
 							l) workspaces_icons+=( $ws_name );;
 							n)
 								((ws_count++))
-								workspaces_icons+=( $(get_icon "number_${ws_count}") )
-								#workspaces_icons+=( $ws_count )
+								#workspaces_icons+=( $(get_icon "number_${ws_count}") )
+								#~/.orw/scripts/notify.sh -t 11 "ICON: $(get_icon "number_${ws_count}")"
+								workspaces_icons+=( $ws_count )
 								;;
 							*) workspaces_icons+=( $(get_icon "Workspace_${ws_name}") );;
 						esac
