@@ -5,7 +5,7 @@ active=$(wmctrl -l | awk '\
 	{
 		switch ($NF) {
 			case /vifm[0-9]?/: a = a ",2"; break;
-			case /alacritty[0-9]?/: a = a ",0"; break;
+			case /alacritty[0-9]?/: if (a !~ "0") a = a ",0"; break;
 			case /DROPDOWN/: a = a ",1"; break;
 			case /qutebrowser/: a = a ",3"; break
 		}
