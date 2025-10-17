@@ -1,0 +1,60 @@
+<openbox_theme>
+  <name>orw</name>
+
+  <frame_geometry name="normal">
+    <distance name="left_width" value="1"/>
+    <distance name="right_width" value="1"/>
+    <distance name="bottom_height" value="1"/>
+    <distance name="top_height" value="1"/> <!-- the tiny bar below the titlebar -->
+  </frame_geometry>
+
+  <frame_geometry name="maximized">
+    <distance name="left_width" value="0"/>
+    <distance name="right_width" value="0"/>
+    <distance name="bottom_height" value="0"/>
+    <distance name="top_height" value="0"/>
+  </frame_geometry>
+
+  <frame name="normal">
+    <!-- Top border (just under titlebar) -->
+    <border name="top" size="1">
+      <color name="active" value="#cccccc"/>     <!-- Light gray -->
+      <color name="inactive" value="#1c1c1c"/>   <!-- Dark/invisible -->
+    </border>
+
+    <!-- Other borders -->
+    <border name="bottom" size="1">
+      <color name="active" value="#1c1c1c"/>
+      <color name="inactive" value="#1c1c1c"/>
+    </border>
+    <border name="left" size="1">
+      <color name="active" value="#1c1c1c"/>
+      <color name="inactive" value="#1c1c1c"/>
+    </border>
+    <border name="right" size="1">
+      <color name="active" value="#1c1c1c"/>
+      <color name="inactive" value="#1c1c1c"/>
+    </border>
+  </frame>
+
+  <!-- Optional: define for maximized windows (usually borderless) -->
+  <frame name="maximized">
+    <border name="top" size="0">
+      <color name="active" value="#000000"/>
+      <color name="inactive" value="#000000"/>
+    </border>
+    <border name="bottom" size="0">
+      <color name="active" value="#000000"/>
+      <color name="inactive" value="#000000"/>
+    </border>
+    <border name="left" size="0">
+      <color name="active" value="#000000"/>
+      <color name="inactive" value="#000000"/>
+    </border>
+    <border name="right" size="0">
+      <color name="active" value="#000000"/>
+      <color name="inactive" value="#000000"/>
+    </border>
+  </frame>
+</openbox_theme>
+
