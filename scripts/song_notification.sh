@@ -8,6 +8,11 @@ album=$(mpc current -f %album%)
 cover="$(~/.orw/scripts/get_cover_art.sh)"
 cover="${cover//[()]/}"
 
+widget_cover=/tmp/widget_cover.jpg
+#[[ -f $widget_cover ]] && rm $widget_cover
+cp $cover $widget_cover
+#~/.orw/scripts/notify.sh "$cover"
+
 #song_position=$(mpc current -f '%position%')
 #IFS=$'\n' read -d '' -a songs <<< $(mpc playlist |
 #	awk 'NR >= '$song_position' - 1 && NR <= '$song_position' + 1')
@@ -24,4 +29,4 @@ info="<b>$artist</b>\n$title"
 [[ -f $cover ]] && icon="-i $cover"
 [[ $artist && $title ]] &&
 	#~/.orw/scripts/notify.sh $icon -r 101 -F 'Iosevka Orw' -f 8 -po 8 "$info" &> /dev/null
-	~/.orw/scripts/notify.sh $icon -r 101 -F 'Iosevka Orw' -f 8 -o 8 "$info" &> /dev/null
+	~/.orw/scripts/notify.sh $icon -t 5 -r 101 -F 'Iosevka Orw' -f 8 -o 8 "$info" &> /dev/null
