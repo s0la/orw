@@ -1,0 +1,2 @@
+/home/sola/.orw/scripts/bar/run.sh -y 44,b -w 210 -x c -h 25 -p 0 -a 6,o:8 -c auto_generated -n mp_v -c -V b:18,r:5,o:3,g:40 -O 30
+#/home/sola/.orw/scripts/bar/run.sh -y 44,b -w 210 -x c -h 25 -p 0 -a 6,o:8 -c auto_generated -n mp_v -c -m i:s22i -O 30

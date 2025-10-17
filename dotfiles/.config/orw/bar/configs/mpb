@@ -1,0 +1,1 @@
+/home/sola/.orw/scripts/bar/run.sh -y 10,b -w 200 -x c -h 14 -F 5 -f a:1 -p 0 -a 5 -c auto_generated -n mpb -c -f -m R:s,S:f,b:fS3P11ptn -O 30

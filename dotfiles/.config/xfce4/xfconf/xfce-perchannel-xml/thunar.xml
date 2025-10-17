@@ -20,8 +20,8 @@
   </property>
   <property name="last-location-bar" type="string" value="void"/>
   <property name="last-side-pane" type="string" value="THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS"/>
-  <property name="last-window-width" type="int" value="264"/>
-  <property name="last-window-height" type="int" value="306"/>
+  <property name="last-window-width" type="int" value="273"/>
+  <property name="last-window-height" type="int" value="312"/>
   <property name="last-window-maximized" type="bool" value="false"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_25_PERCENT"/>
   <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,78,50,81,386,50,50,50,50,50"/>
