@@ -271,6 +271,7 @@ get_basic_info() {
 		case $info in
 			u) info_content="$(whoami)";;
 			h) info_content="$(hostname)";;
+			i) info_content="$(ip a | awk '/inet.*scope global/ { sub("/.*", "", $2); print $2; exit }')";;
 			*)
 				bold_info=B
 				info_content="${info//_/ }"
@@ -424,6 +425,15 @@ generate_ps1() {
 	gdc="211;124;135;"
 	vc="211;124;135;"
 
+	sec=$(awk --non-decimal-data '
+		function get_decimal(hex) {
+			printf ""
+		}
+
+		/colors.normal/,/^$/ {
+			if (/red/) for (i=3; i<length($NF); i+=2) printf "%d;", "0x" substr($NF, i, 2)
+		}' ~/.config/alacritty/alacritty.toml)
+
 	#clean='\[\033[0m\]'
 	#clean='\1\e[0m\2'
 	clean="${format_start}0$format_end"
@@ -451,7 +461,7 @@ generate_ps1() {
 
 		#info_module="u,┃"
 		[[ $mode == simple ]] &&
-			info_module='u,|' || info_module="u"
+			info_module='u,@,i,|' || info_module="u"
 		git_module="s,m,i,a,d,u"
 
 		#modules="i,W,g,v,m"
@@ -464,45 +474,72 @@ generate_ps1() {
 			start_bracket="$(color_content 3 $fg)("
 			end_bracket="$(color_content 3 $fg))"
 
-			format_module -f $fg -b default -Bc "[ "
 			color_modules
 
-			#((content_length > 70)) &&
-			#((COLUMNS / content_length < 2)) &&
+			prompt_end=" >"
+			prompt_start="• " prompt_end="•"
+			prompt_start="• " prompt_end="›"
 			((COLUMNS - content_length < 50)) &&
-				#prompt_start='┌─' prompt_end='└─╼'
-				#prompt_start='╭─' prompt_end='╰─›'
-				#prompt_start='┌─' prompt_end='└─•›'
+				prompt_start="┌─$prompt_start" prompt_end="└─$prompt_end" end_prefix='\n' ||
+				end_prefix=' '
 
-				#prompt_start='\[\033[1m\]• ' prompt_end='• ›'
-				#prompt_start='\1\e[1m\2• ' prompt_end='• ›'
-				prompt_start="${format_start}1$format_end┌─ " prompt_end='└─ •›'
-				#prompt_start="${format_start}1$format_end• " prompt_end='• ›'
-				#prompt_end=''
-
-				#prompt_start='┌─' prompt_end='└─›'
 			if [[ $prompt_start ]]; then
 				start="$(color_content 3 $sc)$prompt_start"
 				all_modules="$start$all_modules"
 			fi
 
-			[[ $reverse ]] || format_module -f $fg -Bc " ]"
-			#format_module -b default -f $vc -Bc " $vi_icon "
-			#format_module -b $vc -Bc "${vi_mode^}"
-
-			#[[ $vi_mode ]] &&
-			#	format_module -b default -f $vi_color -Bc " ${vi_mode^} "
-			[[ $vi_mode ]] &&
-				format_module -b default -f $vi_color -Bc " $vi_icon "
-
 			if [[ $prompt_end ]]; then
-				all_modules+='\n'
+				all_modules+=$end_prefix
 				format_module -f $sc -Bc "$prompt_end"
-			else
-				format_module -f $sc -Bc '•›'
-				#format_module -f $sc -Bc '━›'
-				#format_module -f $sc -Bc '━'
 			fi
+
+			##format_module -f $fg -b default -Bc "[ "
+			#format_module -f $fg -b default -Bc "• "
+			#color_modules
+
+			##((content_length > 70)) &&
+			##((COLUMNS / content_length < 2)) &&
+			#((COLUMNS - content_length < 50)) &&
+			#	#prompt_start='┌─' prompt_end='└─╼'
+			#	#prompt_start='╭─' prompt_end='╰─›'
+			#	#prompt_start='┌─' prompt_end='└─•›'
+
+			#	#prompt_start='\[\033[1m\]• ' prompt_end='• ›'
+			#	#prompt_start='\1\e[1m\2• ' prompt_end='• ›'
+			#	prompt_start="${format_start}1$format_end┌─ " prompt_end='└─ •›'
+			#	#prompt_start="${format_start}1$format_end• " prompt_end='• ›'
+			#	#prompt_end=''
+
+			#	#prompt_start='┌─' prompt_end='└─›'
+			#if [[ $prompt_start ]]; then
+			#	start="$(color_content 3 $sc)$prompt_start"
+			#	all_modules="$start$all_modules"
+			#fi
+
+			##[[ $reverse ]] || format_module -f $fg -Bc " ]"
+			##[[ $reverse ]] || format_module -f $fg -Bc " •"
+
+			##format_module -b default -f $vc -Bc " $vi_icon "
+			##format_module -b $vc -Bc "${vi_mode^}"
+
+			##[[ $vi_mode ]] &&
+			##	format_module -b default -f $vi_color -Bc " ${vi_mode^} "
+			#[[ $vi_mode ]] &&
+			#	format_module -b default -f $vi_color -Bc " $vi_icon "
+
+			#if [[ $prompt_end ]]; then
+			#	all_modules+='\n'
+			#	format_module -f $sc -Bc "$prompt_end"
+			#else
+			#	#format_module -f $sc -Bc '•›'
+			#	#format_module -f $sc -Bc '•›'
+			#	#format_module -f $sc -Bc '›'
+			#	format_module -f $sc -Bc ' •'
+			#	#true
+			#	#all_modules+=">"
+			#	#format_module -f $sc -Bc '━›'
+			#	#format_module -f $sc -Bc '━'
+			#fi
 		else
 			if [[ $edge_mode == sharp ]]; then
 				symbol_start='╭── '
