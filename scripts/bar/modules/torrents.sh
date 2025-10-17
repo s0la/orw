@@ -6,7 +6,7 @@ get_torrents_stats() {
 			function make_progressbar(percent) {
 				if (percent) {
 					pb = sprintf("%*s", percent, " ")
-					gsub(" ", pbi "%{O0}", pb)
+					gsub(" ", pbi "%{O'"${offset:-0}"'}", pb)
 					return fg pb
 				}
 			}
@@ -21,11 +21,12 @@ get_torrents_stats() {
 			}
 
 			{
-				if ($2 ~ "^[0-9]{1,2}\\.[0-9]{1,2}%") {
+				if ($2 ~ "^[0-9]{1,2}(\\.[0-9]{1,2})?%") {
 					tp += $2
 					tc++
 
 					i = i "," $1
+					sub("\\*$", "", i)
 					ts = substr($0, ss)
 					ns = (ts ~ "^Stopped") ? "s" : "S"
 				}
@@ -36,15 +37,13 @@ get_torrents_stats() {
 				pd = sprintf("%.0f", ap / spbs)
 				pr = 100 / spbs - pd
 
-				pb = "%{T3}${tbefg:-${pbefg:-${pfg}}}" make_progressbar(pd) 
-				pb = pb "${tbfg:-${sfg}}" make_progressbar(pr) "%{T-}"
+				#pb = "%{T3}${tbefg:-${pbefg:-${pfg}}}" make_progressbar(pd) 
+				pb = "%{T4}${Tbefg:-${pbefg:-${pfg}}}" make_progressbar(pd) 
+				pb = pb "${Tbfg:-${sfg}}" make_progressbar(pr) "%{T-}"
 
 				if (tc) print substr(i, 2), ns, tc, ap "%", pb
 			}' 2> /dev/null
 }
-
-#get_torrents_stats
-#exit
 
 set_torrents_actions() {
 	local action1="transmission-remote -t $ids -$status &> /dev/null"
@@ -83,7 +82,7 @@ check_torrents() {
 		#((count)) && sleep_interval=10 || sleep_interval=60
 		if ((!count)); then
 			sleep_interval=60
-			((pid)) && kill $pid
+			((pid)) && sudo kill $pid
 		else
 			sleep_interval=10
 		fi
