@@ -28,7 +28,7 @@ get_app() {
 
 		if [[ $1 == install ]]; then
 			[[ "${@:4}" != *make* ]] && make
-			sudo make install
+			sudo --preserve-env=PATH make install
 			(( $? > 0 )) && return 1
 		fi
 
@@ -132,6 +132,10 @@ function deps() {
 		fzf
 		ripgrep
 		newsboat
+		bluez
+		bluez-utils
+		libnotify
+		expect
 	)
 
 	if [[ $(which apt 2> /dev/null) ]]; then
@@ -175,7 +179,7 @@ function deps() {
 
 		confirm '' 'y' 'y' | sudo pacman -S ${common_deps[*]} base-devel llvm-libs ninja python-pip bash-completion \
 			alsa-lib alsa-plugins alsa-utils pipewire{,-pulse} xorg-xrandr xorg-xwininfo xorg-xset xorg-xsetroot iniparser \
-			gtk-engine-murrine unzip mpfr openssl wpa_supplicant meson uthash \
+			unzip mpfr openssl wpa_supplicant meson uthash \
 			libconfig libev xcb-util-{image,renderutil} libxml2 glibc icu &> $output ||
 			handle_failure "$failure_message"
 
@@ -230,12 +234,12 @@ function apps() {
 	get_app install ym1234 colorpicker || handle_failure "Failed to install colorpicker."
 
 	#i3lock-color installation
-	get_app install PandorasFox i3lock-color "autoreconf --force --install" \
+	get_app install Raymo111 i3lock-color "autoreconf --force --install" \
 		"rm -rf build/" "mkdir -p build" "cd build/" "../configure --prefix=/usr --sysconfdir=/etc --disable-sanitizers"
 
 	#fseed installation
 	#get_app git clone git://git.codemadness.org/sfeed
-	get_app install dxwc sfeed
+	#get_app install dxwc sfeed
 
 	#git clone git://git.codemadness.org/sfeed ~/Downloads/sfeed
 	#cd ~/Downloads/sfeed
@@ -302,7 +306,7 @@ function orw() {
 
 	ex_user=$(sed -n 's/user.*"\(.*\)"/\1/p' ~/.config/mpd/mpd.conf)
 	sed -i "s/$ex_user/$(whoami)/" $orw/{scripts/{bar/run,wallctl,ncmpcpp*}.sh,dotfiles/{.config/{mpd/mpd.conf,ncmpcpp/config*},services/change_wallpaper.service}}
-	sed -i "s/^\\(#\?\)(.[^\/]*\)\{2\}/\1${HOME//\//\\/}/" $orw/dotfiles/.config/orw/bar/configs/*
+	sed -i "s/^\(#\?\)\(.[^\/]*\)\{2\}/\1${HOME//\//\\/}/" $orw/dotfiles/.config/orw/bar/configs/*
 
 	[[ ! -f ~/.config/orw/config ]] && $orw/scripts/generate_orw_config.sh
 
