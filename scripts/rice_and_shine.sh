@@ -278,8 +278,10 @@ function gtk() {
 
 	case $property in
 		fc)
-			folder fill $(offset_color "#${color: -6}" ${shade_offset-+10})
-			folder stroke $(offset_color "#${color: -6}" ${secondary_shade_offset--20});;
+			#folder fill $(offset_color "#${color: -6}" ${shade_offset-+10})
+			#folder stroke $(offset_color "#${color: -6}" ${secondary_shade_offset--20});;
+			folder fill $(offset_color "#${color: -6}" ${shade_offset-+5})
+			folder stroke $(offset_color "#${color: -6}" ${secondary_shade_offset--15});;
 		ff) folder fill;;
 		fs) folder stroke;;
 		*)
@@ -1479,8 +1481,7 @@ else
 			[[ $module =~ $set_modules ]] || continue
 			eval reload_$module=true
 
-			sed -n "/^#$module/,/^$/ { /^\(#\|$\)/!p }" $colorscheme | set_$module #&> /dev/null &
-			exit
+			sed -n "/^#$module/,/^$/ { /^\(#\|$\)/!p }" $colorscheme | set_$module &> /dev/null &
 		done
 		wait
 	else
