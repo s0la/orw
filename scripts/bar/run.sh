@@ -186,7 +186,7 @@ make_module() {
 
 			[[ ${singles[*]} == *$module* && ! ${joiner_modules[$opt]} ]] &&
 				single_color_type=p mfs="$module_active_frame_start" mfe="${mfe/?fc/pfc}" || single_color_type=s
-			local single_fg="\${cjffg:-\${cj${single_color_type}fg:-\$${opt}${single_color_type}fg}}"
+			local single_fg="\${${opt}jfg:-\${cjffg:-\${cj${single_color_type}fg:-\$${opt}${single_color_type}fg}}}"
 
 			full_module="$pbg$single_fg\$${module}_padding%{T2}"
 			full_module+="$single_content\$${module}_padding"
@@ -321,8 +321,34 @@ print_module() {
 		output_content="$actions_start${!content}$actions_end"
 
 	if [[ ${!joiner_modules[*]} == *$short* ]]; then
+		##{
+		#{
+		#	flock -x 11
+
+		#	local joiner_group_index=${joiner_modules[$short]}
+		#	local joiner_group="${joiner_groups[joiner_group_index - 1]}"
+
+		#	local active_modules=$(sed -n "${joiner_group_index}p" $joiner_modules_file)
+		#	local new_active_modules=$active_modules
+
+		#	[[ ${active_modules: -1} == $short ]] && local end_module=true
+		#	[[ ${active_modules::1} == $short ]] && local start_module=true
+
+		#	[[ $short == [$active_modules] && ! "${!module}" ]] &&
+		#		new_active_modules="${active_modules/$short}"
+		#	[[ $short != [$active_modules] && "${!module}" ]] &&
+		#		new_active_modules="${joiner_group//[^$active_modules$short]}"
+
+		#	if [[ ! $2 ]]; then
+		#		[[ $new_active_modules != $active_modules ]] &&
+		#			sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
+		#	fi
+		#} 11> ~/test.lock
+		##} 11< $joiner_modules_file
+
 		{
-			flock -x 11
+			exec 11> $joiner_lock_file
+			flock -e 11
 
 			local joiner_group_index=${joiner_modules[$short]}
 			local joiner_group="${joiner_groups[joiner_group_index - 1]}"
@@ -343,33 +369,8 @@ print_module() {
 					sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
 			fi
 
-		} 11< $joiner_modules_file
-
-		#{
-		#	exec 11> $joiner_lock_file
-		#	flock -e 11
-
-		#	local joiner_group_index=${joiner_modules[$short]}
-		#	local joiner_group="${joiner_groups[joiner_group_index - 1]}"
-
-		#	local active_modules=$(sed -n "${joiner_group_index}p" $joiner_modules_file)
-		#	local new_active_modules=$active_modules
-
-		#	[[ ${active_modules: -1} == $short ]] && local end_module=true
-		#	[[ ${active_modules::1} == $short ]] && local start_module=true
-
-		#	[[ $short == [$active_modules] && ! "${!module}" ]] &&
-		#		new_active_modules="${active_modules/$short}"
-		#	[[ $short != [$active_modules] && "${!module}" ]] &&
-		#		new_active_modules="${joiner_group//[^$active_modules$short]}"
-
-		#	if [[ ! $2 ]]; then
-		#		[[ $new_active_modules != $active_modules ]] &&
-		#			sed -i "$joiner_group_index s/.*/$new_active_modules/" $joiner_modules_file
-		#	fi
-
-		#	flock -u 11
-		#}
+			flock -u 11
+		}
 
 		local joiner_{distance,{frame_,}{start,end},padding,next_bg} cj{f,p,s}fg switch_bg
 		read joiner_{distance,padding,frame_{start,end}} switch_bg <<< \
@@ -581,6 +582,17 @@ assign_y_args() {
 	esac
 }
 
+assign_separator_args() {
+	case $arg in
+		s) separator_symbol=$value;;
+		*)
+			local space=${value:-$arg}
+			[[ ! $separator_symbol ]] &&
+				bar_separator="%{B-}%{O$space}" ||
+				bar_separator="%{B-}%{O$((space / 2))}\$sfg$separator_symbol%{O$((space / 2))}"
+	esac
+}
+
 assign_font_args() {
 	case $arg in
 		o) font_offset=$value;;
@@ -620,7 +632,8 @@ while getopts :xywhspcrafFSjinemdvtDNPTCVOWARLXBbE opt; do
 		[xy]) assign_args $opt;;
 		w) assign_args width;;
 		h) bar_height=$args;;
-		s) bar_separator="%{B-}%{O$args}";;
+		#s) bar_separator="%{B-}%{O$args}";;
+		s) assign_args separator;;
 		p) padding="%{O$args}";;
 		f)
 			frame_size=${args#*:}
@@ -765,8 +778,14 @@ icon_font="material:size=$icon_size"
 #bar_font="SFMono:style=Heavy:size=$font_size"
 #bar_font="Iosevka Orw:style=Heavy:size=$font_size"
 
+font="JetBrains Mono:style=Medium:size=$font_size"
+bold_font="JetBrains Mono:style=ExtraBold:size=$font_size"
+font="Monocraft:style=Medium:size=$font_size"
+bold_font="Monocraft:style=Bold:size=$font_size"
 font="Iosevka Orw:style=Medium:size=$font_size"
 bold_font="Iosevka Orw:style=Heavy:size=$font_size"
+#font="Source Code Pro:style=Medium:size=$font_size"
+#bold_font="Source Code Pro:style=Bold:size=$font_size"
 bar_font="Iosevka Orw:style=Heavy:size=$((font_size - 0))"
 vbar_font="SFMono:style=Heavy:size=$((font_size - 1))"
 #bar_font="SFMono:style=Heavy:size=$font_size"
@@ -805,6 +824,8 @@ remove_fifos() {
 	#ps aux | awk '/(bt|nmcli )mon|cava.raw/ && !/awk/ { print $2 }' | xargs -r sudo kill -9
 	[[ $pattern ]] &&
 		ps aux | awk '/'"${pattern#\|}"'/ && !/awk/ { print $2 }' | xargs -r sudo kill -9
+
+	((BT_PID)) && kill $BT_PID
 }
 
 trap self_kill INT
@@ -909,15 +930,15 @@ run_modules
 main_pid=$$
 
 while IFS=':' read module content; do
-	eval ${module,,}=\""$content"\"
+	eval ${module,,}=\""$content"\" &> /dev/null
 	#[[ ${module,,} == rec ]] && eval echo "${module,,}=\""$content"\"" >> ~/bar.log
 	#(($?)) && eval echo "${module,,}: "$content"" >> ~/bar.log
 	#eval echo -e \""$bar_content"\" >> b.log
 	eval echo -e \""$bar_content"\"
 done < $fifo | adjust_bar_width |
 	lemonbar -d -B$bg -F$fg -u 0 \
-	-f "$font" -o $font_offset \
-	-f "$bold_font" -o $font_offset \
+	-f "$font" -o $((font_offset - 1)) \
+	-f "$bold_font" -o $((font_offset - 1)) \
 	-f "$bar_font" -o $((font_offset - 1)) \
 	-f "$vbar_font" -o $((font_offset - 2)) \
 	-f "$icon_font" -o $((font_offset + 0)) \
