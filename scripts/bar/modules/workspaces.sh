@@ -16,11 +16,11 @@ make_list() {
 		item=${list[index]}
 
 		if [[ $item == ${!current_item} ]]; then
-			current=p current_icon=p
+			current=p
 		else
 			[[ ${workspaces_windows[$item]} ]] &&
-				current_icon=c || current_icon=s
-			current=s
+				current=c || current=s
+			#current=s
 		fi
 
 		if [[ $module == windows ]]; then
@@ -28,7 +28,7 @@ make_list() {
 		else
 			[[ $workspace_icons == [biln]* ]] &&
 				label="${workspaces_icons[index]}" ||
-				label="\${workspace_${current_icon}_icon:-$item}"
+				label="\${workspace_${current}_icon:-$item}"
 		fi
 
 		#~/.orw/scripts/notify.sh -t 11 "$label"
@@ -50,16 +50,17 @@ make_list() {
 
 		action="${!actions_start}$left_offset$label$right_offset${!actions_end}"
 
-		item="\\\${cj${current}fg:-\\\$$short${current}fg}$action"
+		item="\\\${cj${current}fg:-\\\${$short${current}fg:-\\\$${short}pfg}$action"
 
 		if [[ ! ${joiner_modules[$short]} ]]; then
-			item="\$$short${current}bg$item"
+			item="\${$short${current}bg:-\$${short}sbg}$item"
+			#~/.orw/scripts/notify.sh -t 11 "$index: $item"
 
 			if [[ ${!module_frame_type} == single || ${!separator} || $workspace_icons == b* ]]; then
 				local frame_mode=${!module_frame_start}
-				[[ $current_icon == p && (${!module_frame_type} == single || $workspace_icons == b*) ]] && 
+				[[ $current == p && (${!module_frame_type} == single || $workspace_icons == b*) ]] && 
 					frame_mode=${!module_active_frame_start}
-				[[ $current_icon == s && $module == workspaces && ${!module_frame_type} == single ]] && unset frame_mode
+				[[ $current == s && $module == workspaces && ${!module_frame_type} == single ]] && unset frame_mode
 				#~/.orw/scripts/notify.sh -t 22 "WS, $current_icon: $frame_mode"
 			fi
 
@@ -75,7 +76,7 @@ make_list() {
 
 				#[[ $workspace_icons == b* && $current_icon != p ]] &&
 				#	unset frame_mode_end || local frame_mode_end=${!module_frame_end}
-				[[ $workspace_icons == b* && $current_icon == p ]] &&
+				[[ $workspace_icons == b* && $current == p ]] &&
 					local frame_mode_end=${!module_active_frame_end} ||
 					local frame_mode_end=${!module_frame_end}
 				#~/.orw/scripts/notify.sh -t 11 "FME: $index $frame_mode_end"
@@ -83,7 +84,7 @@ make_list() {
 
 			#~/.orw/scripts/notify.sh -t 22 "WS, $current_icon: $frame_mode, $Wsfc, $workspace_icons - $item"
 			[[ (${!module_frame_type} == all && ${!separator}) ||
-				(($module == windows || ($workspace_icons == [biln]* && $current_icon != s)) &&
+				(($module == windows || ($workspace_icons == [biln]* && $current != s)) &&
 				${!module_frame_type} == single) ]] &&
 				item="$frame_mode$item$frame_mode_end"
 		fi
