@@ -30,6 +30,15 @@ read icon_size window_width <<< \
 			print is
 		 }' ~/.config/{orw/config,rofi/image_preview.rasi})
 
+while getopts :i:o:c:h: opt; do
+	case $opt in
+		i) index=$OPTARG;;
+		c) item_count=$OPTARG;;
+		o) orientation=$OPTARG;;
+		h) hilight="-u $OPTARG";;
+	esac
+done
+
 read location width y lines columns icon_size keybinds <<< $(awk '
 		function get_value() {
 			gsub("[^0-9]", "", $NF)
@@ -42,7 +51,7 @@ read location width y lines columns icon_size keybinds <<< $(awk '
 		NR == FNR && $1 == "primary" { d = get_value() }
 
 		NR > FNR {
-			if ($1 == "window-orientation:") { o = $NF }
+			if ($1 == "window-orientation:") { o = ("'"$orientation"'") ? "'"$orientation"'" : $NF }
 			if (/font/) { f = get_value() }
 			if (/element-padding/) { ep = get_value() }
 			if (/window-padding/) { wp = get_value() }
@@ -51,12 +60,12 @@ read location width y lines columns icon_size keybinds <<< $(awk '
 		} END {
 			ryo = int((bto - bbo) / 2)
 
-			if (o ~ "horizontal") {
+			if (o ~ "^h") {
 				ln = 1
 				l = "center"
 				es = sprintf("%.0f", (w / 11))
 				is = int(es - 2 * ep)
-				c = int((w / 3 * 2) / es)
+				c = ("'"$item_count"'") ? "'"$item_count"'" : int((w / 3 * 2) / es)
 				ww = 2 * wp + es * c
 				#kb = "kb-row-up: \"\"; kb-row-down: \"\"; kb-row-left: \"ctrl+j\"; kb-row-right: \"ctrl+k\";"
 				kb = "-kb-row-up \"\" -kb-row-down \"\" -kb-row-left \"ctrl+k\" -kb-row-right \"ctrl+j\""
@@ -109,8 +118,10 @@ IFS=$'\n' read -d '' command active content
 
 #KB_BINDINGS=(-kb-row-up "" -kb-row-down "" -kb-row-left "ctrl+j" -kb-row-right "ctrl+k")
 
-toggle force
-trap "toggle force" EXIT
+if [[ $orientation != h* ]]; then
+	toggle force
+	trap "toggle force" EXIT
+fi
 
 while
 	#while read -r element; do
@@ -123,7 +134,7 @@ while
 	read index element <<< $(while read -r element; do
 				echo -en "${element##*/}\0icon\x1f$element\n"
 		done <<< $(echo -e "$content") |
-			rofi -dmenu -show-icons -format 'i s' "${keybinds[@]}" \
+			rofi -dmenu -show-icons -format 'i s' "${keybinds[@]}" $hilight \
 				$active -selected-row ${index:-0} -theme-str "$theme_str" -theme image_preview 2> /dev/null
 		)
 
