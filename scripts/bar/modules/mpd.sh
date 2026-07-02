@@ -138,16 +138,20 @@ get_mpd() {
 		local mpd_components="$full_mpd_components" ||
 		local mpd_components="$short_mpd_components"
 
-	if [[ $mpd_components == *toggle* ]]; then
+	if [[ $mpd_buttons_components == *toggle* ]]; then
 		[[ $status == playing ]] &&
 			toggle_icon=pause || toggle_icon=play
 		toggle="%{A:mpc -q toggle:}$(get_icon "^${toggle_icon}${toggle_style}=")%{A}"
 	fi
 
-	eval mpd_buttons=\""$mpd_buttons"\"
-	#~/.orw/scripts/notify.sh "$mpd_buttons"
+	eval mpd_buttons=\""$mpd_buttons_components"\"
+	#~/.orw/scripts/notify.sh "$mpd_buttons_components"
 
 	eval mpd=\""$mpd_components"\"
+	[[ $mpd_fs && $mpd != *$mpd_fs* ]] && mpd="$mpd_fs$mpd"
+	#[[ $mpd_fe && $mpd != *%{B${!frame_color}}${mpd_fe#*\}}* ]] && mpd+="$mpd_fe"
+	[[ $mpd_fe && $mpd != *${mpd_fe/\$$frame_color/${!frame_color}}* ]] && mpd+="$mpd_fe"
+	#~/.orw/scripts/notify.sh -t 22 "$msbg, $mpbg, $mpd"
 	unset change
 }
 
@@ -176,6 +180,16 @@ assign_components() {
 	done <<< $(sed 's/[^a-zA-Z]*/& /g' <<< "$value")
 }
 
+assign_mpd_toggle_components() {
+	case $component in
+		i) mpd_toggle_components='$mpd_info';;
+		t) mpd_toggle_components='$mpd_time';;
+		v) mpd_toggle_components='$volume';;
+		b) mpd_toggle_components='$mpd_buttons';;
+		p) mpd_toggle_components='$mpd_progressbar';;
+	esac
+}
+
 assign_mpd_info_components() {
 	case $component in
 		s) scroll_area=$component_value;;
@@ -186,7 +200,7 @@ assign_mpd_info_components() {
 	esac
 
 	#mpd_info_components="$mpd_bg$mpd_fg$mpd_info_components"
-	mpd_info_components="$mpd_bg$mpfg$mpd_info_components"
+	#mpd_info_components="$mpd_bg$mpfg$mpd_info_components"
 }
 
 assign_mpd_progressbar_components() {
@@ -198,7 +212,7 @@ assign_mpd_progressbar_components() {
 		#b) mpd_progressbar_components+="$mpd_bg$mpd_fg$mpd_bar";;
 	esac
 
-	mpd_progressbar_components="$mpd_bg$mpd_fg$mpd_progressbar_components"
+	#mpd_progressbar_components="$mpd_bg$mpd_fg$mpd_progressbar_components"
 }
 
 assign_mpd_buttons_components() {
@@ -216,7 +230,13 @@ assign_mpd_buttons_components() {
 			[[ $icon_style ]] &&
 				icon_style='' || icon_style='_circle_empty'
 			;;
-		o) mpd_buttons+="%{O$component_value}";;
+		#o) mpd_buttons_components+="%{O$component_value}";;
+		o) local mpd_buttons_offset="%{O$component_value}";;
+		#o)
+		#	[[ $mpd_buttons_offset ]] &&
+		#		mpd_buttons_ending_offset="%{O$component_value}" ||
+		#		mpd_buttons_offset+="%{O$component_value}"
+		#	;;
 		f)
 			mpd_button_start_frame="%{U$msfc}%{B$msfc}%{O1}%{+u}%{+o}$mpd_bg"
 			mpd_button_end_frame="%{B$msfc}%{O1}%{-u}%{-o}$mpd_bg"
@@ -232,23 +252,34 @@ assign_mpd_buttons_components() {
 			mpd_button_icon="$(get_icon "${mpd_button}${icon_style}=")" \
 			mpd_button_icon="%{A:mpc -q $mpd_button:}$mpd_button_icon%{A}"
 		#mpd_buttons+="$mpd_button_icon$mpd_button_separator"
-		mpd_buttons+="$mpd_button_start_frame$mpd_button_bg"
-		mpd_buttons+="$mpd_button_padding%{T4}$mpd_fg$mpd_button_icon%{T-}$mpd_button_padding"
-		mpd_buttons+="$mpd_button_end_frame$mpd_button_separator"
+		mpd_buttons_components+="$mpd_button_start_frame$mpd_button_bg"
+		mpd_buttons_components+="$mpd_button_padding%{T4}$mpd_fg$mpd_button_icon%{T-}$mpd_button_padding"
+		mpd_buttons_components+="$mpd_button_end_frame$mpd_button_separator"
 		#~/.orw/scripts/notify.sh -t 22 "MBS: $mpd_buttons"
 		#mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
-	else
-		#[[ $mpd_buttons && $mpd_button_separator ]] && ~/.orw/scripts/notify.sh -t 22 "pre MBS: $mpd_buttons" && mpd_buttons="${mpd_buttons%\%*}" &&
-			#~/.orw/scripts/notify.sh -t 22 "post MBS: $mpd_buttons"
-		[[ $mpd_buttons && $mpd_button_separator ]] &&
-			mpd_buttons="${mpd_buttons%\%*}" &&
-			unset mpd_button_separator
-		#[[ $mpd_buttons && $mpd_button_separator ]] &&
-		#	mpd_buttons="${mpd_buttons%\%*}" && unset mpd_button_separator ||
-		#	return
+	elif [[ $mpd_buttons_offset ]]; then
+		[[ $mpd_buttons_components == *T* ]] &&
+			mpd_buttons_components="${mpd_buttons_components%\%*}"
+		mpd_buttons_components+="$mpd_buttons_offset"
 	fi
+	#else
+	#	#[[ $mpd_buttons && $mpd_button_separator ]] && ~/.orw/scripts/notify.sh -t 22 "pre MBS: $mpd_buttons" && mpd_buttons="${mpd_buttons%\%*}" &&
+	#		#~/.orw/scripts/notify.sh -t 22 "post MBS: $mpd_buttons"
+	#	[[ $mpd_buttons && $mpd_button_separator ]] &&
+	#		mpd_buttons="${mpd_buttons%\%*}" &&
+	#		unset mpd_button_separator
+	#		~/.orw/scripts/notify.sh -t 22 "post MBS: $mpd_buttons"
+	#	#[[ $mpd_buttons && $mpd_button_separator ]] &&
+	#	#	mpd_buttons="${mpd_buttons%\%*}" && unset mpd_button_separator ||
+	#	#	return
+	#fi
 
 	#mpd_buttons="$mpd_bg$mpd_fg%{T4}$mpd_buttons%{T-}"
+	#mpd_buttons_components="$mpd_bg$mpd_fg%{T4}$mpd_buttons_offset"
+	#mpd_buttons_components+="$mpd_buttons$mpd_buttons_ending_offset%{T-}"
+	#mpd_buttons_components="$mpd_bg$mpd_fg$mpd_button_padding$mpd_buttons_components$mpd_button_padding"
+	#mpd_buttons_components="$mpd_bg$mpd_fg$mpd_buttons_components"
+	#~/.orw/scripts/notify.sh -t 22 "BUTT: $((cnt++)) $mpd_buttons_components"
 }
 
 assign_mpd_time_components() {
@@ -262,12 +293,24 @@ assign_mpd_time_components() {
 	esac
 }
 
+restore_color() {
+	[[ $restore_start_color ]] &&
+		eval "mpd_${mpd_module}_components='$restore_end_color$mpd_{mpd_module}_components'"
+	[[ $restore_end_color ]] &&
+		eval "mpd_${mpd_module}_components+='$restore_end_color'"
+	#~/.orw/scripts/notify.sh -t 11 "$1 - $mpd_buttons_components"
+	unset restore_{start,end}_color mpd_bg #mpd_fe
+	#mpd_bg='%{B-}'
+}
+
 make_mpd_content() {
 	#limiter_icon='%{I}%{I}'
 	limiter_icon='%{I}%{I}'
 	#local mpd_bg=$msbg mpd_fg=$msfg
+	local mpd_{padding,bg}
 	[[ ${joiner_modules[m]} ]] ||
-		local mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs=$mfs mpd_fe=$mfe
+		mpd_padding=$padding mpd_bg=${msbg:-$sbg} mpd_fs="$mfs$mpd_bg" mpd_fe="$mfe"
+	[[ $mpd_fe =~ ^%\{B\$([^\}]*)\} ]] && frame_color=${BASH_REMATCH[1]}
 
 	for arg in ${1//,/ }; do
 		value=${arg:2}
@@ -288,15 +331,17 @@ make_mpd_content() {
 				((${#value} > 1)) &&
 					color="\${m${value:1:1}bg}" || color='%{B-}'
 				eval restore_${side}_color="$color$side_frame_end"
-				[[ $side_frame_end ]] && unset side_frame_end mfe
-				mpd_bg='%{B-}'
+				[[ $side_frame_end ]] && unset side_frame_end #mpd_fe
+				#mpd_bg='%{B-}'
 				;;
 			[PS]) switch_color="\$m${arg,}${value:-g\$m${arg,}f}g";;
 			P*) mpd_components+="\$mp${value:-g\$mpf}g";;
 			t) assign_components mpd_time;;
 			i)
-				assign_components mpd_info
-				mpd_components+='$mpd_info'
+				mpd_module=info mpd_module_fg=$mpfg
+				#assign_components mpd_info
+				#[[ $restore_end ]] && restore_end mpd_info
+				#mpd_components+='$mpd_info'
 
 				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
 				#	mpd_info_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_info_components$restore_end_color"
@@ -304,6 +349,7 @@ make_mpd_content() {
 				#fi
 				;;
 			v)
+				#mpd_module=volume
 				read volume_{up,down}_icon <<< $(get_icon 'arrow_(right|left).*full' | xargs)
 				toggle_mpd_volume_buttons="sed -i '/mpd_volume_buttons/ y/01/10/' \$bar_config"
 				mpd_volume_down_button="%{A:mpc -q volume -5:}$volume_down_icon%{A}%{O10}"
@@ -319,11 +365,13 @@ make_mpd_content() {
 				#fi
 				;;
 			p)
+				mpd_module=progressbar
 				mpd_progressbar_icon="━"
 				mpd_progressbar_step=10
 
-				assign_components mpd_progressbar
-				mpd_components+='$mpd_progressbar'
+				#assign_components mpd_progressbar
+				#[[ $restore_end ]] && restore_end mpd_progressbar
+				#mpd_components+='$mpd_progressbar'
 
 				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
 				#	mpd_progressbar_components="$restore_start_color$switch_bg_color$switch_fg_color$mpd_progressbar_components$restore_end_color"
@@ -331,10 +379,9 @@ make_mpd_content() {
 				#fi
 				;;
 			b)
-				buttons="${value:-ptn}"
+				mpd_module=buttons mpd_module_fg=$msfg mpd_module_args="${value:-ptn}"
 
-				assign_components mpd_buttons "$buttons"
-				[[ $mpd_button_separator ]] && mpd_buttons="${mpd_buttons%\%*}"
+				#[[ $mpd_button_separator ]] && mpd_buttons="${mpd_buttons%\%*}"
 				#~/.orw/scripts/notify.sh -t 22 "MB: $mpd_buttons, $mpd_button_separator"
 
 				#if [[ ${switch_bg_color:-${switch_fg_color:-${restore_start_color:-$restore_end_color}}} ]]; then
@@ -342,29 +389,50 @@ make_mpd_content() {
 				#	unset {switch_{b,f}g,restore_{start,end}}_color
 				#fi
 
-				mpd_components+="%{T4}$mpd_buttons%{T-}"
+				#assign_components mpd_buttons "$buttons"
+				#[[ $restore_end ]] && restore_end mpd_buttons
+				#mpd_components+='$mpd_buttons'
 				;;
 			T)
-				[[ $value ]] &&
-					short_mpd_components="$mpd_bg$mpd_fg\$mpd_toggle" &&
-					while ((i < ${#value})); do
-						case ${value:$((i++)):1} in
-							b) mpd_short_module='%{T4}$mpd_buttons%{T-}';;
-							p) mpd_short_module='$mpd_progressbar';;
-							i) mpd_short_module='$mpd_info';;
-							t) mpd_short_module='$mpd_time';;
-							v) mpd_short_module='$volume';;
-						esac
-						short_mpd_components+="$mpd_short_module"
-					done
+				mpd_module=toggle
+				#[[ $value ]] &&
+				#	short_mpd_components="$mpd_bg$mpd_fg\$mpd_toggle" &&
+				#	while ((i < ${#value})); do
+				#		case ${value:$((i++)):1} in
+				#			b) mpd_short_module='%{T4}$mpd_buttons%{T-}';;
+				#			p) mpd_short_module='$mpd_progressbar';;
+				#			i) mpd_short_module='$mpd_info';;
+				#			t) mpd_short_module='$mpd_time';;
+				#			v) mpd_short_module='$volume';;
+				#		esac
+				#		short_mpd_components+="$mpd_short_module"
+				#	done
 
 				toggle_volume='mpc -q volume +1 && mpc -q volume -1'
 				toggle_command="sed -i '/mpd_full/ y/01/10/' \$bar_config && $toggle_volume"
 				toggle_icon=$(get_icon music)
-				mpd_toggle="%{A:$toggle_command:}$toggle_icon%{A}"
-				mpd_components+="$mpd_bg$mpd_fg$mpd_toggle"
+				mpd_toggle_components="%{A:$toggle_command:}$toggle_icon%{A}"
+
+				#[[ $restore_end ]] && restore_end short_mpd
+				#mpd_components+="$mpd_bg$mpd_fg$mpd_toggle"
 				;;
 		esac
+
+		if [[ $mpd_module ]]; then
+			assign_components mpd_$mpd_module $mpd_module_args
+			#eval mpd_${mpd_module}_components="$mpd_bg$mpd_fg\$mpd_${mpd_module}"
+			mpd_components+="$mpd_bg${mpd_module_fg:-$mpd_fg}\$mpd_${mpd_module}"
+			[[ $restore_start_color || $restore_end_color ]] && restore_color
+			#~/.orw/scripts/notify.sh -t 22 "MB: $mpd_buttons, $mpd_progressbar_components"
+
+			unset mpd_module{,_{args,{b,f}g}}
+		fi
+
+		#if [[ $module_arg ]]; then
+		#	[[ $restore_end_color ]] && unset restore_end_color mpd_fe
+		#	[[ $restore_start_color ]] && unset restore_start_color
+		#	unset module_arg
+		#fi
 	done
 
 	#~/.orw/scripts/notify.sh -t 22 "$mpd_components"
@@ -372,7 +440,10 @@ make_mpd_content() {
 	full_mpd_components="$mpd_components"
 	#short_mpd_components='$mpd_toggle$mpd_info$mpd_time'
 
-	mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding$mpd_fe"
+	#mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding$mpd_fe"
+	#mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding$mpd_fe"
+	#mpd_content="$mpd_fs$mpd_bg\$mpd_padding\$mpd\$mpd_padding\$mpd_fe"
+	mpd_content="$mpd_bg\$mpd_padding\$mpd\$mpd_padding"
 }
 
 switch_mpd_volume_buttons() {
