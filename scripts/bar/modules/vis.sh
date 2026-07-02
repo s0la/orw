@@ -63,6 +63,8 @@ check_vis() {
 		#echo "$color: $brightness, $brightness_step,    $vis_fg"
 	done #> ~/vis_colors.log
 
+	#~/.orw/scripts/notify.sh -t 11 "$vis_fg1, $vis_fg2, $vis_fg3, $vis_fg4"
+
 	while read values; do
 		get_vis "$values"
 	done < <(awk '{
@@ -101,9 +103,11 @@ make_vis_content() {
 	#		{ read values; echo $values; cat > $vis_config; })
 
 	[[ $Vpfg != $pfg ]] && vis_fg=$Vpfg
+
 	[[ ${joiner_modules[V]} ]] &&
-		local vis_fg="${vis_fg:-$cjpfg}" ||
+		vis_fg="${vis_fg:-${cjpfg:-$pfg}}" ||
 		local vis_bg=$Vpbg vis_padding=$padding
+	#~/.orw/scripts/notify.sh -t 11 "$Vpfg, $pfg, $vis_fg, $cjpfg"
 
 	#eval read vis_fg{1..$((bars / 2)) 
 
