@@ -171,7 +171,7 @@ torrent=""
 torrent_source=""
 selection=""
 multiple_files=""
-music_directory=""
+music_directory="/home/sola/Music"
 regex=""
 
 git=""
@@ -445,7 +445,7 @@ if [[ ${option% *} ]]; then
 						if [[ $option == *destination ]]; then
 							set torrent_source "$current"
 						else
-							pidof transmission-daemon &> /dev/null || coproc (sudo transmission-daemon &)
+							pidof transmission-daemon &> /dev/null || coproc (transmission-daemon &)
 
 							[[ $multiple_files ]] &&
 								#torrent="$current/{${multiple_files//\|/\",\"}}"
@@ -557,24 +557,35 @@ bluetooth_device=$(bluetoothctl devices |
 if [[ $bluetooth_device ]]; then
 	#files_to_send="${multiple_files:-$file}"
 
-	pidof obexd &> /dev/null ||
-		/usr/lib/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+	#pidof obexd &> /dev/null ||
+	#	/usr/lib/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
+	pidof obexd | xargs -r kill
+	/usr/lib/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
 		#/usr/libexec/bluetooth/obexd -r ~/Downloads/bluetooth -adn &> /dev/null &
 	files_to_send="${multiple_files:-$current}"
+	~/.orw/scripts/notify.sh "SENDING $files_to_send"
+	#exit
 	#echo "send \"send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n\"" > ~/bt.log
+
+	bt-obex -p "$bluetooth_device" "${files_to_send}"
+	echo "bt-obex -p '$bluetooth_device' '${files_to_send}'" >> ~/btt.log
+	exit
+
 	/usr/bin/expect <<- EOF &> ~/bt.log
-		set timeout 20
+		set timeout 50
 		spawn obexctl
 
 		expect "Client" {
 			send "connect $bluetooth_device\n"
 		}
 
+		sleep 3
+
 		expect "Connection successful" {
-			send "send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 5$'\n'send \"send \\\"}\"\n"
+			send "send \"${files_to_send//\|/\\\"\\\n\"$'\n'sleep 33$'\n'send \"send \\\"}\"\n"
 		}
 
-		sleep 15
+		sleep 33
 		interact
 	EOF
 
