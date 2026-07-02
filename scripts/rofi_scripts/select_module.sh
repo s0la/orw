@@ -3,7 +3,7 @@
 colorscheme="${1%.*}"
 colorschemes_root=~/.config/orw/colorschemes
 #modules="$(sed -n "s/^#\(.*\)/[\1]=1 /p" $colorchemes_root/$colorcheme | xargs)"
-modules=( $(sed -n "s/^#//p" $colorschemes_root/$colorscheme) )
+modules=( $(sed -n "s/^#//p" $colorschemes_root/$colorscheme.ocs) )
 options=(
 	done
 	none
@@ -41,10 +41,15 @@ while
 	read index module <<< \
 		$(rofi -dmenu $hilight -selected-row ${index:-0} \
 		-format 'i s' -theme-str "$theme_str" -theme list \
-		<<- EOF
-			$(tr ' ' '\n' <<< "${options[*]} ${modules[*]}")
-		EOF
-		)
+		<<< $(printf '%s\n' ${options[*]} ${modules[*]}))
+
+	#read index module <<< \
+	#	$(rofi -dmenu $hilight -selected-row ${index:-0} \
+	#	-format 'i s' -theme-str "$theme_str" -theme list \
+	#	<<- EOF
+	#		$(tr ' ' '\n' <<< "${options[*]} ${modules[*]}")
+	#	EOF
+	#	)
 
 	((index))
 do
