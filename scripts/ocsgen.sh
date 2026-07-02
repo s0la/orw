@@ -45,7 +45,8 @@ print_accents() {
 				local label='(most vibrant accent)' || local label=''
 		fi
 
-		[[ $skip_index != *"$((accent + 1))"* ]] &&
+		#[[ $skip_index != *"$((accent + 1))"* ]] &&
+		[[ ! $skip_index =~ (^|,)$((accent + 1))(,|$) ]] &&
 			print_color ${accents[accent]} "$label" "$prefix" ||
 			skip+="${accents[accent]##*_}|"
 	done
@@ -199,11 +200,13 @@ get_colors() {
 		function parse_hex(segment) {
 			#print substr(hex, 1 + (!!f) + len - segment * 2, 2)
 			#print substr(hex, 0 + (!!f) + len - segment * 2, 2)
-			return "0x" substr(hex, (!lc) + (!!f) + len - segment * 2, 2)
+			#print segment, substr(hex, (!lc) + (!!f) + len - segment * 2, 2), (!lc) + (!!f), len - segment * 2
+			return "0x" substr(hex, (!f) + (!!f) + len - segment * 2, 2)
 		}
 
 		function get_colors(hex) {
 			len = length(hex)
+			#print hex, (!!f), f, (!lc), lc, substr(hex, 2), len, (!f)
 			return sprintf(f "%d;%d;%d;_%s", parse_hex(3), parse_hex(2), parse_hex(1), hex)
 		}
 
@@ -213,6 +216,7 @@ get_colors() {
 			if (/^'"$subpattern"'/) {
 				hex = "#" substr($NF, length($NF) - (6 - (lc + o)), 6)
 				gsub("\"", "", hex)
+				#print substr(hex, 1 + 7 - 6, 2)
 				print get_colors(hex)
 			}
 		}' $file | xargs 
@@ -1115,11 +1119,11 @@ else
 							split(ar1[i], acp, "[;_]")
 							split(ar2[ai], arp, "[;_]")
 							hd = sqrt((acp[2] - arp[2]) ^ 2)
-							tdh = ((acp[2] >= 320 && arp[2] <= 15) || (arp[2] >= 320 && acp[2] <= 15))
+							tdh = ((acp[2] >= 320 && arp[2] <= 20) || (arp[2] >= 320 && acp[2] <= 20))
 
 							#if (acp[1] == 104) print "HERE", ar1[i], ar2[ai]
 
-							#if (acp[1] == 151) print del, dc, dal, i, ai, acl, acm, "HRE", (del && pc && (dc >= 2 || sdl) && acl > acm && (hd <= 80 || tdh)), (i <= dal && ai <= dal && acl >= 6), (int(i) > dal && int(ai) > dal), ar1[i], ar2[ai], acl, acm, (del && pc && (dc >= 2 || sdl) && acl >= acm && (hd <= 80 || tdh))
+							#if (acp[1] == 140) print del, dc, dal, i, ai, acl, acm, "HRE", (del && pc && (dc >= 2 || sdl) && acl > acm && (hd <= 80 || tdh)), (i <= dal && ai <= dal && acl >= 6), (int(i) > dal && int(ai) > dal), ar1[i], ar2[ai], acl, acm, (del && pc && (dc >= 2 || sdl) && acl >= acm && (hd <= 80 || tdh)), tdh
 							#if (acp[1] == 92) {
 							#	print "HERE", i, ai, dal + ddsai, acl, pc, (del && pc && dc >= 2 && acl >= 6 && (hd <= 65 || tdh)), del, dc, dal, i, ai, (i <= dal && ai <= dal && acl >= 6), (int(i) > dal && int(ai) > dal), ar1[i], ar2[ai]
 							#	if (arp[1] == 101) for (x in ac) print x, ac[x]
@@ -1131,8 +1135,9 @@ else
 								ari = get_color_index(arp)
 
 								svd = sqrt((acp[1] - arp[1]) ^ 2)
-								pds += (lab < 200 && aci == ari && sqrt((acp[3] - arp[3]) ^ 2) <= 45) ? hd / 2 * 7 : -5
-								#print lab, ds, pds, clab, ar1[i], ar2[ai], svd, aci, ari, (del && pc && int(clab) < pds ), acl
+								pds += (lab < 200 && aci == ari && sqrt((acp[4] - arp[4]) ^ 2) <= 50) ? hd / 2 * 7 : -5
+								#print (lab < 200 && aci == ari && sqrt((acp[4] - arp[4]) ^ 2) <= 45), pds, acp[4], arp[4]
+								#print lab, ds, pds, clab, ar1[i], ar2[ai], svd, aci, ari, (del && pc && int(clab) < pds ), acl, clab, pds
 							}
 
 
@@ -1167,7 +1172,7 @@ else
 										con = (ds < 20) ? acp[cpi] > arp[cpi] : acp[cpi] < arp[cpi]
 										con = acp[cpi] > arp[cpi]
 
-										adi = ((con || (acp[cpi] == arp[cpi] && acp[scpi] > arp[scpi])) && ai > 1) ? ai : i
+										adi = ((con || (acp[cpi] == arp[cpi] && acp[scpi] > arp[scpi])) && ai >= 1) ? ai : i
 
 										rac = ar2[adi]
 										delete ar2[adi]
@@ -1192,6 +1197,9 @@ else
 										}
 
 										acl--
+
+										bc[aci] = ar2[(adi == i) ? ai : i]
+
 
 										#print adi, dc, dal, ddsai
 										#if ((dc == 3 && acl == 7) || (dc == 2 && acl == 5)) { dc--; dal = dc + ddsai }
@@ -1287,6 +1295,10 @@ else
 						}
 					}
 
+					split(c, kbc, "[;_]")
+					bci = get_color_index(kbc)
+					bc[bci] = c
+
 					sa[c] = 1
 					return c
 				}
@@ -1310,46 +1322,54 @@ else
 				if (s < 10 && svd > 70) return li
 				#if ((s < 10 && svd > 70) || mc[(length(color[1])) ? lh : ccp[2]]) return li
 
-				if (lh <= 30 && sqrt((r - g) ^ 2) > 20) {
+				if (lh <= 30 && sqrt((r - g) ^ 2) > 18) {
 					rgd = sqrt((r - g) ^ 2)
 					#if ((length(color[1]) && r > 240 && rgd > 70 && rgd < 140) || !(b <= g)) return li
 					if ((length(color[1]) && r > 216 && rgd > 75 && rgd < 115) || !(b <= g)) return li
 					#if ((length(color[1]) && r > 200 && rgd > 60 + (250 - r) && rgd < 90 + (250 - r)) || !(b <= g)) return li
 
-					if (lh > 6 &&
+					if (lh > 5 &&
 						#(v > 55 && (sqrt((r - g) ^ 2) < ((r > 240) ? 140 : (r >= 200) ? 110 : (r > 156) ? 50 : 25))) ||
-						(v >= 55 && (sqrt((r - g) ^ 2) < ((r > 230) ? 130 : (r > 220) ? 90 : (r > 190) ? 70 : (r > 165) ? 35 : 20)) &&
+						(v >= 45 && b < 150 && (sqrt((r - g) ^ 2) < \
+							((r > 230) ? 130 : (r > 220) ? 90 : (r > 190) ? 70 : (r >= 170) ? 55 : (r > 160) ? 35 : 20)) &&
+							#((r > 230) ? 130 : (r > 220) ? 90 : (r > 190) ? 70 : (r > 165) ? 35 : 20)) &&
 						#(v >= 55 && (sqrt((r - g) ^ 2) < ((r > 240) ? 140 : (r >= 200) ? 110 : (r > 190) ? 70 : (r > 165) ? 60 : 25)) &&
-							(sqrt((g - b) ^ 2) >= 5)) || (v < 55 && 0)) {
+							(sqrt((g - b) ^ 2) >= 1)) || (v < 55 && 0)) {
 					#if (lh >= 5 && (sqrt((r - g) ^ 2) < (((r < 160) ? 30 : (r < 200) ? 50 : (r < 240) ? 80 : 100) + ((lh > 10) ? 0 : 0)))) {
 							#li = 8
 							#ls = r + g
-							if (r < 140) return li
+							if (r < 120) return li
 							else {
-								if (g > r) { li = 4; ls = g + s }
+								#if (g > r) { li = 4; ls = g + s }
+								if (g + 20 > r) { li = 4; ls = g + s }
 								else { li = 8; ls = r + g + s }
 							}
 					#} else if (sqrt((r - g) ^ 2) > 50) {
 					} else {
 						#li = (b > 150 || sqrt((r - g) ^ 2) < ((r > 160) ? 50 : (r > 120) ? 30 : 20)) ? 5 : 6
 						#li = (b > 150 || sqrt((r - g) ^ 2) <= ((r > 160) ? \
-						li = (sqrt((r - g) ^ 2) < ((r > 170) ? 45 : (r > 120) ? 35 : 20)) ? 5 : 6
+						#li = (sqrt((r - g) ^ 2) < ((r > 170) ? 50 : (r > 140) ? 35 : 20)) ? 5 : 6
+						li = (sqrt((r - g) ^ 2) < ((r > 170) ? 50 : (v > 65) ? 35 : 20)) ? 5 : 6
 						#li = (sqrt((g - b) ^ 2) > 10) ? 6 : 5
 						ls = r + ((li == 5) ? s : -g)
 					}
 				} else if (lh > 25 && lh < 100 && g > 70) {
 					#if ((lh > 40 && g + ((r >= 165) ? -30 : (r > 130) ? 15 : (r > 100) ? 5 : 0) >= r) ||
-					if ((g > 200 && g - r > 35) || (g < 200 &&
+					if ((g > 200 && g - r > 35) || (g <= 200 &&
 						#(lh > 40 && g + ((r >= 170) ? 0 : (r >= 160) ? -20 : (r > 150) ? 5 : (r > 140) ? -10 : \
-						(lh > 40 && g + ((r >= 170) ? -5 : (r >= 155) ? -20 : (r > 140) ? 10 : \
-						(r > 130) ? 20 : (r > 115) ? 15 : (r > 100) ? 5 : 0) > r - ((r >= 185) ? -5 : (r > 175) ? 10 : 0)) ||
-						(lh <= 40 && g + ((r < 130) ? 0 : (r > 130 && r < 187) ? 20 : 5) >= r)))
+						(lh >= 40 && g + ((r >= 170) ? -7 : (r >= 155) ? -15 : (r > 140) ? -10 : \
+							(r > 130) ? 20 : (r > 115) ? 15 : (r > 100) ? 5 : 0) * (bcs[4] ? 1 : 1) \
+						>= r - ((r >= 185) ? 0 : (r > 160) ? 11 : 6)) ||
+						#>= r - ((r >= 185) ? 0 : (r > 160) ? 11 : 3)) ||
+						#(r > 130) ? 20 : (r > 115) ? 15 : (r > 100) ? 5 : 0) > r - ((r >= 185) ? 2 : (r > 185) ? 10 : -10)) ||
+						#(r > 130) ? 20 : (r > 115) ? 15 : (r > 100) ? 5 : 0) > r - ((r >= 185) ? 2 : (r > 175) ? 10 : 0)) ||
+						(lh <= 40 && g + ((r < 130) ? 0 : (r > 130 && r < 187) ? 19 : 5) > r)))
 						#{ li = 4; ls = g } else { li = 8; ls = r + g + s }
 						{
 							#if (sqrt((b - g) ^ 2) > 20) { li = 3; ls = b + s } else { li = 4; ls = g }
 							if (r > 140 && s + v > 50 && sqrt((b - g) ^ 2) <= ((g > 195) ? 25 : 19))
 								{ li = 3; ls = b + s } else { li = 4; ls = g + s }
-						} else if (r > 156) { li = 8; ls = r + g + s }
+						} else if (r > 145) { li = 8; ls = r + g + s }
 						#{ li = (g - b <= 25) ? 3 : 4; ls = g } else { li = 8; ls = r + g }
 				#} else if (lh >= 100 && lh < 180) {
 				} else if (lh >= 100 && lh < 180 && s >= 4 && v + s > 50 && sqrt((s - v) ^ 2) < 75) {
@@ -1359,7 +1379,8 @@ else
 						#(g < 210 && g >= 165 && g > b + ((r > 170) ? 15 : (r > 155) ? 40 : (r > 120) ? 10 : 15)) ||
 						#(g < 210 && g >= 165 && g > b + ((r > 170) ? 15 : (r > 155) ? 30 : (r > 120) ? 10 : 15)) ||
 						(g < 215 && g >= 165 && g >= b + ((r > 165 || r < 100) ? \
-							((g > 195) ? 33 : 13) : (r > 150) ? 20 : (r > 120) ? 10 : (r > 100) ? 15 : 5)) ||
+							((g > 200) ? 33 : 13) : (r >= 145) ? 27 : (r > 120) ? 10 : (r > 100) ? 15 : 5)) ||
+							#((g > 200) ? 33 : 13) : (r > 150) ? 20 : (r > 120) ? 10 : (r > 100) ? 15 : 5)) ||
 							#((g > 200) ? 5 : 13) : (r > 150) ? 20 : (r > 120) ? 10 : (r > 100) ? 20 : 5)) ||
 						#((g < 165 || v < 50) && g > b + ((r > 130) ? 15 : (r > 110) ? 10 : 5))) { li = 4; ls = g + s }
 							((g < 165 || v < 50) && g > b + ((v < 75) ? 5 : (r > 140) ? 15 : (r >= 105) ? 10 : 5))) {
@@ -1373,18 +1394,20 @@ else
 								#if (v > 35 && g - b < ((r < 125 && r > 85) ? 10 : (g > 225 || (g < 200 && r > 80)) ? 35 : 25))
 								#if (v > 55 && g - b <= ((r < 135) ? (g > 150) ? 20 : 10 : (g > 225 || (g < 200 && r > 80)) ? 35 : 25))
 								if ((v > 80 && sqrt(g - b) ^ 2 >= 50) ||
-									(v > 55 && g - b <= ((r < 135) ? (g > 155 && g < 200) ? 25 : 10 : \
-									(g > 225 || (g < 190 && r > 80)) ? 35 : 25)))
+									#(v > 45 && g - b <= ((r < 135) ? (g > 160 && g < 200) ? 35 : 15 : \
+									(v > 45 && g - b <= ((r <= 125) ? (g > 160 && g < 200) ? 35 : 15 : \
+									(g > 225 || (g < 190 && r > 80)) ? 35 : 15)))
 								#if (v > 35 && g - b < ((r < 135 && r > 80) ? 10 : (g > 225 || (g < 200 && r > 80)) ? 35 : 25))
 									{ li = 3; ls = b + s } else { li = 4; ls = g + s }
 							#li = 4; ls = g + s
 						} else { li = 3; ls = b + s }
-				} else if (lh >= 180 && lh < 280 && s && (s >= 9 && sqrt((s - v) ^ 2) <= 67)) {
+				} else if (lh >= 180 && lh < 280 && (s + v > 40) && (s >= 9 && sqrt((s - v) ^ 2) <= 71)) {
 					if (lh > 225) {
 						#if ((v > 30 && s >= 10 && r > 105 &&
 						if ((v > 30 && s >= 10 && s + v >= 65 &&
 							#sqrt((r - b) ^ 2) < ((b > 200) ? 70 : (b > 170) ? 50 : (b > 150) ? 40 : (r > 100) ? 95 : 15))) { li = 5; ls = r + s }
-							sqrt((r - b) ^ 2) < ((b > 210) ? 70 : (b > 170) ? 50 : (b >= 150) ? 35 : 15) * ((r > 75) ? 1 : 2.5))) { li = 5; ls = r + s }
+							#sqrt((r - b) ^ 2) < ((b > 210) ? 70 : (b > 170) ? 50 : (b >= 130) ? 35 : 15) * ((r > 75) ? 1.3 : 2.5))) { li = 5; ls = r + s }
+							sqrt((r - b) ^ 2) < ((b > 210) ? 70 : (b > 170) ? 40 : (b >= 130) ? 35 : 15) * ((r > 75) ? 1.0 : 2.5))) { li = 5; ls = r + s }
 						#else if (s >= 17 || (s > 10 && g + 15 > b && r < g + 5)) {
 						else if (((s >= 17 && v > 35) || (s > 10 && g + 15 > b && r < g + 5)) && g + b > 140) {
 							#li = (b - g >= 15) ? 2 : (g - b < 10) ? 4 : 3; ls = ((li == 4) ? g : b) + s
@@ -1398,9 +1421,16 @@ else
 						if ((v < 60 && g > 100 && g < 150 &&
 							#b - g < 20 && (sqrt((g - b) ^ 2) >= ((g > 130) ? 0 : 5) || g - r > 10)) ||
 							#b - g < 14 && r > 55 && (sqrt((g - b) ^ 2) >= ((g > 125) ? 13 : 0) || (g - r > 15 && 0))) ||
-							b - g < 14 && r > 55 && (sqrt((g - b) ^ 2) >= ((b > 120) ? 13 : 0) || (g - r > 15 && 0))) ||
+
+							#b - g < 14 && r > 55 && (sqrt((g - b) ^ 2) >= ((b > 120) ? 13 : 0) || (g - r > 15 && 0))) ||
+							#b - g <= 30 && r > 55 && (sqrt((g - b) ^ 2) >= ((b > 140) ? 18 : (b > 120) ? 13 : 0) ||
+							#b - g <= 30 && r > 55 && (sqrt((g - b) ^ 2) >= ((b > 125) ? 22 : (b > 110) ? 13 : 0) ||
+							b - g <= 30 && r > 55 && (sqrt((g - b) ^ 2) >= ((b > 135) ? 22 : (b > 110) ? 11 : 0) ||
+								(g - r > 15 && 0))) || (v > 35 && g < 100 && g > 60 && b < 110 && g + 7 > b) ||
+
 							#(v > 25 && g < 100 && g > 60 && b < 100 && g + 10 > b) ||
-							(v >= 25 && g < 100 && g > 60 && b < 110 && g + 15 > b) ||
+							#(v >= 25 && g < 100 && g > 60 && b < 110 && g + 15 > b) ||
+							#(v >= 25 && g < 100 && g > 60 && b < 110 && g + 8 > b) ||
 							#sqrt((g - b) ^ 2) > ((g - r > 10) ? 10 : 5)) ||
 							(g > 170 && g + 5 >= b && sqrt((r - b) ^ 2 < 50))) { li = 4; ls = g + s }
 						else {
@@ -1419,8 +1449,8 @@ else
 							#	(r < 105 && r > 90) ? 25 : (r <= 90 && r > 50) ? ((b > 210) ? 70 : \
 
 							#li = (b - g >= ((b > 200 && r < 120) ? 42 : (r < 50 || r > 100 && r < 110) ? 50 : (r >= 110 && r < 145) ? 28 : \
-							li = ((v < 60 && b >= g) || b - g > ((b > 200 && r < 120) ? ((b > 220) ? 32 : 42) : (r < 50 || r > 100 && r < 110) ? 35 : \
-								(r >= 110 && r < 145) ? 22 : (r < 100 && r > 90) ? ((v >= 65) ? 30 : 15) : (r <= 90 && r >= 50) ? ((b > 210) ? 70 : \
+							li = ((v <= 60 && b > g) || b - g > ((b > 200 && r < 120) ? ((b > 220) ? 32 : 42) : (r < 50 || r > 100 && r < 110) ? 35 : \
+								(r >= 110 && r <= 145) ? 23 : (r < 100 && r > 90) ? ((v >= 65) ? 30 : 15) : (r <= 90 && r >= 50) ? ((b > 210) ? 70 : \
 								(b > 180) ? 40 : (b > 155) ? 25 : (b > 133) ? 23 : (b > 110) ? 12 : 0) : \
 								((b > 210) ? (sqrt((r - g) ^ 2) > 10 ? 60 : 35) : 35)) ||
 								#(r > 50 && r < 100 && b > 100 && g - r > b - g) ||
@@ -1445,12 +1475,14 @@ else
 						#if (lh >= 350 && g > 160) { li = 8; ls = r + g }
 						#if (lh >= 340 && r > 200 && r - g > ((r > 175) ? 50 : 85)) { li = 8; ls = r + g + s }
 						#if (lh >= 340 && r > 200 && r - g > ((r > 175) ? 85 : 85)) { li = 8; ls = r + g + s }
-						if (lh >= 340 && r > 200 && g > 130) { li = 8; ls = r + g + s }
+
+						#if (lh >= 340 && r > 205 && g > 130) { li = 8; ls = r + g + s }
+						if (lh > 335 && r >= 195 && g > 130 && sqrt((g - b) ^ 2) > 10) { li = 8; ls = r + g + s }
 							#((r > 210) ? 100 : (r > 200) ? 70 : (r > 190) ? 55 : \
 							#(r > 165) ? 65 : (r > 150) ? 40 : (r > 120) ? 30 : (r >= 100) ? 25 : 10) ||
 						else if (sqrt((r - b) ^ 2) >= \
-							((r > 210) ? 100 : (r > 195) ? ((s > 40) ? 80 : 45) : (r > 180) ? 70 : \
-							(r > 165) ? 60 : (r > 150) ? 40 : (r > 120) ? 30 : (r >= 100) ? 25 : 10) ||
+							((r > 210) ? 90 : (r > 195) ? ((s > 40) ? 80 : 57) : (r > 180) ? 70 : \
+							(r > 165) ? 60 : (r > 150) ? 45 : (r > 120) ? 35 : (r >= 100) ? 25 : 10) ||
 							#((r > 205) ? 100 : (r > 165) ? 80 : (r > 130) ? 50 : 30) ||
 							((r > 100 && b < 100) && (r - b < 33 && r - b > 10)))
 								{ li = 6; ls = r - g } else { li = 5; ls = r + s }
@@ -1497,7 +1529,7 @@ else
 				fd = sqrt((d1 - d2) ^ 2)
 
 				#print rgbs / 3, fd, rgbd, r, g, b, $0
-				if (ccp[1] < 85 && ((acl > 6 && acl <= 10 && (sbc || (rgbs / 3 > 195 && \
+				if (ccp[1] < 85 && ((acl >= 6 && acl <= 10 && (sbc || (rgbs / 3 > 195 && \
 					((d1 < 30 && d2 < 30 && fd <= 10 && d1 + d2 < 40) || (rgbd < 30))))) ||
 					(acl > 7 && rgbs / 3 >= 210))) {
 							if (NR == 1) rmva = 1
@@ -1627,6 +1659,13 @@ else
 
 				if (length(dl) && length(ac) >= 3) la = avl / length(dl)
 
+				for (d in dac) {
+					split(dac[d], kdc, "[;_]")
+					di = get_color_index(kdc)
+					#print "BASIC", bc[di], dac[d]
+					#bc[di] = dac[d]
+				}
+
 				for (fai=2; fai<5+(dc<2); fai++) {
 				#for (fai=2; fai<6; fai++) {
 					if (length(ac)) {
@@ -1660,7 +1699,17 @@ else
 	}
 
 	if [[ $no_accents ]]; then
-		accent_colors=( $(get_colors accents | sed 's/\([^ ]*\)\s*\([^ ]*\)$/\2 \1/') )
+		#accent_colors=( $(get_colors accents | sed 's/\([^ ]*\)\s*\([^ ]*\)$/\2 \1/') )
+		#base_colors=( "0;_${term_rgb_sfg:-$rgb_sfg}_${term_hex_sfg:-$hex_sfg}" )
+		accent_colors=(
+			$(tr ' ' '\n' <<< $(get_colors accents) |
+				awk -F '_' '{ ac[NR] = $NF }
+					END {
+						vfg = ac[3]; ffg = ac[5]; cfg = ac[6]
+						ac[3] = cfg; ac[5] = vfg; ac[6] = ffg
+						for (c in ac) print ac[c]
+					}' | xargs -n1 ~/.orw/scripts/convert_colors.sh -ha | tr ' ' '_')
+				)
 		base_colors=( "0;_${term_rgb_sfg:-$rgb_sfg}_${term_hex_sfg:-$hex_sfg}" )
 	else
 		accents=( $(tr ' ' '\n' <<< "${final_accents[*]}" |
@@ -1714,6 +1763,10 @@ else
 		accent_colors[i1-1]=$swap_accent
 	}
 
+	#for bc in ${accent_colors[*]}; do
+	#	print_color "0;_$bc" label
+	#done
+	#exit
 
 	if [[ $wallpaper == *ocs && ! $no_accents ]]; then
 		get_colors base
@@ -2034,6 +2087,43 @@ set_term() {
 		NR > FNR { cf = cf "\n" $0 }
 		END { print ",#term" ac cf }
 		' <(tr ' ' '\n' <<< "${base_colors[*]}") $term_conf |
+			{ read -r ac; tr "," "\n" <<< "$ac"; cat > $term_conf; }
+}
+
+set_term() {
+	awk '
+		NR == FNR { bc[NR] = $0 }
+
+		NR > FNR && /ground/ {
+			sub("#\\w*", ($1 ~ "^b") ? "'${term_hex_bg:-$hex_bg}'" : "'$hex_term_fg'")
+			ac = ac "," substr($1, 1, 1) "g " substr($NF, 2, 7)
+		}
+
+		/colors.(normal|bright)/,/^$/ {
+			if (/^\w/) {
+				c = bc[++bci]
+				if (c) {
+					split(c, acr, "_")
+					c = ""
+					if (b) {
+						split(acr[2], rgb, ";")
+						for (i in rgb) if (rgb[i]) {
+							cv = rgb[i] + 30
+							c = c "" sprintf("%.2x", (cv > 255) ? 255 : cv)
+						}
+						c = "#" c
+					} else c = acr[3]
+
+					sub("#[^\"]+", c)
+				}
+
+				ac = ac "," ((b) ? "br_" : "") $1 " " substr($NF, 2, 7)
+			} else { bci = 0; b = (/bright/) }
+		}
+
+		NR > FNR { cf = cf "\n" $0 }
+		END { print ",#term" ac cf }
+		' <(tr ' ' '\n' <<< "${base_colors[*]}") ~/.config/alacritty/alacritty.toml |
 			{ read -r ac; tr "," "\n" <<< "$ac"; cat > $term_conf; }
 }
 
@@ -2465,6 +2555,9 @@ under_join_bar() {
 		Ppbg $hex_ma
 		Ppfg $hex_ma_br
 		Ppfc $hex_ma_br
+		Ppbg $hex_a6
+		Ppfg $hex_a6_br
+		Ppfc $hex_a6_br
 		Bpbg $hex_pbg
 		tsbg $hex_pbg
 	EOF
@@ -3732,6 +3825,12 @@ if [[ $wallpaper != *ocs ]]; then
 	#eval "magick $preview_colors -append ${colorscheme%/*}/previews/${colorscheme##*/}.png"
 	eval "$preview_command '$previews_dir/${colorscheme##*/}.png'" &> /dev/null
 fi
+
+#replace_colors bar
+#set_term
+#replace_colors vim | sed 's/.*:\([^ ]*\)[^'\'']*.\(.\w*\).*/\1 \2/'
+#~/.orw/scripts/reload_neovim_colors.sh &> /dev/null &
+#exit
 
 {
 	set_ob
