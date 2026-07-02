@@ -152,17 +152,46 @@ while
 
 				echo "ERE: $action: $selected_device"
 
+				#/usr/bin/expect <<- EOF &> /dev/null
+				#	set timeout 5
+				#	spawn bluetoothctl
+				#	send "scan on\n"
+				#	sleep 5
+				#	send "scan off\n"
+				#	send "agent KeyboardOnly\n"
+
+				#	send "$action $selected_device\n"
+
+				#	expect "Confirm passkey" {
+				#		send "yes\n"
+				#	}
+
+				#	expect -re {[Ss]uccessful} {
+				#		send "scan off\nquit\n"
+				#		exit 0
+				#	}
+				#EOF
+
 				/usr/bin/expect <<- EOF &> /dev/null
 					set timeout 5
 					spawn bluetoothctl
 					send "scan on\n"
 					sleep 5
 					send "scan off\n"
+					send "agent KeyboardOnly\n"
 
 					send "$action $selected_device\n"
 
-					expect "Confirm passkey" {
-						send "yes\n"
+					expect {
+						-re "Passkey: (\\d+)" {
+							set pin $expect_out(1,string)
+							exec env(HOME)/.orw/scripts/noitfy.sh -s osd -t 11 -i "" "$pin" &
+							exp_continue
+						}
+						"Confirm passkey" {
+							send "yes\r"
+							exp_continue
+						}
 					}
 
 					expect -re {[Ss]uccessful} {
@@ -170,6 +199,7 @@ while
 						exit 0
 					}
 				EOF
+
 					#expect -re {${action^}.* successful} {
 					#expect -re {.*Device ${action:1:}ed.*} {
 
