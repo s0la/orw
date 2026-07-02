@@ -12,8 +12,9 @@ active=$(wmctrl -l | awk '\
 	} END { if (a) print "-a " substr(a, 2) }')
 
 if [[ $style =~ icons|dmenu ]]; then
+	icon_pattern="\(arrow_down_square_full\|.*_side\|term\|dir_empty\|web\)"
 	read dropdown term vifm qb left right top bottom <<< \
-		$(sed -n 's/^\(arrow_down_square_full\|.*_side\|term\|dir_empty\|web\).*=//p' $icons | xargs)
+		$(sed -n "s/^$icon_pattern.*=//p" $icons | xargs)
 else
 	term=alacritty dropdown=dropdown vifm=vifm qb=qutebrowser \
 		left=left right=right top=top bottom=bottom
@@ -22,7 +23,7 @@ fi
 toggle
 trap toggle EXIT
 
-item_count=4
+item_count=5
 set_theme_str
 
 options=(
@@ -45,6 +46,24 @@ get_title() {
 				ic = gensub("'$1'", "", 1)
 				if(mc + 1 < ic) exit; else mc = (ic) ? ic : 0
 			} END { if(length(mc)) mc++; print "'"$1"'" mc }')
+}
+
+get_title() {
+	local name="$1"
+	wmctrl -l | awk '$NF ~ "^'$name'[0-9]?" {
+			c = $NF
+			sub("'$name'[^0-9]*", "", c)
+			ac[int(c)] = int(c)
+		} END {
+			if (length(ac)) {
+				for (c in ac) {
+					if (c > l + 1) break
+					l = c
+				}
+				fc = l + 1
+			}
+			print "'"$name"'" fc
+		}'
 }
 
 focused_window=$(xdotool getwindowfocus getwindowname)
@@ -104,11 +123,12 @@ do
 				#~/.orw/scripts/dropdown.sh ${app#*$dropdown}
 			;;
 		$term*)
-			get_title alacritty
+			title=$(get_title alacritty)
 			alacritty -t $title &
+			#alacritty -t $title -e bash -c "figlet -f 'ANSI Shadow' TERM${title//[^0-9]}; bash" &
 			;;
 		$vifm*)
-			get_title vifm
+			title=$(get_title vifm)
 			spy_windows=~/.orw/scripts/spy_windows.sh
 			workspace=$(xdotool get_desktop)
 			class="--class=custom_size"
@@ -122,7 +142,7 @@ do
 			alacritty -t $title --class=custom_size -e ~/.orw/scripts/vifm.sh &
 			;;
 		$qb*)
-			get_title qutebrowser
+			title=$(get_title qutebrowser)
 			if [[ ! $app =~ private ]]; then
 				qutebrowser ${app#*$qb} &
 			else
