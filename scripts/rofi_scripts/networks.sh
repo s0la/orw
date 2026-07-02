@@ -32,7 +32,7 @@
 
 (
 	for range in     ; do
-		~/.orw/scripts/notify.sh -s osd -t 1 -r 303 -C 'pfg' -i $range "scanning.."
+		~/.orw/scripts/notify.sh -s osd -t 1 -r 303 -C 'pbfg' -i $range "scanning.."
 		sleep 0.4
 	done
 ) &
@@ -128,7 +128,7 @@ rofi_width=$(awk '
 				if (/^display_[0-9]_xy/ && p > $pf) {
 					rw = int(w * (ww - sw - 2 * 0) / 100)
 					rw -= 2 * (lp + ep)
-					print int((rw / f) * 1.12)
+					print int((rw / f) * 1.3)
 					exit
 				}
 			}
@@ -168,7 +168,7 @@ list_networks() {
 				if ($NF == "--") pi = pui
 				else { pi = pli; h = h "," FNR - 2 }
 
-				ssid = substr($0, ssidi, (moi - ssidi) - 1)
+				ssid = substr($0, ssidi + 1, (moi - ssidi) - 1)
 				sub("\\s+$", "", ssid)
 
 				if ($1 == "*") a = FNR - 2
@@ -176,11 +176,12 @@ list_networks() {
 				o = '$rofi_width' - length(ssid) -  length($(NF - 1))
 				#print '$rofi_width', length(ssid), o, ssid
 				b = substr($0, bi, 4)
-				an = an "\n" sprintf("%s%*s", b, '$rofi_width', ssid)
+				#system("~/.orw/scripts/notify.sh \"^" ssid "^\"")
+				if (ssid != "--") an = an "\n" sprintf("%s%*s", b, '$rofi_width' - 1, ssid)
 				#an = an "\n" $(NF - 1) " " ssid
 			}
 		} END { print "-a " a "\n-u " substr(h, 2) an }' \
-			~/.orw/scripts/icons <(nmcli dev wifi)
+			~/.orw/scripts/icons <(nmcli dev wifi list)
 		#} END { print ((cn ~ "[0-9]") ? "-a " cn : " ") an }' \
 }
 
@@ -226,6 +227,11 @@ theme_str='window { padding: 0%; }'
 read index signal network_name <<< $(echo -e "$all_networks" |
 	rofi -dmenu -format 'i s' $hilight $active -theme-str "$theme_str" -theme list)
 
+#echo $index: $network_name, $active
+#[[ ${active##* } =~ (^|,)$index|$index(,|$) ]]
+#echo ${BASH_REMATCH[*]}
+#exit
+
 if [[ $network_name ]]; then
 	get_password() {
 		password=$(sed -n "s/^$network_name: //p" ~/.orw/scripts/auth/networks)
@@ -237,7 +243,8 @@ if [[ $network_name ]]; then
 		done && ~/.orw/scripts/notify.sh "Successfully ${state-connected to} <b>$network_name</b>"
 	}
 
-	if [[ $active ]]; then
+	#if [[ $active ]]; then
+	if [[ ${active##* } =~ (^|,)$index|$index(,|$) ]]; then
 		state='disconnected from'
 		command="nmcli connection down '$network_name'"
 	else
@@ -245,18 +252,24 @@ if [[ $network_name ]]; then
 			get_password
 
 			if [[ ! $password ]]; then
-				killall rofi
+				#killall rofi
 				~/.orw/scripts/set_geometry.sh -t network_input -w 300 -h 100
 				alacritty -t network_input -e \
 					bash -c "~/.orw/scripts/network_auth.sh ${network_name//\'/\\\'}" $> /dev/null
 				get_password
+				password_arg="password $password"
 			fi
 
-			password_arg=password
+			#password_arg=password
 		fi
 
-		command="nmcli device wifi connect '$network_name' $password_arg $password"
+		command="nmcli device wifi connect '$network_name' $password_arg"
+		echo "$command"
 	fi
+
+	eval "$command"
+	~/.orw/scripts/notify.sh "Successfully ${state-connected to} <b>$network_name</b>"
+	exit
 
 	coproc (eval $command &> /dev/null &)
 	pid=$((COPROC_PID + 1))
