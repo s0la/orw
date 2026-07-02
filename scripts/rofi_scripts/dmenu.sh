@@ -86,7 +86,7 @@ if ((sourced)); then
 
 	trap : USR1
 
-	script=${0%/*}/$1.sh
+	[[ $1 == *.sh ]] && script=$1 || script=${0%/*}/$1.sh
 	shift
 
 	current_workspace=$(xdotool get_desktop)
@@ -96,5 +96,5 @@ if ((sourced)); then
 
 	style=$(awk 'END { gsub("\"|\\..*", "", $NF); print $NF }' ~/.config/rofi/main.rasi)
 
-	source $script $@
+	source $script "$@"
 fi
