@@ -13,26 +13,30 @@ get_volume() {
 	#		c && $1 == "Mute:" { print "volume" (($NF == "yes") ? "_mute" : "") }
 	#		c && /^\s*Volume/ { print $5; exit }' | xargs)
 
+	#local id=$(pactl list sinks short | awk '$NF == "RUNNING" { print $1 }')
+	local sink=$(pactl get-default-sink)
+
 	read icon volume <<< $(pactl list sinks | awk '
-		$1 == "Mute:" { m = "volume" (($NF == "yes") ? "_mute" : "") }
-		/^\s*Volume/ {
-			v = $5
+		$2 == "'"$sink"'",/^$/ {
+			if ($1 == "Mute:") { m = "volume" (($NF == "yes") ? "_mute" : "") }
+			else if (/^\s*Volume/) {
+				v = $5
 
-			if (m == "volume") {
-				switch (v) {
-					case /^[7-9].|100/: l = "high"; break
-					case /^[3-6]./: l = "mid"; break
-					default: l = "low"
+				if (m == "volume") {
+					switch (v) {
+						case /^[7-9].|100/: l = "high"; break
+						case /^[3-6]./: l = "mid"; break
+						default: l = "low"
+					}
+
+					m = m "_" l
 				}
-
-				m = m "_" l
-			}
-		}
-		$1 ~ "bus$" {
-			switch ($NF) {
-				case /bluetooth/: b = m " " v; break
-				case /usb/: u = m " " v; break
-				case /pci/: p = m " " v; break
+			} else if ($1 ~ "bus$") {
+				switch ($NF) {
+					case /bluetooth/: b = m " " v; break
+					case /usb/: u = m " " v; break
+					case /pci/: p = m " " v; break
+				}
 			}
 		} END { print (b) ? b : (u) ? u : p }')
 
