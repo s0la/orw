@@ -140,9 +140,20 @@ select_tiling_window() {
 }
 
 select_tiling_win() {
+	local selection_direction
 	if [[ ! $second_window_properties ]]; then
 		# let user select window to which should selected window tile to
-		~/.orw/scripts/select_window.sh
+		((scrolling_window_count)) &&
+			case ${selected_index:-$scroll_index} in
+				$((scroll_window_num - 1))) selection_direction=l;;
+				0) selection_direction=h;;
+				*) selection_direction='l h';;
+			esac
+		#~/.orw/scripts/notify.sh "${selected_index:-$scroll_index}: $selection_direction"
+		coproc WINDOW { ~/.orw/scripts/select_window.sh $selection_direction; }
+		((auto_pid)) && kill -USR1 $auto_pid
+		echo $selected_index: $selection_direction, $auto_pid >&2
+		wait $WINDOW_PID
 		printf '0x%x' $(xdotool getactivewindow)
 	fi
 }
@@ -223,6 +234,7 @@ update_alignment() {
 					alignments[$window_id]=$alignment_direction
 				fi
 			fi
+			echo ALIGNEDD: $window_id: ${alignments[$window_id]}
 		done
 }
 
@@ -234,13 +246,26 @@ remove_tiling_window() {
 
 	properties=( $id ${windows[$id]} )
 	original_properties=( ${properties[*]} )
-
 	alignment_direction=${alignments[$id]}
+
+	if [[ ${windows_to_ignore[*]} == *${tiling_group_id%%,*}* ]]; then
+		local restore_ignored=true
+		for w in ${tiling_group_id//,/ }; do
+			windows_to_ignore=( ${windows_to_ignore/$w} )
+		done
+	fi
+
+	echo TILEAL: $id, $alignment_direction: ${alignments[$id]}, ${!alignments[*]}
 	set_alignment_properties $alignment_direction
+	get_alignment move print
 
 	read _ _ _ aligned <<< $(get_alignment move)
 	eval aligned_windows=( $aligned )
 	update_alignment move
+
+	[[ $restore_ignored ]] && windows_to_ignore+=( ${tiling_group_id//,/ } )
+
+	echo -e "\nRESIZE: ${tiling_group_id} - ${windows_to_ignore[*]}\n $alignment_direction - $aligned"
 
 	for window_id in ${!aligned_windows[*]}; do
 		read ws wd <<< ${aligned_windows[$window_id]}
@@ -249,10 +274,17 @@ remove_tiling_window() {
 		new_properties[index + 1]=$wd
 		all_aligned_windows[$window_id]="${new_properties[*]}"
 		resize_after_tiling+=( $window_id )
+		echo resize: $window_id - ${all_aligned_windows[$window_id]}
 	done
+
+	#echo -e '\npre\n'
+	#list_windows
 
 	#[[ $move_window ]] && xdotool windowminimize $id
 	update_aligned_windows $@ #no_change
+
+	#echo -e '\npost\n'
+	#list_windows
 
 	unset windows[$id]
 }
@@ -291,25 +323,47 @@ list_windows() {
 		local windows_to_ignore="${!states[*]}"
 
 	for wid in ${!list[*]}; do
-		[[ ${list[$wid]} ]] && echo $wid ${list[$wid]}
-	done | grep -v "^\(${windows_to_ignore// /\\|}\)\s\+\w"
+		[[ ${list[$wid]} && ${windows_to_ignore[*]} != *$wid* ]] && echo $wid ${list[$wid]}
+	done #| grep -v "^\(${windows_to_ignore// /\\|}\)\s\+\w"
+	#for wid in ${!list[*]}; do
+	#	[[ ${list[$wid]} ]] && echo $wid ${list[$wid]}
+	#done | grep -v "^\(${windows_to_ignore// /\\|}\)\s\+\w"
 }
+
+#set_new_position() {
+#	local monitor=${display_map[$display]}
+#	#echo $id, $current_id: $monitor
+#	awk -i inplace '
+#		/class="(\*|input)"/ { t = 1 } t && /<\/app/ { t = 0 }
+#
+#		t && /<decor>/ { v = ("'"${tiling_workspaces[*]}"'" !~ "'$workspace'") ? "yes" : "no" }
+#
+#		t && /<(width|height)>/ { v = (/width/) ? "'$3'" : "'$4'" }
+#		#t && /<monitor>/ { sub("[0-9]+", "'"$monitor"'") }
+#		t && /<[xy]>/ { v = (/x/) ? "'$1'" : "'$2'" }
+#
+#		t && v { 
+#			sub(">.*<", ">" v "<")
+#			v = ""
+#		}
+#
+#		{ print }' ~/.config/openbox/rc.xml
+#
+#	openbox --reconfigure &
+#}
 
 set_new_position() {
 	local monitor=${display_map[$display]}
-	#echo $id, $current_id: $monitor
 	awk -i inplace '
-		/class="(\*|input)"/ { t = 1 } t && /<\/app/ { t = 0 }
+		/class="\*"/,/^\s*<\/app/ {
+			if (/<decor>/) v = ("'"${tiling_workspaces[*]}"'" !~ "'$workspace'") ? "yes" : "no"
+			if (/<(width|height)>/) v = (/width/) ? "'$3'" : "'$4'"
+			if (/<[xy]>/) v = (/x/) ? "'$1'" : "'$2'"
 
-		t && /<decor>/ { v = ("'"${tiling_workspaces[*]}"'" !~ "'$workspace'") ? "yes" : "no" }
-
-		t && /<(width|height)>/ { v = (/width/) ? "'$3'" : "'$4'" }
-		#t && /<monitor>/ { sub("[0-9]+", "'"$monitor"'") }
-		t && /<[xy]>/ { v = (/x/) ? "'$1'" : "'$2'" }
-
-		t && v { 
-			sub(">.*<", ">" v "<")
-			v = ""
+			if (v) { 
+				sub(">.*<", ">" v "<")
+				v = ""
+			}
 		}
 
 		{ print }' ~/.config/openbox/rc.xml
@@ -354,7 +408,7 @@ set_orientation_properties() {
 }
 
 set_alignment_properties() {
-	if [[ $1 == h ]]; then
+	if [[ $1 == h* ]]; then
 		index=1
 		opposite_index=2
 		border=$x_border
@@ -1011,6 +1065,7 @@ align_windows() {
 	#	echo $id: ${properties[*]}
 	#fi
 
+	[[ $scrolling_window_count && ! $alignment_direction ]] && local alignment_direction=h
 	set_alignment_properties $alignment_direction
 
 	#[[ "${tabbed_windows_ids[*]}" == *$id* ]] &&
@@ -1115,6 +1170,8 @@ handle_first_window() {
 
 	get_display_properties
 	workspaces[$id]="${workspace}_${display}"
+
+	xdotool windowactivate $current_id
 }
 
 align() {
@@ -1325,6 +1382,12 @@ update_aligned_windows() {
 
 				[[ ${tabbed_windows_ids[*]} != *$window_id* && ! $no_change ]] &&
 					set_window $window_id props[*]
+
+				#echo UAW: $window_id - ${props[*]}
+
+				((scrolling_window_count)) && wmctrl -ia $window_id
+				#[[ ${FUNCNAME[1]} == shift_windows ]] && wmctrl -ia $window_id #&& sleep 1
+				#[[ ${FUNCNAME[1]} == shift_windows ]] && wmctrl -ir $window_id -b remove,hidden #&& sleep 1
 
 				#if [[ ${tabbed_windows_ids[*]} != *$window_id* ]]; then
 				#	[[ $no_change ]] || set_window $window_id props[*]
@@ -1932,6 +1995,31 @@ swap_windows() {
 				print md, wd + wb + m, ids
 			}')
 
+	#((properties[3] + properties[5] == scroll_window_height)) && local match_sep=' ' || local match_sep=','
+	if ((properties[3] + properties[5] == scroll_window_height)); then
+		[[ $reverse ]] && ((scroll_index--)) || ((scroll_index++))
+		local match_sep=' '
+	else
+		local match_sep=','
+	fi
+
+	[[ $reverse ]] &&
+		local match="((${move_ids// /\|}).*)$match_sep$id" || match="$id$match_sep(.*(${move_ids// /\|}))" 
+
+	[[ ${scrolling_windows[*]} =~ $match ]] #&& saved=( ${BASH_REMATCH[*]} )
+	[[ $reverse ]] &&
+		local replace="$id$match_sep${BASH_REMATCH[1]}" ||
+		local replace="${BASH_REMATCH[1]}$match_sep$id" 
+
+	echo ${properties[*]}, $scroll_window_height, ^$match_sep^, $match, $replace, ${BASH_REMATCH[*]}
+	echo SCROLLS PRE: ${scrolling_windows[*]}
+	echo ${BASH_REMATCH[0]}
+	echo ${scrolling_windows[*]} / ${BASH_REMATCH[0]} / $replace
+	echo ${scrolling_windows[*]/${BASH_REMATCH[0]}/$replace}
+	windows_before_swap="${scrolling_windows[*]}"
+	scrolling_windows=( ${windows_before_swap[*]/${BASH_REMATCH[0]}/$replace} )
+	echo SCROLLS POST: $scroll_index - ${scrolling_windows[*]}
+
 	for move_id in $id $move_ids; do
 		props=( ${windows[$move_id]} )
 		[[ $move_id == $id ]] &&
@@ -1945,6 +2033,20 @@ swap_windows() {
 	done
 
 	signal_event "launchers" "swap" "$id ${move_ids// /,} $reverse"
+
+	#[[ ${scrolling_windows[*]} =~ $match ]] && saved=( ${BASH_REMATCH[*]} )
+	#echo ${scrolling_windows[*]}
+
+	#cat <<- EOF
+
+	#SWAPPING: $diff - $reverse
+
+	#$source_move
+	#$target_move
+	#$move_ids
+	#$match - ${BASH_REMATCH[*]}
+
+	#EOF
 
 	properties=( ${windows[$id]} )
 }
@@ -2317,6 +2419,7 @@ adjust_helper() {
 		props[index]=${aligned_windows[$wid]% *}
 		props[index + 2]=${aligned_windows[$wid]#* }
 		all_aligned_windows[$wid]="${props[*]:1}"
+		#((scrolling_window_count)) && windows[$wid]="${props[*]:1}"
 	done
 }
 
@@ -2329,6 +2432,8 @@ start_interactive() {
 
 	get_dimension_size x
 	get_dimension_size y
+	echo X: $x_window_before, $x_window_size, $x_window_after, $x_block_before, $x_block_after
+	echo Y: $y_window_before, $y_window_size, $y_window_after, $y_block_before, $y_block_after
 
 	if [[ ! $no_restart ]]; then
 		pidof -x notify.sh dunst | xargs -r kill -9
@@ -2373,10 +2478,13 @@ adjust_window() {
 
 	if [[ $1 ]]; then
 		properties=( ${old_properties[*]} )
-		((!start_block && !block_dimension)) &&
+		#((!start_block && !block_dimension)) &&
+		((!block_start && !block_dimension)) &&
 			read block_{start,dimension} _ <<< $(get_alignment)
 	fi
 
+	echo ADJUST: $old_id, $cw_start, $window_end, $index: ${display_properties[*]}
+	echo $x, $y, $w, $h, $orientation, $alignment_direction, $block_start, $block_dimension
 	start_interactive window
 
 	border=${old_properties[-(index % 2 + 1)]}
@@ -2396,6 +2504,7 @@ adjust_window() {
 
 	id=$old_id
 	[[ $1 ]] && all_aligned_windows[$id]="${new_properties[*]:1}"
+	#((scrolling_window_count)) && windows[$current_id]="${all_aligned_windows[$current_id]}"
 }
 
 update_workspaces() {
@@ -2492,10 +2601,11 @@ signal_event_event() {
 }
 
 set_tile_event() {
-	local tiling=true {align,full}_index choosen_alignment reverse
+	local tiling=true {align,full,selected}_index choosen_alignment reverse
 	local original_properties=( ${properties[*]} ) resize_after_tiling
 	local original_alignment=${alignments[$current_id]}
 	local style=$rofi_style item_count theme_str
+	local auto_pid=$(pidof -x auto.sh)
 
 	#[[ $rofi_state == opened ]] && toggle_rofi
 	#remove_tiling_window no_change
@@ -2504,8 +2614,99 @@ set_tile_event() {
 	select_display
 
 	if ((window_count > 0)); then
+		if ((scrolling_window_count && scrolling_window_count >= scroll_window_num)); then
+			local shifted tiling_window_id=$id
+			[[ ${scrolling_windows[*]} =~ [^\ \]*(,$id|$id,)[^\ \]* ]] &&
+				local tiling_group_id="${BASH_REMATCH[0]/${BASH_REMATCH[1]}}"
+			echo TGID: ${scrolling_windows[*]} - $id, $tiling_group_id, ${BASH_REMATCH[*]}
+			#read selected_index shifter <<< $(select_scrolling_window)
+			select_scrolling_window
+			shifted=$?
+
+			echo SCROLL TILING: $id, $current_id
+			local current_window_height=$((properties[3] + properties[5]))
+			local tiling_window_properties=( ${properties[*]} )
+
+			#((current_window_height < scroll_window_height)) &&
+			#	((scrolling_window_count++)) || ((scrolling_window_count--))
+
+			#remove=$((current_window_height < scroll_window_height))
+			((current_window_height < scroll_window_height)) && remove=1
+			#((current_window_height < scroll_window_height)) &&
+			#	((scrolling_window_count++)) && local remove=1 ||
+			#	((scrolling_window_count--))
+
+			#if ((current_window_height < scroll_window_height)); then
+			#	[[ ${scrolling_windows[*]} =~ [^\ \]*(,$id|$id,)[^\ \]* ]] &&
+			#		local tiling_group_id="${BASH_REMATCH[0]/${BASH_REMATCH[1]}}"
+			#	((scrolling_window_count++)) 
+			#else
+			#	((scrolling_window_count--))
+			#fi
+
+			echo TILING GROUP ID: $tiling_group_id
+
+			tile_window "$remove"
+			echo SCROLL TILING: $id, $current_id
+			echo update_aligned_windows
+			echo $shifted
+
+			#((full_index)) && [[ ! $remove ]] || shift_windows
+
+			#if ((!full_index)); then
+			#	shift_windows
+
+			#	if [[ ! $remove ]]; then
+			#		remove_scrolling_window
+			#		windows_to_ignore=( ${windows_to_ignore[*]/$current_id} )
+			#	fi
+			#fi
+
+			if ((full_index)); then
+				((remove)) && ((scrolling_window_count++))
+			else
+				if ((remove)); then
+					for resized_id in ${resize_after_tiling[*]}; do
+						[[ ${!all_aligned_windows[*]} != *$resized_id* ]] &&
+							all_aligned_windows[$resized_id]="${all_windows[$resized_id]}"
+					done
+
+					update_aligned_windows
+					((shifted)) || get_scrolling_index $id $tiling_group_id
+					echo $scroll_index: $tiling_group_id, ${scrolling_windows[*]}
+					new_window_id=$tiling_window_id
+				else
+					shift_windows
+					remove_scrolling_window
+					windows_to_ignore=( ${windows_to_ignore[*]/$current_id} )
+					((scrolling_window_count--))
+					echo $scrolling_window_count: ${scrolling_windows[*]}
+				fi
+			fi
+
+			#((remove || !(remove && full_index))) && shift_windows
+			#((shifted)) && update_aligned_windows || shift_windows
+			echo BEFORE: $shifted, ${scrolling_windows[*]}
+			list_windows
+			#scrolling_windows=( ${scrolling_windows[*]/ $current_id / } )
+			current_id=$tiling_window_id
+
+			#if [[ ! $remove ]]; then
+			#	#((shifted)) || remove_scrolling_window
+			#	remove_scrolling_window
+			#	windows_to_ignore=( ${windows_to_ignore[*]/$current_id} )
+			#fi
+
+			#~/.orw/scripts/notify.sh "selecting" &
+			#wmctrl -ia $current_id
+			echo AFTER: ${scrolling_windows[*]}
+			#for w in ${!windows[*]}; do
+			#	echo $w: ${windows[$w]}
+			#done
+		else
 		#local tiling_id=$(select_tiling_win)
 
+			((scrolling_window_count)) && echo SCROLLING TILE $scroll_index && printf '\n\n\n'
 
 		#if [[ $tabbed_windows_ids == *$tiling_id* ]]; then
 		#	#tabbed_windows_ids+=" $current_id"
@@ -2522,8 +2723,10 @@ set_tile_event() {
 		#	align_tabbed_windows
 		#	remove_tiling_window #no_change
 		#else
+			echo $id, $current_id
 			tile_window remove
-			list_windows
+			echo $id, $current_id
+			#list_windows
 
 			for resized_id in ${resize_after_tiling[*]}; do
 				[[ ${!all_aligned_windows[*]} != *$resized_id* ]] &&
@@ -2531,15 +2734,18 @@ set_tile_event() {
 			done
 
 			update_aligned_windows
+
+			local selected_id=$id
 			id=${original_properties[0]} 
 			properties=( ${windows[$id]} )
 			xdotool windowactivate $id &
 			workspaces[$id]=${workspace}_$new_display_index
+			echo $id, $current_id
 			#workspaces[$id]=${workspaces[$tiling_id]}
 		#fi
 
 			echo ID: $id, CID: $current_id, TID: $tiling_id
-			list_windows
+			#list_windows
 
 			#if [[ $tabbed_windows_ids == *$id* ]]; then
 			#	tabbed_windows_ids=( ${tabbed_windows_ids[*]/$id} )
@@ -2563,6 +2769,7 @@ set_tile_event() {
 
 		#echo TILE: $tiling_id, $id, ${original_properties[0]}, ${workspaces[$id]}
 		#list_windows
+		fi
 	else
 		#local empty_display=$display
 		remove_tiling_window
@@ -2572,8 +2779,18 @@ set_tile_event() {
 		#display_properties=( ${displays[$display]} )
 		current_window_count=1
 		handle_first_window
-
 	fi
+
+	#if ((scrolling_window_count)); then
+	#	echo ${scrolling_windows[*]}
+	#	printf '\nBEFORE\n\n%s\n' ${scrolling_windows[*]}
+	#	scrolling_windows=( ${scrolling_windows[*]/$current_id} )
+	#	[[ $reverse ]] && local order="$current_id,$selected_id" || local order="$selected_id,$current_id"
+	#	scrolling_windows=( ${scrolling_windows[*]/$selected_id/$order} )
+	#	printf '\nAFTER\n\n%s\n' ${scrolling_windows[*]}
+	#	echo SCROLL TILED: $scroll_index: $current_id, $selected_id, "^$order^", ${scrolling_windows[*]}
+	#	get_scrolling_index $selected_id
+	#fi
 
 	#tabbed_windows_ids="${tabbed_windows_ids//$id}"
 	#[[ "$tabbed_windows_ids" == *$id* ]] && tabbed_windows_ids
@@ -3251,67 +3468,90 @@ restore() {
 }
 
 make_full_window() {
-	local event=full
-	local direction=${choosen_alignment:-$alignment_direction}
-	declare -A aligned_windows
+	if ((scrolling_window_count >= scroll_window_num)) && [[ $tiling ]]; then
+		echo $scroll_index, ${scrolling_windows[*]}, ${original_properties[*]}, ${resize_after_tiling[*]}
+		#local tiling_group_id=${resize_after_tiling[0]} scroll_height=$scroll_window_height
+		local scroll_height=$scroll_window_height
 
-	[[ ${direction::1} != [hv] ]] &&
-		direction=${alignments[$id]}
-	set_alignment_properties $direction
+		#for resized_id in ${resize_after_tiling[*]}; do
+		#	[[ ${!all_aligned_windows[*]} != *$resized_id* ]] &&
+		#		all_aligned_windows[$resized_id]="${all_windows[$resized_id]}"
+		#done
 
-	read temp_{start,opposite_{start,dimension}} <<< $(list_windows | awk '
-			BEGIN {
-				m = '$margin'
-				i = '$index' + 1
-				oi = '$opposite_index' + 1
-				r = "'"$reverse"'"
-				s = (r) ? '${properties[index]}' : \
-					'${properties[index]}' + '${properties[index + 2]}' + '${properties[index + 4]}'
-			}
+		echo ${scrolling_windows[*]}: ^${all_aligned_windows[*]}^ - ${resize_after_tiling[*]}, ${windows[${resize_after_tiling[0]}]}
+		add_scrolling_window $tiling_id $current_id 1
+		# when moving full window to another full window
+		# (remove will be set only when moving tiled window to a full window)
+		#[[ $remove ]] || get_scrolling_index $current_id
+		echo $scroll_index: ${scrolling_windows[*]}
+		#get_scrolling_index $id
+		unset no_change
+		shift_windows
+		((scrolling_window_count++))
+	else
+		local event=full
+		local direction=${choosen_alignment:-$alignment_direction}
+		declare -A aligned_windows
 
-			{
-				cws = (r) ? $i : $i + $(i + 2) + $(i + 4)
-				cwoe = $oi + $(oi + 2) + $(oi + 4)
-				if (cws == s) {
-					if (!mos || $oi < mos) mos = $oi
-					if (!moe || cwoe > moe) moe = cwoe
+		[[ ${direction::1} != [hv] ]] &&
+			direction=${alignments[$id]}
+		set_alignment_properties $direction
+
+		read temp_{start,opposite_{start,dimension}} <<< $(list_windows | awk '
+				BEGIN {
+					m = '$margin'
+					i = '$index' + 1
+					oi = '$opposite_index' + 1
+					r = "'"$reverse"'"
+					s = (r) ? '${properties[index]}' : \
+						'${properties[index]}' + '${properties[index + 2]}' + '${properties[index + 4]}'
 				}
-			} END { print s + ((r) ? 0 : m), mos, moe - mos }
-		')
 
-	old_id=$id
-	id=temp
-	properties=( $id 0 0 0 0 ${properties[*]: -2} )
-	properties[index + 2]=-$((margin + ${properties[index + 4]}))
-	properties[index]=$temp_start
-	properties[opposite_index]=$temp_opposite_start
-	properties[opposite_index + 2]=$((temp_opposite_dimension - \
-		${properties[opposite_index + 4]}))
-	windows[$id]="${properties[*]:1}"
+				{
+					cws = (r) ? $i : $i + $(i + 2) + $(i + 4)
+					cwoe = $oi + $(oi + 2) + $(oi + 4)
+					if (cws == s) {
+						if (!mos || $oi < mos) mos = $oi
+						if (!moe || cwoe > moe) moe = cwoe
+					}
+				} END { print s + ((r) ? 0 : m), mos, moe - mos }
+			')
 
-	read block_{start,dimension,segments} aligned <<< $(get_alignment)
+		old_id=$id
+		id=temp
+		properties=( $id 0 0 0 0 ${properties[*]: -2} )
+		properties[index + 2]=-$((margin + ${properties[index + 4]}))
+		properties[index]=$temp_start
+		properties[opposite_index]=$temp_opposite_start
+		properties[opposite_index + 2]=$((temp_opposite_dimension - \
+			${properties[opposite_index + 4]}))
+		windows[$id]="${properties[*]:1}"
 
-	eval aligned_windows=( $aligned )
-	read new_{start,size} <<< ${aligned_windows[$current_id]}
+		read block_{start,dimension,segments} aligned <<< $(get_alignment)
 
-	properties[index]=$new_start
-	properties[index + 2]=$new_size
-	properties=( ${properties[*]:1} )
-	windows[$current_id]="${properties[*]}"
-	unset aligned_windows[temp]
-	unset windows[temp]
+		eval aligned_windows=( $aligned )
+		read new_{start,size} <<< ${aligned_windows[$current_id]}
 
-	for win in ${!aligned_windows[*]}; do
-		props=( $win ${windows[$win]} )
-		props[index]=${aligned_windows[$win]% *}
-		props[index + 2]=${aligned_windows[$win]#* }
-		all_aligned_windows[$win]="${props[*]:1}"
-	done
+		properties[index]=$new_start
+		properties[index + 2]=$new_size
+		properties=( ${properties[*]:1} )
+		windows[$current_id]="${properties[*]}"
+		unset aligned_windows[temp]
+		unset windows[temp]
 
-	alignments[$current_id]=$direction
-	update_alignment 
+		for win in ${!aligned_windows[*]}; do
+			props=( $win ${windows[$win]} )
+			props[index]=${aligned_windows[$win]% *}
+			props[index + 2]=${aligned_windows[$win]#* }
+			all_aligned_windows[$win]="${props[*]:1}"
+		done
 
-	id=$old_id
+		alignments[$current_id]=$direction
+		echo FULL AL: $current_id: $direction, ${alignments[$current_id]}
+		update_alignment 
+
+		id=$old_id
+	fi
 }
 
 get_stretch_properties() {
@@ -4193,9 +4433,9 @@ move_windows_to_display() {
 		echo "$w: ${all_aligned_windows[$w]}"
 	done
 
-	sleep 1
+	#sleep 1
 	update_aligned_windows
-	sleep 1
+	#sleep 1
 
 	#list_windows
 	#exit
@@ -4264,7 +4504,7 @@ move_windows_to_display() {
 }
 
 move_windows_to_display() {
-	local current_workspace=$workspace all_displays="${!displays[*]}"
+	local current_workspace=$workspace all_displays="${!displays[*]}" scale display_args
 
 	if ((${#displays[*]} > 1)); then
 		[[ $rofi_state != opened ]] && toggle_rofi
@@ -4275,6 +4515,12 @@ move_windows_to_display() {
 		[[ $new_display_index ]] || return
 		(( new_display_index++ ))
 
+		scale=$(awk '/^display.*size/ {
+						if ($1 ~ "^display_'"$new_display_index"'") nh = $NF
+						else ch = $NF
+					}
+					END { print nh / ch }' ~/.config/orw/config)
+
 		local start_index=$((${displays[$new_display_index]%% *} == ${displays[$display]%% *}))
 		local new_display_start=$(cut -d ' ' -f $((start_index + 1)) <<< ${displays[$new_display_index]})
 		local current_display_start=$(cut -d ' ' -f $((start_index + 1)) <<< ${displays[$display]})
@@ -4284,16 +4530,21 @@ move_windows_to_display() {
 
 		local display_args=$new_display_index
 	else
-		local display_args=$(xrandr -q | awk '
+		read scale display_args <<< $(xrandr -q | awk '
+			$3 == "primary" {
+				gsub(".*x|+.*", "", $4)
+				ch = $4
+			}
 			$3 ~ "^\\(" { c = 1 }
 			c && ($2 ~ "+$" || $3 ~ "^+") {
 				sub("x", " ", $1)
-				print $1
-				exit
-			}')
+				da = $1
+				sub(".* ", "", $1)
+				nh = $1
+			} END { print nh / ch, da }')
 	fi
 
-	echo ARGS: $display_args
+	echo ARGS: $display_args, $scale
 
 	while read workspace {current,new}_display_{x,y} wid new_properties; do
 		workspaces[$wid]="${workspace}_1"
@@ -4366,6 +4617,244 @@ move_windows_to_display() {
 }
 
 test() {
+	select_scrolling_window
+	return
+
+	#move_windows_to_display
+	#return
+
+	if ((!(counter++ % 2))); then
+		echo "scrolling_windows=(${scrolling_windows[*]})"
+		for w in ${scrolling_windows[*]//,/ }; do
+			echo "windows[$w]='${windows[$w]}'"
+			echo "all_windows[$w]='${windows[$w]}'"
+		done
+
+		cat <<- EOF
+			windows_to_ignore=(${windows_to_ignore[*]})
+			scrolling_window_count=$scrolling_window_count
+			scroll_window_num=3
+			scroll_index=$scroll_index
+			id=$current_id
+			current_id=\$id
+			scroll_window_height=$((display_properties[3] - display_properties[1]))
+			scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+				(scroll_window_num - 1) * margin) / scroll_window_num))
+		EOF
+	else
+		scrolling_windows=(0x1200003 0x2c00003 0x3e00003,0xc00003)
+		windows[0x1200003]='30 66 612 982 2 2'
+		all_windows[0x1200003]='30 66 612 982 2 2'
+		windows[0x2c00003]='654 66 611 982 2 2'
+		all_windows[0x2c00003]='654 66 611 982 2 2'
+		windows[0x3e00003]='1277 66 611 241 2 2'
+		all_windows[0x3e00003]='1277 66 611 241 2 2'
+		windows[0xc00003]='1277 319 611 729 2 2'
+		all_windows[0xc00003]='1277 319 611 729 2 2'
+		windows_to_ignore=()
+		scrolling_window_count=3
+		scroll_window_num=3
+		scroll_index=2
+		id=0x3e00003
+		current_id=$id
+		scroll_window_height=984
+		scroll_window_width=613
+
+		set_tile_event
+	fi
+	return
+
+	#echo $scrolling_window_count: ${scrolling_windows[*]}
+	#echo ${windows_to_ignore[*]}
+	#list_windows
+	#return
+
+	if ((!counter++)); then
+		scrolling_windows=(0x5800003 0x8400003,0x6200003 0x5200003 0xd000003)
+		windows[0x5800003]="30 66 612 982 2 2"
+		windows[0x8400003]="654 66 611 685 2 2"
+		windows[0x6200003]="654 763 611 285 2 2"
+		windows[0x5200003]="1277 66 612 982 2 2"
+		windows[0xd000003]="1277 66 612 982 2 2"
+		windows_to_ignore=( 0x9c00003 )
+
+		titles[0x5800003]=""
+		titles[0x8400003]=""
+		titles[0x6200003]=""
+		titles[0x5200003]=""
+		titles[0xd000003]=""
+
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+		scrolling_window_count=4
+		scroll_window_num=3
+		scroll_index=0
+		id=0x5800003
+		current_id=$id
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		echo $id, $current_id, $scroll_index
+		#scroll_windows close
+		echo -e "\n\n"
+	else
+		select_scrolling_window
+	fi
+	return
+
+	if ((!counter++)); then
+		scrolling_windows=(0x5400003 0xc00003,0xa600003 0xba00003 0x9c00003)
+		windows[0x5400003]="30 66 612 982 2 2"
+		windows[0xc00003]="654 66 611 485 2 2"
+		windows[0xba00003]="1277 66 612 982 2 2"
+		windows[0xa600003]="654 563 611 485 2 2"
+		windows_to_ignore=( 0x9c00003 )
+
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+		scrolling_window_count=4
+		scroll_window_num=3
+		scroll_index=0
+		id=0x5400003
+		current_id=$id
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		echo $id, $current_id, $scroll_index
+		#scroll_windows close
+		echo -e "\n\n"
+	else
+		select_scrolling_window
+	fi
+	return
+
+	if ((!counter++)); then
+		scrolling_windows=(0xe00003,0x5200003 0x6000003 0x7600003)
+		windows[0xe00003]="30 66 612 302 2 2"
+		windows[0x5200003]="30 380 612 668 2 2"
+		windows[0x6000003]="654 66 611 982 2 2"
+		windows[0x7600003]="1277 66 611 982 2 2"
+
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+		scrolling_window_count=3
+		scroll_window_num=3
+		scroll_index=0
+		id=0xe00003
+		current_id=$id
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		echo $id, $current_id, $scroll_index
+		set_tile_event
+		#scroll_windows close
+		echo -e "\n\n"
+	else
+		select_scrolling_window
+	fi
+	return
+
+	select_scrolling_window
+	return
+
+	if ((!counter++)); then
+		scrolling_windows=(0x6c00003 0xa400003,0x9a00003 0xbc00003 0xc00003)
+		windows[0x6c00003]="30 66 612 982 2 2"
+		windows[0xa400003]="654 66 611 485 2 2"
+		windows[0x9a00003]="654 563 611 485 2 2"
+		windows[0xbc00003]="1277 66 612 982 2 2"
+		windows[0xc00003]="1277 66 612 982 2 2"
+
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+		scrolling_window_count=4
+		scroll_window_num=3
+		scroll_index=0
+		id=0x6c00003
+		current_id=$id
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		echo $id, $current_id, $scroll_index
+		set_tile_event
+		#scroll_windows close
+		echo -e "\n\n"
+	else
+		select_scrolling_window
+	fi
+	#select_scrolling_window
+	#return
+
+	return
+
+	scrolling_windows=(0x7600003 0xb200003,0x9400003 0x9e00003 0xc00003)
+	windows[0x7600003]="30 66 612 982 2 2"
+	windows[0xb200003]="30 66 611 302 2 2"
+	windows[0x9400003]="30 380 611 668 2 2"
+	windows[0x9e00003]="653 66 611 982 2 2"
+	windows[0xc00003]="1276 66 612 982 2 2"
+
+	alignments[0x2000003]="v"
+	alignments[0x6c00003]="v"
+	alignments[0x7600003]="h"
+	alignments[0x8000003]="h"
+
+	scroll_window_height=$((display_properties[3] - display_properties[1]))
+	scrolling_window_count=4
+	scroll_window_num=3
+	scroll_index=2
+	id=0xc00003 
+	current_id=$id
+	scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+		(scroll_window_num - 1) * margin) / scroll_window_num))
+	echo $id, $current_id, $scroll_index
+	#set_tile_event
+	#scroll_windows close
+	echo -e "\n\n"
+	#select_scrolling_window
+	#return
+
+	#scrolling_windows=( 0x2400003 0xb000003 0xba00003 0x9200003,0x2200003 0xa400003 )
+	#echo ${scrolling_windows[*]}
+	#list_windows
+	set_tile_event
+	return
+
+	if ((!counter++)); then
+		scrolling_windows=(0x2000003,0x6c00003 0x7600003 0x8000003)
+		#windows[0x1e00003]="30 66 612 982 2 2"
+		#windows[0x3400003]="30 66 612 982 2 2"
+		#windows[0x3e00003]="30 66 612 982 2 2"
+		#windows[0xe00003]="654 66 611 982 2 2"
+		#windows[0x5200003]="1277 66 611 982 2 2"
+		windows[0x2000003]="30 66 612 302 2 2"
+		windows[0x6c00003]="30 380 612 668 2 2"
+		windows[0x7600003]="654 66 611 982 2 2"
+		windows[0x8000003]="1277 66 611 982 2 2"
+
+		alignments[0x2000003]="v"
+		alignments[0x6c00003]="v"
+		alignments[0x7600003]="h"
+		alignments[0x8000003]="h"
+
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+		scrolling_window_count=3
+		scroll_window_num=3
+		scroll_index=0
+		id=0x2000003 
+		current_id=$id
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		echo $id, $current_id, $scroll_index
+		#set_tile_event
+		#scroll_windows close
+		echo -e "\n\n"
+		#select_scrolling_window
+		#return
+
+		#scrolling_windows=( 0x2400003 0xb000003 0xba00003 0x9200003,0x2200003 0xa400003 )
+		#echo ${scrolling_windows[*]}
+		#list_windows
+		select_scrolling_window
+		set_tile_event
+	else
+		select_scrolling_window
+	fi
+
+	return
+
 	#local remove="$1" tiling_id=$(select_tiling_win)
 	#echo $tiling_id
 	#return
@@ -4385,9 +4874,6 @@ test() {
 
 	#get_translated_windows 2
 	#return
-
-	move_windows_to_display
-	return
 
 	local size start {{align,full}_,}index choosen_alignment reverse
 
@@ -5571,10 +6057,11 @@ trap set_layout_event 58
 trap display_notification 59
 trap save_state SIGKILL SIGINT SIGTERM
 
-declare -A {all_,}windows {all_,}aligned_windows workspaces border_gaps
+declare -A {all_,}windows {all_,}aligned_windows workspaces border_gaps titles icons
 declare -A displays alignments states last_display_window display_map
 
-tiling_workspaces=( 1 2 )
+tiling_workspaces=( 1 2 3 )
+scrolling_workspaces=( 2 3 )
 workspace=$(xdotool get_desktop)
 
 read total_workspace_count workspace <<< \
@@ -5735,7 +6222,11 @@ select_display() {
 		[[ $rofi_state != opened ]] && toggle_rofi
 		#sleep 1
 		local icons_template="^number_\(${all_displays// /\\\|}\)="
-		new_display_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template")
+		#new_display_index=$(~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template")
+		coproc INDEX { ~/.orw/scripts/rofi_scripts/dmenu.sh menu_template "$icons_template"; }
+		exec {INDEX[1]}>&-
+		((auto_pid)) && kill -USR1 $auto_pid
+		read new_display_index <&"${INDEX[0]}"
 		[[ $rofi_state == opened ]] && toggle_rofi
 
 		(( new_display_index++ ))
@@ -5746,86 +6237,6 @@ select_display() {
 }
 
 tile_window() {
-	local remove="$1" #tiling_id=$(select_tiling_win)
-
-	if [[ $remove ]]; then
-		remove_tiling_window no_change
-		local windows_to_ignore=$id
-	else
-		tiling=true current_id=$moving_id
-	fi
-
-	if [[ "${tabbed_windows_ids[*]}" == *$tiling_id* ]]; then
-		tabbed_windows_ids+=( $id )
-		align_tabbed_windows
-	else
-		toggle_rofi
-		align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
-		full_index=$(echo -e '\n ' | rofi -dmenu -format i -theme main)
-		toggle_rofi
-
-		[[ $reverse ]] && reverse_state=$reverse
-		[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
-
-		if [[ $align_index ]]; then
-			((align_index > 1)) &&
-				choosen_alignment=v || choosen_alignment=h
-						((!(align_index % 2))) && reverse=true
-		fi
-
-		id=$tiling_id
-		properties=( $id ${all_windows[$id]} )
-
-		get_workspace_windows $new_display_index
-
-		((full_index)) &&
-			make_full_window || align
-		[[ ! $remove && $interactive ]] && adjust_window
-	fi
-}
-
-tile_window() {
-	local remove="$1" #tiling_id=$(select_tiling_win)
-
-	#if [[ "${tabbed_windows_ids[*]}" == *$tiling_id* ]]; then
-	#	tabbed_windows_ids+=( $id )
-	#	echo TILE TABBED: ^$id:${windows[$id]}^ - ^${tabbed_windows_ids[*]}^
-	#	align_tabbed_windows
-	#	remove_tiling_window no_change
-	#else
-		toggle_rofi
-		align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
-		full_index=$(echo -e '\n ' | rofi -dmenu -format i -theme main)
-		toggle_rofi
-
-		[[ $reverse ]] && reverse_state=$reverse
-		[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
-
-		if [[ $align_index ]]; then
-			((align_index > 1)) &&
-				choosen_alignment=v || choosen_alignment=h
-						((!(align_index % 2))) && reverse=true
-		fi
-
-		if [[ $remove ]]; then
-			remove_tiling_window no_change
-			local windows_to_ignore=$id
-		else
-			tiling=true current_id=$moving_id
-		fi
-
-		id=$tiling_id
-		properties=( $id ${all_windows[$id]} )
-
-		get_workspace_windows $new_display_index
-
-		((full_index)) &&
-			make_full_window || align
-		[[ ! $remove && $interactive ]] && adjust_window
-	#fi
-}
-
-tile_window() {
 	local remove="$1" tiling_id=$(select_tiling_win)
 
 	#if [[ "${tabbed_windows_ids[*]}" == *$tiling_id* ]]; then
@@ -5833,45 +6244,132 @@ tile_window() {
 	#	align_tabbed_windows
 	#else
 
-		echo TOGGLING ROFI
-		toggle_rofi
-		align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
-		full_index=$(echo -e '\n' | rofi -dmenu -format i -theme main)
-		toggle_rofi
-		echo TOGGLING ROFI
+	echo TOGGLING ROFI
+	toggle_rofi
 
-		[[ $reverse ]] && reverse_state=$reverse
-		[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
+	#align_index=$(echo -e '\n\n\n' | rofi -dmenu -format i -theme main)
+	coproc INDEX { rofi -dmenu -format i -theme main <<< $'\n\n\n'; }
+	exec {INDEX[1]}>&-
+	((auto_pid)) && kill -USR1 $auto_pid
+	read align_index <&"${INDEX[0]}"
 
-		if [[ $align_index ]]; then
-			((align_index > 1)) &&
-				choosen_alignment=v || choosen_alignment=h
-						((!(align_index % 2))) && reverse=true
-		fi
+	#full_index=$(echo -e '\n' | rofi -dmenu -format i -theme main)
+	coproc INDEX { rofi -dmenu -format i -theme main <<< $'\n' ; }
+	exec {INDEX[1]}>&-
+	((auto_pid)) && kill -USR1 $auto_pid
+	read full_index <&"${INDEX[0]}"
+	toggle_rofi
+	echo TOGGLING ROFI
+
+	[[ $reverse ]] && reverse_state=$reverse
+	[[ $choosen_alignment ]] && alignment_state=$choosen_alignment
+
+	if [[ $align_index ]]; then
+		((align_index > 1)) &&
+			choosen_alignment=v || choosen_alignment=h
+		((!(align_index % 2))) && reverse=true
+	fi
 
 	[[ ${tabbed_windows_ids[*]} != *$id* ]] &&
 		local no_change=no_change || org_id=$id
 
-	if [[ $remove ]]; then
+	#((scrolling_window_count)) && get_scrolling_index $tiling_id
+
+	if ((remove)) then
 		remove_tiling_window $no_change
 		local windows_to_ignore=$id
-	else
+	#else
+	elif ((!scrolling_window_count)); then
 		tiling=true current_id=$moving_id
 	fi
 
-		id=$tiling_id
-		properties=( $id ${all_windows[$id]} )
-
-		get_workspace_windows $new_display_index
-
-		#set_alignment_properties $choosen_alignment
-		#get_alignment '' print
-		#exit
-
-		((full_index)) &&
-			make_full_window || align
-		[[ ! $remove && $interactive ]] && adjust_window
+	#if ((scrolling_window_count)); then
+	#	echo ${scrolling_windows[*]}
+	#	printf '\nBEFORE\n\n%s\n' ${scrolling_windows[*]}
+	#	if [[ $remove ]]; then
+	#		local delimiter=' '
+	#		[[ ${scrolling_windows[*]} == *$current_id,* ]] && local suffix="," || local prefix=","
+	#	fi
+	#	scrolling_windows=( ${scrolling_windows[*]/$prefix$current_id$suffix} )
+	#	[[ $reverse ]] && local order="$current_id$delimiter$tiling_id" || local order="$tiling_id$delimiter$current_id"
+	#	scrolling_windows=( ${scrolling_windows[*]/$tiling_id/$order} )
+	#	printf '\nAFTER\n\n%s\n' ${scrolling_windows[*]}
+	#	echo SCROLL TILED: $scroll_index: $current_id, $tiling_id, "^$order^", ${scrolling_windows[*]}
+	#	#get_scrolling_index $tiling_id
 	#fi
+
+	#if ((scrolling_window_count)); then
+	#	echo ${scrolling_windows[*]}
+	#	printf '\nBEFORE\n\n%s\n' ${scrolling_windows[*]}
+	#	if [[ $remove ]]; then
+	#		local delimiter=' '
+	#		[[ ${scrolling_windows[*]} == *$current_id,* ]] && local suffix="," || local prefix=","
+	#	fi
+	#	local tiling_index=$(printf '%s\n' ${scrolling_windows[*]} | awk '/'$tiling_id'/ { print NR - 1 }')
+	#	scrolling_windows=( ${scrolling_windows[*]/$prefix$current_id$suffix} )
+	#	[[ $reverse ]] &&
+	#		local order="$current_id ${scrolling_windows[tiling_index]}" ||
+	#		local order="${scrolling_windows[tiling_index]} $current_id"
+	#	scrolling_windows=( ${scrolling_windows[*]/${scrolling_windows[tiling_index]}/$order} )
+	#	printf '\nAFTER\n\n%s\n' ${scrolling_windows[*]}
+	#	echo SCROLL TILED: $scroll_index: $current_id, $tiling_id, "^$order^", ${scrolling_windows[*]}
+	#	#get_scrolling_index $tiling_id
+	#fi
+
+	id=$tiling_id
+	properties=( $id ${all_windows[$id]} )
+
+	get_workspace_windows $new_display_index
+
+	#set_alignment_properties $choosen_alignment
+	#get_alignment '' print
+	#exit
+
+	echo -e "\npre ${!windows[*]}\n" 
+	list_windows
+
+	#[[ ! $remove ]] && ((shifted)) && get_scrolling_index $id
+	((shifted)) && get_scrolling_index $id
+
+	[[ $tiling_window_id ]] && current_id=$tiling_window_id
+	((full_index)) &&
+		make_full_window || align
+
+	((scrolling_window_count && full_index)) && return
+
+	#[[ ! $remove && $interactive ]] && adjust_window
+	[[ $interactive ]] && adjust_window
+
+	if ((scrolling_window_count)); then
+		echo TILING: $shifted - $full_index - ${scrolling_windows[*]}
+		#((full_index)) && return
+		#printf '\nBEFORE\n\n%s\n' ${scrolling_windows[*]}
+		#if [[ $remove ]]; then
+		#	local delimiter=' '
+		#	[[ ${scrolling_windows[*]} == *$current_id,* ]] && local suffix="," || local prefix=","
+		#fi
+
+		#[[ $remove ]] && add_scrolling_window $tiling_id $current_id
+		add_scrolling_window $tiling_id $current_id $remove
+		#((full_index)) && return
+
+		echo HERE SCROLL ALIGN: ${!all_aligned_windows[*]}
+
+		for wid in ${!all_aligned_windows[*]}; do
+			windows[$wid]="${all_aligned_windows[$wid]}"
+			echo SCROLL ALIGN "$wid: ${all_aligned_windows[$wid]}"
+		done
+
+		#local tiling_index=$(printf '%s\n' ${scrolling_windows[*]} | awk '/'$tiling_id'/ { print NR - 1 }')
+		#scrolling_windows=( ${scrolling_windows[*]/$prefix$current_id$suffix} )
+		#[[ $reverse ]] &&
+		#	local order="$current_id ${scrolling_windows[tiling_index]}" ||
+		#	local order="${scrolling_windows[tiling_index]} $current_id"
+		#scrolling_windows=( ${scrolling_windows[*]/${scrolling_windows[tiling_index]}/$order} )
+		#printf '\nAFTER\n\n%s\n' ${scrolling_windows[*]}
+		echo SCROLL TILED: $scroll_index: $current_id, $tiling_id, "^$order^", ${scrolling_windows[*]}
+		#get_scrolling_index $tiling_id
+	fi
 
 	if [[ ${tabbed_windows_ids[*]} == *$tiling_id* ]]; then
 		[[ $reverse == true ]] &&
@@ -6155,7 +6653,8 @@ align_moved_window() {
 	list_windows
 
 	if [[ ${tiling_workspaces[*]} =~ $workspace ]]; then
-		if ((window_count > 0)); then
+		[[ $move_window ]] && local count_to_reduce=1
+		if ((window_count - count_to_reduce > 0)); then
 			#[[ $rofi_state == opened ]] && toggle_rofi 
 			#select_tiling_window
 			#local tiling_id=$(select_tiling_win)
@@ -6214,10 +6713,666 @@ align_moved_window() {
 	unset move_window tiling moving_id
 }
 
+get_window_group_size() {
+	local x y width height window_group=$1
+	first=${window_group%%,*}
+	last=${window_group##*,}
+	first_props=( ${windows[$first]} )
+	last_props=( ${windows[$last]} )
+	read x y <<< ${first_props[*]::2}
+	width=$(((last_props[0] + last_props[2] + last_props[4]) - first_props[0]))
+	height=$(((last_props[1] + last_props[3] + last_props[5]) - first_props[1]))
+
+	echo $x $y $width $height
+}
+
+add_scrolling_window() {
+	local current_id=$1 new_id=$2 remove=$3
+	echo ADDING: $full_index, $current_id, $new_id: ${scrolling_windows[*]}, $remove, ^$shifted^
+	scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} | awk '
+		#/'$new_id'/ && length("'"$remove"'") {
+		/'$new_id'/ && '${remove:-0}' {
+			t = ("'"$new_id"'" == "'"$current_id"'")
+			sub("('"$new_id,?|,?$new_id"')", "")
+		}
+		/'$current_id'/ || t {
+			# only when tiling TO a group of windows, join them by ","
+			# full windows (new or taken FROM a group) should be joined by " " - marking separate windows/groups
+			d = ("'"$tiling"'" && !'${full_index:-0}') ? "," : " "
+			#d = ("'"$tiling"'" && !"'"$remove"'") ? "," : " "
+			$0 = ("'"$reverse"'") ? "'"$new_id"'" d $0 : $0 d "'"$new_id"'"
+			t = 0
+		} { print }
+		') )
+	echo ADDED: ${scrolling_windows[*]}
+}
+
+remove_scrolling_window() {
+	scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} |
+		awk '{
+			if (/'"$current_id"'/) {
+				p = (/^'"$current_id"'/) ? "'"$current_id"',?" : ",?'"$current_id"'"
+				sub(p, "")
+			}
+			print
+		}' ) )
+}
+
+remove_scrolling_window() {
+	scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} |
+		awk '$0 != "'"$current_id"'" { print }') )
+}
+
+shift_windows() {
+	echo $scroll_index, ${scrolling_windows[*]}, $id, $current_id, ${properties[*]}
+	echo $tiling: $tiling_group_id, $current_window_height, $scroll_window_height
+
+	#read {move,hide}_windows <<< \
+	#	$(printf '%s\n' ${scrolling_windows[*]} |
+	#		awk '
+	#			BEGIN {
+	#				si = '$scroll_index'
+	#				swn = '$scroll_window_num'
+	#				if ("'"$tiling"'") {
+	#					if ("'"$current_window_height"'" == '$scroll_window_height') ttg = 1; else tfg = 1
+	#				}
+	#			}
+
+	#			{
+	#				w[NR] = $1
+	#				if ($1 ~ "'"$id"'") c = NR
+	#				if (((ttg && c != NR) || (!ttg)) && $1 ~ "'"$current_id"'") n = NR
+	#				if ($1 ~ "'"$tiling_group_id"'") tg = NR
+	#			}
+
+	#			END {
+	#				if ((c == n && !tfg) || ttg) {
+	#					r = 1
+	#					crs = nrs = c - si; cre = nre = crs + swn - 1
+	#					if (((c == n) || (ttg && (c < n || crs == 1 || n == 1))) && NR > cre) nre++; else nrs--
+	#				} else {
+	#					if (tfg) c = tg
+	#					crs = nrs = c - si; cre = nre = crs + swn - 1
+
+	#					#if (n < crs) { nrs--; nre-- }
+	#					#else if (n > cre) { nrs++; nre++ }
+	#					if (n < crs) { nrs = n; nre = nrs + swn - 1 }
+	#					else if (n > cre) { nre = n; nrs = nre - swn + 1 }
+	#					else { cre++ }
+	#				}
+
+	#				#print "TILE", si, c, n, tg, crs, cre, nrs, nre
+	#				for (wi in w) {
+	#					if (!(r) || ((r) && wi != n)) {
+	#						if (wi >= nrs && wi <= nre) mw = mw "-" w[wi]
+	#						else if (wi >= crs && wi <= cre) hw = hw "-" w[wi]
+	#					}
+	#				}
+
+	#				print substr(mw, 2), substr(hw, 2)
+	#			}')
+
+	printf '%s\n' ${scrolling_windows[*]} |
+			awk '
+				BEGIN {
+					si = '$scroll_index'
+					swn = '$scroll_window_num'
+					if ("'"$tiling"'") {
+						if ("'"$current_window_height"'" == '$scroll_window_height') {
+							if ("'"${FUNCNAME[1]}"'" == "make_full_window") tf = 1; else ttg = 1
+						} else tfg = 1
+					}
+				}
+
+				{
+					w[NR] = $1
+					if ($1 ~ "'"$id"'") c = NR
+					if (((ttg && c != NR) || (!ttg)) && $1 ~ "'"$current_id"'") n = NR
+					if ($1 ~ "'"$current_id"'") n = NR
+					if ($1 ~ "'"$tiling_group_id"'") tg = NR
+					print
+				}
+
+				END {
+					print c, n, tg, ttg, tfg
+					#if ((c == n && !tfg) || ttg || tf) {
+					if ((c == n && !tfg) || ttg || tf) {
+						if (tf) si += (c < n)
+						else r = 1
+						crs = nrs = ((ttg && '${shifted:-0}') ? c : n) - si; cre = nre = crs + swn - 1
+						if (!ttg || (ttg && n >= crs && n <= cre)) {
+							print "HERE", n, crs, nrs
+							if (tf) {
+								if (n > cre) { nrs++; nre++ }
+								else cre++
+							} else {
+								if (((c == n) || (ttg && (c < n || crs == 1 || n == 1))) && NR > cre) nre++; else nrs--
+							}
+						}
+					#} else if (tfg && "'"${FUNCNAME[1]}"'" !~ "select") {
+					#} else if (tfg && '${shifted:-0}') {
+					#	print "SHIFTED", "'"${FUNCNAME[1]}"'"
+					#	crs = tg - '${original_index:-0}'; nrs = n - si; cre = crs + swn - 1; nre = nrs + swn - 1
+					} else {
+						#if (tfg && !'${shifted:-0}') { c = tg; b = (n <= tg) }
+						#else if (n < c) c--
+
+						if (tfg) {
+							if (!'${shifted:-0}') { c = tg; b = (n <= tg) }
+							else if (n < c) c--
+						}
+						crs = nrs = c - si - b; cre = nre = crs + swn - 1
+
+						print "TFG", c, oc, crs, n, cre, (tg == cre), (tg == NR)
+						if (n < crs) { nrs = n; nre = nrs + swn - 1 }
+						else if (n > cre) { nre = n; nrs = nre - swn + 1 }
+						#else if (tg == NR) crs--
+						else cre++
+					}
+
+					print "TILE", tf, si, c, n, tg, crs, cre, nrs, nre
+					for (wi in w) {
+						if (!(r) || ((r) && wi != n)) {
+							if (wi >= nrs && wi <= nre) mw = mw "-" w[wi]
+							else if (wi >= crs && wi <= cre) hw = hw "-" w[wi]
+						}
+					}
+
+					print substr(mw, 2), substr(hw, 2)
+				}'
+
+	read {move,hide}_windows <<< \
+		$(printf '%s\n' ${scrolling_windows[*]} |
+			awk '
+				BEGIN {
+					si = '$scroll_index'
+					swn = '$scroll_window_num'
+					if ("'"$tiling"'") {
+						if ("'"$current_window_height"'" == '$scroll_window_height') {
+							if ("'"${FUNCNAME[1]}"'" == "make_full_window") tf = 1; else ttg = 1
+						} else tfg = 1
+					}
+				}
+
+				{
+					w[NR] = $1
+					if ($1 ~ "'"$id"'") c = NR
+					if (((ttg && c != NR) || (!ttg)) && $1 ~ "'"$current_id"'") n = NR
+					if ($1 ~ "'"$tiling_group_id"'") tg = NR
+				}
+
+				END {
+					if ((c == n && !tfg) || ttg || tf) {
+						if (tf) si += (c < n)
+						else r = 1
+						#crs = nrs = n - si; cre = nre = crs + swn - 1
+						crs = nrs = ((ttg && '${shifted:-0}') ? c : n) - si; cre = nre = crs + swn - 1
+						if (!ttg || (ttg && n >= crs && n <= cre)) {
+							if (tf) {
+								if (n > cre) { nrs++; nre++ }
+								else cre++
+							} else {
+								if (((c == n) || (ttg && (c < n || crs == 1 || n == 1))) && NR > cre) nre++; else nrs--
+							}
+						}
+					#} else if (tfg && "'"${FUNCNAME[1]}"'" !~ "select") {
+					#} else if (tfg && '${shifted:-0}') {
+					#	crs = tg - '${original_index:-0}'; nrs = n - si; cre = crs + swn - 1; nre = nrs + swn - 1
+					} else {
+						#if (tfg) c = tg
+						#crs = nrs = c - si - (n <= tg); cre = nre = crs + swn - 1
+						#if (tfg && !'${shifted:-0}') { c = tg; b = (n <= tg) }
+						#else if (n < c) c--
+
+						if (tfg) {
+							if (!'${shifted:-0}') { c = tg; b = (n <= tg) }
+							else if (n < c) c--
+						}
+						crs = nrs = c - si - b; cre = nre = crs + swn - 1
+
+						if (n < crs) { nrs = n; nre = nrs + swn - 1 }
+						else if (n > cre) { nre = n; nrs = nre - swn + 1 }
+						else cre++
+					}
+
+					#print "TILE", tf, si, c, n, tg, crs, cre, nrs, nre
+					for (wi in w) {
+						if (!(r) || ((r) && wi != n)) {
+							if (wi >= nrs && wi <= nre) mw = mw "-" w[wi]
+							else if (wi >= crs && wi <= cre) hw = hw "-" w[wi]
+						}
+					}
+
+					print substr(mw, 2), substr(hw, 2)
+				}')
+
+	local windows_to_move=( ${move_windows//-/ } )
+	local x {current,hidden,remaining,cw}_width scrolling_ratio
+
+	windows_to_ignore=(
+		$(comm -3 \
+			<(printf '%s\n' ${windows_to_move[*]//,/ } | sort) \
+			<(printf '%s\n' ${scrolling_windows[*]//,/ } | sort -u))
+		)
+
+	echo ${tiling_window_properties[*]}, ${properties[*]}
+	echo SHIFT $move_windows, $hide_windows, ${windows_to_ignore[*]}
+	[[ $1 ]] && exit
+
+	x=${display_properties[0]}
+	echo START X: $x, $hide_windows - ${windows[$hide_windows]}, ${properties[*]}
+
+	get_current_width() {
+		local wid="$1"
+		[[ $wid == *,* ]] &&
+			bc <<< "$(cut -d ' ' -f 1,3,5 --output-delimiter '+' \
+			<<< "${windows[${wid##*,}]}") - ${windows[${wid%%,*}]%% *}" ||
+			cut -d ' ' -f 3,5 --output-delimiter '+' <<< ${windows[$wid]} | bc
+	}
+
+	if [[ ${!all_windows[*]} != *${current_id##*,}* && $id != $current_id ]]; then
+		local new_id=$current_id
+		props=( $(get_windows $current_id) )
+		#current_width=$(cut -d ' ' --output-delimiter '+' -f 3,5 <<< "${windows[$hide_windows]}" | bc)
+		current_width=$(get_current_width "$hide_windows")
+		echo CURRENT WIDTH: $current_width
+		((current_width-=props[-2]))
+
+		windows[$current_id]="$x ${display_properties[1]} $current_width \
+			$((scroll_window_height - props[-2])) ${props[*]: -2}"
+
+		scrolling_ratio=1
+	else
+		for wid in ${windows_to_move[*]}; do
+			#[[ $wid == *,* ]] &&
+			#	cw_width=$(bc <<< "$(cut -d ' ' -f 1,3,5 --output-delimiter '+' \
+			#		<<< "${windows[${wid##*,}]}") - ${windows[${wid%%,*}]%% *}") ||
+			#	cw_width=$(cut -d ' ' -f 3,5 --output-delimiter '+' <<< ${windows[$wid]} | bc)
+			cw_width=$(get_current_width "$wid")
+			((current_width += cw_width + margin))
+			echo $wid: $cw_width - $current_width
+		done
+
+		scrolling_ratio=$(bc -l <<< "(${display_properties[2]} - ${display_properties[0]} + $margin) / $current_width")
+	fi
+
+	fit_scrolling_window() {
+		local group=$1
+		props=( ${windows[$wid]} )
+		echo FIT $wid: ${props[2]}, ${props[4]}, $margin, ${props[*]}
+		props[2]=$(bc <<< "(${props[2]} + ${props[4]} + $margin) * \
+			$scrolling_ratio - (${props[4]} + $margin)" | xargs printf '%.0f')
+		[[ ! $group ]] && props[0]=$x props[1]=${display_properties[1]} ||
+			props[0]=$(bc <<< "$x + (${props[0]} - $group_x) * $scrolling_ratio" | xargs printf '%.0f')
+		[[ $wid == $current_id && $scroll_height ]] && props[3]=$((scroll_height - props[5]))
+		all_aligned_windows[$wid]="${props[*]}"
+		echo NEW SCROLL wmctrl -ir $wid -e 0$(printf ',%d' ${props[*]::4})
+	}
+
+	echo SCROLLING RATIO: $scrolling_ratio
+
+	for wi in ${!windows_to_move[*]}; do
+		wid=${windows_to_move[$wi]}
+		#[[ $wid == *$id* ]] && local current_index=$wi
+		#[[ $wid == *$current_id* && ${FUNCNAME[1]} != select* ]] && scroll_index=$wi
+		[[ $wid == *$current_id* ]] && scroll_index=$wi
+
+		if [[ $wid == *,* ]]; then
+			local group_x=${windows[${wid%%,*}]%% *}
+			for wid in ${wid//,/ }; do
+				fit_scrolling_window true
+			done
+			((props[2] += props[0] - x))
+		else
+			fit_scrolling_window
+		fi
+
+		((x += props[2] + props[4] + margin))
+	done
+
+	#[[ $current_id == $id ]] &&
+
+
+	local alignment_direction=h
+
+	#case $current_id in
+	#	$new_id)
+	#		[[ $interactive ]] && adjust_window
+	#		scroll_index=$current_index
+	#		;;
+	#	${windows_to_move[0]}) scroll_index=0;;
+	#	${windows_to_move[-1]}) scroll_index=$((scroll_window_num - 1));;
+	#esac
+
+	#local old_id=$id orientation
+	#local cw_start window_end enforced_direction=true
+	#local {old,new}_properties {property,dimension}_diff
+	#old_properties=( $current_id ${all_aligned_windows[$current_id]} )
+	#read x y w h {x,y}_border <<< ${old_properties[*]:1}
+	#set_window_steps
+
+	#get_dimension_size x
+	#get_dimension_size y
+	#display_notification
+	#exit
+
+	#if [[ ${FUNCNAME[1]} != select* ]]; then
+	#	echo ${scrolling_windows[*]}
+	#	new_window_id=${windows_to_move[$scroll_index]##*,}
+	#	echo BEFORE EXIT: $scroll_index - $new_window_id
+	#	get_scrolling_index $new_window_id
+	#	exit
+	#fi
+
+	#if [[ $interactive && ${FUNCNAME[1]} != select* ]]; then
+	if [[ $interactive && ${FUNCNAME[1]} != select* &&
+		($new_id || ($tiling && $full_index -eq 1)) ]]; then
+	#if [[ $interactive && $new_id ]]; then
+			block_start=${display_properties[0]}
+			block_dimension=$((display_properties[2] - display_properties[0]))
+			adjust_window
+	fi
+
+	for wid in ${hide_windows//-/ }; do
+		printf '%s\n' ${wid//,/ } | xargs -n 1 -P 4 xdotool windowminimize
+	done
+
+	#echo SHIFT $scroll_index: $current_id
+
+	update_aligned_windows
+	#if ((scrolling_window_count > scroll_window_num)); then
+	echo BEFORE NEW ID: $id, $current_id
+	[[ $tiling ]] &&
+		new_window_id=$current_id || new_window_id=${windows_to_move[scroll_index]##*,} #$current_id
+
+	#~/.orw/scripts/notify.sh -t 11 "SHIFTED $current_id, $new_window_id, $scroll_index"
+	echo "SHIFTED $current_id, $new_window_id, $scroll_index"
+	#sleep 1
+	wmctrl -ia $new_window_id #$current_id
+	#fi
+}
+
+get_window_groups() {
+	set_alignment_properties $alignment_direction
+	index=0 opposite_index=1
+	list_windows | sort -nk 2,2 -nk 3,3 | awk '
+		BEGIN {
+			i = '$index'
+			oi = '$opposite_index'
+			o = '${margin:-$offset}'
+			oo = '${margin:-$opposite_offset}'
+			wc = '${#windows[*]}'
+			ws = '${properties[index]}'
+			b = '${properties[index + 4]}'
+			ob = '${properties[opposite_index + 4]}'
+			wd = '${properties[index + 2]}' + b
+			wos = '${properties[opposite_index]}'
+			wod = '${properties[opposite_index + 2]}' + ob
+			woe = wos + wod
+			we = ws + wd
+
+			ds = "'"${display_properties[1]}"'"
+			de = "'"${display_properties[3]}"'"
+			#print fs + o, ws, wd, we
+			ofd = de - ds + o
+
+			w = 1
+		}
+
+		$(oi + 2) == ds {
+			if (!wgfs) { ts = $(i + 2); tos = $(oi + 2) }
+			wgfs += ($(i + 4) + b + o) * ofd
+		}
+
+		wgfs {
+			aw[w] = aw[w] " " $1
+
+			wgcs += ($(i + 4) + b + o) * ($(oi + 4) + b + o)
+			if (wgcs == wgfs) {
+				wgfs = wgcs = 0
+				w++
+			}
+		}
+
+		END {
+			for (w in aw) print aw[w]
+		}'
+}
+
+select_scrolling_window() {
+	#window_groups=( ${scrolling_windows[*]} )
+	#if ((!${#window_groups[*]})); then
+	#	while read window_group; do
+	#		window_groups+=( ${window_group// /,} )
+	#	done <<< $(get_window_groups)
+	#fi
+
+	if ((!${#scrolling_windows[*]})); then
+		while read window_group; do
+			scrolling_windows+=( ${window_group// /,} )
+		done <<< $(get_window_groups)
+	fi
+
+	#for wid in ${window_groups[*]//,/ }; do
+	#	props=( ${windows[$wid]} )
+	#	command+="-size ${props[2]}x${props[3]} xc:black mpr:$wid"
+	#done
+	#exit
+
+	local tiling term_{b,f}g
+	read term_{b,f}g <<< $(awk -F '"' '/ground/ { printf "%s ", $(NF - 1) }' ~/.config/alacritty/alacritty.toml)
+
+	#date +'%S%3N'
+	for wg in ${!scrolling_windows[*]}; do
+		[[ ${scrolling_windows[$wg]} == *$current_id* ]] && current_index=$wg
+
+		wg_image=/tmp/wg_${wg}.png
+		echo $wg: ${scrolling_windows[$wg]} - $wg_image >&2
+		if [[ ! -f $wg_image ]]; then
+			if [[ ${scrolling_windows[wg]} == *,* ]]; then
+				window_props=( $(get_window_group_size ${scrolling_windows[wg]}) )
+				#window_props="$x,$y,$width,$height"
+
+				for partial_window in ${scrolling_windows[wg]//,/ }; do
+					partial_image=/tmp/group${wg}_$partial_window.png
+					#scrot -w $partial_window $partial_image &
+					partial_window_props=( ${windows[$partial_window]} )
+					((partial_window_props[0] -= window_props[0]))
+					((partial_window_props[1] -= window_props[1]))
+					#composite+="$partial_image -geometry +${partial_window_props[0]}+${partial_window_props[1]} -composite "
+
+					composite+=" \( -size ${partial_window_props[2]}x${partial_window_props[3]} xc:$term_bg "
+					composite+="-fill '$term_fg' -font material -pointsize 85 -gravity Center -annotate +0+0 '${icons[$partial_window]}' \) "
+					composite+="-gravity northwest -geometry +${partial_window_props[0]}+${partial_window_props[1]} -composite "
+					#composite+="-size ${partial_window_props[2]}x${partial_window_props[3]} xc:$term_color "
+					#composite+="-geometry +${partial_window_props[0]}+${partial_window_props[1]} -composite "
+				done
+
+				eval "magick -size ${window_props[-2]}x${window_props[-1]} xc:transparent $composite $wg_image"
+				echo "magick -size ${window_props[-2]}x${window_props[-1]} xc:transparent $composite $wg_image" >&2
+				rm /tmp/group${wg}*png
+				unset composite
+			else
+				window_props=( ${windows[${scrolling_windows[wg]}]% * *} )
+				#window_props="${window_props// /,}"
+				#scrot -a $window_props $wg_image
+				magick -size ${window_props[2]}x${window_props[3]} xc:$term_bg -fill "$term_fg" \
+					-font material -pointsize 85 -gravity Center -annotate +0+0 "${icons[${scrolling_windows[$wg]}]}" $wg_image
+				#magick -size ${window_props[2]}x${window_props[3]} xc:$term_color $wg_image
+			fi
+		fi
+	done
+	#date +'%S%3N'
+	#for i in ${!icons[*]}; do
+	#	echo ICON $i: ${icons[$i]}
+	#done
+
+	#hilight=$(tr ' ' ',' <<< ${scrolling_windows[*]:current_index-scroll_index:scroll_window_num})
+	hilight_start=$((current_index - scroll_index))
+	hilight=$(seq -s ',' $hilight_start $((hilight_start + scroll_window_num - 1)))
+	echo SELECT: $current_id, $current_index, $scroll_index, $hilight_start $((hilight_start + scroll_window_num - 1)), $hilight >&2
+
+	#selected_index=$(
+	#	{
+	#		echo 'echo ${element//[^0-9]} && exit'
+	#		echo "$current_index"
+	#		ls /tmp/wg*.png
+	#	} | ~/.orw/scripts/rofi_scripts/dmenu.sh image_preview \
+	#		-i $current_index -o h -c ${#scrolling_windows[*]} -h $hilight
+	#)
+
+	coproc INDEX {
+			{
+				echo 'echo ${element//[^0-9]} && exit'
+				echo "$current_index"
+				ls /tmp/wg*.png
+			} | ~/.orw/scripts/rofi_scripts/dmenu.sh image_preview \
+				-i $current_index -o h -c ${#scrolling_windows[*]} -h $hilight
+		}
+	exec {INDEX[1]}>&-
+
+	((auto_pid)) && kill -USR1 $auto_pid
+	read selected_index <&"${INDEX[0]}"
+
+	echo NEW: $selected_index >&2
+
+	original_index=$scroll_index
+	current_id=${scrolling_windows[selected_index]}
+
+	#~/.orw/scripts/notify.sh -t 11 "CURR: $scroll_index, NEW: $selected_index, $hilight"
+	if [[ $selected_index && ! $hilight =~ (^|,)$selected_index(,|$) ]]; then
+		#current_id=${scrolling_windows[selected_index]}
+		shift_windows
+		local shifted=1
+		#wmctrl -ia $current_id
+		#scroll_index=$selected_index
+		#id=$current_id
+		#skip=true
+	else
+		#scroll_index=$selected_index
+		wmctrl -ia $current_id
+	fi
+
+	selected_index=$(awk '/'$selected_index'/ { print NR - 1 }' <<< ${hilight//,/$'\n'})
+
+	rm /tmp/wg*.png &> /dev/null
+
+	echo SELECTION END $selected_index - $scroll_index: $current_id, $shifted >&2
+	#[[ $hilight =~ (^|,)$selected_index(,|$) ]]
+	return $shifted
+}
+
+get_scrolling_index() {
+	local new_id=$1 current_id="${2:-$current_id}"
+	echo INDEX: ${LINENO[*]}: $current_id, $new_id, $scroll_index - ${scrolling_windows[*]}, $closing_ids
+
+	if [[ ${scrolling_windows[*]} == *$current_id* ]]; then
+		printf '%s\n' ${scrolling_windows[*]} |
+			awk '
+				$1 ~ "'"$new_id"'" { n = NR }
+				$1 ~ "'"$current_id"'" { c = NR }
+				END {
+					print c, n, '$scroll_index'
+					print '$scroll_index' - (c - n)
+				}'
+
+		scroll_index=$(printf '%s\n' ${scrolling_windows[*]} |
+			awk '
+				$1 ~ "'"$new_id"'" { n = NR }
+				$1 ~ "'"$current_id"'" { c = NR }
+				END { print '$scroll_index' - (c - n) }'
+			)
+		echo NEW INDEX: $new_id, $scroll_index
+		~/.orw/scripts/notify.sh "$scroll_index"
+
+		#echo NEW ${all_windows[$new_id]}, ${scrolling_windows[*]}
+		#if [[ ${scrolling_windows[*]} =~ ,$new_id|$new_id, && ! ${all_windows[$new_id]} ]]; then
+		#	scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} | awk '
+		#		{
+		#			if (/'"$id"'/) {
+		#				p = (/^'"$id"'/) ? "'"$id"',?" : ",?'"$id"'"
+		#				sub(p, "")
+		#			}
+		#			print
+		#		}' ) )
+		#	((scrolling_window_count--))
+		#fi
+		#echo NEW ${scrolling_windows[*]}
+	fi
+}
+
+scroll_windows() {
+	if [[ $1 == new ]]; then
+		scroll_window_num=3
+		scroll_window_width=$(((display_properties[2] - display_properties[0] - \
+			(scroll_window_num - 1) * margin) / scroll_window_num))
+		scroll_window_height=$((display_properties[3] - display_properties[1]))
+
+		#echo CURR: $id, $current_id, ${properties[*]}
+
+		scrolling_window_count=${#scrolling_windows[*]}
+		if (($scrolling_window_count < scroll_window_num)); then
+			if ((scrolling_window_count)); then
+				local window_group=$(printf '%s\n' ${scrolling_windows[*]} | awk '/'"$id"'/ { print }')
+				scrolling_windows=( ${scrolling_windows[*]/$window_group/$window_group $current_id} )
+				id=${window_group##*,}
+				properties=( $id ${all_windows[$id]} )
+				#align horizontal
+				local alignment_direction=h
+				make_full_window
+				#scrolling_windows=( ${scrolling_windows[*]/$window_group/$window_group $current_id} )
+
+				[[ $interactive ]] && adjust_window
+				add_border_gap "$current_id"
+				update_aligned_windows $current_id
+
+				[[ ${input_ids[*]} ]] &&
+					id=$current_id properties=( ${windows[$current_id]} )
+				((scroll_index++))
+			else
+				scroll_index=0
+				id=$current_id
+				alignments[$id]=h
+				handle_first_window
+				scrolling_windows=( $id )
+			fi
+		else
+			echo INDEX: $scroll_index
+			add_scrolling_window $id $current_id
+			shift_windows
+			#scrolling_windows=( ${scrolling_windows[*]/$id/$id $current_id} )
+		fi
+
+		local x{,b} y{,b} w h 
+		read x y w h xb yb <<< ${windows[$current_id]}
+		new_x=$((x + (w - new_window_size) / 2 - ${display_properties[0]}))
+		new_y=$((y + (h - new_window_size) / 2 - ${display_properties[1]}))
+		set_new_position $new_x $new_y 150 150
+
+		wmctrl -ir $current_id -b add,above &
+		((scrolling_window_count++))
+	else
+		echo ELSE $1, $id, $current_id
+
+		shift_windows
+		remove_scrolling_window
+
+		((scrolling_window_count--))
+	fi
+
+	#get_scrolling_index $current_id
+
+	#xdotool windowactivate $current_id
+	echo SCROLLING: $scroll_index, ${scrolling_windows[*]}
+	list_windows
+	return 0
+}
+
 shm_alignments=/tmp/alignments
 shm_floating_properties=/tmp/shm_floating_properties
 
 while read change new_value; do
+	echo EVENT: ${change^^}: $new_value
 	#echo DISPLAY $change: $id, ${properties[*]}, $display: ${display_properties[*]}
 	if [[ $change == desktop ]]; then
 		unset notification
@@ -6282,9 +7437,12 @@ while read change new_value; do
 					closing_ids=$(sort_by_workspaces)
 
 				current_window_id=$id
+				org_current_id=$current_id
 				for current_id in ${closing_ids:-$current_ids}; do
 					[[ ${input_ids[*]} != *$current_id* ]] &&
 						signal_event "launchers" "close" "$current_id"
+
+					echo CLOSING: $current_id, ${input_ids[*]}, $closing_ids, ${all_windows[$id]}
 
 					closing_id_workspace=${workspaces[$current_id]%_*}
 					#echo ciw: $closing_id_workspace, $id, $current_id
@@ -6293,130 +7451,189 @@ while read change new_value; do
 					if [[ ${tiling_workspaces[*]} == *$closing_id_workspace* ]]; then
 						if [[ ${input_ids[*]} == *$id* ]]; then
 							for iid in ${!input_ids[*]}; do
+								echo REMOVING INPUT ${input_ids[iid]}: ${previous_ids[*]}
+								previous_ids=( ${previous_ids[*]/${input_ids[iid]}} )
+								echo REMOVING INPUT ${input_ids[iid]}: ${previous_ids[*]}
 								[[ ${input_ids[iid]} == $id ]] &&
 									unset input_ids[iid] && break
 							done
 
 							continue
-						elif [[ ${all_windows[$id]} ]]; then
-							[[ $rofi_state == opened ]] && toggle_rofi
-							properties=( $id ${all_windows[$id]} )
+						elif [[ ${all_windows[$id]} &&
+							($scrolling_window_count -le ${scroll_window_num:-1} ||
+							${scrolling_windows[*]} =~ ,$id|$id,) ]]; then
+								[[ $rofi_state == opened ]] && toggle_rofi
+								properties=( $id ${all_windows[$id]} )
 
-							align c
+								align c
 
-							update_aligned_windows
-							((window_count--))
+								tiled_ids=( ${!all_aligned_windows[*]} )
+								update_aligned_windows
+								((window_count--))
 						fi
 					fi
 
 					if [[ ${all_windows[$id]} ]]; then
+						echo UNSETTING $id: ${!windows[*]}
 						unset {{all_,}windows,workspaces,alignments}[$id]
 					fi
 				done
 
-				id=$current_window_id
+				if [[ ${scrolling_workspaces[*]} != *$workspace* ]]; then
+					id=$current_window_id
 
-				#echo closing: $closing_id_workspace, $workspace, $window_count
-				windows_in_closing_workspace="${workspaces[*]//[^$closing_id_workspace]_?}"
-				#echo "${#window_count} - ^$window_count^: $windows_in_closing_workspace : ${workspaces[*]}", $id: ${workspaces[$id]}
-				#for w in ${!workspaces[*]}; do
-				#	echo ws: $w, ${workspaces[$w]}
-				#done
-				#((!${#window_count})) && echo empty || echo not
+					#echo closing: $closing_id_workspace, $workspace, $window_count
+					windows_in_closing_workspace="${workspaces[*]//[^$closing_id_workspace]_?}"
+					#echo "${#window_count} - ^$window_count^: $windows_in_closing_workspace : ${workspaces[*]}", $id: ${workspaces[$id]}
+					#for w in ${!workspaces[*]}; do
+					#	echo ws: $w, ${workspaces[$w]}
+					#done
+					#((!${#window_count})) && echo empty || echo not
 
-				#~/.orw/scripts/notify.sh -t 11 "${workspaces[*]}: ${workspaces[*]//[^$closing_id_workspace]_?}"
-				#~/.orw/scripts/notify.sh -t 11 "HERE $windows_in_closing_workspace: ${windows_in_closing_workspace//[^0-9]}"
+					#~/.orw/scripts/notify.sh -t 11 "${workspaces[*]}: ${workspaces[*]//[^$closing_id_workspace]_?}"
+					#~/.orw/scripts/notify.sh -t 11 "HERE $windows_in_closing_workspace: ${windows_in_closing_workspace//[^0-9]}"
 
-				#if ((closing_id_workspace == workspace && !window_count)); then
-				#if ((!${window_count//[^0-9]})); then
-				if [[ ! ${windows_in_closing_workspace//[^0-9]} ]]; then
-					tmp=$(awk '
-						/names/ {
-							wn = !wn
-							if (wn) wi = NR + 1 + '$closing_id_workspace'
-						}
+					#if ((closing_id_workspace == workspace && !window_count)); then
+					#if ((!${window_count//[^0-9]})); then
+					if [[ ! ${windows_in_closing_workspace//[^0-9]} ]]; then
+						tmp=$(awk '
+							/names/ {
+								wn = !wn
+								if (wn) wi = NR + 1 + '$closing_id_workspace'
+							}
 
-						wi && NR == wi && /tmp/ {
-							gsub("\\s*<[^>]*.", "")
-							print
-							exit
-						}' ~/.config/openbox/rc.xml)
+							wi && NR == wi && /tmp/ {
+								gsub("\\s*<[^>]*.", "")
+								print
+								exit
+							}' ~/.config/openbox/rc.xml)
 
-					if [[ $tmp ]]; then
-						#if we're on a tmp workspace while last window is closed
-						#we should move to the previously visited workspace and remove the current empty one
-						#and shift all the windows to the right of the removed workspace, to the left
-						if ((workspace == closing_id_workspace)); then
-							workspace_to_restore=$((previous_workspace - (previous_workspace > closing_id_workspace)))
-							workspace_not_shifted=$((workspace_to_restore == closing_id_workspace))
-							#workspace_to_restore=$previous_workspace
-							#workspace_not_shifted=$((previous_workspace - \
-							#	(previous_workspace > closing_id_workspace) == closing_id_workspace))
+						if [[ $tmp ]]; then
+							#if we're on a tmp workspace while last window is closed
+							#we should move to the previously visited workspace and remove the current empty one
+							#and shift all the windows to the right of the removed workspace, to the left
+							if ((workspace == closing_id_workspace)); then
+								workspace_to_restore=$((previous_workspace - (previous_workspace > closing_id_workspace)))
+								workspace_not_shifted=$((workspace_to_restore == closing_id_workspace))
+								#workspace_to_restore=$previous_workspace
+								#workspace_not_shifted=$((previous_workspace - \
+								#	(previous_workspace > closing_id_workspace) == closing_id_workspace))
 
-							#shift_workspace_back=$((previous_workspace > closing_id_workspace))
-							#workspace_to_restore=$((previous_workspace - shift_workspace_back))
-							#((previous_workspace > closing_id_workspace)) &&
-							#	shift_left_count=1 && unset workspaces_not_shifted || workspaces_not_shifted=1
-							#workspace_to_restore=$((previous_workspace - shift_left_count))
-						#else
-						#	((closing_id_workspace > workspace)) && unset closing_id_workspace
+								#shift_workspace_back=$((previous_workspace > closing_id_workspace))
+								#workspace_to_restore=$((previous_workspace - shift_workspace_back))
+								#((previous_workspace > closing_id_workspace)) &&
+								#	shift_left_count=1 && unset workspaces_not_shifted || workspaces_not_shifted=1
+								#workspace_to_restore=$((previous_workspace - shift_left_count))
+							#else
+							#	((closing_id_workspace > workspace)) && unset closing_id_workspace
+							fi
+
+							#echo aws: $shift_left_count, $workspaces_not_shifted, $workspace_to_restore
+
+							~/.orw/scripts/workspacectl.sh remove $tmp $workspace_to_restore
+							#since adjust_workspaces function is triggered by workspace change (from removed to the previous),
+							#if it happens that previously visited workspace (the one we should move to after removal)
+							#should become the current workspace (one to be removed) after shift is applied,
+							#workspace won't change, thus adjust_workspace won't be triggered automatically,
+							#so we have to run it manually
+							((workspace_not_shifted)) && adjust_workspaces
+							#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+							((closing_id_workspace > workspace)) && unset closing_id_workspace
+							unset workspace{s_not_shifted,_to_restore}
+
+
+
+							#((workspace == closing_id_workspace)) &&
+							#	workspace=$((previous_workspace - (previous_workspace > closing_id_workspace)))
+							#	#workspace_to_restore=$previous_workspace || unset workspace_to_restore
+							#echo WS: $workspace
+
+							##~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+							#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
+							##new_ws_count=$(~/.orw/scripts/manage_workspaces.sh remove $tmp $restore_workspace)
+
+							##echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $no_change
+							##echo tmp: $tmp, $no_change, $workspace, $closing_id_workspace, $id
+							##~/.orw/scripts/notify.sh -t 5 "CHANGING: $new_ws_count, $no_change, $closing_id_workspace"
+
+
+							##if [[ $no_change ]]; then
+							##	sleep 2
+							##	wmctrl -s $previous_workspace
+							##	echo CLOSING $previous_workspace
+							##	sleep 2
+							##	wmctrl -n $new_ws_count
+							##fi
+						else
+							unset closing_id_workspace
 						fi
-
-						#echo aws: $shift_left_count, $workspaces_not_shifted, $workspace_to_restore
-
-						~/.orw/scripts/workspacectl.sh remove $tmp $workspace_to_restore
-						#since adjust_workspaces function is triggered by workspace change (from removed to the previous),
-						#if it happens that previously visited workspace (the one we should move to after removal)
-						#should become the current workspace (one to be removed) after shift is applied,
-						#workspace won't change, thus adjust_workspace won't be triggered automatically,
-						#so we have to run it manually
-						((workspace_not_shifted)) && adjust_workspaces
-						#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
-						((closing_id_workspace > workspace)) && unset closing_id_workspace
-						unset workspace{s_not_shifted,_to_restore}
-
-
-
-						#((workspace == closing_id_workspace)) &&
-						#	workspace=$((previous_workspace - (previous_workspace > closing_id_workspace)))
-						#	#workspace_to_restore=$previous_workspace || unset workspace_to_restore
-						#echo WS: $workspace
-
-						##~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
-						#echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $workspace_to_restore
-						##new_ws_count=$(~/.orw/scripts/manage_workspaces.sh remove $tmp $restore_workspace)
-
-						##echo ~/.orw/scripts/manage_workspaces.sh remove $tmp $no_change
-						##echo tmp: $tmp, $no_change, $workspace, $closing_id_workspace, $id
-						##~/.orw/scripts/notify.sh -t 5 "CHANGING: $new_ws_count, $no_change, $closing_id_workspace"
-
-
-						##if [[ $no_change ]]; then
-						##	sleep 2
-						##	wmctrl -s $previous_workspace
-						##	echo CLOSING $previous_workspace
-						##	sleep 2
-						##	wmctrl -n $new_ws_count
-						##fi
-					else
-						unset closing_id_workspace
 					fi
+
+					if ((closing_id_workspace != workspace)); then
+						windows=()
+
+						for wid in ${!all_windows[*]}; do
+							[[ ${workspaces[$wid]} == ${workspace}_${display} ]] &&
+								windows[$wid]="${all_windows[$wid]}"
+							done
+					fi
+
+					#echo CLOSING $id: ${properties[*]}, $closing_id_workspace: ${workspaces[$current_id]}, $display: ${display_properties[*]}
+
+					[[ $org_current_id ]] && current_id=$org_current_id
+
+					[[ ! ${windows[*]} ]] &&
+						signal_event "workspaces" "close" "$workspace"
+					unset closing_ids
 				fi
 
-				if ((closing_id_workspace != workspace)); then
-					windows=()
+				echo CLOSING REGULAR: ${scrolling_windows[*]}, $id, $scrolling_window_count, ${!input_ids[*]}
 
-					for wid in ${!all_windows[*]}; do
-						[[ ${workspaces[$wid]} == ${workspace}_${display} ]] &&
-							windows[$wid]="${all_windows[$wid]}"
-						done
+				#if [[ ${scrolling_workspaces[*]} == *$workspace* && 
+				#	${scrolling_windows[*]} =~ ,$id|$id, ]] &&
+				#	((scrolling_window_count >= scroll_window_num)); then
+				#		#for swid in ${scrolling_windows[*]}; do
+				#		#	[[ $swid == *$id* ]] && new_window_id=
+				#		#done
+
+				#		new_window_id=${tiled_ids[-1]}
+				#		wmctrl -ia $new_window_id
+
+				#		scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} | awk '
+				#			{
+				#				if (/'"$id"'/) {
+				#					p = (/^'"$id"'/) ? "'"$id"',?" : ",?'"$id"'"
+				#					sub(p, "")
+				#				}
+				#				print
+				#			}' ) )
+				#		#((scrolling_window_count--))
+				#fi
+
+				echo PREV $id: ${previous_ids[*]}
+
+				if [[ ${previous_ids[*]} == *$id* &&
+					${scrolling_workspaces[*]} == *$workspace* ]]; then
+						#[[ ! ${scrolling_windows[*]} =~ ,$id|$id, ]] &&
+						[[ ! ${scrolling_windows[*]} =~ [^\ ]*(,$id|$id,)[^\ ]* ]] &&
+							((scrolling_window_count-- > 3)) && shift_windows
+
+						remaining_windows=${BASH_REMATCH[0]/${BASH_REMATCH[1]}}
+						new_window_id=${remaining_windows%%,*}
+						echo $remaining_windows, $new_window_id
+						wmctrl -ia $new_window_id
+
+						scrolling_windows=( $(printf '%s\n' ${scrolling_windows[*]} | awk '
+							{
+								if (/'"$id"'/) {
+									p = (/^'"$id"'/) ? "'"$id"',?" : ",?'"$id"'"
+									sub(p, "")
+								}
+								print
+							}' ) )
 				fi
 
-				#echo CLOSING $id: ${properties[*]}, $closing_id_workspace: ${workspaces[$current_id]}, $display: ${display_properties[*]}
-
-				[[ ! ${windows[*]} ]] &&
-					signal_event "workspaces" "close" "$workspace"
-				unset closing_ids
+				echo CLOSING POST REGULAR: ${scrolling_windows[*]}, $id, $scrolling_window_count
 
 				# count should be decremented only when this condition is hit due to input window
 				# if it has a value of 2, that means condition was hit due to closed window during input
@@ -6426,6 +7643,9 @@ while read change new_value; do
 
 			current_id=$current_ids
 			window_title=$(wmctrl -l | sed -n "s/^0x0*${current_id#0x}.* //p")
+			icon="$(sed -n "/${window_title%%[0-9]*}/h; $ { x; s/.*=//p }" ~/.orw/scripts/icons)"
+			titles[$current_id]="$window_title"
+			icons[$current_id]="$icon"
 
 			if [[ ${tiling_workspaces[*]} =~ $workspace ]]; then
 				if [[ ${input_ids[*]} == *$current_id* ]]; then
@@ -6451,6 +7671,11 @@ while read change new_value; do
 						END { print cwc++, i }')
 				fi
 
+				#titles[$current_id]="$window_title"
+				#icons[$current_id]="$(sed -n "/${window_title%%[0-9]*}/h; \
+				#	$ { x; s/.*=//p }" ~/.orw/scripts/icons)"
+				echo TITLE: $window_title - ${window_title%%[0-9]*}, ${icons[$current_id]}
+
 				((ignore)) ||
 					ignore=$(xprop -id $current_id _NET_WM_WINDOW_TYPE 2> /dev/null |
 						awk '{ print $NF ~ "DIALOG$" }')
@@ -6458,99 +7683,104 @@ while read change new_value; do
 				if ((ignore)); then
 					[[ $window_title =~ image_preview|cover_art_widget|DROPDOWN ]] && set_opacity
 					[[ $window_title == 'get_borders' ]] && border_window_id=$current_id
+					continue
+				elif [[ ${scrolling_workspaces[*]} == *$workspace* ]]; then
+					((scrolling_window_count < scroll_window_num)) && new_window_id=$current_id
+					echo $enforced_direction, $alignment_direction: ${scrolling_windows[*]}
+					[[ ! $enforced_direction ]] &&
+						scroll_windows new && continue ||
+						scrolling_windows=( ${scrolling_windows[*]/$id/$id,$current_id} )
+					#if [[ $enforced_direction ]]; then
+					#	scrolling_windows=( ${scrolling_windows[*]/$id/$id,$current_id} )
+					#else
+					#	scroll_windows new
+					#	echo STATUS: $?
+					#	continue
+					#fi
+				fi
+
+				wmctrl -l | grep "^0x0*${current_id#0x}" &> /dev/null
+				missing_window=$?
+
+				if ((missing_window)); then
+					missing_id=$current_id
 				else
-					wmctrl -l | grep "^0x0*${current_id#0x}" &> /dev/null
-					missing_window=$?
+					#echo NEW WINDOW $current_window_count: $current_id, ${properties[*]}
+					#list_windows
+					if ((current_window_count > 1)); then
+						if [[ $id == 0x* && ${tabbed_windows_ids[*]} == *$id* ]]; then
+							echo TWG ASSIGN: "^$id^, ^${properties[*]}^, ^${tabbed_windows_ids[*]}^"
+							id=twg
+							tabbed_properties=( ${tabbed_windows_properties[*]} )
+							((tabbed_properties[2] > tabbed_properties[3])) &&
+								tabbed_direction=h index=0 || tabbed_direction=v index=1
+							echo TP: ${tabbed_properties[*]}
+							#((tabbed_properties[0] += tabbed_properties[2] + margin))
+							((tabbed_properties[index] += tabbed_properties[index+2] + margin))
+							#((tabbed_properties[2] += 20))
+							tabbed_properties[index+2]=-$margin
 
-					if ((missing_window)); then
-						missing_id=$current_id
-					else
-						echo NEW WINDOW $current_window_count: $current_id, ${properties[*]}
-						list_windows
-						#if ((current_window_count == 1)); then
-						#	id=$current_id
-						#	handle_first_window
-						#	alignments[$id]=$display_orientation
-						#else
-						if ((current_window_count > 1)); then
-							if [[ $id == 0x* && ${tabbed_windows_ids[*]} == *$id* ]]; then
-								echo TWG ASSIGN: "^$id^, ^${properties[*]}^, ^${tabbed_windows_ids[*]}^"
-								id=twg
-								tabbed_properties=( ${tabbed_windows_properties[*]} )
-								((tabbed_properties[2] > tabbed_properties[3])) &&
-									tabbed_direction=h index=0 || tabbed_direction=v index=1
-								echo TP: ${tabbed_properties[*]}
-								#((tabbed_properties[0] += tabbed_properties[2] + margin))
-								((tabbed_properties[index] += tabbed_properties[index+2] + margin))
-								#((tabbed_properties[2] += 20))
-								tabbed_properties[index+2]=-$margin
-
-								#all_windows[twg]="${tabbed_windows_properties[*]}"
-								windows[$id]="${tabbed_properties[*]}"
-								all_windows[$id]="${tabbed_properties[*]}"
-							fi
-
-							properties=( $id ${all_windows[$id]} )
-							echo NEW $tabbed_direction - $id: ${properties[*]}
-
-							#set_alignment_properties v
-							#get_alignment '' print
-							#exit
-
-							[[ $full ]] && make_full_window || align "$tabbed_direction"
-
-							#[[ $interactive ]] && adjust_window
-							if [[ $mouse_split ]]; then
-								unset mouse_split align_ratio enforced_direction reverse
-								[[ $reverse_state ]] &&
-									reverse=$reverse_state &&
-									unset reverse_state
-							else
-								[[ $interactive ]] && adjust_window
-							fi
-
-							wmctrl -l | grep "^0x0*${current_id#0x}" &> /dev/null
-							missing_window=$?
-
-							if ((missing_window)); then
-								missing_id=$current_id
-							else
-								add_border_gap "$current_id"
-								update_aligned_windows $current_id
-								((window_count++))
-
-								echo TWG ID: $id, ${properties[*]}, ${tabbed_windows_ids[*]}
-								if [[ $id == twg ]]; then
-									unset {all_,}windows[$id] tabbed_direction
-									align_tabbed_windows
-									id=$org_id
-								fi
-
-								[[ ${input_ids[*]} ]] &&
-									id=$current_id properties=( ${windows[$current_id]} )
-							fi
-						else
-							id=$current_id
-							handle_first_window
-							alignments[$id]=$display_orientation
+							#all_windows[twg]="${tabbed_windows_properties[*]}"
+							windows[$id]="${tabbed_properties[*]}"
+							all_windows[$id]="${tabbed_properties[*]}"
 						fi
 
-						workspaces[$current_id]=${workspace}_${display}
+						properties=( $id ${all_windows[$id]} )
+						echo NEW $tabbed_direction - $id: ${properties[*]}
 
-						echo NEW $display: ${display_properties[*]}
-						read x y w h xb yb <<< ${windows[$current_id]}
-						new_x=$((x + (w - new_window_size) / 2 - ${display_properties[0]}))
-						new_y=$((y + (h - new_window_size) / 2 - ${display_properties[1]}))
+						[[ $full ]] && make_full_window || align "$tabbed_direction"
 
-						#new_x=$x new_y=$y
-						#new_x=$((x - ${display_properties[0]})) new_y=$((y - ${display_properties[1]}))
+						#[[ $interactive ]] && adjust_window
+						if [[ $mouse_split ]]; then
+							unset mouse_split align_ratio enforced_direction reverse
+							[[ $reverse_state ]] &&
+								reverse=$reverse_state &&
+								unset reverse_state
+						else
+							[[ $interactive ]] && adjust_window
+						fi
 
-						set_new_position $new_x $new_y 150 150
+						wmctrl -l | grep "^0x0*${current_id#0x}" &> /dev/null
+						missing_window=$?
 
-						#echo $new_x, $new_y: $x, $y, $w, $h - ${display_properties[*]},   ${windows[$current_id]}, $offset, $offset_x, $offset_y
+						if ((missing_window)); then
+							missing_id=$current_id
+						else
+							add_border_gap "$current_id"
+							update_aligned_windows $current_id
+							((window_count++))
 
-						[[ ! $id ]] && id=$current_id
+							echo TWG ID: $id, ${properties[*]}, ${tabbed_windows_ids[*]}
+							if [[ $id == twg ]]; then
+								unset {all_,}windows[$id] tabbed_direction
+								align_tabbed_windows
+								id=$org_id
+							fi
+
+							[[ ${input_ids[*]} ]] &&
+								id=$current_id properties=( ${windows[$current_id]} )
+						fi
+					else
+						id=$current_id
+						handle_first_window
+						alignments[$id]=$display_orientation
 					fi
+
+					workspaces[$current_id]=${workspace}_${display}
+
+					echo NEW $display: ${display_properties[*]}
+					read x y w h xb yb <<< ${windows[$current_id]}
+					new_x=$((x + (w - new_window_size) / 2 - ${display_properties[0]}))
+					new_y=$((y + (h - new_window_size) / 2 - ${display_properties[1]}))
+
+					#new_x=$x new_y=$y
+					#new_x=$((x - ${display_properties[0]})) new_y=$((y - ${display_properties[1]}))
+
+					set_new_position $new_x $new_y 150 150
+
+					#echo $new_x, $new_y: $x, $y, $w, $h - ${display_properties[*]},   ${windows[$current_id]}, $offset, $offset_x, $offset_y
+
+					[[ ! $id ]] && id=$current_id
 				fi
 			else
 				if [[ $window_title && ! $window_title =~ ${blacklist//,/|} ]]; then
@@ -6574,7 +7804,9 @@ while read change new_value; do
 			fi
 
 			#wmctrl -ia $current_id 2> /dev/null
-			[[ $window_title != image_preview ]] && xdotool windowactivate $current_id
+			#[[ ${scrolling_workspaces[*]} != *$current_workspace* && 
+			((!scrolling_window_count)) &&
+				[[ $window_title != image_preview ]] && xdotool windowactivate $current_id
 		fi
 	else
 		signal_event "workspaces" "windows" "$workspace $new_value ${!windows[*]}"
@@ -6586,6 +7818,37 @@ while read change new_value; do
 		#so it can be targeted as a default window, when different display is selected 
 		#[[ $id && ${workspaces[$id]} ]] && last_display_window[${workspaces[$id]#*_}]=$id
 			#echo ldw: $id, ${!workspaces[*]}, ${last_display_window[${workspaces[$id]#*_}]}
+
+		echo NEW ID: $id, $current_id, $new_value, $new_window_id
+
+		#if ((scrolling_window_count)) && [[ $new_value != $new_window_id &&
+		#	${scrolling_workspaces[*]} == *$workspace* ]]; then
+		#	#[[ $new_window_id ]] && unset new_window_id
+		#	#[[ $keep_index ]] && unset keep_index
+		#	[[ ! $keep_index ]] && get_scrolling_index $new_value
+		#	unset new_window_id keep_index
+		#fi
+
+		#if ((scrolling_window_count)) && [[ ${scrolling_workspaces[*]} == *$workspace* ]]; then
+		#	#echo INDEXING $new_window_id, $keep_index, $scrolling_window_count
+		#	#[[ (! $new_window_id && ! $keep_index) ||
+		#	#	$scrolling_window_count -le $scroll_window_num ]] && get_scrolling_index $new_value
+		#	echo SHOULD GET INDEX: $new_window_id - $scrolling_window_count, $scroll_window_num
+		#	#[[ (! $new_window_id && ! $keep_index) ||
+		#	#	$scrolling_window_count -le $scroll_window_num ]] && get_scrolling_index $new_value
+		#	[[ ! $new_window_id ]] && get_scrolling_index $new_value
+		#	#if [[ ! $new_window_id ]]; then
+		#	#	[[ $scrolling_window_count -le $scroll_window_num ]] && get_scrolling_index $new_value
+		#	#fi
+		#	[[ $new_value == $new_window_id ]] && echo REMOVE NEW: $new_window_id && unset new_window_id
+		#	#[[ $keep_index ]] && unset keep_index
+		#fi
+		##[[ $new_value == $new_window_id ]] && 
+
+		if ((scrolling_window_count)) && [[ ${scrolling_workspaces[*]} == *$workspace* ]]; then
+			[[ ! $new_window_id ]] && get_scrolling_index $new_value
+			[[ $new_value == $new_window_id ]] && echo REMOVE NEW: $new_window_id && unset new_window_id
+		fi
 
 		id=$new_value
 		signal_event "launchers" "active" "$id"
@@ -6601,9 +7864,10 @@ while read change new_value; do
 			elif [[ ${tabbed_windows_ids[*]} != *$id* ]]; then
 				if [[ $border_window_id ]]; then
 					[[ $border_window_id != $id ]] && unset border_window_id
-				else
+				elif [[ ! $new_window_id ]]; then
 					temp_props=$(xwininfo -id $id 2> /dev/null |
 						parse_properties | cut -d ' ' -f 2-)
+					#echo $id, ${properties[*]}, ${temp_props[*]}
 
 					if [[ $temp_props ]]; then
 						properties=( $temp_props )
