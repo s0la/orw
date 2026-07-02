@@ -24,15 +24,37 @@ get_bluetooth_devices() {
 	local device_id=$1 wait_for_device=$2
 
 	until
-		device=$(bluetoothctl info $device_id | awk '
-			$1 == "Device" { d = $2 }
-			#$1 == "Icon:" { sub(".*-", "", $NF); ad[d] = $NF }
-			$1 == "Icon:" { sub(".*-", "", $NF); i = $NF }
-			$1 == "Battery" { gsub("[()]", "", $NF); ad[d] = i "_" $NF }
-			END { for (d in ad) printf "[%s]=%s ", d, ad[d] }')
+		#device=$(bluetoothctl info $device_id | awk '
+		#	$1 == "Device" { d = $2 }
+		#	$1 == "Icon:" { sub(".*-", "", $NF); i = $NF }
+		#	$1 == "Battery" { gsub("[()]", "", $NF); ad[d] = i "_" $NF }
+		#	END { for (d in ad) printf "[%s]=%s ", d, ad[d] }')
 
-		#~/.orw/scripts/notify.sh -t 15 "${BASH_LINENO[*]}   $has     WAITING: $wait_for_device - $device"
-		[[ ($wait_for_device && $device) || -z $wait_for_device ]]
+		bluetoothctl devices | cut -d ' ' -f 2 | xargs -n1 bluetoothctl info > ~/bt.log
+
+		#sleep 1
+
+		device=$(bluetoothctl devices | cut -d ' ' -f 2 | xargs -n1 bluetoothctl info |
+			awk '
+				function add(device) {
+					if (c) ad[d] = i "_" b
+					d = device; i = b = ""
+				}
+
+				$1 == "Device" {
+					if ($2 ~ "'"$device"'") { add($2); a = 1 }
+					else a = 0
+				}
+				a && $1 == "Icon:" { sub(".*-", "", $NF); i = $NF }
+				a && $1 == "Battery" { gsub("[()]", "", $NF); b = $NF }
+				a && $1 == "Connected:" { c = $NF == "yes" }
+				END {
+					if (a) add(d)
+					for (d in ad) printf "[%s]=%s ", d, ad[d]
+				}')
+
+		#~/.orw/scripts/notify.sh -t 15 "${BASH_LINENO[*]}   $has     WAITING: $wait_for_device - ^$device^"
+		[[ (($wait_for_device && $device) || -z $wait_for_device) && $device != *_\  ]]
 	do
 		sleep 1
 	done
@@ -58,9 +80,11 @@ get_bluetooth() {
 		for bluetooth_device in ${!bluetooth_devices[*]}; do
 			IFS='_' read device battery <<< ${bluetooth_devices[$bluetooth_device]}
 			#[[ $battery ]] && battery="$inner\${cjsfg:-\${jsfg}}$battery"
-			[[ $battery ]] && battery="$inner$battery"
+			[[ $battery ]] &&
+				battery_icon=$(get_icon "number_${battery%0}") battery="$inner$battery"
+				#battery_icon=$(get_icon "bt_battery_$battery") battery="$inner$battery"
 			#~/.orw/scripts/notify.sh "DEV: $device: $battery"
-			icon+="$bluetooth_distance\${cjpfg:-\${jpfg}}$(get_icon $device)$battery"
+			icon+="$bluetooth_distance\${cjpfg:-\${jpfg}}$(get_icon $device)$battery_icon"
 		done
 	fi
 }
@@ -92,44 +116,78 @@ check_bluetooth() {
 	#~/.orw/scripts/notify.sh -t 5 "BT: $bluetooth"
 	print_module bluetooth
 
-	while read device state; do
-		#~/.orw/scripts/notify.sh -t 5 "BT: $device ${state}ed"
+	coproc BT {
+		sudo unbuffer btmon | awk '
+			/Powered:/ { print "bluetooth", (($2 == "Enabled") ? "on" : "off"); fflush() }
+			/onnect Complete/ { s = $4 }
+			s && /Address:/ {
+				gsub("^.*Address:\\s+", "")
+				print $1, s; fflush()
+				s = ""
+			}'
+	}
+
+	exec {BT[1]}>&-
+
+	while true; do
+		read -t 60 device state <&"${BT[0]}"
+
 		case $device in
+			"") eval bluetooth_devices=( $(get_bluetooth_devices) );;
 			bluetooth)
 				bluetooth=$state
 				set_bluetooth_actions
 				;;
-			bluetooth) get_bluetooth $state;;
 			*)
 				[[ ${state,} == disconnect ]] &&
 					unset bluetooth_devices[$device] ||
 					eval bluetooth_devices+=( $(get_bluetooth_devices $device wait) )
-
-				#~/.orw/scripts/notify.sh -t 5 "$(get_bluetooth_devices $device)"
-				#eval "bluetooth_devices$(get_bluetooth_devices $device)"
 				;;
-				#if [[ $state == Connect ]]; then
-				#	read device_icon <<< $(awk -F '[= ]' '
-				#		NR == FNR && /^\s*Icon/ {
-				#			sub(".*-", "", $NF)
-				#			i = $NF
-				#		}
-				#		NR > FNR && $1 == i {
-				#			print $NF
-				#		}' <(bluetoothctl show $device) $icons_file)
-				#	icon+="\$inner\$cjpfg$icon"
-				#fi
-				#;;
 		esac
 
 		get_bluetooth
 		print_module bluetooth
-	done < <(sudo unbuffer btmon | awk '
-		/Powered:/ { print "bluetooth", (($2 == "Enabled") ? "on" : "off"); fflush() }
-		/onnect Complete/ { s = $4 }
-		s && /Address:/ {
-			gsub("^.*Address:\\s+", "")
-			print $1, s; fflush()
-			s = ""
-		}')
+	done
+
+	#while read device state; do
+	#	#~/.orw/scripts/notify.sh -t 5 "BT: $device ${state}ed"
+	#	case $device in
+	#		bluetooth)
+	#			bluetooth=$state
+	#			set_bluetooth_actions
+	#			;;
+	#		bluetooth) get_bluetooth $state;;
+	#		*)
+	#			[[ ${state,} == disconnect ]] &&
+	#				unset bluetooth_devices[$device] ||
+	#				eval bluetooth_devices+=( $(get_bluetooth_devices $device wait) )
+
+	#			#~/.orw/scripts/notify.sh -t 5 "${bluetooth_devices[*]} $state"
+	#			#~/.orw/scripts/notify.sh -t 5 "$(get_bluetooth_devices $device)"
+	#			#eval "bluetooth_devices$(get_bluetooth_devices $device)"
+	#			;;
+	#			#if [[ $state == Connect ]]; then
+	#			#	read device_icon <<< $(awk -F '[= ]' '
+	#			#		NR == FNR && /^\s*Icon/ {
+	#			#			sub(".*-", "", $NF)
+	#			#			i = $NF
+	#			#		}
+	#			#		NR > FNR && $1 == i {
+	#			#			print $NF
+	#			#		}' <(bluetoothctl show $device) $icons_file)
+	#			#	icon+="\$inner\$cjpfg$icon"
+	#			#fi
+	#			#;;
+	#	esac
+
+	#	get_bluetooth
+	#	print_module bluetooth
+	#done < <(sudo unbuffer btmon | awk '
+	#		/Powered:/ { print "bluetooth", (($2 == "Enabled") ? "on" : "off"); fflush() }
+	#		/onnect Complete/ { s = $4 }
+	#		s && /Address:/ {
+	#			gsub("^.*Address:\\s+", "")
+	#			print $1, s; fflush()
+	#			s = ""
+	#		}')
 }
