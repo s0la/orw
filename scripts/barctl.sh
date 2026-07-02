@@ -6,11 +6,7 @@ get_bars() {
 }
 
 kill_bar() {
-	#local pid=$(ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs)
-	#[[ $pid ]] && kill $pid
 	ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) print $2 }' | xargs -r kill
-	#ps aux | awk '!/barctl.sh/ { if(/-n \<'$bar'\>/) printf "%s\n\n", $0 }'
-	#kill $pids
 }
 
 kill_running_script() {
@@ -29,14 +25,8 @@ add_bar() {
 	sed -i "/^last_running/ { /\<$bar\>/! s/$/$separator$bar/ }" $0
 }
 
-keep_running() {
-	echo
-}
-
-trap keep_running SIGHUP
-
 configs=~/.config/orw/bar/configs
-last_running=solid3
+last_running=under_join
 
 while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 	case $flag in
@@ -59,7 +49,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 
 			[[ $@ =~ -k ]] && remove=true
 
-			#echo $bar_expr: ${BASH_REMATCH[*]} ${bar_expr//[[:alnum:]_-]/} = $pattern
 			read current_running bar_array <<< $(ls $configs | awk -F '/' '\
 				BEGIN {
 					r = "'$remove'"
@@ -71,15 +60,6 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 					if (!r && b !~ "^('${last_running//,/|}')$") nb = nb "," b
 					ub = ub "," b
 				} END {
-					#if(r) {
-					#	ab = gensub(",?\\<(" gensub(",", "|", "g", ub) ")\\>", "", "g", lr)
-					#	if (ab ~ /^,/) sub("^,", "", ab)
-					#} else {
-					#	if (nb && ! lr) sub("^,", "", nb)
-					#	ab = lr nb
-					#}
-					#print (ab) ? ab : "none", gensub(",", " ", "g", (nb) ? nb : ub)
-
 					if(r) {
 						dub = ub; gsub(",", "|", dub)
 						gsub(",?\\<(" dub ")\\>", "", lr)
@@ -151,7 +131,7 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 					split(e_a, aa)
 					split(e_f, fa, ",")
 				} {
-					if(e_a ~ /[+-][0-9]?/) {
+					if(e_a ~ /[/*+-][0-9]?/) {
 						if(i_c && NR == FNR) {
 							for(ai in aa) naa[ai] = get_new_value(i_f)
 							print
@@ -164,12 +144,13 @@ while getopts :dI:gb:M:E:eriamsR:klLnc:u flag; do
 							for(ai in aa) {
 								a = aa[ai]
 								as = substr(a, 1, 1)
-								av = int(substr(a, 2))
+								av = substr(a, 2)
 								cv = get_new_value(f)
 
 								fo = (length(naa[1])) ? naa[ai] : cv
 								so = (length(a) > 1) ? av : cv
-								nv = (as == "+") ? so + fo : fo - so
+								nv = sprintf("%.0f", (as == "*") ? fo * so : (as == "/") ? fo / so: \
+									(as == "+") ? fo + so : fo - so)
 
 								replace_value()
 							}
