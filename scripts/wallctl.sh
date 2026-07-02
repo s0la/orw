@@ -291,7 +291,7 @@ display_count=${#displays[*]}
 
 [[ "$@" =~ -U ]] && unsplash=true
 
-while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmxC: flag; do
+while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:tq:vUWmxC: flag; do
 	case $flag in
 		x) no_xinerama=true;;
 		i) index=$((OPTARG - 1));;
@@ -462,10 +462,12 @@ while getopts :i:n:w:sd:M:rD:o:acAI:O:P:p:t:q:vUWmxC: flag; do
 		o)
 			order=$OPTARG
 			[[ ${!OPTIND} =~ [0-9]+ ]] && order_count=${!OPTIND} && shift
-			set_order;;
+			set_order
+			;;
 		c) colors=true;;
 		p) page=$OPTARG;;
 		P) per_page=$OPTARG;;
+		t) mode=c;;
 		t) thumb_width=$OPTARG;;
 		q) set_query_parameters "$OPTARG";;
 		O) image_orientation="&orientation=$OPTARG";;
@@ -1252,11 +1254,11 @@ if [[ ! $wallpapers || ($order && $display_number) ]]; then
 			o = "'${order:-next}'"
 			oc = '${order_count:-1}'
 
-			if (m || dn) wi = (o == "rand") ? srand() : ad[d] + ((o == "next") ? oc : -oc)
+			if (m || dn) wi = (o ~ "rand") ? srand() : ad[d] + ((o == "next") ? oc : -oc)
 			for (d in ad) {
 				if (!m || (dn && d != dn)) {
 					wi = ad[d]
-					if (!dn || d == dn) wi = (o == "rand") ? '$RANDOM' : ad[d] + ((o == "next") ? oc : -oc)
+					if (!dn || d == dn) wi = (o ~ "rand") ? '$RANDOM' : ad[d] + ((o == "next") ? oc : -oc)
 				}
 				print wp[(wi + wc) % wc]
 			}
@@ -1323,8 +1325,9 @@ else
 		if [[ ${wallpaper//\"/} == \#* ]]; then
 			wallpaper_to_add="-sc \\$wallpaper"
 		else
-			color=$(eval "magick $wallpaper_to_set -format '%[hex:u.p{15,15}]\n' info:")
-			wallpaper_to_add="--bg-color '#${color::6}' -z $wallpaper_to_set"
+			[[ $mode ]] &&
+				color=$(eval "magick $wallpaper_to_set -format '%[hex:u.p{15,15}]\n' info:")
+			wallpaper_to_add="--bg-color '#${color::6}' -${mode:-z} $wallpaper_to_set"
 		fi
 			#set_aspect "$wallpaper_path"
 
