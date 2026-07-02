@@ -67,7 +67,7 @@ get_display() {
 	#		~/.config/{openbox/rc.xml,orw/config})
 
 	[[ $display_icons == only ]] &&
-		icon=$(get_icon "number_$display") ||
+		icon=$(get_icon "number_$display[^0-9]") ||
 		icon=$(get_icon "display_icon")
 	label=DIS
 }
