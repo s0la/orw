@@ -18,22 +18,22 @@
     <value type="string" value="network:///"/>
     <value type="string" value="file:///"/>
   </property>
-  <property name="last-location-bar" type="string" value="void"/>
+  <property name="last-location-bar" type="string" value="ThunarLocationButtons"/>
   <property name="last-side-pane" type="string" value="THUNAR_SIDEPANE_TYPE_HIDDEN_SHORTCUTS"/>
-  <property name="last-window-width" type="int" value="273"/>
-  <property name="last-window-height" type="int" value="312"/>
+  <property name="last-window-width" type="int" value="766"/>
+  <property name="last-window-height" type="int" value="425"/>
   <property name="last-window-maximized" type="bool" value="false"/>
   <property name="last-details-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_25_PERCENT"/>
   <property name="last-details-view-column-widths" type="string" value="50,306,58,50,81,78,50,81,386,50,50,50,50,50"/>
   <property name="last-details-view-visible-columns" type="string" value="THUNAR_COLUMN_NAME"/>
   <property name="last-menubar-visible" type="bool" value="false"/>
-  <property name="last-separator-position" type="int" value="130"/>
+  <property name="last-separator-position" type="int" value="122"/>
   <property name="last-show-hidden" type="bool" value="false"/>
   <property name="last-statusbar-visible" type="bool" value="false"/>
   <property name="misc-single-click" type="bool" value="false"/>
   <property name="misc-middle-click-in-tab" type="bool" value="true"/>
   <property name="last-sort-column" type="string" value="THUNAR_COLUMN_NAME"/>
-  <property name="last-sort-order" type="string" value="GTK_SORT_ASCENDING"/>
+  <property name="last-sort-order" type="string" value="GTK_SORT_DESCENDING"/>
   <property name="misc-thumbnail-mode" type="string" value="THUNAR_THUMBNAIL_MODE_ALWAYS"/>
   <property name="last-compact-view-zoom-level" type="string" value="THUNAR_ZOOM_LEVEL_75_PERCENT"/>
   <property name="last-details-view-fixed-columns" type="bool" value="false"/>

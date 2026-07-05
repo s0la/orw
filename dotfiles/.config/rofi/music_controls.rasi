@@ -22,11 +22,12 @@ inputbar {
 }
 
 listview {
-  spacing:           7px;
+  spacing:           8px;
   // spacing:           0px;
   layout:            horizontal;
   background-color:  transparent;
-  padding:           0 2px;
+  // background-color:  #608985;
+  padding:           0;
 }
 
 element {
@@ -35,7 +36,7 @@ element {
 }
 
 element-text {
-  padding:		8px 10px;
+  padding:		10px 10px;
   // padding:		8px 13px;
   font:			"material 12";
   background-color: inherit;
@@ -52,11 +53,16 @@ element-text {
 #element.selected.normal {
 	// background-color: argb:00000000;
 	background-color: transparent;
+	background-color: #6f7168;
 }
 
 #element-text selected.normal {
 	text-color:       @msfg;
 	background-color: @msbg;
+	background-color: #6f7168;
+	color: #50524b;
+	background-color: @ebg;
+	color: @efg;
 	// background-color: @efg;
 }
 

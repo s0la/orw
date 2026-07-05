@@ -23,9 +23,9 @@
 	// window-margin:          0 7px;
 	window-radius:          0px;
 	window-border:          0px;
-	window-width:           353px;
+	window-width:           365px;
 
-	y-offset:               65px;
+	y-offset:               85px;
 
 	element-radius:         10%;
 	element-radius:         5px;
@@ -83,10 +83,10 @@ mainbox {
 }
 
 #listview {
-	flow:      @window-orientation;
+	flow:        @window-orientation;
 	spacing:     @list-spacing;
 	lines:       1;
-	columns: 4;
+	columns:     4;
     background-color:            #608985;
     background-color:            transparent;
     background-color:            #00000000;
@@ -132,6 +132,7 @@ mainbox {
 
 #element.normal.active, element.alternate.active {
 	background-color: @abg;
+	// background-color: #232323;
 }
 
 #element-text normal.active, element-text alternate.active {
@@ -160,10 +161,15 @@ mainbox {
 
 #element.selected.normal, element.selected.active, element.selected.urgent {
 	background-color: @sbg;
+
+	background-color: #6f7168;
+	background-color: @ebg;
+	// background-color: @sbg;
+	// background-color: @ebg;
 	// background-color: @sbg;
 }
 
 #element-text selected.normal, element-text selected.alternate, element-text selected.active, element-text selected.alternate.active, element-text selected.urgent, element-text selected.alternate.urgent {
 	color: @efg;
-	color: @sfg;
+	// color: @ebg;
 }

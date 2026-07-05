@@ -16,7 +16,8 @@ while getopts :i:F:f:o:r:c:t:P:ps:b:v:TC:w: flag; do
 		b)
 			bar=true
 			level_value=${OPTARG%/*}
-			empty_value=${OPTARG#*/};;
+			empty_value=${OPTARG#*/}
+			;;
 		t)
 			[[ $OPTARG =~ m$ ]] &&
 				miliseconds=true sleep_time=2
@@ -36,7 +37,8 @@ read bg fg <<< $(awk -F '"' '/urgency_normal/ { nr = NR } \
 
 sbg="#343434"
 #pbfg="#7f9385"
-pbfg="#607667"
+#pbfg="#607667"
+pbfg="#6f7168"
 
 type=$(ps -C dunst -o args=)
 [[ $style_config ]] || style_config=dunstrc
@@ -182,13 +184,14 @@ if [[ $style ]]; then
 			icon="<span font='Iosevka Orw $icon_size' foreground='${icon_fg:-$fg}'>$font_icon</span>"
 
 			if [[ $bar ]]; then
-				level=$(color_bar '▖' $level_value)
-				empty=$(color_bar '▖' $empty_value)
+				#level=$(color_bar '▖' $level_value)
+				#empty=$(color_bar '▖' $empty_value)
 
-				level=$(color_bar '➖' $level_value)
-				empty=$(color_bar '➖' $empty_value)
+				#level=$(color_bar '➖' $level_value)
+				#empty=$(color_bar '➖' $empty_value)
 
-				level=$(color_bar '' $level_value)
+				((level_value)) &&
+					level=$(color_bar '' $level_value)
 				empty=$(color_bar '' $empty_value)
 
 				bar="<span font='Iosevka Orw $info_size' foreground='$pbfg'>$level<span foreground='$sbg'>$empty</span></span>"
@@ -198,7 +201,6 @@ if [[ $style ]]; then
 					l = length(m)
 					d = (20 - l) / 2
 					printf("%*.s%s%*.s", d, " ", m, d, " ") }' <<< "${value:-${@: -1}}")
-
 
 				if [[ $waiting_index ]]; then
 					#local waiting{,_fg}

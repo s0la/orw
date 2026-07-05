@@ -42,7 +42,7 @@ alternative_ui_separator_color = "black"
 
 progressbar_color = "19"
 progressbar_look = "   "
-progressbar_elapsed_color = "93"
+progressbar_elapsed_color = "133"
 
 visualizer_in_stereo = "no"
 visualizer_output_name = "mpd_fifo"
@@ -53,6 +53,8 @@ visualizer_output_name = "mpd_fifo"
 #visualizer_look = "▋"
 
 visualizer_look = "○▋"
+#visualizer_look = "▋"
+#visualizer_look = "▋"
 #visualizer_look = "▋"
 #visualizer_look = "▋"
 #visualizer_look = "▋"
@@ -64,4 +66,4 @@ visualizer_spectrum_smooth_look = yes
 #visualizer_color = 20,82,93,93
 #visualizer_color = 20,82,93,93
 #visualizer_color = 20,82,93,93
-visualizer_color = 20,82,93,93
+visualizer_color = 20,82,112,112

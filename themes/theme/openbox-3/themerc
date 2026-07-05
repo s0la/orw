@@ -2,7 +2,7 @@
 
 # Misc
 border.width: 1
-padding.width: 3
+padding.width: 4
 padding.height: 3
 
 window.handle.width: 0
@@ -28,7 +28,7 @@ menu.items.disabled.text.color: #575757
 
 menu.items.active.bg: flat
 menu.items.active.bg.color: #282828
-menu.items.active.text.color: #9fafa4
+menu.items.active.text.color: #6f7168
 
 menu.separator.color: #282828
 menu.separator.width: 1
@@ -39,42 +39,52 @@ menu.bullet.image.color: #282828
 menu.bullet.selected.image.color: #282828
 
 # Window - Active
-window.active.border.color: #282828
-window.active.client.color: #343434
+window.active.border.color: #6f7168
+window.active.client.color: #6f7168
 
 window.active.grip.bg: flat solid
-window.active.grip.bg.color: #282828
+window.active.grip.bg.color: #6f7168
 
 window.active.handle.bg: flat solid
-window.active.handle.bg.color: #282828
+window.active.handle.bg.color: #6f7168
 
-window.active.button.disabled.bg: Parentrelative
+window.active.button.*.bg: Flat
+
 window.active.button.disabled.bg.color: #343434
 window.active.button.disabled.image.color: #343434
 
-window.active.button.hover.bg: Parentrelative
+window.active.button.hover.bg.color: #464646
 window.active.button.hover.image.color: #464646
 
-window.active.button.pressed.bg: Parentrelative
+window.active.button.pressed.bg.color: #4d4d4d
 window.active.button.pressed.image.color: #4d4d4d
 
-Window.active.button.toggled.bg: Parentrelative
+window.active.button.toggled.bg.color: #4d4d4d
 window.active.button.toggled.image.color: #4d4d4d
 
-window.active.button.unpressed.bg: Parentrelative
+window.active.button.unpressed.bg.color: #4d4d4d
 window.active.button.unpressed.image.color: #4d4d4d
 
 #specific buttons
+window.active.button.max.unpressed.bg.color: #4d4d4d
 window.active.button.max.unpressed.image.color: #4d4d4d
+window.active.button.max.pressed.bg.color: #4d4d4d
 window.active.button.max.pressed.image.color: #4d4d4d
+window.active.button.max.hover.bg.color: #464646
 window.active.button.max.hover.image.color: #464646
 
-window.active.button.close.unpressed.image.color: #b66b75
-window.active.button.close.pressed.image.color: #9a5b63
-window.active.button.close.hover.image.color: #9a5b63
+window.active.button.close.unpressed.bg.color: #916e6e
+window.active.button.close.unpressed.image.color: #916e6e
+window.active.button.close.pressed.bg.color: #7c5e5e
+window.active.button.close.pressed.image.color: #7c5e5e
+window.active.button.close.hover.bg.color: #7c5e5e
+window.active.button.close.hover.image.color: #7c5e5e
 
+window.active.button.iconify.unpressed.bg.color: #4d4d4d
 window.active.button.iconify.unpressed.image.color: #4d4d4d
+window.active.button.iconify.pressed.bg.color: #4d4d4d
 window.active.button.iconify.pressed.image.color: #4d4d4d
+window.active.button.iconify.hover.bg.color: #464646
 window.active.button.iconify.hover.image.color: #464646
 
 #window.active.title.bg: Flat Gradient Vertical
@@ -85,7 +95,7 @@ window.active.button.iconify.hover.image.color: #464646
 
 window.active.title.bg: Flat Solid
 window.active.title.bg.color: #343434
-window.active.title.bg.border.color: #282828
+window.active.title.bg.border.color: #6f7168
 window.active.title.separator.color: #4d4d4d
 
 window.active.label.text.font: shadow=n
@@ -132,10 +142,11 @@ window.inactive.label.text.color: #282828
 
 # OSD
 osd.bg: Solid Flat
-osd.bg.color: #282828
-osd.bg.border.color: #282828
+osd.bg.color: #6f7168
+osd.border.color: #6f7168
+osd.bg.border.color: #6f7168
 osd.label.bg: parentrelative
-osd.label.text.color: #282828
+osd.label.text.color: #6f7168
 
 osd.hilight.bg: flat #7f9385
 osd.hilight.bg.color: #7f9385
@@ -144,14 +155,14 @@ osd.unhilight.bg: flat #282828
 osd.unhilight.bg.color: #282828
 
 osd.button.unpressed.bg: flat border
-osd.button.unpressed.bg.color: #282828
-osd.button.unpressed.*.border.color: #282828
+osd.button.unpressed.bg.color: #6f7168
+osd.button.unpressed.*.border.color: #6f7168
 
 osd.button.pressed.bg: flat border
-osd.button.pressed.bg.color: #282828
-osd.button.pressed.*.border.color: #282828
+osd.button.pressed.bg.color: #6f7168
+osd.button.pressed.*.border.color: #6f7168
 
 osd.button.focused.bg: flat solid border
-osd.button.focused.bg.color: #282828
-osd.button.focused.*.border.color: #282828
-osd.button.focused.box.color: #282828
+osd.button.focused.bg.color: #6f7168
+osd.button.focused.*.border.color: #6f7168
+osd.button.focused.box.color: #6f7168

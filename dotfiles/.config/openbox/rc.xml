@@ -43,7 +43,7 @@
   </placement>
   <theme>
     <name>orw</name>
-		<titleLayout>LIMC</titleLayout>
+    <titleLayout>LIMC</titleLayout>
     <!--
 		<titleLayout>LIMC</titleLayout>
 	-->
@@ -62,7 +62,7 @@
     <animateIconify>no</animateIconify>
     <font place="ActiveWindow">
       <name>Roboto</name>
-      <size>8</size>
+      <size>7</size>
       <!-- font size in points -->
       <weight>Normal</weight>
       <!-- 'bold' or 'normal' -->
@@ -184,18 +184,13 @@
   <keyboard>
     <chainQuitKey>C-g</chainQuitKey>
     <!-- Keybindings for desktop switching -->
-	<keybind key="C-S-A">
+    <keybind key="C-S-A">
       <action name="Execute">
         <command>alacritty</command>
       </action>
     </keybind>
     <keybind key="W-b">
       <action name="ToggleDecorations"/>
-    </keybind>
-	<keybind key="C-S-p">
-      <action name="Execute">
-        <command>~/Documents/projects/youtube/lastpass/lastpass.sh</command>
-      </action>
     </keybind>
     <keybind key="A-Tab">
       <action name="Execute">
@@ -344,7 +339,7 @@
         <command>~/.orw/scripts/rofi_scripts/music_controls.sh</command>
       </action>
     </keybind>
-	<keybind key="A-C-p">
+    <keybind key="A-C-p">
       <action name="Execute">
         <command>~/.orw/scripts/rofi_scripts/music_progressbar.sh</command>
       </action>
@@ -1139,8 +1134,8 @@
       <focus>no</focus>
       <position force="yes">
         <monitor>2</monitor>
-        <x>624</x>
-        <y>336</y>
+        <x>center</x>
+        <y>center</y>
       </position>
       <size>
         <width>150</width>
@@ -1226,12 +1221,12 @@
       <layer>below</layer>
       <skip_taskbar>no</skip_taskbar>
       <position force="yes">
-        <x>624</x>
-        <y>336</y>
+        <x>894</x>
+        <y>243</y>
       </position>
       <size>
-        <width>150</width>
-        <height>150</height>
+        <width>130</width>
+        <height>130</height>
       </size>
     </application>
 
@@ -1240,8 +1235,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>center</x>
-        <y>center</y>
+        <x>810</x>
+        <y>490</y>
       </position>
       <size>
         <width>300</width>
@@ -1254,8 +1249,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>center</x>
-        <y>center</y>
+        <x>810</x>
+        <y>490</y>
       </position>
       <size>
         <width>300</width>
@@ -1288,8 +1283,8 @@
       <decor>no</decor>
       <layer>above</layer>
       <position force="yes">
-        <x>518</x>
-        <y>717</y>
+        <x>1096</x>
+        <y>67</y>
       </position>
       <size>
         <width>150</width>

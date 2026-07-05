@@ -92,10 +92,11 @@ element-icon {
 	color: transparent;
 }
 
-#element.selected.normal, element.selected.active {
+#element.selected.normal, element.selected.active, element.selected.urgent {
 	border:           0;
 	background-color: @dmsbg;
 	background-color: @sbg;
+	background-color: #6f7168;
 	border-radius:    @radius;
 	border-color:     #608985;
 	border-color:     @sfg;

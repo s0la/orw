@@ -100,8 +100,10 @@ bar_spacing = 1
 foreground = '#7f9385'
 gradient = 1
 gradient_color_1 = '#7f9385'
+gradient_color_1 = '#6f7168'
 gradient_color_2 = '#9dccbd'
 gradient_color_2 = '#9dccbd'
+gradient_color_2 = '#c0979d'
 gradient_count = 2
 
 # Gradient mode, only hex defined colors are supported, background must also be defined in hex

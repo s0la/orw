@@ -1,0 +1,48 @@
+#vim
+bg #1c1510
+fg #a5a09c
+sfg #cba348
+vfg #8ea998
+cfg #70716b
+ifg #ffa859
+ffg #8c4e70
+nbg none
+nfg #342920
+lbg #281f18
+lfg #8ea998
+syfg #916f6f
+cmfg #46392e
+slbg #281f18
+slfg #46392e
+fzfhl #8ea998
+bcbg #8c4e70
+bdbg #8ea998
+nmbg #ffa859
+imbg #cba348
+vmbg #916f6f
+
+#term
+bg #1c1c1c
+fg #a59c9c
+br_black #646464
+br_blue #66667c
+br_cyan #2fffe4
+br_green #5f9d88
+br_magenta #aa688b
+br_red #e89370
+br_white #c3baba
+br_yellow #ffc26f
+black #464646
+blue #48485e
+cyan #11ecc6
+green #417f6a
+magenta #8c4a6d
+red #ca7552
+white #a59c9c
+yellow #ffa451
+
+#lock
+tc #ff666060
+rc #ff7f9385
+ic #dc1c1c1c
+wc #ff9fafa4

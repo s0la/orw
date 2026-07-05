@@ -13,7 +13,7 @@
 	tbg: argb:e8232323;
 	tbg: #232323e0;
 	tbg: #232323;
-	tbg: argb:ea232323;
+	tbg: argb:e0232323;
 	mbg: argb:f01c1c1c;
 	msbg: argb:702f2f2f;
 	msbg: #2f2f2f;
@@ -37,10 +37,13 @@
 	ebg: #232323;
 	ebg: #718677;
 	ebg: #607667;
+	ebg: #6f7168;
 	esbg: #ffffff06;
+	esbg: #ffffff09;
 	efg: #7f9385;
 	efg: #8d9f92;
 	efg: #9fafa4;
+	efg: #50524b;
 	sbg: #e0e0e00e;
 	sbg: #fafafa0a;
 	sbg: #eeeeee0a;
@@ -49,6 +52,7 @@
 	sbg: #2f2f2fd0;
 	sbg: #2f2f2fb0;
 	sfg: #7f9385;
+	sfg: #6f7168;
 	sul: #7f9385;
 	lpc: #666060;
 	dpc: #666060;
