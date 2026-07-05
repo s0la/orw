@@ -128,6 +128,7 @@ is_vi_mode=$(set -o | awk '$1 == "vi" { print ($NF == "on") }')
 ((is_vi_mode)) &&
 	format_start='\1\e[' format_end='m\2' ||
 	format_start='\[\033[' format_end='m\]'
+
 color_content() {
 	echo "$format_start${1}8;2;${2%;}$format_end"
 }
@@ -420,9 +421,11 @@ generate_ps1() {
 	sc="77;77;77;"
 	dc="77;77;77;"
 	ic="157;204;189;"
+	ic="152;156;129;"
 	sec="127;147;133;"
 	gcc="127;147;133;"
 	gdc="211;124;135;"
+	gdc="192;151;157;"
 	vc="211;124;135;"
 
 	sec=$(awk --non-decimal-data '
@@ -704,12 +707,28 @@ alias stc="show_tty_clock"
 
 #tmux
 alias tmux="tmux -f ~/.config/tmux/tmux.conf"
-alias nf="clear && neofetch"
+alias nf="blank=true && . ~/.bashrc && clear && neofetch"
 
 #startx
 if [[ `tty` == '/dev/tty1' ]]; then
 	pidof openbox || startx ~/.orw/dotfiles/.config/X11/xinitrc
 fi
+
+banner() {
+	term_count=$(wmctrl -l | awk '$NF ~ "'"^$TERM"'" { t++ } END { print t }')
+	term_title=$(figlet "TERM$term_count")
+	title_height=$(wc -l <<< "$term_title")
+	start_line=$((title_height + 2))
+
+	clear
+	echo "$term_title"
+	printf -- '-%.0s' $(seq $COLUMNS)
+
+	printf "\e[%d;r" $start_line
+	printf "\e[%d;1H" $start_line
+
+	bind -x '"\C-l": banner'
+}
 
 export NVM_DIR="$HOME/.config/nvm"
 if [ -s "$NVM_DIR/nvm.sh" ]; then \. "$NVM_DIR/nvm.sh"; fi # This loads nvm
@@ -717,3 +736,4 @@ if [ -s "$NVM_DIR/bash_completion" ]; then \. "$NVM_DIR/bash_completion"; fi  # 
 #. "$HOME/.cargo/env"
 
 #[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+#banner
