@@ -25,6 +25,9 @@ noremap <silent> <C-k> :resize -3<cr>
 noremap <silent> <C-h> :vert resize +3<cr>
 noremap <silent> <C-l> :vert resize -3<cr>
 
+"vertial split under cursor
+nnoremap <C-W><S-F> <C-W>vgf
+
 "insert mode
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
