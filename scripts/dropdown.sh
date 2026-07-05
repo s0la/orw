@@ -178,8 +178,8 @@ set_position() {
 		~/.orw/scripts/set_geometry.sh -c dropdown -x $x -y $y -w $width -h $height
 }
 
-x_position=r
-y_position=c
+x_position=c
+y_position=t
 	
 current_desktop=$(xdotool get_desktop)
 focused_window=$(xdotool getwindowfocus getwindowname)
