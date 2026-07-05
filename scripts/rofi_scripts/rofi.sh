@@ -101,9 +101,8 @@ resize_rofi() {
 			new_value()
 		}
 
-		$1 ~ "width" {
-			if (m) new_value(m)
-		} { print }' ~/.config/rofi/icons.rasi
+		$1 ~ "width" { if (m) new_value(m) }
+		{ print }' ~/.config/rofi/icons.rasi
 }
 
 toggle
