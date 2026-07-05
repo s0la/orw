@@ -78,47 +78,52 @@ case $1 in
 	r*)
 		[[ $1 == rl ]] && rofi_config=config.rasi
 
-		awk -i inplace '\
+		awk -i inplace '
 			$1 ~ "^'${1:1:1}'[^-]*:" {
-				nv = '$new_value'
+				nv = "'"$new_value"'"
+				nv = "'"${new_value#"$sign"}"'"
 				cv = gensub(/.* ([0-9]+).*/, "\\1", 1)
-				sub(/[0-9]+/, ("'$sign'") ? cv + nv : nv)
+				fv = sprintf("%.0f", cv '"$sign"' nv)
+				sub(/[0-9]+/, ("'"$sign"'") ? fv : nv)
 			}
 
 			$1 ~ "^'${1:1:1}'\\w*-'${1:2:1}'\\w*:" {
 				if ($1 ~ ".*-padding") {
 					w = 2
-					fv = '$new_value'
-					sv = '${second_arg:=$new_value}'
+					fv = '"${new_value#"$sign"}"'
+					sv = '"${second_arg:=${new_value#"$sign"}}"'
 					av = gensub(".* ([0-9]+).* ([0-9]+).*", "\\1 \\2", 1)
 					split(av, v)
 
-					v1 = ("'$sign'") ? v[1] + fv : fv 
-					v2 = ("'$second_arg'") ? ("'${second_sign:=$sign}'") ? \
-						v[2] + sv : sv : ("'$mode'" ~ "dmenu") ? v[2] : v1
+					v1 = sprintf("%.0f", ("'"$sign"'") ? v[1] '"$sign"' fv : fv)
+					v2 = sprintf("%.0f", ("'$second_arg'") ? ("'${second_sign:=$sign}'") ? \
+							v[2] '"$sign"' sv : sv : ("'$mode'" ~ "dmenu") ? v[2] : v1)
 
 					sub(/([0-9px]+ ?){2}/, v1 "px " v2 "px")
 				} else {
 					w = (/margin/)
 					u = ($1 ~ "width") ? "%" : "px"
 
-					nv = '$new_value'
+					nv = '"${new_value#"$sign"}"'
 
 					cv = gensub(".* ([0-9.]+)(%|px).*", "\\1", 1)
-					sub(cv "(%|px)", ("'$sign'") ? cv + nv u : nv u)
+					fv = sprintf("%.0f", cv '"$sign"' nv u)
+					sub(cv "(%|px)", ("'$sign'") ? fv : nv u)
 				}
 			}
 
 			w && FILENAME ~ "icons" && $1 == "window-width:" {
 				cv = $NF
 				gsub("[^0-9]", "", cv)
-				nv = cv + w * '${second_arg:-$new_value}'
+				nv = cv + w * '"${second_arg:-${new_value#"$sign"}}"'
 				#nv = cv '${second_sign:-$sign}' w * '${second_arg:-$new_value}'
 				#system("~/.orw/scripts/notify.sh -t 5 \"" cv " '"${second_sign:-$sign}"' " nv " '"${second_arg:-$new_value}"' \"")
 				sub(cv, nv)
 			}
 
-			{ print }' $rofi_path/${rofi_conf:-$mode};;
+			{ print }' $rofi_path/${rofi_conf:-$mode}
+			exit
+			;;
 	tm*)
 		[[ $1 == tms ]] &&
 			pattern=separator || pattern='window.*format'
